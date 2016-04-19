@@ -70,8 +70,10 @@ int g_imageWidth = 1024;
 int g_imageHeight = 768;
 
 // nv::Model *g_model;
+vl::ref<vl::Geometry> g_model;
 GLuint g_quadDisplayList;
 GLuint g_vboId;
+GLuint g_nboId;
 GLuint g_eboId;
 
 bool g_useOQ = true;
@@ -106,7 +108,7 @@ enum {
 };
 
 float g_opacity = 0.6;
-char g_mode = DUAL_PEELING_MODE;
+char g_mode = WEIGHTED_SUM_MODE; //  DUAL_PEELING_MODE;
 bool g_showOsd = true;
 bool g_bShowUI = true;
 unsigned g_numGeoPasses = 0;
@@ -150,7 +152,7 @@ GLenum g_drawBuffers[] = {GL_COLOR_ATTACHMENT0,
 					     GL_COLOR_ATTACHMENT6
 };
 
-#if 0
+#if 1
 #define CHECK_GL_ERRORS  \
 { \
     GLenum err = glGetError(); \
@@ -175,65 +177,64 @@ public:
     vl::glGenFramebuffers(1, &g_dualPeelingSingleFboId);
     for (int i = 0; i < 2; i++)
     {
-	    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, g_dualDepthTexId[i]);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RG32F, g_imageWidth, g_imageHeight,
-				     0, GL_RGB, GL_FLOAT, 0);
+	    glBindTexture(GL_TEXTURE_RECTANGLE, g_dualDepthTexId[i]);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RG32F, g_imageWidth, g_imageHeight, 0, GL_RGB, GL_FLOAT, 0);
 
-	    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, g_dualFrontBlenderTexId[i]);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, g_imageWidth, g_imageHeight,
-				     0, GL_RGBA, GL_FLOAT, 0);
+	    glBindTexture(GL_TEXTURE_RECTANGLE, g_dualFrontBlenderTexId[i]);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, g_imageWidth, g_imageHeight, 0, GL_RGBA, GL_FLOAT, 0);
 
-	    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, g_dualBackTempTexId[i]);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, g_imageWidth, g_imageHeight,
-				     0, GL_RGBA, GL_FLOAT, 0);
+	    glBindTexture(GL_TEXTURE_RECTANGLE, g_dualBackTempTexId[i]);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, g_imageWidth, g_imageHeight, 0, GL_RGBA, GL_FLOAT, 0);
     }
 
     glGenTextures(1, &g_dualBackBlenderTexId);
-    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, g_dualBackBlenderTexId);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, g_imageWidth, g_imageHeight,
-			     0, GL_RGB, GL_FLOAT, 0);
+    glBindTexture(GL_TEXTURE_RECTANGLE, g_dualBackBlenderTexId);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGB, g_imageWidth, g_imageHeight, 0, GL_RGB, GL_FLOAT, 0);
 
     vl::glGenFramebuffers(1, &g_dualBackBlenderFboId);
     vl::glBindFramebuffer(GL_FRAMEBUFFER, g_dualBackBlenderFboId);
-    vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-						      GL_TEXTURE_RECTANGLE_ARB, g_dualBackBlenderTexId, 0);
+    vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, g_dualBackBlenderTexId, 0);
 
     vl::glBindFramebuffer(GL_FRAMEBUFFER, g_dualPeelingSingleFboId);
 
     int j = 0;
 	    vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-							      GL_TEXTURE_RECTANGLE_ARB, g_dualDepthTexId[j], 0);
+							      GL_TEXTURE_RECTANGLE, g_dualDepthTexId[j], 0);
 	    vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1,
-							      GL_TEXTURE_RECTANGLE_ARB, g_dualFrontBlenderTexId[j], 0);
+							      GL_TEXTURE_RECTANGLE, g_dualFrontBlenderTexId[j], 0);
 	    vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2,
-							      GL_TEXTURE_RECTANGLE_ARB, g_dualBackTempTexId[j], 0);
+							      GL_TEXTURE_RECTANGLE, g_dualBackTempTexId[j], 0);
 
     j = 1;
 	    vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3,
-							      GL_TEXTURE_RECTANGLE_ARB, g_dualDepthTexId[j], 0);
+							      GL_TEXTURE_RECTANGLE, g_dualDepthTexId[j], 0);
 	    vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4,
-							      GL_TEXTURE_RECTANGLE_ARB, g_dualFrontBlenderTexId[j], 0);
+							      GL_TEXTURE_RECTANGLE, g_dualFrontBlenderTexId[j], 0);
 	    vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5,
-							      GL_TEXTURE_RECTANGLE_ARB, g_dualBackTempTexId[j], 0);
+							      GL_TEXTURE_RECTANGLE, g_dualBackTempTexId[j], 0);
 
     vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6,
-						      GL_TEXTURE_RECTANGLE_ARB, g_dualBackBlenderTexId, 0);
+						      GL_TEXTURE_RECTANGLE, g_dualBackBlenderTexId, 0);
+
+    // Cleanup
+    vl::glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_RECTANGLE, 0);
 
     CHECK_GL_ERRORS;
   }
@@ -258,44 +259,48 @@ public:
 
     for (int i = 0; i < 2; i++)
     {
-	    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, g_frontDepthTexId[i]);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_DEPTH_COMPONENT32F,
+	    glBindTexture(GL_TEXTURE_RECTANGLE, g_frontDepthTexId[i]);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_DEPTH_COMPONENT32F,
 				     g_imageWidth, g_imageHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
-	    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, g_frontColorTexId[i]);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, g_imageWidth, g_imageHeight,
+	    glBindTexture(GL_TEXTURE_RECTANGLE, g_frontColorTexId[i]);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, g_imageWidth, g_imageHeight,
 				     0, GL_RGBA, GL_FLOAT, 0);
 
 	    vl::glBindFramebuffer(GL_FRAMEBUFFER, g_frontFboId[i]);
 	    vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-							      GL_TEXTURE_RECTANGLE_ARB, g_frontDepthTexId[i], 0);
+							      GL_TEXTURE_RECTANGLE, g_frontDepthTexId[i], 0);
 	    vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-							      GL_TEXTURE_RECTANGLE_ARB, g_frontColorTexId[i], 0);
+							      GL_TEXTURE_RECTANGLE, g_frontColorTexId[i], 0);
     }
 
     glGenTextures(1, &g_frontColorBlenderTexId);
-    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, g_frontColorBlenderTexId);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, g_imageWidth, g_imageHeight,
+    glBindTexture(GL_TEXTURE_RECTANGLE, g_frontColorBlenderTexId);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, g_imageWidth, g_imageHeight,
 			     0, GL_RGBA, GL_FLOAT, 0);
 
     vl::glGenFramebuffers(1, &g_frontColorBlenderFboId);
     vl::glBindFramebuffer(GL_FRAMEBUFFER, g_frontColorBlenderFboId);
     vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-						      GL_TEXTURE_RECTANGLE_ARB, g_frontDepthTexId[0], 0);
+						      GL_TEXTURE_RECTANGLE, g_frontDepthTexId[0], 0);
     vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-						      GL_TEXTURE_RECTANGLE_ARB, g_frontColorBlenderTexId, 0);
+						      GL_TEXTURE_RECTANGLE, g_frontColorBlenderTexId, 0);
+
+    // Cleanup
+    glBindTexture(GL_TEXTURE_RECTANGLE, 0);
+
     CHECK_GL_ERRORS;
   }
 
@@ -314,28 +319,31 @@ public:
   {
     glGenTextures(2, g_accumulationTexId);
 
-    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, g_accumulationTexId[0]);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA16F_ARB,
+    glBindTexture(GL_TEXTURE_RECTANGLE, g_accumulationTexId[0]);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA16F_ARB,
 			     g_imageWidth, g_imageHeight, 0, GL_RGBA, GL_FLOAT, NULL);
 
-    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, g_accumulationTexId[1]);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_R32F,
+    glBindTexture(GL_TEXTURE_RECTANGLE, g_accumulationTexId[1]);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_R32F,
 			     g_imageWidth, g_imageHeight, 0, GL_RGBA, GL_FLOAT, NULL);
 
     vl::glGenFramebuffers(1, &g_accumulationFboId);
     vl::glBindFramebuffer(GL_FRAMEBUFFER, g_accumulationFboId);
     vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-						      GL_TEXTURE_RECTANGLE_ARB, g_accumulationTexId[0], 0);
+						      GL_TEXTURE_RECTANGLE, g_accumulationTexId[0], 0);
     vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1,
-						      GL_TEXTURE_RECTANGLE_ARB, g_accumulationTexId[1], 0);
+						      GL_TEXTURE_RECTANGLE, g_accumulationTexId[1], 0);
+
+    // Cleanup
+    glBindTexture(GL_TEXTURE_RECTANGLE, 0);
 
     CHECK_GL_ERRORS;
   }
@@ -371,71 +379,80 @@ public:
   }
 
   //--------------------------------------------------------------------------
-  /*void LoadModel(const char *model_filename)
+  void LoadModel(const char *model_filename)
   {
-    g_model = new nv::Model;
-    printf("loading OBJ...\n");
+    //g_model = new nv::Model;
+    //printf("loading OBJ...\n");
 
-      std::string resolved_path;
+    //  std::string resolved_path;
 
-      if (sdkPath.getFilePath( model_filename, resolved_path)) {
-        if (!g_model->loadModelFromFile(resolved_path.c_str())) {
-	        fprintf(stderr, "Error loading model '%s'\n", model_filename);
-	        exit(1);
-        }
-      }
-      else {
-          fprintf(stderr, "Failed to find model '%s'\n", model_filename);
-	    exit(1);
-      }
+    //  if (sdkPath.getFilePath( model_filename, resolved_path)) {
+    //    if (!g_model->loadModelFromFile(resolved_path.c_str())) {
+	   //     fprintf(stderr, "Error loading model '%s'\n", model_filename);
+	   //     exit(1);
+    //    }
+    //  }
+    //  else {
+    //      fprintf(stderr, "Failed to find model '%s'\n", model_filename);
+	   // exit(1);
+    //  }
 
-    printf("compiling mesh...\n");
-    g_model->compileModel();
+    //printf("compiling mesh...\n");
+    //g_model->compileModel();
+    printf("%d vertices\n", g_model->vertexArray()->size()); // getPositionCount());
+    printf("%d triangles\n", g_model->drawCalls()[0].get()->countTriangles()); // getIndexCount() / 3);
 
-    printf("%d vertices\n", g_model->getPositionCount());
-    printf("%d triangles\n", g_model->getIndexCount()/3);
-    int totalVertexSize = g_model->getCompiledVertexCount() * g_model->getCompiledVertexSize() * sizeof(GLfloat);
-    int totalIndexSize = g_model->getCompiledIndexCount() * sizeof(GLuint);
+    g_model->updateDirtyBufferObject(vl::BUM_KeepRamBufferAndForceUpdate);
+    g_vboId = g_model->vertexArray()->bufferObject()->handle();
+    g_nboId = g_model->normalArray()->bufferObject()->handle();
+    g_eboId = g_model->drawCalls()[0].get()->as<vl::DrawElementsUInt>()->indexBuffer()->bufferObject()->handle();
 
-    glGenBuffers(1, &g_vboId);
-    glBindBuffer(GL_ARRAY_BUFFER, g_vboId);
-      glBufferData(GL_ARRAY_BUFFER, totalVertexSize, g_model->getCompiledVertices(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //int totalVertexSize = g_model->getCompiledVertexCount() * g_model->getCompiledVertexSize() * sizeof(GLfloat);
+    //int totalIndexSize = g_model->getCompiledIndexCount() * sizeof(GLuint);
 
-    glGenBuffers(1, &g_eboId);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_eboId);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, totalIndexSize, g_model->getCompiledIndices(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    //glGenBuffers(1, &g_vboId);
+    //glBindBuffer(GL_ARRAY_BUFFER, g_vboId);
+    //glBufferData(GL_ARRAY_BUFFER, totalVertexSize, g_model->getCompiledVertices(), GL_STATIC_DRAW);
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    vl::fvec3 modelMin, modelMax;
-    g_model->computeBoundingBox(modelMin, modelMax);
+    //glGenBuffers(1, &g_eboId);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_eboId);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, totalIndexSize, g_model->getCompiledIndices(), GL_STATIC_DRAW);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    vl::AABB aabb = g_model->boundingBox(); // computeBoundingBox(modelMin, modelMax);
+    vl::fvec3 modelMin = aabb.minCorner(), modelMax = aabb.maxCorner();
 
     vl::fvec3 diag = modelMax - modelMin;
     g_bbScale = 1.0 / diag.length() * 1.5;
     g_bbTrans = -g_bbScale * (modelMin + 0.5f * (modelMax - modelMin));
-  }*/
+  }
 
   //--------------------------------------------------------------------------
-  /*void DrawModel()
+  void DrawModel()
   {
-    glBindBuffer(GL_ARRAY_BUFFER, g_vboId);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_eboId);
-    int stride = g_model->getCompiledVertexSize() * sizeof(GLfloat);
-    int normalOffset = g_model->getCompiledNormalOffset() * sizeof(GLfloat);
-    glVertexPointer(g_model->getPositionSize(), GL_FLOAT, stride, NULL);
-    glNormalPointer(GL_FLOAT, stride, (GLubyte *)NULL + normalOffset);
+    vl::glBindBuffer(GL_ARRAY_BUFFER, g_vboId);
+    // int stride = g_model->getCompiledVertexSize() * sizeof(GLfloat);
+    // int normalOffset = g_model->getCompiledNormalOffset() * sizeof(GLfloat);
+    // glVertexPointer(g_model->getPositionSize(), GL_FLOAT, stride, NULL);
+    glVertexPointer(g_model->vertexArray()->glSize(), g_model->vertexArray()->glType(), /*stride*/0, NULL); VL_CHECK_OGL();
+
+    vl::glBindBuffer(GL_ARRAY_BUFFER, g_nboId);
+    glNormalPointer(g_model->normalArray()->glType(), /*stride*/0, NULL); VL_CHECK_OGL();
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
 
-    glDrawElements(GL_TRIANGLES, g_model->getCompiledIndexCount(), GL_UNSIGNED_INT, NULL);
+    vl::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_eboId);
+    glDrawElements(GL_TRIANGLES, g_model->drawCalls()[0].get()->as<vl::DrawElementsUInt>()->indexBuffer()->size(), GL_UNSIGNED_INT, NULL);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    vl::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    vl::glBindBuffer(GL_ARRAY_BUFFER, 0);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
 
     g_numGeoPasses++;
-  }*/
+  }
 
   //--------------------------------------------------------------------------
   void BuildShaders()
@@ -538,7 +555,7 @@ public:
     vl::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     BuildShaders();
-    // LoadModel(MODEL_FILENAME); // FIXME
+    LoadModel(MODEL_FILENAME); // FIXME
     MakeFullScreenQuad();
 
     glDisable(GL_CULL_FACE);
@@ -552,17 +569,21 @@ public:
 
   void bindTexture(vl::GLSLProgram* glsl, GLenum target, std::string texname, GLuint texid, int texunit)
   {
+    int current_glsl_program = -1;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &current_glsl_program); VL_CHECK_OGL();
+    VL_CHECK(current_glsl_program == (int)glsl->handle())
+
 	  // setTextureUnit(texname, texunit);
     int location = glsl->getUniformLocation(texname.c_str());
 	  if (location == -1) {
-		  std::cerr << "Warning: Invalid texture " << texname << std::endl;
+		  // std::cerr << "Warning: Invalid texture " << texname << std::endl;
 		  return;
 	  }
     vl::glUniform1i(location, texunit);
 
-    glActiveTexture(GL_TEXTURE0 + texunit);
+    vl::glActiveTexture(GL_TEXTURE0 + texunit);
 	  glBindTexture(target, texid);
-	  glActiveTexture(GL_TEXTURE0);
+	  vl::glActiveTexture(GL_TEXTURE0);
   }
 
   //--------------------------------------------------------------------------
@@ -589,11 +610,11 @@ public:
     glDrawBuffer(g_drawBuffers[0]);
     glClearColor(-MAX_DEPTH, -MAX_DEPTH, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
-    glBlendEquation(GL_MAX);
+    vl::glBlendEquation(GL_MAX);
 
     g_shaderDualInit->useProgram();
     g_shaderDualInit->applyUniformSet();
-    // DrawModel(); // FIXME
+    DrawModel(); // FIXME
     vl::glUseProgram(0); // g_shaderDualInit.unbind();
 
     CHECK_GL_ERRORS;
@@ -630,17 +651,17 @@ public:
 	    // Render target 1: RGBA MAX blending
 	    // Render target 2: RGBA MAX blending
 	    vl::glDrawBuffers(3, &g_drawBuffers[bufId+0]);
-	    glBlendEquation(GL_MAX);
+	    vl::glBlendEquation(GL_MAX);
 
 	    g_shaderDualPeel->useProgram();
-	    bindTexture(g_shaderDualPeel.get(), GL_TEXTURE_RECTANGLE_ARB, "DepthBlenderTex", g_dualDepthTexId[prevId], 0);
-	    bindTexture(g_shaderDualPeel.get(), GL_TEXTURE_RECTANGLE_ARB, "FrontBlenderTex", g_dualFrontBlenderTexId[prevId], 1);
+	    bindTexture(g_shaderDualPeel.get(), GL_TEXTURE_RECTANGLE, "DepthBlenderTex", g_dualDepthTexId[prevId], 0);
+	    bindTexture(g_shaderDualPeel.get(), GL_TEXTURE_RECTANGLE, "FrontBlenderTex", g_dualFrontBlenderTexId[prevId], 1);
 	    
       // g_shaderDualPeel.setUniform("Alpha", (float*)&g_opacity, 1);
       g_shaderDualPeel->setUniform(g_uniformAlpha.get());
       g_uniformAlpha->setUniform(1, (float*)&g_opacity);
       g_shaderDualPeel->applyUniformSet();
-      // DrawModel(); // FIXME
+      DrawModel(); // FIXME
 	    vl::glUseProgram(0); // g_shaderDualPeel.unbind();
 
 	    CHECK_GL_ERRORS;
@@ -648,7 +669,7 @@ public:
 	    // Full screen pass to alpha-blend the back color
 	    glDrawBuffer(g_drawBuffers[6]);
 
-	    glBlendEquation(GL_FUNC_ADD);
+	    vl::glBlendEquation(GL_FUNC_ADD);
 	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	    if (g_useOQ) {
@@ -656,7 +677,7 @@ public:
 	    }
 
 	    g_shaderDualBlend->useProgram();
-	    bindTexture(g_shaderDualBlend.get(), GL_TEXTURE_RECTANGLE_ARB, "TempTex", g_dualBackTempTexId[currId], 0);
+	    bindTexture(g_shaderDualBlend.get(), GL_TEXTURE_RECTANGLE, "TempTex", g_dualBackTempTexId[currId], 0);
       g_shaderDualBlend->applyUniformSet();
 	    glCallList(g_quadDisplayList);
 	    vl::glUseProgram(0); // g_shaderDualBlend.unbind();
@@ -683,9 +704,9 @@ public:
     glDrawBuffer(GL_BACK);
 
     g_shaderDualFinal->useProgram();
-    bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE_ARB, "DepthBlenderTex", g_dualDepthTexId[currId], 0);
-    bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE_ARB, "FrontBlenderTex", g_dualFrontBlenderTexId[currId], 1);
-    bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE_ARB, "BackBlenderTex", g_dualBackBlenderTexId, 2);
+    bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "DepthBlenderTex", g_dualDepthTexId[currId], 0);
+    bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "FrontBlenderTex", g_dualFrontBlenderTexId[currId], 1);
+    bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "BackBlenderTex", g_dualBackBlenderTexId, 2);
     g_shaderDualFinal->applyUniformSet();
     glCallList(g_quadDisplayList);
     vl::glUseProgram(0); // g_shaderDualFinal.unbind();
@@ -713,7 +734,7 @@ public:
     g_shaderFrontInit->setUniform(g_uniformAlpha.get());
     g_uniformAlpha->setUniform(1, (float*)&g_opacity);    
     g_shaderFrontInit->applyUniformSet();
-    // DrawModel(); // FIXME
+    DrawModel(); // FIXME
     vl::glUseProgram(0); // g_shaderFrontInit.unbind();
 
     CHECK_GL_ERRORS;
@@ -741,12 +762,12 @@ public:
 	    }
 
 	    g_shaderFrontPeel->useProgram();
-	    bindTexture(g_shaderFrontPeel.get(), GL_TEXTURE_RECTANGLE_ARB, "DepthTex", g_frontDepthTexId[prevId], 0);
+	    bindTexture(g_shaderFrontPeel.get(), GL_TEXTURE_RECTANGLE, "DepthTex", g_frontDepthTexId[prevId], 0);
       // g_shaderFrontPeel.setUniform("Alpha", (float*)&g_opacity, 1);
       g_shaderFrontPeel->setUniform(g_uniformAlpha.get());
       g_uniformAlpha->setUniform(1, (float*)&g_opacity);    
 	    g_shaderFrontPeel->applyUniformSet();
-      // DrawModel(); // FIXME
+      DrawModel(); // FIXME
 	    vl::glUseProgram(0); // g_shaderFrontPeel.unbind();
 
 	    if (g_useOQ) {
@@ -761,12 +782,12 @@ public:
 	    glDisable(GL_DEPTH_TEST);
 	    glEnable(GL_BLEND);
 
-	    glBlendEquation(GL_FUNC_ADD);
+	    vl::glBlendEquation(GL_FUNC_ADD);
 	    vl::glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE,
 						    GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
 		
 	    g_shaderFrontBlend->useProgram();
-	    bindTexture(g_shaderFrontBlend.get(), GL_TEXTURE_RECTANGLE_ARB, "TempTex", g_frontColorTexId[currId], 0);
+	    bindTexture(g_shaderFrontBlend.get(), GL_TEXTURE_RECTANGLE, "TempTex", g_frontColorTexId[currId], 0);
       g_shaderFrontBlend->applyUniformSet();
 	    glCallList(g_quadDisplayList);
 	    vl::glUseProgram(0); // g_shaderFrontBlend.unbind();
@@ -796,9 +817,9 @@ public:
 
     // g_shaderFrontFinal.setUniform("BackgroundColor", g_backgroundColor, 3);
     g_shaderFrontFinal->setUniform(g_uniformBackgroundColor.get());
-    g_uniformBackgroundColor->setUniform(3, g_backgroundColor);
+    g_uniformBackgroundColor->setUniform3f(1, g_backgroundColor);
 
-    bindTexture(g_shaderFrontFinal.get(), GL_TEXTURE_RECTANGLE_ARB, "ColorTex", g_frontColorBlenderTexId, 0);
+    bindTexture(g_shaderFrontFinal.get(), GL_TEXTURE_RECTANGLE, "ColorTex", g_frontColorBlenderTexId, 0);
     g_shaderFrontFinal->applyUniformSet();
     glCallList(g_quadDisplayList);
     vl::glUseProgram(0); // g_shaderFrontFinal.unbind();
@@ -821,7 +842,7 @@ public:
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glBlendEquation(GL_FUNC_ADD);
+    vl::glBlendEquation(GL_FUNC_ADD);
     glBlendFunc(GL_ONE, GL_ONE);
     glEnable(GL_BLEND);
 
@@ -831,7 +852,7 @@ public:
     g_shaderAverageInit->setUniform(g_uniformAlpha.get());
     g_uniformAlpha->setUniform(1, (float*)&g_opacity);    
     g_shaderAverageInit->applyUniformSet();
-    // DrawModel(); // FIXME
+    DrawModel(); // FIXME
     vl::glUseProgram(0); // g_shaderAverageInit.unbind();
 
     glDisable(GL_BLEND);
@@ -848,10 +869,10 @@ public:
     g_shaderAverageFinal->useProgram();
     // g_shaderAverageFinal.setUniform("BackgroundColor", g_backgroundColor, 3);
     g_shaderAverageFinal->setUniform(g_uniformBackgroundColor.get());
-    g_uniformBackgroundColor->setUniform(3, g_backgroundColor);
+    g_uniformBackgroundColor->setUniform3f(1, g_backgroundColor);
 
-    bindTexture(g_shaderAverageFinal.get(), GL_TEXTURE_RECTANGLE_ARB, "ColorTex0", g_accumulationTexId[0], 0);
-    bindTexture(g_shaderAverageFinal.get(), GL_TEXTURE_RECTANGLE_ARB, "ColorTex1", g_accumulationTexId[1], 1);
+    bindTexture(g_shaderAverageFinal.get(), GL_TEXTURE_RECTANGLE, "ColorTex0", g_accumulationTexId[0], 0);
+    bindTexture(g_shaderAverageFinal.get(), GL_TEXTURE_RECTANGLE, "ColorTex1", g_accumulationTexId[1], 1);
     g_shaderAverageFinal->applyUniformSet();
     glCallList(g_quadDisplayList);
     vl::glUseProgram(0); // g_shaderAverageFinal.unbind();
@@ -874,7 +895,7 @@ public:
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glBlendEquation(GL_FUNC_ADD);
+    vl::glBlendEquation(GL_FUNC_ADD);
     glBlendFunc(GL_ONE, GL_ONE);
     glEnable(GL_BLEND);
 
@@ -883,7 +904,7 @@ public:
     g_shaderWeightedSumInit->setUniform(g_uniformAlpha.get());
     g_uniformAlpha->setUniform(1, (float*)&g_opacity);    
     g_shaderWeightedSumInit->applyUniformSet();
-    // DrawModel(); // FIXME
+    DrawModel(); // FIXME
     vl::glUseProgram(0); // g_shaderWeightedSumInit.unbind();
 
     glDisable(GL_BLEND);
@@ -900,9 +921,9 @@ public:
     g_shaderWeightedSumFinal->useProgram();
     // g_shaderWeightedSumFinal.setUniform("BackgroundColor", g_backgroundColor, 3);
     g_shaderWeightedSumFinal->setUniform(g_uniformBackgroundColor.get());
-    g_uniformBackgroundColor->setUniform(3, g_backgroundColor);
+    g_uniformBackgroundColor->setUniform3f(1, g_backgroundColor);
 
-    bindTexture(g_shaderWeightedSumFinal.get(), GL_TEXTURE_RECTANGLE_ARB, "ColorTex", g_accumulationTexId[0], 0);
+    bindTexture(g_shaderWeightedSumFinal.get(), GL_TEXTURE_RECTANGLE, "ColorTex", g_accumulationTexId[0], 0);
     g_shaderWeightedSumFinal->applyUniformSet();
     glCallList(g_quadDisplayList);
     vl::glUseProgram(0); // g_shaderWeightedSumFinal.unbind();
@@ -958,6 +979,16 @@ public:
     }
 
     // glutSwapBuffers(); // FIXME
+    openglContext()->swapBuffers();
+
+    // Cleanup states
+    vl::glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_RECTANGLE, 0);
+    vl::glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_RECTANGLE, 0);
+    vl::glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_RECTANGLE, 0);
+    vl::glActiveTexture(GL_TEXTURE0);
   }
 
   //--------------------------------------------------------------------------
@@ -1037,30 +1068,30 @@ public:
   //}
 
   //--------------------------------------------------------------------------
-  void SaveFramebuffer()
-  {
-    std::cout << "Writing image.ppm... " << std::flush;
-    float *pixels = new float[3*g_imageWidth*g_imageHeight];
-    glReadBuffer(GL_BACK);
-    glReadPixels(0, 0, g_imageWidth, g_imageHeight, GL_RGB, GL_FLOAT, pixels);
+  //void SaveFramebuffer()
+  //{
+  //  std::cout << "Writing image.ppm... " << std::flush;
+  //  float *pixels = new float[3*g_imageWidth*g_imageHeight];
+  //  glReadBuffer(GL_BACK);
+  //  glReadPixels(0, 0, g_imageWidth, g_imageHeight, GL_RGB, GL_FLOAT, pixels);
 
-    char *filename = "image.ppm";
-    std::ofstream fp(filename);
-    fp << "P3\n" << g_imageWidth << " " << g_imageHeight << std::endl << "255\n";
-    for (int i = g_imageHeight-1; i >=0; i--)
-    {
-	    for (int j = 0; j < g_imageWidth; j++)
-	    {
-		    int pixelPos = (i*g_imageWidth+j)*3;
-		    int r = (int)(pixels[pixelPos+0]*255.0);
-		    int g = (int)(pixels[pixelPos+1]*255.0);
-		    int b = (int)(pixels[pixelPos+2]*255.0);
-		    fp << r << " " << g << " " << b << std::endl;
-	    }
-    }
-    fp.close();
-    std::cout << "done!\n";
-  }
+  //  char *filename = "image.ppm";
+  //  std::ofstream fp(filename);
+  //  fp << "P3\n" << g_imageWidth << " " << g_imageHeight << std::endl << "255\n";
+  //  for (int i = g_imageHeight-1; i >=0; i--)
+  //  {
+	 //   for (int j = 0; j < g_imageWidth; j++)
+	 //   {
+		//    int pixelPos = (i*g_imageWidth+j)*3;
+		//    int r = (int)(pixels[pixelPos+0]*255.0);
+		//    int g = (int)(pixels[pixelPos+1]*255.0);
+		//    int b = (int)(pixels[pixelPos+2]*255.0);
+		//    fp << r << " " << g << " " << b << std::endl;
+	 //   }
+  //  }
+  //  fp.close();
+  //  std::cout << "done!\n";
+  //}
 
   //--------------------------------------------------------------------------
   void keyboardFunc(unsigned char key, int x, int y)
@@ -1083,9 +1114,9 @@ public:
 	    case 'b':
 		    g_backgroundColor = (g_backgroundColor == g_white) ? g_black : g_white;
 		    break;
-	    case 'c':
+	    /*case 'c':
 		    SaveFramebuffer();
-		    break;
+		    break;*/
 	    case 'o':
 		    g_showOsd = !g_showOsd;
 		    break;
@@ -1222,9 +1253,44 @@ public:
     openglContext()->setContinuousUpdate(false);
     rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(true);
     loadModel("/models/3ds/monkey.3ds");
+
+    // ----------------------------------------------------------------------------------
+    InitGL();
   }
 
-  void loadModel(const char* file) {
+  void resizeEvent(int w, int h)
+  {
+    Applet::resizeEvent(w, h);
+
+    reshape(w, h);
+  }
+
+  void updateEvent()
+  {
+    //// update the scene content
+    //updateScene();
+
+    //// set frame time for all the rendering
+    //vl::real now_time = vl::Time::currentTime();
+    //rendering()->setFrameClock( now_time );
+
+    // execute rendering
+    // rendering()->render();
+
+    display();
+
+    //// show rendering
+    //if (openglContext()->hasDoubleBuffer()) {
+    //  openglContext()->swapBuffers();
+    //}
+
+    VL_CHECK_OGL();
+
+    // useful for debugging
+    // wglMakeCurrent(NULL,NULL);
+  }
+
+void loadModel(const char* file) {
     std::vector<vl::String> files;
     files.push_back(file);
     loadModel(files);
@@ -1298,6 +1364,8 @@ public:
         VL_CHECK(act->effect());
 
         mEffects.insert( act->effect() );
+
+        g_model = geom; // FIXME
       }
     }
 
@@ -1336,9 +1404,9 @@ public:
     int total_draw_calls = 0;
     for( std::set<vl::Geometry*>::iterator it = geometries.begin(); it != geometries.end(); ++it )
     {
-      total_draw_calls += (*it)->drawCalls()->size();
-      for(int i=0; i < (*it)->drawCalls()->size(); ++i )
-        total_triangles += (*it)->drawCalls()->at(i)->countTriangles();
+      total_draw_calls += (*it)->drawCalls().size();
+      for(int i=0; i < (*it)->drawCalls().size(); ++i )
+        total_triangles += (*it)->drawCalls().at(i)->countTriangles();
     }
 
     VL_LOG_PRINT << "Statistics:\n";
