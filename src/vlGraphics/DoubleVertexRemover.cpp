@@ -54,8 +54,8 @@ namespace
       for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
         if (geom->texCoordArray(i))
           mAttribs.push_back(geom->texCoordArray(i));
-      for(int i=0; i<geom->vertexAttribArrays()->size(); ++i)
-        mAttribs.push_back(geom->vertexAttribArrays()->at(i)->data());
+      for(int i=0; i<geom->vertexAttribArrays().size(); ++i)
+        mAttribs.push_back(geom->vertexAttribArrays().at(i)->data());
     }
 
     bool operator()(u32 a, u32 b) const 
@@ -91,8 +91,8 @@ namespace
       for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
         if (geom->texCoordArray(i))
           mAttribs.push_back(geom->texCoordArray(i));
-      for(int i=0; i<geom->vertexAttribArrays()->size(); ++i)
-        mAttribs.push_back(geom->vertexAttribArrays()->at(i)->data());
+      for(int i=0; i<geom->vertexAttribArrays().size(); ++i)
+        mAttribs.push_back(geom->vertexAttribArrays().at(i)->data());
     }
 
     bool operator()(u32 a, u32 b) const 
@@ -280,14 +280,14 @@ void DoubleVertexRemover::removeDoubles(Geometry* geom)
   // regenerate DrawCall
 
   std::vector< ref<DrawCall> > draw_cmd;
-  for(int idraw=0; idraw<geom->drawCalls()->size(); ++idraw)
-    draw_cmd.push_back( geom->drawCalls()->at(idraw) );
-  geom->drawCalls()->clear();
+  for(int idraw=0; idraw<geom->drawCalls().size(); ++idraw)
+    draw_cmd.push_back( geom->drawCalls().at(idraw) );
+  geom->drawCalls().clear();
 
   for(u32 idraw=0; idraw<draw_cmd.size(); ++idraw)
   {
     ref<DrawElementsUInt> de = new DrawElementsUInt( draw_cmd[idraw]->primitiveType() );
-    geom->drawCalls()->push_back(de.get());
+    geom->drawCalls().push_back(de.get());
     const u32 idx_count = draw_cmd[idraw]->countIndices();
     de->indexBuffer()->resize(idx_count);
     u32 i=0;

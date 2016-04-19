@@ -197,7 +197,7 @@ public:
     vert_array->at(6) = vl::fvec3(0, h1, -w1);
     vert_array->at(7) = vl::fvec3(0, 0, -w1);
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
-    wall_1_b->drawCalls()->push_back(de.get());
+    wall_1_b->drawCalls().push_back(de.get());
     de->indexBuffer()->resize(12);
     de->indexBuffer()->at(0) = 1; // a
     de->indexBuffer()->at(1) = 0;
@@ -233,7 +233,7 @@ public:
     vert_array->at(6) = vl::fvec3(0, h1, -w1) + v1c;
     vert_array->at(7) = vl::fvec3(0, 0, -w1) + v1c;
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
-    wall_1_c->drawCalls()->push_back(de.get());
+    wall_1_c->drawCalls().push_back(de.get());
     de->indexBuffer()->resize(16);
     de->indexBuffer()->at(0) = 1; // a
     de->indexBuffer()->at(1) = 0;
@@ -272,7 +272,7 @@ public:
     vert_array->at(6) = vl::fvec3(-w1, h1, 0);
     vert_array->at(7) = vl::fvec3(-w1, 0, 0);
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
-    wall_2_b->drawCalls()->push_back(de.get());
+    wall_2_b->drawCalls().push_back(de.get());
     de->indexBuffer()->resize(12);
     de->indexBuffer()->at(0) = 1; // a
     de->indexBuffer()->at(1) = 0;
@@ -308,7 +308,7 @@ public:
     vert_array->at(6) = vl::fvec3(-w1, h1, 0) + v2c;
     vert_array->at(7) = vl::fvec3(-w1, 0, 0) + v2c;
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
-    wall_2_c->drawCalls()->push_back(de.get());
+    wall_2_c->drawCalls().push_back(de.get());
     de->indexBuffer()->resize(16);
     de->indexBuffer()->at(0) = 1; // a
     de->indexBuffer()->at(1) = 0;

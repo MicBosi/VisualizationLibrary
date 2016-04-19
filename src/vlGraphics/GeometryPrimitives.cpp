@@ -130,7 +130,7 @@ ref<Geometry> vl::makeIcosphere(const vec3& pos, real diameter, int detail, bool
 
   geom->setVertexArray(coords.get());
   geom->setNormalArray(norms.get());
-  geom->drawCalls()->push_back(polys.get());
+  geom->drawCalls().push_back(polys.get());
 
   if (remove_doubles)
   {
@@ -311,7 +311,7 @@ ref<Geometry> vl::makeUVSphere( const vec3& origin, real diameter, int phi, int 
 
   ref<DrawElementsUInt> quads = new DrawElementsUInt( PT_QUADS );
   quads->indexBuffer()->resize( (theta-1)*phi*4 );
-  geom->drawCalls()->push_back(quads.get());
+  geom->drawCalls().push_back(quads.get());
   int idx = 0;
   for(int i=0; i<theta-1; ++i)
   {
@@ -329,7 +329,7 @@ ref<Geometry> vl::makeUVSphere( const vec3& origin, real diameter, int phi, int 
   ref<DrawElementsUInt> tris = new DrawElementsUInt( PT_TRIANGLES );
 
   tris->indexBuffer()->resize( phi*3 + phi*3 );
-  geom->drawCalls()->push_back(tris.get());
+  geom->drawCalls().push_back(tris.get());
   idx = 0;
   // top fan
   for(int j=0; j<phi; ++j)
@@ -380,7 +380,7 @@ ref<Geometry> vl::makeCylinder( const vec3& origin, real diameter, real height, 
 
   ref<DrawElementsUInt> quads = new DrawElementsUInt( PT_QUADS );
   quads->indexBuffer()->resize( (theta-1)*phi*4 );
-  geom->drawCalls()->push_back(quads.get());
+  geom->drawCalls().push_back(quads.get());
   int idx = 0;
   for(int i=0; i<theta-1; ++i)
   {
@@ -399,7 +399,7 @@ ref<Geometry> vl::makeCylinder( const vec3& origin, real diameter, real height, 
   {
     ref<DrawElementsUInt> tris = new DrawElementsUInt( PT_TRIANGLE_FAN );
     tris->indexBuffer()->resize( phi+2 );
-    geom->drawCalls()->push_back(tris.get());
+    geom->drawCalls().push_back(tris.get());
     idx = 0;
 
     int fan_center = vert_idx;
@@ -421,7 +421,7 @@ ref<Geometry> vl::makeCylinder( const vec3& origin, real diameter, real height, 
   {
     ref<DrawElementsUInt> tris = new DrawElementsUInt( PT_TRIANGLE_FAN );
     tris->indexBuffer()->resize( phi+2 );
-    geom->drawCalls()->push_back(tris.get());
+    geom->drawCalls().push_back(tris.get());
     idx = 0;
 
     int fan_center = vert_idx;
@@ -496,7 +496,7 @@ ref<Geometry> vl::makeTorus( const vec3& origin, real diameter, real thickness, 
   }
 
   ref<DrawElementsUInt> polys = new DrawElementsUInt( PT_QUADS );
-  geom->drawCalls()->push_back(polys.get());
+  geom->drawCalls().push_back(polys.get());
   int idx = 0;
   polys->indexBuffer()->resize( theta * phi * 4 );
   // create indices
@@ -571,7 +571,7 @@ ref<Geometry> vl::makeBox( const vec3& origin, real xside, real yside, real zsid
   };
 
   ref<DrawArrays> polys = new DrawArrays(PT_QUADS, 0, 24);
-  geom->drawCalls()->push_back( polys.get() );
+  geom->drawCalls().push_back( polys.get() );
   vert3->resize( 24  );
   memcpy(vert3->ptr(), verts, sizeof(verts));
 
@@ -603,7 +603,7 @@ ref<Geometry> vl::makeBox( const vec3& origin, real xside, real yside, real zsid
   };
 
   ref<DrawArrays> polys = new DrawArrays(PT_TRIANGLES, 0, 36);
-  geom->drawCalls()->push_back( polys.get() );
+  geom->drawCalls().push_back( polys.get() );
   vert3->resize( 36 );
   memcpy(vert3->ptr(), verts, sizeof(verts));
 
@@ -651,7 +651,7 @@ ref<Geometry> vl::makePyramid( const vec3& origin, real side, real height)
   fvec3 a4( (fvec3)(vec3(+x,+0,-z) + origin) );
 
   ref<DrawArrays> polys = new DrawArrays(PT_TRIANGLES, 0, 6*3);
-  geom->drawCalls()->push_back( polys.get() );
+  geom->drawCalls().push_back( polys.get() );
 
   vert3->resize(6*3);
 
@@ -693,7 +693,7 @@ ref<Geometry> vl::makeCone( const vec3& origin, real diameter, real height, int 
   // top fan
   ref<DrawElementsUInt> top_fan = new DrawElementsUInt(PT_TRIANGLE_FAN);
   top_fan->indexBuffer()->resize(phi+2);
-  geom->drawCalls()->push_back(top_fan.get());
+  geom->drawCalls().push_back(top_fan.get());
   int idx = 0;
   top_fan->indexBuffer()->at(idx++) = 0;
   for(int j=0; j<phi+1; ++j)
@@ -713,7 +713,7 @@ ref<Geometry> vl::makeCone( const vec3& origin, real diameter, real height, int 
 
     ref<DrawElementsUInt> bottom_fan = new DrawElementsUInt(PT_TRIANGLE_FAN);
     bottom_fan->indexBuffer()->resize(phi+2);
-    geom->drawCalls()->push_back(bottom_fan.get());
+    geom->drawCalls().push_back(bottom_fan.get());
     idx = 0;
     bottom_fan->indexBuffer()->at(idx++) = fan_center;
     for(int j=0; j<phi+1; ++j)
@@ -770,7 +770,7 @@ ref<Geometry> vl::makeGrid( const vec3& origin, real xside, real zside, int x, i
 
   // create indices
   ref<DrawElementsUInt> polys = new DrawElementsUInt(PT_QUADS);
-  geom->drawCalls()->push_back(polys.get());
+  geom->drawCalls().push_back(polys.get());
   int idx = 0;
   polys->indexBuffer()->resize( (z-1)*(x-1)*4 );
   for(int i=0; i<z-1; ++i)
@@ -809,7 +809,7 @@ ref<Geometry> vl::makePoints( const std::vector< vec3>& pos, const fvec4& color 
     col4->at(i)  = color;
   }
 
-  geom->drawCalls()->push_back( new DrawArrays(PT_POINTS, 0, vert3->size() ));
+  geom->drawCalls().push_back( new DrawArrays(PT_POINTS, 0, vert3->size() ));
 
 #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
   geom->makeGLESFriendly();
@@ -858,7 +858,7 @@ ref<Geometry> vl::makeIcosahedron( const vec3& origin, real diameter )
   };
 
   ref<DrawElementsUShort> polys = new DrawElementsUShort(PT_TRIANGLES);
-  geom->drawCalls()->push_back(polys.get());
+  geom->drawCalls().push_back(polys.get());
   polys->indexBuffer()->resize(20*3);
   memcpy(polys->indexBuffer()->ptr(), faces, sizeof(faces));
 
@@ -883,7 +883,7 @@ ref<Geometry> vl::makeCircle( vec3 origin, real radius, int slices )
     vec3 v = mat4::getRotation(t,0,1,0) * vec3(radius,0,0) + origin;
     points->at(i) = (fvec3)v;
   }
-  geom->drawCalls()->push_back( new DrawArrays(PT_LINE_LOOP, 0, points->size()) );
+  geom->drawCalls().push_back( new DrawArrays(PT_LINE_LOOP, 0, points->size()) );
 
 #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
   geom->makeGLESFriendly();
@@ -934,8 +934,8 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
     }
     ref<DrawElementsUInt> de_up = new DrawElementsUInt(PT_QUADS);
     ref<DrawElementsUInt> de_lo = new DrawElementsUInt(PT_QUADS);
-    geom->drawCalls()->push_back(de_up.get());
-    geom->drawCalls()->push_back(de_lo.get());
+    geom->drawCalls().push_back(de_up.get());
+    geom->drawCalls().push_back(de_lo.get());
     de_up->indexBuffer()->resize(segments*4);
     de_lo->indexBuffer()->resize(segments*4);
     int upup = segments*0;
@@ -959,7 +959,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
   else
   {
     ref<DrawElementsUInt> de_up = new DrawElementsUInt(PT_QUADS);
-    geom->drawCalls()->push_back(de_up.get());
+    geom->drawCalls().push_back(de_up.get());
     de_up->indexBuffer()->resize(segments*4);
     int upup = segments*0;
     int uplo = segments*1;
@@ -992,7 +992,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
       cols.push_back(top_col);
     }
     ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLE_FAN);
-    geom->drawCalls()->push_back(de.get());
+    geom->drawCalls().push_back(de.get());
     de->indexBuffer()->resize(segments);
     for(int i=0,j=segments; j--; ++i)
       de->indexBuffer()->at(j) = start + i;
@@ -1008,7 +1008,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
       cols.push_back(bottom_col);
     }
     ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLE_FAN);
-    geom->drawCalls()->push_back(de.get());
+    geom->drawCalls().push_back(de.get());
     de->indexBuffer()->resize(segments);
     for(int i=0; i<segments; ++i)
       de->indexBuffer()->at(i) = start + i;
@@ -1033,7 +1033,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
     cols.push_back(top_col);
 
     ref<DrawElementsUInt> de_quads = new DrawElementsUInt(PT_QUADS);
-    geom->drawCalls()->push_back(de_quads.get());
+    geom->drawCalls().push_back(de_quads.get());
     de_quads->indexBuffer()->resize(segments*(segments2-1)*4);
     for(int j=0,idx=0; j<segments2-1; ++j)
     {
@@ -1050,7 +1050,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
     }
 
     ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLE_FAN);
-    geom->drawCalls()->push_back(de.get());
+    geom->drawCalls().push_back(de.get());
     de->indexBuffer()->resize(segments+2);
     de->indexBuffer()->at(0) = (GLuint)verts.size()-1;
     for(int i=0; i<segments+1; ++i)
@@ -1075,7 +1075,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
     cols.push_back(bottom_col);
 
     ref<DrawElementsUInt> de_quads = new DrawElementsUInt(PT_QUADS);
-    geom->drawCalls()->push_back(de_quads.get());
+    geom->drawCalls().push_back(de_quads.get());
     de_quads->indexBuffer()->resize(segments*(segments2-1)*4);
     for(int j=0,idx=0; j<segments2-1; ++j)
     {
@@ -1092,7 +1092,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
     }
 
     ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLE_FAN);
-    geom->drawCalls()->push_back(de.get());
+    geom->drawCalls().push_back(de.get());
     de->indexBuffer()->resize(segments+2);
     de->indexBuffer()->at(0) = (GLuint)verts.size()-1;
     for(int i=0; i<segments+1; ++i)

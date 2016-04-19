@@ -239,6 +239,6 @@ vl::ref<vl::Geometry> makeScales(bool X, bool Y, bool Z, int numArmTicks, float 
     }
     scales->setVertexArray(scalesPoints.get());
     //every consecutive pair of points make a line
-    scales->drawCalls()->push_back( new vl::DrawArrays( vl::PT_LINES, 0, numRulers*points->size() ) );
+    scales->drawCalls().push_back( new vl::DrawArrays( vl::PT_LINES, 0, numRulers*points->size() ) );
     return scales;
 }

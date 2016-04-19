@@ -114,9 +114,9 @@ void SceneManagerPortals::renderPortal(Portal* portal)
     vert_array->resize(portal->geometry().size());
     for(unsigned int i=0; i<portal->geometry().size(); ++i)
       vert_array->at(i) = portal->geometry()[i];
-    portal_geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINE_LOOP, 0, (int)vert_array->size()) );
+    portal_geom->drawCalls().push_back( new vl::DrawArrays(vl::PT_LINE_LOOP, 0, (int)vert_array->size()) );
 #if defined(VL_OPENGL)
-    portal_geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_POLYGON,   0, (int)vert_array->size()) );
+    portal_geom->drawCalls().push_back( new vl::DrawArrays(vl::PT_POLYGON,   0, (int)vert_array->size()) );
 #endif
     ref<Actor> actor = new vl::Actor(portal_geom.get(), portal_fx.get(), NULL);
     mPortalActorMap[portal] = actor;

@@ -70,9 +70,9 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
   if (posarr)
   {
     mat4 matrix = act->transform() ? act->transform()->worldMatrix() : mat4();
-    for(int i=0; i<geom->drawCalls()->size(); ++i)
+    for(int i=0; i<geom->drawCalls().size(); ++i)
     {
-      DrawCall* prim = geom->drawCalls()->at(i);
+      DrawCall* prim = geom->drawCalls().at(i);
       int itri = 0;
       for(TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next(), ++itri)
       {

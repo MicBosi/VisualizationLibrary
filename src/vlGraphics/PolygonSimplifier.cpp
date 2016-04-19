@@ -80,7 +80,7 @@ void PolygonSimplifier::simplify()
     bool problem = mInput->normalArray() != NULL || mInput->colorArray() != NULL || mInput->secondaryColorArray() != NULL || mInput->fogCoordArray() != NULL;
     for( int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
       problem |= mInput->texCoordArray(i) != NULL;
-    problem |= mInput->vertexAttribArrays()->size() > 0 && !(!mInput->vertexArray() && mInput->vertexAttribArray(VA_Position) && mInput->vertexAttribArrays()->size() == 1);
+    problem |= mInput->vertexAttribArrays().size() > 0 && !(!mInput->vertexArray() && mInput->vertexAttribArray(VA_Position) && mInput->vertexAttribArrays().size() == 1);
     if (problem)
       Log::warning("PolygonSimplifier::simplify() simplifies only the position array of a Geometry, the other attibutes will be discarded.\n");
   #endif
@@ -100,9 +100,9 @@ void PolygonSimplifier::simplify()
 
   // merge all triangles in a single DrawElementsUInt
   ref<DrawElementsUInt> pint = new DrawElementsUInt(PT_TRIANGLES, 1);
-  for( int i=0; i<mInput->drawCalls()->size(); ++i )
+  for( int i=0; i<mInput->drawCalls().size(); ++i )
   {
-    DrawCall* prim = mInput->drawCalls()->at(i);
+    DrawCall* prim = mInput->drawCalls().at(i);
     for(TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next())
     {
       indices.push_back( trit.a() );
@@ -349,7 +349,7 @@ void PolygonSimplifier::simplify(const std::vector<fvec3>& in_verts, const std::
   if (verbose() && !output().empty())
   {
     float elapsed = (float)timer.elapsed();
-    int polys_after = output().back()->drawCalls()->at(0)->countTriangles();
+    int polys_after = output().back()->drawCalls().at(0)->countTriangles();
     int verts_after = output().back()->vertexArray() ? (int)output().back()->vertexArray()->size() : (int)output().back()->vertexAttribArray(VA_Position)->data()->size();
     Log::print(Say("POLYS: %n -> %n, %.2n%%, %.1nT/s\n") << polys_before << polys_after << 100.0f*verts_after/verts_before << (polys_before - polys_after)/elapsed );
     Log::print(Say("VERTS: %n -> %n, %.2n%%, %.1nV/s\n") << verts_before << verts_after << 100.0f*verts_after/verts_before << (verts_before - verts_after)/elapsed );
@@ -406,7 +406,7 @@ void PolygonSimplifier::outputSimplifiedGeometry()
     mOutput.back()->setVertexArray( arr_f3.get() );
   else
     mOutput.back()->setVertexAttribArray( vl::VA_Position, arr_f3.get() );
-  mOutput.back()->drawCalls()->push_back( de.get() );
+  mOutput.back()->drawCalls().push_back( de.get() );
 }
 //-----------------------------------------------------------------------------
 void PolygonSimplifier::clearTrianglesAndVertices()

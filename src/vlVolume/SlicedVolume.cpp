@@ -310,9 +310,9 @@ void SlicedVolume::onActorRenderStarted(Actor* actor, real clock, const Camera* 
     #endif
   }
 
-  mGeometry->drawCalls()->clear();
+  mGeometry->drawCalls().clear();
   ref<DrawArrays> da = new DrawArrays(PT_TRIANGLES, 0, (int)polygons.size());
-  mGeometry->drawCalls()->push_back( da.get() );
+  mGeometry->drawCalls().push_back( da.get() );
   ref<ArrayFloat3> vertex_array = new ArrayFloat3;
   ref<ArrayFloat3> texcoo_array = new ArrayFloat3;
   vertex_array->resize(polygons.size());

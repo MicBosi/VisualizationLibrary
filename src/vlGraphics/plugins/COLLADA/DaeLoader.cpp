@@ -804,14 +804,14 @@ bool DaeLoader::load(VirtualFile* file)
           // first merge all tristrips
           ref<DrawCall> tristrips = geom->mergeTriangleStrips();
           // keep it for later
-          geom->drawCalls()->erase( tristrips.get() );
+          geom->drawCalls().erase( tristrips.get() );
 
           // merge all non-tristrips
           geom->mergeDrawCallsWithTriangles(PT_UNKNOWN);
 
           // put back the tristrips
           if (tristrips.get())
-            geom->drawCalls()->push_back( tristrips.get() );
+            geom->drawCalls().push_back( tristrips.get() );
         }
       }
 
@@ -1716,7 +1716,7 @@ void DaeLoader::generateGeometry(Dae::Primitive* prim, const char* name)
     }
 
     de->setIndexBuffer( index_buffer.get() );
-    prim->mGeometry->drawCalls()->push_back( de.get() );
+    prim->mGeometry->drawCalls().push_back( de.get() );
   }
   else
   {
@@ -1737,7 +1737,7 @@ void DaeLoader::generateGeometry(Dae::Primitive* prim, const char* name)
 
     mde->setIndexBuffer( index_buffer.get() );
     mde->setCountVector( vcount );
-    prim->mGeometry->drawCalls()->push_back( mde.get() );
+    prim->mGeometry->drawCalls().push_back( mde.get() );
   }
 
   // generate new vertex attrib info and install data

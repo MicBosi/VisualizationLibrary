@@ -386,7 +386,7 @@ void MarchingCubes::run(bool generate_colors)
   {
     ref<Geometry> geom = new Geometry;
     geom->setVertexArray(mVertsArray.get());
-    geom->drawCalls()->push_back(mDrawElements.get());
+    geom->drawCalls().push_back(mDrawElements.get());
 
     geom->computeNormals();
     mNormsArray->resize( geom->normalArray()->size() );

@@ -712,7 +712,7 @@ namespace vl
           VLX_IMPORT_CHECK_RETURN(value.type() == VLXValue::Structure, value) 
           DrawCall* draw_call = s.importVLX(value.getStructure())->as<DrawCall>();
           if (draw_call)
-            geom->drawCalls()->push_back(draw_call);
+            geom->drawCalls().push_back(draw_call);
           else
             s.signalImportError( Say("Line %n : import error.\n") << value.lineNumber() );
         }
@@ -767,8 +767,8 @@ namespace vl
         }
       }
 
-      for(int i=0; i<geom->drawCalls()->size(); ++i)
-        *vlx << "DrawCall" << s.exportVLX(geom->drawCalls()->at(i));
+      for(int i=0; i<geom->drawCalls().size(); ++i)
+        *vlx << "DrawCall" << s.exportVLX(geom->drawCalls().at(i));
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)

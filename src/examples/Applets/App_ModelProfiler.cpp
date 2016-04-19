@@ -161,9 +161,9 @@ public:
     int total_draw_calls = 0;
     for( std::set<Geometry*>::iterator it = geometries.begin(); it != geometries.end(); ++it )
     {
-      total_draw_calls += (*it)->drawCalls()->size();
-      for(int i=0; i < (*it)->drawCalls()->size(); ++i )
-        total_triangles += (*it)->drawCalls()->at(i)->countTriangles();
+      total_draw_calls += (*it)->drawCalls().size();
+      for(int i=0; i < (*it)->drawCalls().size(); ++i )
+        total_triangles += (*it)->drawCalls().at(i)->countTriangles();
     }
 
     VL_LOG_PRINT << "Statistics:\n";

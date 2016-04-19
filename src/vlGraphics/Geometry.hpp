@@ -111,10 +111,10 @@ namespace vl
     Geometry& deepCopyFrom(const Geometry&);
 
     //! Returns the list of DrawCall objects bound to a Geometry
-    Collection<DrawCall>* drawCalls() { return &mDrawCalls; }
+    Collection<DrawCall>& drawCalls() { return mDrawCalls; }
 
     //! Returns the list of DrawCall objects bound to a Geometry
-    const Collection<DrawCall>* drawCalls() const { return &mDrawCalls; }
+    const Collection<DrawCall>& drawCalls() const { return mDrawCalls; }
 
     //! Fills the color array with the given color
     void setColorArray(const fvec4& color)
@@ -328,9 +328,9 @@ namespace vl
 
     VertexAttribInfo* vertexAttribArray(unsigned int attrib_location);
 
-    Collection<VertexAttribInfo>* vertexAttribArrays() { return &mVertexAttribArrays; }
+    Collection<VertexAttribInfo>& vertexAttribArrays() { return mVertexAttribArrays; }
 
-    const Collection<VertexAttribInfo>* vertexAttribArrays() const { return &mVertexAttribArrays; }
+    const Collection<VertexAttribInfo>& vertexAttribArrays() const { return mVertexAttribArrays; }
 
   protected:
     virtual void computeBounds_Implementation();

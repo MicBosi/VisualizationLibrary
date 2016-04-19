@@ -64,8 +64,8 @@ public:
     // patch parameter associated to the draw call
     vl::ref<vl::PatchParameter> patch_param = new vl::PatchParameter;
     patch_param->setPatchVertices(4);
-    geom_patch->drawCalls()->at(0)->setPatchParameter( patch_param.get() );
-    geom_patch->drawCalls()->at(0)->setPrimitiveType(vl::PT_PATCHES);
+    geom_patch->drawCalls().at(0)->setPatchParameter( patch_param.get() );
+    geom_patch->drawCalls().at(0)->setPrimitiveType(vl::PT_PATCHES);
 
     vl::ref<vl::Texture> hmap = new vl::Texture("/images/ps_height_4k.jpg", vl::TF_RED, false, false);
     vl::ref<vl::Texture> tmap = new vl::Texture("/images/ps_texture_4k.jpg", vl::TF_RGBA, true, false);
@@ -219,7 +219,7 @@ public:
     
     // draw call
     vl::ref< vl::DrawArrays> da = new vl::DrawArrays(vl::PT_PATCHES, 0, verts->size());
-    geom_patch->drawCalls()->push_back(da.get());
+    geom_patch->drawCalls().push_back(da.get());
     
     // patch parameter associated to the draw call
     vl::ref<vl::PatchParameter> patch_param = new vl::PatchParameter;

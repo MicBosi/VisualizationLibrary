@@ -165,7 +165,7 @@ ref<Geometry> Tessellator::tessellateGeometry(bool append_tessellated_tris)
   vert_array->initFrom(mTessellatedTris);
 
   geom->setVertexArray(vert_array.get());
-  geom->drawCalls()->push_back( new vl::DrawArrays(PT_TRIANGLES, 0, vert_array->size()) );
+  geom->drawCalls().push_back( new vl::DrawArrays(PT_TRIANGLES, 0, vert_array->size()) );
   geom->computeNormals();
   return geom;
 }

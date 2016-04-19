@@ -258,8 +258,8 @@ public:
         for(int q=0; q<4*9; ++q)
           quads[q] += istart;
         memcpy(de->indexBuffer()->ptr(), quads, sizeof(quads));
-        geom->drawCalls()->push_back(de.get());
-        geom->drawCalls()->push_back(da.get());
+        geom->drawCalls().push_back(de.get());
+        geom->drawCalls().push_back(da.get());
       }
     }
 

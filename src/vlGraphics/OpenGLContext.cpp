@@ -1633,9 +1633,9 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_bo, bool force
       // ----- vertex attrib -----
 
       // (1) enable pass
-      for(int i=0; i<vas->vertexAttribArrays()->size(); ++i)
+      for(int i=0; i<vas->vertexAttribArrays().size(); ++i)
       {
-        const VertexAttribInfo* info = vas->vertexAttribArrays()->at(i);
+        const VertexAttribInfo* info = vas->vertexAttribArrays().at(i);
         int idx = info->attribLocation();
 
         mVertexAttrib[idx].mState += 1; // 0 -> 1; 1 -> 2;
@@ -1691,10 +1691,10 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_bo, bool force
       // (2) disable pass
       if (mCurVAS)
       {
-        for(int i=0; i<mCurVAS->vertexAttribArrays()->size(); ++i)
+        for(int i=0; i<mCurVAS->vertexAttribArrays().size(); ++i)
         {
           // vertex array
-          const VertexAttribInfo* info = mCurVAS->vertexAttribArrays()->at(i);
+          const VertexAttribInfo* info = mCurVAS->vertexAttribArrays().at(i);
           VL_CHECK(info)
           int idx = info->attribLocation();
           // disable if not used by new VAS

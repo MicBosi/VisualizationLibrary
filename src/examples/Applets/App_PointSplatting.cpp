@@ -121,7 +121,7 @@ protected:
     geometry->setVertexArray( points.get() );
     geometry->setNormalArray( norms.get() );
     geometry->setColorArray( color.get() );
-    geometry->drawCalls()->push_back( draw_elements.get() );
+    geometry->drawCalls().push_back( draw_elements.get() );
 
     int point_count = 0;
     for(int index = 0, z=0; z<img->depth(); ++z)

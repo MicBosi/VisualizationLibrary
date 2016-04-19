@@ -80,7 +80,7 @@ RaycastVolume::RaycastVolume()
 
   // install index array
   ref<DrawElementsUInt> de = new DrawElementsUInt( PT_QUADS );
-  mGeometry->drawCalls()->push_back( de.get() );
+  mGeometry->drawCalls().push_back( de.get() );
   unsigned int de_indices[] = 
   {
     0,1,2,3, 1,5,6,2, 5,4,7,6, 4,0,3,7, 3,2,6,7, 4,5,1,0

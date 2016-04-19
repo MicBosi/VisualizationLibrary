@@ -80,9 +80,9 @@ void EdgeExtractor::extractEdges(Geometry* geom)
   std::set<Edge> edges;
 
   // iterate all primitives
-  for(int iprim=0; iprim<geom->drawCalls()->size(); ++iprim)
+  for(int iprim=0; iprim<geom->drawCalls().size(); ++iprim)
   {
-    DrawCall* prim = geom->drawCalls()->at(iprim);
+    DrawCall* prim = geom->drawCalls().at(iprim);
     // iterate triangles (if present)
     for(TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next())
     {
@@ -156,7 +156,7 @@ ref<Geometry> EdgeExtractor::generateEdgeGeometry() const
       vert_array->at(start+i*2+1) = v + edges()[i].normal2()*0.25f;
     }
   #endif
-  geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINES, 0, (int)vert_array->size()) );
+  geom->drawCalls().push_back( new vl::DrawArrays(vl::PT_LINES, 0, (int)vert_array->size()) );
   return geom;
 }
 //-----------------------------------------------------------------------------

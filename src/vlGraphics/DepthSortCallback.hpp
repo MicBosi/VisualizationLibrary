@@ -183,9 +183,9 @@ namespace vl
       geometry->setBufferObjectDirty(true);
       geometry->setDisplayListDirty(true);
 
-      for(int idraw=0; idraw<geometry->drawCalls()->size(); ++idraw)
+      for(int idraw=0; idraw<geometry->drawCalls().size(); ++idraw)
       {
-        DrawCall* dc = geometry->drawCalls()->at(idraw);
+        DrawCall* dc = geometry->drawCalls().at(idraw);
         if (dc->classType() == DrawElementsUInt::Type())
           sort<unsigned int, DrawElementsUInt>(dc->as<DrawElementsUInt>(), mSortedPointsUInt, mSortedLinesUInt, mSortedTrianglesUInt, mSortedQuadsUInt);
         else

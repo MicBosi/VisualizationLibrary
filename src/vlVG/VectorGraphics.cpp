@@ -69,7 +69,7 @@ Actor* VectorGraphics::drawLines(const std::vector<dvec2>& ln)
     geom->setTexCoordArray(0, tex_array.get());
   }
   // issue the primitive
-  geom->drawCalls()->push_back( new DrawArrays(PT_LINES, 0, (int)ln.size()) );
+  geom->drawCalls().push_back( new DrawArrays(PT_LINES, 0, (int)ln.size()) );
   // add the actor
   return addActor( new Actor(geom.get(), currentEffect(), NULL) );
 }
@@ -81,7 +81,7 @@ Actor* VectorGraphics::drawLineStrip(const std::vector<dvec2>& ln)
   // generate texture coords
   generateLinearTexCoords(geom.get());
   // issue the primitive
-  geom->drawCalls()->push_back( new DrawArrays(PT_LINE_STRIP, 0, (int)ln.size()) );
+  geom->drawCalls().push_back( new DrawArrays(PT_LINE_STRIP, 0, (int)ln.size()) );
   // add the actor
   return addActor( new Actor(geom.get(), currentEffect(), NULL) );
 }
@@ -93,7 +93,7 @@ Actor* VectorGraphics::drawLineLoop(const std::vector<dvec2>& ln)
   // generate texture coords
   generateLinearTexCoords(geom.get());
   // issue the primitive
-  geom->drawCalls()->push_back( new DrawArrays(PT_LINE_LOOP, 0, (int)ln.size()) );
+  geom->drawCalls().push_back( new DrawArrays(PT_LINE_LOOP, 0, (int)ln.size()) );
   // add the actor
   return addActor( new Actor(geom.get(), currentEffect(), NULL) );
 }
@@ -105,7 +105,7 @@ Actor* VectorGraphics::fillPolygon(const std::vector<dvec2>& poly)
   // generate texture coords
   generatePlanarTexCoords(geom.get(), poly);
   // issue the primitive
-  geom->drawCalls()->push_back( new DrawArrays(PT_TRIANGLES, 0, (int)geom->vertexArray()->size()) );
+  geom->drawCalls().push_back( new DrawArrays(PT_TRIANGLES, 0, (int)geom->vertexArray()->size()) );
   // add the actor
   return addActor( new Actor(geom.get(), currentEffect(), NULL) );
 }
@@ -117,7 +117,7 @@ Actor* VectorGraphics::fillTriangles(const std::vector<dvec2>& triangles)
   // generate texture coords
   generatePlanarTexCoords(geom.get(), triangles);
   // issue the primitive
-  geom->drawCalls()->push_back( new DrawArrays(PT_TRIANGLES, 0, (int)triangles.size()) );
+  geom->drawCalls().push_back( new DrawArrays(PT_TRIANGLES, 0, (int)triangles.size()) );
   // add the actor
   return addActor( new Actor(geom.get(), currentEffect(), NULL) );
 }
@@ -129,7 +129,7 @@ Actor* VectorGraphics::fillTriangleFan(const std::vector<dvec2>& fan)
   // generate texture coords
   generatePlanarTexCoords(geom.get(), fan);
   // issue the primitive
-  geom->drawCalls()->push_back( new DrawArrays(PT_TRIANGLE_FAN, 0, (int)fan.size()) );
+  geom->drawCalls().push_back( new DrawArrays(PT_TRIANGLE_FAN, 0, (int)fan.size()) );
   // add the actor
   return addActor( new Actor(geom.get(), currentEffect(), NULL) );
 }
@@ -141,7 +141,7 @@ Actor* VectorGraphics::fillTriangleStrip(const std::vector<dvec2>& strip)
   // generate texture coords
   generatePlanarTexCoords(geom.get(), strip);
   // issue the primitive
-  geom->drawCalls()->push_back( new DrawArrays(PT_TRIANGLE_STRIP, 0, (int)strip.size()) );
+  geom->drawCalls().push_back( new DrawArrays(PT_TRIANGLE_STRIP, 0, (int)strip.size()) );
   // add the actor
   return addActor( new Actor(geom.get(), currentEffect(), NULL) );
 }
@@ -153,7 +153,7 @@ Actor* VectorGraphics::fillQuads(const std::vector<dvec2>& quads)
   // generate texture coords
   generateQuadsTexCoords(geom.get(), quads);
   // issue the primitive
-  geom->drawCalls()->push_back( new DrawArrays(PT_QUADS, 0, (int)quads.size()) );
+  geom->drawCalls().push_back( new DrawArrays(PT_QUADS, 0, (int)quads.size()) );
   // add the actor
   return addActor( new Actor(geom.get(), currentEffect(), NULL) );
 }
@@ -165,7 +165,7 @@ Actor* VectorGraphics::fillQuadStrip(const std::vector<dvec2>& quad_strip)
   // generate texture coords
   generatePlanarTexCoords(geom.get(), quad_strip);
   // issue the primitive
-  geom->drawCalls()->push_back( new DrawArrays(PT_QUAD_STRIP, 0, (int)quad_strip.size()) );
+  geom->drawCalls().push_back( new DrawArrays(PT_QUAD_STRIP, 0, (int)quad_strip.size()) );
   // add the actor
   return addActor( new Actor(geom.get(), currentEffect(), NULL) );
 }
@@ -196,7 +196,7 @@ Actor* VectorGraphics::drawPoints(const std::vector<dvec2>& pt)
   // generate geometry
   ref< Geometry > geom = new Geometry;
   geom->setVertexArray(pos_array.get());
-  geom->drawCalls()->push_back( new DrawArrays(PT_POINTS, 0, (int)pos_array->size()) );
+  geom->drawCalls().push_back( new DrawArrays(PT_POINTS, 0, (int)pos_array->size()) );
   // add the actor
   return addActor( new Actor(geom.get(), currentEffect(), NULL) );
 }
@@ -247,7 +247,7 @@ Actor* VectorGraphics::fillQuad(double left, double bottom, double right, double
   // generate texture coords
   generateQuadsTexCoords(geom.get(), quad);
   // issue the primitive
-  geom->drawCalls()->push_back( new DrawArrays(PT_TRIANGLE_FAN, 0, (int)quad.size()) );
+  geom->drawCalls().push_back( new DrawArrays(PT_TRIANGLE_FAN, 0, (int)quad.size()) );
   // add the actor
   return addActor( new Actor(geom.get(), currentEffect(), NULL) );
 }

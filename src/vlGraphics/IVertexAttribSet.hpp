@@ -100,10 +100,10 @@ namespace vl
     virtual VertexAttribInfo* vertexAttribArray(unsigned int attrib_location) = 0;
 
     /** The list of VertexAttribInfo objects bound to a Geometry. */
-    virtual Collection<VertexAttribInfo>* vertexAttribArrays() = 0;
+    virtual Collection<VertexAttribInfo>& vertexAttribArrays() = 0;
 
     /** The list of VertexAttribInfo objects bound to a Geometry. */
-    virtual const Collection<VertexAttribInfo>* vertexAttribArrays() const = 0;
+    virtual const Collection<VertexAttribInfo>& vertexAttribArrays() const = 0;
   };
 }
 

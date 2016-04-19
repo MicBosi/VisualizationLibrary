@@ -133,7 +133,7 @@ public:
     geom1->setColorArray( geom1->normalArray() );
     geom1->setTexCoordArray( 0, geom1->normalArray() );
     // PatchParameter
-    geom1->drawCalls()->at(0)->setPatchParameter( new PatchParameter );
+    geom1->drawCalls().at(0)->setPatchParameter( new PatchParameter );
 
     ref<Geometry> geom2 = makeTeapot( vec3(0,0,0), 10, 4 );
     geom2->setObjectName("teapot without normals");
@@ -155,7 +155,7 @@ public:
     geom5->setColorArray( geom5->normalArray() );
     geom5->makeGLESFriendly();
     geom5->convertToVertexAttribs();
-    geom5->drawCalls()->push_back( geom5->drawCalls()->back() );
+    geom5->drawCalls().push_back( geom5->drawCalls().back() );
     res_db->resources().push_back( geom5.get() );
 
     ref<Effect> fx = new Effect;

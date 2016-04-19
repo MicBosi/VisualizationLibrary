@@ -140,7 +140,7 @@ ref<Geometry> Extrusion::extrude()
 
   int prof_count = silhouetteMode() == SilhouetteClosed ? (int)silhouette().size() : (int)silhouette().size()-1;
   ref<DrawElementsUInt> de = new DrawElementsUInt(PT_QUADS);
-  geom->drawCalls()->push_back(de.get());
+  geom->drawCalls().push_back(de.get());
   de->indexBuffer()->resize(4 * prof_count * (segments-1));
   for(size_t iseg=0; iseg<segments-1; ++iseg)
   {
@@ -170,7 +170,7 @@ ref<Geometry> Extrusion::extrude()
     for(unsigned i=0; i<tessellator.tessellatedTris().size(); ++i)
       verts.push_back(tessellator.tessellatedTris()[i]);
     if (tessellator.tessellatedTris().size())
-      geom->drawCalls()->push_back( new DrawArrays(PT_TRIANGLES, start, tessellator.tessellatedTris().size()) );
+      geom->drawCalls().push_back( new DrawArrays(PT_TRIANGLES, start, tessellator.tessellatedTris().size()) );
     tess_bottom_count = tessellator.tessellatedTris().size();
   }
   if(fillTop())
@@ -185,7 +185,7 @@ ref<Geometry> Extrusion::extrude()
     for(unsigned i=0; i<tessellator.tessellatedTris().size(); ++i)
       verts.push_back(tessellator.tessellatedTris()[i]);
     if (tessellator.tessellatedTris().size())
-      geom->drawCalls()->push_back( new DrawArrays(PT_TRIANGLES, start, tessellator.tessellatedTris().size()) );
+      geom->drawCalls().push_back( new DrawArrays(PT_TRIANGLES, start, tessellator.tessellatedTris().size()) );
     tess_top_count = tessellator.tessellatedTris().size();
   }
 

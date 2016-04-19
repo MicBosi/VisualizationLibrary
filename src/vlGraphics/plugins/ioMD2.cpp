@@ -214,7 +214,7 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
   tex_coords->resize( 3 * loader.header.numTriangles );
   polygons->indexBuffer()->resize( 3 * loader.header.numTriangles );
   geometry->setTexCoordArray(0, tex_coords.get());
-  geometry->drawCalls()->push_back( polygons.get() );
+  geometry->drawCalls().push_back( polygons.get() );
 
   int vert_idx = 0;
   VL_CHECK( (int)loader.md2_triangle.size() == loader.header.numTriangles )
@@ -257,7 +257,7 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
   // install the newly created and simplified arrays
   vertex_frames[0] = cast<ArrayFloat3>(geometry->vertexArray()); VL_CHECK(vertex_frames[0]);
   tex_coords       = cast<ArrayFloat2>(geometry->texCoordArray(0)); VL_CHECK(tex_coords);
-  polygons         = cast<DrawElementsUInt>(geometry->drawCalls()->at(0)); VL_CHECK(polygons);
+  polygons         = cast<DrawElementsUInt>(geometry->drawCalls().at(0)); VL_CHECK(polygons);
 
   // simplify the remaining frames based on the translation table remover.oldToNewIndexMap()
   for(int iframe=1; iframe<loader.header.numFrames; ++iframe)

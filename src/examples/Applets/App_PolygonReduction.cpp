@@ -144,8 +144,8 @@ public:
     sceneManager()->tree()->addActor( mActors[mActiveActor].get() );
     sceneManager()->tree()->addActor( mTextActor.get() );
     /* update label */
-    float percent = 100.0f * mGeom[mActiveActor]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indexBuffer()->size() / mGeom[0]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indexBuffer()->size();
-    mText->setText( Say("Triangle Count: %n (%.1n%%)") << mGeom[mActiveActor]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indexBuffer()->size() / 3 << percent );
+    float percent = 100.0f * mGeom[mActiveActor]->drawCalls().at(0)->as<vl::DrawElementsUInt>()->indexBuffer()->size() / mGeom[0]->drawCalls().at(0)->as<vl::DrawElementsUInt>()->indexBuffer()->size();
+    mText->setText( Say("Triangle Count: %n (%.1n%%)") << mGeom[mActiveActor]->drawCalls().at(0)->as<vl::DrawElementsUInt>()->indexBuffer()->size() / 3 << percent );
   }
 
   void fileDroppedEvent(const std::vector<vl::String>& files)

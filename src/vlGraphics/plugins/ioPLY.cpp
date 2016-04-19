@@ -412,7 +412,7 @@ ref<ResourceDatabase> PlyLoader::loadPly(VirtualFile* file)
   geom->setNormalArray(mNormals.get());
   geom->setColorArray(mColors.get());
   ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLES);
-  geom->drawCalls()->push_back(de.get());
+  geom->drawCalls().push_back(de.get());
   de->indexBuffer()->resize(mIndices.size());
   memcpy(de->indexBuffer()->ptr(), &mIndices[0], sizeof(unsigned int)*mIndices.size());
 
