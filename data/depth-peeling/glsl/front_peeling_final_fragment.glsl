@@ -16,4 +16,5 @@ void main(void)
 {
 	vec4 frontColor = texture2DRect(ColorTex, gl_FragCoord.xy);
 	gl_FragColor.rgb = frontColor.rgb + BackgroundColor.rgb * frontColor.a;
+  gl_FragColor.a = 1.0;
 }

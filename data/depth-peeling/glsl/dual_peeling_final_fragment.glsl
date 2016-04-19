@@ -27,4 +27,6 @@ void main(void)
 	
 	// back blender
 	//gl_FragColor.rgb = backColor;
+
+	gl_FragColor.a = 1.0;
 }
