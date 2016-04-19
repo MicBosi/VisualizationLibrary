@@ -8,6 +8,8 @@
 // Improved by Michele Bosi for VisualizationLibrary.org
 //--------------------------------------------------------------------------------------
 
+#version 120
+
 void main(void)
 {
      gl_Position = ftransform();

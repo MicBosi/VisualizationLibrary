@@ -8,6 +8,8 @@
 // Improved by Michele Bosi for VisualizationLibrary.org
 //--------------------------------------------------------------------------------------
 
+#version 120
+
 vec3 ShadeVertex();
 
 void main(void)
