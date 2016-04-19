@@ -92,12 +92,12 @@ namespace vl
     /** The list of Renderers used to perform the rendering. 
       * The output of one Renderer::render() operation will be fed as input for the next Renderer::render() operation. 
       * \note All the renderers must target the same OpenGL context. */
-    const std::vector< ref<Renderer> >& renderers() const { return mRenderers; }
+    const Collection<Renderer>& renderers() const { return mRenderers; }
 
     /** The list of Renderers used to perform the rendering. 
       * The output of one Renderer::render() operation will be fed as input for the next Renderer::render() operation.
       * \note All the renderers must target the same OpenGL context. */
-    std::vector< ref<Renderer> >& renderers() { return mRenderers; }
+    Collection<Renderer>& renderers() { return mRenderers; }
 
     /** Uitlity function: clears the renderers() list and adds the specified one. */
     void setRenderer(Renderer* renderer) 
@@ -215,7 +215,7 @@ namespace vl
     ref<RenderQueueSorter> mRenderQueueSorter;
     ref<ActorCollection> mActorQueue;
     ref<RenderQueue> mRenderQueue;
-    std::vector< ref<Renderer> > mRenderers;
+    Collection<Renderer> mRenderers;
     ref<Camera> mCamera;
     ref<Transform> mTransform;
     ref<Collection<SceneManager> > mSceneManagers;

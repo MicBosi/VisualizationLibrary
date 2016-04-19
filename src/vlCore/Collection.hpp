@@ -41,8 +41,10 @@ namespace vl
   //------------------------------------------------------------------------------
   // Collection
   //------------------------------------------------------------------------------
-  /** Reference counted container that encapsulates the base functionalites of an std::vector<>.
-   * This container can be used only with objects whose classes derive from Object. */
+  /** It's basically an std::vector for Objects that is itself an Object so it can be reference 
+   * counted and passed around with ease. It has also handy utility functions like sort(), find(), etc.
+   * Handy alternative to std::vector< ref< Object > > which becomes Collection<Object>.
+   */
   template <typename T>
   class Collection: public Object
   {
