@@ -726,6 +726,8 @@ void GLSLProgram::apply(int /*index*/, const Camera*, OpenGLContext*) const
 //-----------------------------------------------------------------------------
 bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
 {
+  uniforms = uniforms ? uniforms : getUniformSet();
+
   VL_CHECK_OGL();
   VL_CHECK( Has_GLSL )
   if( !Has_GLSL )

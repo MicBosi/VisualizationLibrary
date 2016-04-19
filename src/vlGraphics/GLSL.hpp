@@ -490,8 +490,10 @@ namespace vl
     /**
      * Applies a set of uniforms to the currently bound GLSL program.
      * This function expects the GLSLProgram to be already bound, see useProgram().
+     *
+     * @param uniforms If NULL uses GLSLProgram::getUniformSet()
     */
-    bool applyUniformSet(const UniformSet* uniforms) const;
+    bool applyUniformSet(const UniformSet* uniforms = NULL) const;
 
     /**
     * Returns the binding index of the given uniform.
