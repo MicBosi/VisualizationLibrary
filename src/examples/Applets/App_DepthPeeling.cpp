@@ -1258,7 +1258,7 @@ public:
     vl::Log::notify(appletInfo());
     openglContext()->setContinuousUpdate(false);
     rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(true);
-    loadModel("/models/3ds/monkey.3ds");
+    loadModel(MODEL_FILENAME);
 
     // ----------------------------------------------------------------------------------
     InitGL();
@@ -1299,7 +1299,7 @@ public:
     // wglMakeCurrent(NULL,NULL);
   }
 
-void loadModel(const char* file) {
+  void loadModel(const char* file) {
     std::vector<vl::String> files;
     files.push_back(file);
     loadModel(files);
