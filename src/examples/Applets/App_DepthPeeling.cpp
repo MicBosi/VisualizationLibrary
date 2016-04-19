@@ -108,7 +108,7 @@ enum {
 };
 
 float g_opacity = 0.6;
-char g_mode = WEIGHTED_SUM_MODE; //  DUAL_PEELING_MODE;
+char g_mode = DUAL_PEELING_MODE;
 bool g_showOsd = true;
 bool g_bShowUI = true;
 unsigned g_numGeoPasses = 0;
@@ -452,6 +452,7 @@ public:
     glDisableClientState(GL_NORMAL_ARRAY);
 
     g_numGeoPasses++;
+    printf("g_numGeoPasses = %d\n", g_numGeoPasses);
   }
 
   //--------------------------------------------------------------------------
@@ -569,6 +570,10 @@ public:
 
   void bindTexture(vl::GLSLProgram* glsl, GLenum target, std::string texname, GLuint texid, int texunit)
   {
+    vl::glActiveTexture(GL_TEXTURE0 + texunit);
+	  glBindTexture(target, texid);
+	  vl::glActiveTexture(GL_TEXTURE0);
+
     int current_glsl_program = -1;
     glGetIntegerv(GL_CURRENT_PROGRAM, &current_glsl_program); VL_CHECK_OGL();
     VL_CHECK(current_glsl_program == (int)glsl->handle())
@@ -580,10 +585,6 @@ public:
 		  return;
 	  }
     vl::glUniform1i(location, texunit);
-
-    vl::glActiveTexture(GL_TEXTURE0 + texunit);
-	  glBindTexture(target, texid);
-	  vl::glActiveTexture(GL_TEXTURE0);
   }
 
   //--------------------------------------------------------------------------
@@ -979,7 +980,6 @@ public:
     }
 
     // glutSwapBuffers(); // FIXME
-    openglContext()->swapBuffers();
 
     // Cleanup states
     vl::glActiveTexture(GL_TEXTURE0);
@@ -1094,6 +1094,11 @@ public:
   //}
 
   //--------------------------------------------------------------------------
+  void keyReleaseEvent(unsigned short unicode_ch, vl::EKey key)
+  {
+    keyboardFunc(unicode_ch, 0, 0);
+  }
+
   void keyboardFunc(unsigned char key, int x, int y)
   {
     key = (unsigned char)tolower(key);
@@ -1149,6 +1154,7 @@ public:
     }
     
     // glutPostRedisplay(); // FIXME
+    openglContext()->update();
   }
 
   //--------------------------------------------------------------------------
@@ -1267,6 +1273,10 @@ public:
 
   void updateEvent()
   {
+    printf("update...\n");
+
+    openglContext()->makeCurrent();
+
     //// update the scene content
     //updateScene();
 
@@ -1274,15 +1284,14 @@ public:
     //vl::real now_time = vl::Time::currentTime();
     //rendering()->setFrameClock( now_time );
 
-    // execute rendering
-    // rendering()->render();
-
     display();
 
-    //// show rendering
-    //if (openglContext()->hasDoubleBuffer()) {
-    //  openglContext()->swapBuffers();
-    //}
+    // rendering()->render();
+
+    // show rendering
+    if (openglContext()->hasDoubleBuffer()) {
+      openglContext()->swapBuffers();
+    }
 
     VL_CHECK_OGL();
 
