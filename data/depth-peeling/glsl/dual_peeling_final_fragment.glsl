@@ -8,9 +8,9 @@
 // Improved by Michele Bosi for VisualizationLibrary.org
 //--------------------------------------------------------------------------------------
 
-#version 130
+#version 120
 
-uniform sampler2DRect DepthBlenderTex;
+// uniform sampler2DRect DepthBlenderTex;
 uniform sampler2DRect FrontBlenderTex;
 uniform sampler2DRect BackBlenderTex;
 

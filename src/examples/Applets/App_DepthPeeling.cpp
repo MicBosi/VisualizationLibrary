@@ -581,7 +581,7 @@ public:
 	  // setTextureUnit(texname, texunit);
     int location = glsl->getUniformLocation(texname.c_str());
 	  if (location == -1) {
-		  // std::cerr << "Warning: Invalid texture " << texname << std::endl;
+		  std::cerr << "Warning: Invalid texture " << texname << std::endl;
 		  return;
 	  }
     vl::glUniform1i(location, texunit);
@@ -705,7 +705,7 @@ public:
     glDrawBuffer(GL_BACK);
 
     g_shaderDualFinal->useProgram();
-    bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "DepthBlenderTex", g_dualDepthTexId[currId], 0);
+    // bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "DepthBlenderTex", g_dualDepthTexId[currId], 0);
     bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "FrontBlenderTex", g_dualFrontBlenderTexId[currId], 1);
     bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "BackBlenderTex", g_dualBackBlenderTexId, 2);
     g_shaderDualFinal->applyUniformSet();

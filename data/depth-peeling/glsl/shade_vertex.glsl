@@ -8,7 +8,7 @@
 // Improved by Michele Bosi for VisualizationLibrary.org
 //--------------------------------------------------------------------------------------
 
-#version 130
+#version 120
 
 vec3 ShadeVertex()
 {
