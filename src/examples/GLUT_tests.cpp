@@ -81,7 +81,7 @@ int main ( int argc, char *argv[] )
   /* setup the OpenGL context format */
   vl::OpenGLContextFormat format;
   format.setDoubleBuffer(true);
-  format.setRGBABits( 8,8,8,8 );
+  format.setRGBABits( 8,8,8,0 );
   format.setDepthBufferBits(24);
   format.setStencilBufferBits(8);
   format.setFullscreen(false);

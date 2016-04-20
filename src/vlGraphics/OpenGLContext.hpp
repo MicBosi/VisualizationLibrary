@@ -56,7 +56,7 @@ namespace vl
   {
   public:
     OpenGLContextFormat():
-      mRGBABits(ivec4(8,8,8,8)),
+      mRGBABits(ivec4(8,8,8,0)),
       mAccumRGBABits(ivec4(0,0,0,0)),
       mHasDoubleBuffer(true),
       mZBufferBits(24),
