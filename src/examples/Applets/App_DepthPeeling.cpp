@@ -44,6 +44,8 @@
 #include <vlGraphics/DoubleVertexRemover.hpp>
 #include <vlGraphics/FontManager.hpp>
 #include <vlGraphics/plugins/ioVLX.hpp>
+#include <vlGraphics/DepthSortCallback.hpp>
+#include <vlGraphics/RendererVivid.hpp>
 
 // #include <nvModel.h>
 // #include <nvShaderUtils.h>
@@ -79,7 +81,7 @@ GLuint g_eboId;
 bool g_useOQ = true;
 GLuint g_queryId;
 
-#define MODEL_FILENAME "/depth-peeling/monkey.3ds"
+#define MODEL_FILENAME "/depth-peeling/dragon.ply"
 #define SHADER_PATH "/depth-peeling/glsl/"
 
 // static nv::SDKPath sdkPath;
@@ -143,13 +145,14 @@ GLuint g_frontColorBlenderFboId;
 GLuint g_accumulationTexId[2];
 GLuint g_accumulationFboId;
 
-GLenum g_drawBuffers[] = {GL_COLOR_ATTACHMENT0,
-					     GL_COLOR_ATTACHMENT1,
-					     GL_COLOR_ATTACHMENT2,
-					     GL_COLOR_ATTACHMENT3,
-					     GL_COLOR_ATTACHMENT4,
-					     GL_COLOR_ATTACHMENT5,
-					     GL_COLOR_ATTACHMENT6
+GLenum g_drawBuffers[] = {
+  GL_COLOR_ATTACHMENT0,
+  GL_COLOR_ATTACHMENT1,
+  GL_COLOR_ATTACHMENT2,
+  GL_COLOR_ATTACHMENT3,
+  GL_COLOR_ATTACHMENT4,
+  GL_COLOR_ATTACHMENT5,
+  GL_COLOR_ATTACHMENT6
 };
 
 #if 1
@@ -163,7 +166,7 @@ GLenum g_drawBuffers[] = {GL_COLOR_ATTACHMENT0,
 #define CHECK_GL_ERRORS {}
 #endif
 
-// using namespace vl;
+vl::ref<vl::RendererVivid> vivid = new vl::RendererVivid();
 
 class App_DepthPeeling: public BaseDemo
 {
@@ -615,8 +618,8 @@ public:
 
     g_shaderDualInit->useProgram();
     g_shaderDualInit->applyUniformSet();
-    DrawModel(); // FIXME
-    vl::glUseProgram(0); // g_shaderDualInit.unbind();
+    DrawModel();
+    vl::glUseProgram(0);
 
     CHECK_GL_ERRORS;
 
@@ -639,6 +642,8 @@ public:
 	    int bufId = currId * 3;
 		
 	    //vl::glBindFramebuffer(GL_FRAMEBUFFER, g_dualPeelingFboId[currId]);
+      
+      printf("bufId+1 = %d\n", bufId+1);
 
 	    vl::glDrawBuffers(2, &g_drawBuffers[bufId+1]);
 	    glClearColor(0, 0, 0, 0);
@@ -662,8 +667,8 @@ public:
       g_shaderDualPeel->setUniform(g_uniformAlpha.get());
       g_uniformAlpha->setUniform(1, (float*)&g_opacity);
       g_shaderDualPeel->applyUniformSet();
-      DrawModel(); // FIXME
-	    vl::glUseProgram(0); // g_shaderDualPeel.unbind();
+      DrawModel();
+	    vl::glUseProgram(0);
 
 	    CHECK_GL_ERRORS;
 
@@ -681,7 +686,7 @@ public:
 	    bindTexture(g_shaderDualBlend.get(), GL_TEXTURE_RECTANGLE, "TempTex", g_dualBackTempTexId[currId], 0);
       g_shaderDualBlend->applyUniformSet();
 	    glCallList(g_quadDisplayList);
-	    vl::glUseProgram(0); // g_shaderDualBlend.unbind();
+	    vl::glUseProgram(0);
 
 	    CHECK_GL_ERRORS;
 
@@ -710,7 +715,7 @@ public:
     bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "BackBlenderTex", g_dualBackBlenderTexId, 2);
     g_shaderDualFinal->applyUniformSet();
     glCallList(g_quadDisplayList);
-    vl::glUseProgram(0); // g_shaderDualFinal.unbind();
+    vl::glUseProgram(0);
 
     CHECK_GL_ERRORS;
   }
@@ -735,8 +740,8 @@ public:
     g_shaderFrontInit->setUniform(g_uniformAlpha.get());
     g_uniformAlpha->setUniform(1, (float*)&g_opacity);    
     g_shaderFrontInit->applyUniformSet();
-    DrawModel(); // FIXME
-    vl::glUseProgram(0); // g_shaderFrontInit.unbind();
+    DrawModel();
+    vl::glUseProgram(0);
 
     CHECK_GL_ERRORS;
 
@@ -768,8 +773,8 @@ public:
       g_shaderFrontPeel->setUniform(g_uniformAlpha.get());
       g_uniformAlpha->setUniform(1, (float*)&g_opacity);    
 	    g_shaderFrontPeel->applyUniformSet();
-      DrawModel(); // FIXME
-	    vl::glUseProgram(0); // g_shaderFrontPeel.unbind();
+      DrawModel();
+	    vl::glUseProgram(0);
 
 	    if (g_useOQ) {
 		    vl::glEndQuery(GL_SAMPLES_PASSED_ARB);
@@ -791,7 +796,7 @@ public:
 	    bindTexture(g_shaderFrontBlend.get(), GL_TEXTURE_RECTANGLE, "TempTex", g_frontColorTexId[currId], 0);
       g_shaderFrontBlend->applyUniformSet();
 	    glCallList(g_quadDisplayList);
-	    vl::glUseProgram(0); // g_shaderFrontBlend.unbind();
+	    vl::glUseProgram(0);
 
 	    glDisable(GL_BLEND);
 
@@ -823,7 +828,7 @@ public:
     bindTexture(g_shaderFrontFinal.get(), GL_TEXTURE_RECTANGLE, "ColorTex", g_frontColorBlenderTexId, 0);
     g_shaderFrontFinal->applyUniformSet();
     glCallList(g_quadDisplayList);
-    vl::glUseProgram(0); // g_shaderFrontFinal.unbind();
+    vl::glUseProgram(0);
 
     CHECK_GL_ERRORS;
   }
@@ -853,8 +858,8 @@ public:
     g_shaderAverageInit->setUniform(g_uniformAlpha.get());
     g_uniformAlpha->setUniform(1, (float*)&g_opacity);    
     g_shaderAverageInit->applyUniformSet();
-    DrawModel(); // FIXME
-    vl::glUseProgram(0); // g_shaderAverageInit.unbind();
+    DrawModel();
+    vl::glUseProgram(0);
 
     glDisable(GL_BLEND);
 
@@ -876,7 +881,7 @@ public:
     bindTexture(g_shaderAverageFinal.get(), GL_TEXTURE_RECTANGLE, "ColorTex1", g_accumulationTexId[1], 1);
     g_shaderAverageFinal->applyUniformSet();
     glCallList(g_quadDisplayList);
-    vl::glUseProgram(0); // g_shaderAverageFinal.unbind();
+    vl::glUseProgram(0);
 
     CHECK_GL_ERRORS;
   }
@@ -905,8 +910,8 @@ public:
     g_shaderWeightedSumInit->setUniform(g_uniformAlpha.get());
     g_uniformAlpha->setUniform(1, (float*)&g_opacity);    
     g_shaderWeightedSumInit->applyUniformSet();
-    DrawModel(); // FIXME
-    vl::glUseProgram(0); // g_shaderWeightedSumInit.unbind();
+    DrawModel();
+    vl::glUseProgram(0);
 
     glDisable(GL_BLEND);
 
@@ -927,7 +932,7 @@ public:
     bindTexture(g_shaderWeightedSumFinal.get(), GL_TEXTURE_RECTANGLE, "ColorTex", g_accumulationTexId[0], 0);
     g_shaderWeightedSumFinal->applyUniformSet();
     glCallList(g_quadDisplayList);
-    vl::glUseProgram(0); // g_shaderWeightedSumFinal.unbind();
+    vl::glUseProgram(0);
 
     CHECK_GL_ERRORS;
   }
@@ -1252,12 +1257,16 @@ public:
 
   void initEvent()
   {
+    // Setup the vivid renderer
+    vivid->setFramebuffer(openglContext()->framebuffer());
+
     vl::Log::print( vl::Say("GL_VERSION: %s\n") << glGetString(GL_VERSION));
     vl::Log::print( vl::Say("GL_RENDERER: %s\n\n") << glGetString(GL_RENDERER));
 
     vl::Log::notify(appletInfo());
     openglContext()->setContinuousUpdate(false);
     rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(true);
+    rendering()->as<vl::Rendering>()->setRenderer( vivid.get() );
     loadModel(MODEL_FILENAME);
 
     // ----------------------------------------------------------------------------------
@@ -1273,16 +1282,14 @@ public:
 
   void updateEvent()
   {
-    printf("update...\n");
-
     openglContext()->makeCurrent();
 
-    //// update the scene content
-    //updateScene();
+    // update the scene content
+    updateScene();
 
-    //// set frame time for all the rendering
-    //vl::real now_time = vl::Time::currentTime();
-    //rendering()->setFrameClock( now_time );
+    // set frame time for all the rendering
+    vl::real now_time = vl::Time::currentTime();
+    rendering()->setFrameClock( now_time );
 
     display();
 
@@ -1312,15 +1319,6 @@ public:
     // default effects
 
     vl::ref<vl::Light> camera_light = new vl::Light;
-    vl::ref<vl::Effect> fx_lit = new vl::Effect;
-    fx_lit->shader()->enable(vl::EN_DEPTH_TEST);
-    fx_lit->shader()->enable(vl::EN_LIGHTING);
-    fx_lit->shader()->setRenderState(camera_light.get(), 0);
-
-    vl::ref<vl::Effect> fx_solid = new vl::Effect;
-    fx_solid->shader()->enable(vl::EN_DEPTH_TEST);
-
-    mEffects.clear();
 
     for(unsigned int i=0; i<files.size(); ++i)
     {
@@ -1347,23 +1345,40 @@ public:
         if (!act)
           continue;
 
-        if (act->effect() == NULL)
-          act->setEffect(fx_lit.get());
+        act->actorEventCallbacks()->push_back( new vl::DepthSortCallback );
+
+        /* define the Effect to be used */
+        vl::ref<vl::Effect> effect = new vl::Effect;
+        /* enable depth test and lighting */
+        effect->shader()->enable(vl::EN_DEPTH_TEST);
+        /* enable lighting and material properties */
+        effect->shader()->setRenderState( new vl::Light, 0 );
+        effect->shader()->enable(vl::EN_LIGHTING);
+        effect->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f,1.0f,1.0f,0.5f) );
+        effect->shader()->gocLightModel()->setTwoSide(true);
+        /* enable alpha blending */
+        effect->shader()->enable(vl::EN_BLEND);
+
+        act->setEffect(effect.get());
+
+        // Enable blending
+        // Load cessna or other more complex object OR build scene yourself
+        // Switch between the vivid and the normal key-binding
 
         vl::Geometry* geom = act->lod(0)->as<vl::Geometry>();
         geom->computeNormals();
 
         sceneManager()->tree()->addActor(act);
 
-        if (geom && geom->normalArray())
-        {
-          act->effect()->shader()->enable(vl::EN_LIGHTING);
-          act->effect()->shader()->gocLightModel()->setTwoSide(true);
-        }
-
-        if (geom && !geom->normalArray())
-        {
-          act->effect()->shader()->disable(vl::EN_LIGHTING);
+        if (geom) {
+          if (geom->normalArray())
+          {
+            act->effect()->shader()->enable(vl::EN_LIGHTING);
+            act->effect()->shader()->gocLightModel()->setTwoSide(true);
+          }
+          else {
+            act->effect()->shader()->disable(vl::EN_LIGHTING);
+          }
         }
 
         if ( act->effect()->shader()->isEnabled(vl::EN_LIGHTING) && !act->effect()->shader()->getLight(0) )
@@ -1371,8 +1386,6 @@ public:
 
         VL_CHECK(act);
         VL_CHECK(act->effect());
-
-        mEffects.insert( act->effect() );
 
         g_model = geom; // FIXME
       }
@@ -1427,46 +1440,11 @@ public:
 
   void fileDroppedEvent(const std::vector<vl::String>& files)
   {
-    if (!loadShaders(files))
-    {
-      loadModel(files);
-      loadShaders(mLastShaders);
-    }
-
+    loadModel(files);
     // update the rendering
     openglContext()->update();
   }
 
-  bool loadShaders(const std::vector<vl::String>& files)
-  {
-    vl::ref<vl::GLSLProgram> glsl = new vl::GLSLProgram;
-    for(size_t i=0; i<files.size(); ++i)
-    {
-      if (files[i].endsWith(".fs"))
-        glsl->attachShader( new vl::GLSLFragmentShader( files[i] ) );
-      else
-      if (files[i].endsWith(".vs"))
-        glsl->attachShader( new vl::GLSLVertexShader( files[i] ) );
-      else
-      if (files[i].endsWith(".gs"))
-        glsl->attachShader( new vl::GLSLGeometryShader( files[i] ) );
-      else
-      if (files[i].endsWith(".tcs"))
-        glsl->attachShader( new vl::GLSLTessControlShader( files[i] ) );
-      else
-      if (files[i].endsWith(".tes"))
-        glsl->attachShader( new vl::GLSLTessEvaluationShader( files[i] ) );
-    }
-
-    if ( glsl->shaderCount() && glsl->linkProgram())
-    {
-      for( std::set< vl::ref<vl::Effect> >::iterator it = mEffects.begin(); it != mEffects.end() ; ++it )
-        it->get_writable()->shader()->setRenderState( glsl.get() );
-      mLastShaders = files;
-    }
-
-    return glsl->shaderCount() != 0;
-  }
 
 protected:
   std::set< vl::ref<vl::Effect> > mEffects;
