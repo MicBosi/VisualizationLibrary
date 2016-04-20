@@ -45,16 +45,9 @@
 #include <vlGraphics/FontManager.hpp>
 #include <vlGraphics/plugins/ioVLX.hpp>
 #include <vlGraphics/DepthSortCallback.hpp>
+#include <vlGraphics/GeometryPrimitives.hpp>
 #include <vlGraphics/RendererVivid.hpp>
 
-// #include <nvModel.h>
-// #include <nvShaderUtils.h>
-// #include <nvSDKPath.h>
-// #include "GLSLProgramObject.h"
-// #include "Timer.h"
-// #include "OSD.h"
-// #include <GL/glew.h>
-// #include <GL/glut.h>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -81,7 +74,7 @@ GLuint g_eboId;
 bool g_useOQ = true;
 GLuint g_queryId;
 
-#define MODEL_FILENAME "/depth-peeling/dragon.ply"
+#define MODEL_FILENAME "/depth-peeling/bunny.ply"
 #define SHADER_PATH "/depth-peeling/glsl/"
 
 // static nv::SDKPath sdkPath;
@@ -455,7 +448,6 @@ public:
     glDisableClientState(GL_NORMAL_ARRAY);
 
     g_numGeoPasses++;
-    printf("g_numGeoPasses = %d\n", g_numGeoPasses);
   }
 
   //--------------------------------------------------------------------------
@@ -559,7 +551,7 @@ public:
     vl::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     BuildShaders();
-    LoadModel(MODEL_FILENAME); // FIXME
+    // LoadModel(MODEL_FILENAME); // FIXME
     MakeFullScreenQuad();
 
     glDisable(GL_CULL_FACE);
@@ -643,8 +635,6 @@ public:
 		
 	    //vl::glBindFramebuffer(GL_FRAMEBUFFER, g_dualPeelingFboId[currId]);
       
-      printf("bufId+1 = %d\n", bufId+1);
-
 	    vl::glDrawBuffers(2, &g_drawBuffers[bufId+1]);
 	    glClearColor(0, 0, 0, 0);
 	    glClear(GL_COLOR_BUFFER_BIT);
@@ -1257,17 +1247,19 @@ public:
 
   void initEvent()
   {
-    // Setup the vivid renderer
-    vivid->setFramebuffer(openglContext()->framebuffer());
-
     vl::Log::print( vl::Say("GL_VERSION: %s\n") << glGetString(GL_VERSION));
     vl::Log::print( vl::Say("GL_RENDERER: %s\n\n") << glGetString(GL_RENDERER));
 
     vl::Log::notify(appletInfo());
     openglContext()->setContinuousUpdate(false);
     rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(true);
+    
+    // Setup the vivid renderer
+    vivid->setFramebuffer(openglContext()->framebuffer());
     rendering()->as<vl::Rendering>()->setRenderer( vivid.get() );
-    loadModel(MODEL_FILENAME);
+
+    // loadModel(MODEL_FILENAME);
+    loadModel(NULL);
 
     // ----------------------------------------------------------------------------------
     InitGL();
@@ -1291,9 +1283,9 @@ public:
     vl::real now_time = vl::Time::currentTime();
     rendering()->setFrameClock( now_time );
 
-    display();
+    // display();
 
-    // rendering()->render();
+    rendering()->render();
 
     // show rendering
     if (openglContext()->hasDoubleBuffer()) {
@@ -1307,15 +1299,55 @@ public:
   }
 
   void loadModel(const char* file) {
-    std::vector<vl::String> files;
-    files.push_back(file);
-    loadModel(files);
+    sceneManager()->tree()->actors()->clear();
+    if (file != NULL) {
+      std::vector<vl::String> files;
+      files.push_back(file);
+      loadModel(files);
+    }
+    else {
+      vl::ref<vl::Effect> fx1 = new vl::Effect;
+      fx1->shader()->enable(vl::EN_BLEND);
+      fx1->shader()->enable(vl::EN_DEPTH_TEST);
+      fx1->shader()->enable(vl::EN_LIGHTING);
+      fx1->shader()->setRenderState( new vl::Light, 0 );
+      fx1->shader()->gocLightModel()->setTwoSide(true);
+      fx1->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 1.0f, 1.0f, 1.0f) );
+      fx1->shader()->gocMaterial()->setTransparency( 0.5f );
+
+      vl::ref<vl::Effect> fx2 = new vl::Effect;
+      fx2->shader()->disable(vl::EN_BLEND);
+      fx2->shader()->enable(vl::EN_DEPTH_TEST);
+      fx2->shader()->enable(vl::EN_LIGHTING);
+      fx2->shader()->setRenderState( new vl::Light, 0 );
+      fx2->shader()->gocLightModel()->setTwoSide(true);
+      fx2->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 0.0f, 0.0f, 1.0f) );
+      // fx2->shader()->gocMaterial()->setTransparency( 0.8f );
+
+      vl::ref< vl::Transform > tr1 = new vl::Transform();
+      tr1->setLocalAndWorldMatrix(vl::mat4::getTranslation(+0.25f, 0, 0));
+      
+      vl::ref< vl::Transform > tr2 = new vl::Transform();
+      tr2->setLocalAndWorldMatrix(vl::mat4::getTranslation(-0.25f, 0, 0) * vl::mat4::getRotationXYZ(90, 0, 0));
+
+      vl::ref< vl::Geometry > torus = vl::makeTorus( vl::vec3( 0, 0, 0 ), 1.0f, 0.2f, 20, 40 );
+
+      sceneManager()->tree()->addActor( torus.get(), fx1.get(), tr1.get() );
+      sceneManager()->tree()->addActor( torus.get(), fx2.get(), tr2.get() );
+    }
+
+    // position the camera to nicely see the objects in the scene
+    trackball()->adjustView( rendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
+
+    // throttle ghost camera manipulator speed based on the scene size, using a simple euristic formula
+    sceneManager()->computeBounds();
+    const vl::AABB& scene_aabb = sceneManager()->boundingBox();
+    vl::real speed = (scene_aabb.width() + scene_aabb.height() + scene_aabb.depth()) / 20.0f;
+    ghostCameraManipulator()->setMovementSpeed(speed);
   }
 
   void loadModel(const std::vector<vl::String>& files)
   {
-    sceneManager()->tree()->actors()->clear();
-
     // default effects
 
     vl::ref<vl::Light> camera_light = new vl::Light;
@@ -1345,7 +1377,7 @@ public:
         if (!act)
           continue;
 
-        act->actorEventCallbacks()->push_back( new vl::DepthSortCallback );
+        // act->actorEventCallbacks()->push_back( new vl::DepthSortCallback );
 
         /* define the Effect to be used */
         vl::ref<vl::Effect> effect = new vl::Effect;
@@ -1354,7 +1386,8 @@ public:
         /* enable lighting and material properties */
         effect->shader()->setRenderState( new vl::Light, 0 );
         effect->shader()->enable(vl::EN_LIGHTING);
-        effect->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f,1.0f,1.0f,0.5f) );
+        effect->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 1.0f, 1.0f, 1.0f) );
+        effect->shader()->gocMaterial()->setTransparency( 0.5f );
         effect->shader()->gocLightModel()->setTwoSide(true);
         /* enable alpha blending */
         effect->shader()->enable(vl::EN_BLEND);
@@ -1390,15 +1423,6 @@ public:
         g_model = geom; // FIXME
       }
     }
-
-    // position the camera to nicely see the objects in the scene
-    trackball()->adjustView( rendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
-
-    // throttle ghost camera manipulator speed based on the scene size, using a simple euristic formula
-    sceneManager()->computeBounds();
-    const vl::AABB& scene_aabb = sceneManager()->boundingBox();
-    vl::real speed = (scene_aabb.width() + scene_aabb.height() + scene_aabb.depth()) / 20.0f;
-    ghostCameraManipulator()->setMovementSpeed(speed);
   }
 
   void showStatistics(vl::ref<vl::ResourceDatabase> res_db)
