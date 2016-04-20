@@ -57,7 +57,19 @@ namespace vl
       * RendererVivid's implementation of this function always returns \p in_render_queue. */
     virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, real frame_clock);
     
-    void renderQueue(const RenderQueue* in_render_queue, Camera* camera, real frame_clock);
+    void renderQueue(const RenderQueue* in_render_queue, Camera* camera, real frame_clock, bool depth_peeling_on=true);
+
+    void DeleteDualPeelingRenderTargets();
+    void InitDualPeelingRenderTargets();
+    void DeleteFrontPeelingRenderTargets();
+    void InitFrontPeelingRenderTargets();
+    void BuildShaders();
+    void MakeFullScreenQuad();
+    void bindTexture(vl::GLSLProgram* glsl, GLenum target, std::string texname, GLuint texid, int texunit);
+    void RenderFrontToBackPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock);
+    void RenderDualPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock);
+    void lazyInitialize();
+    ivec2 mInitSize;
   };
   //------------------------------------------------------------------------------
 }

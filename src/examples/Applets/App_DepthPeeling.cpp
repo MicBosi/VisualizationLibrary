@@ -1259,7 +1259,7 @@ public:
     rendering()->as<vl::Rendering>()->setRenderer( vivid.get() );
 
     // loadModel(MODEL_FILENAME);
-    loadModel(NULL);
+    initScene();
 
     // ----------------------------------------------------------------------------------
     InitGL();
@@ -1298,44 +1298,40 @@ public:
     // wglMakeCurrent(NULL,NULL);
   }
 
-  void loadModel(const char* file) {
-    sceneManager()->tree()->actors()->clear();
-    if (file != NULL) {
-      std::vector<vl::String> files;
-      files.push_back(file);
-      loadModel(files);
-    }
-    else {
-      vl::ref<vl::Effect> fx1 = new vl::Effect;
-      fx1->shader()->enable(vl::EN_BLEND);
-      fx1->shader()->enable(vl::EN_DEPTH_TEST);
-      fx1->shader()->enable(vl::EN_LIGHTING);
-      fx1->shader()->setRenderState( new vl::Light, 0 );
-      fx1->shader()->gocLightModel()->setTwoSide(true);
-      fx1->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 1.0f, 1.0f, 1.0f) );
-      fx1->shader()->gocMaterial()->setTransparency( 0.5f );
+  void initScene() {
+    vl::ref<vl::Effect> fx1 = new vl::Effect;
+    fx1->shader()->enable(vl::EN_BLEND);
+    fx1->shader()->enable(vl::EN_DEPTH_TEST);
+    fx1->shader()->enable(vl::EN_LIGHTING);
+    fx1->shader()->setRenderState( new vl::Light, 0 );
+    fx1->shader()->gocLightModel()->setTwoSide(true);
+    fx1->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 1.0f, 1.0f, 1.0f) );
+    fx1->shader()->gocMaterial()->setTransparency( 0.5f );
 
-      vl::ref<vl::Effect> fx2 = new vl::Effect;
-      fx2->shader()->disable(vl::EN_BLEND);
-      fx2->shader()->enable(vl::EN_DEPTH_TEST);
-      fx2->shader()->enable(vl::EN_LIGHTING);
-      fx2->shader()->setRenderState( new vl::Light, 0 );
-      fx2->shader()->gocLightModel()->setTwoSide(true);
-      fx2->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 0.0f, 0.0f, 1.0f) );
-      fx2->shader()->gocMaterial()->setTransparency( 1.0f );
+    vl::ref<vl::Effect> fx2 = new vl::Effect;
+    fx2->shader()->disable(vl::EN_BLEND);
+    fx2->shader()->enable(vl::EN_DEPTH_TEST);
+    fx2->shader()->enable(vl::EN_LIGHTING);
+    fx2->shader()->setRenderState( new vl::Light, 0 );
+    fx2->shader()->gocLightModel()->setTwoSide(true);
+    fx2->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 0.0f, 0.0f, 1.0f) );
+    fx2->shader()->gocMaterial()->setTransparency( 1.0f );
 
-      vl::ref< vl::Transform > tr1 = new vl::Transform();
-      tr1->setLocalAndWorldMatrix(vl::mat4::getTranslation(+0.25f, 0, 0));
+    vl::ref< vl::Transform > tr1 = new vl::Transform();
+    tr1->setLocalAndWorldMatrix(vl::mat4::getTranslation(+0.025f, 0, 0));
       
-      vl::ref< vl::Transform > tr2 = new vl::Transform();
-      tr2->setLocalAndWorldMatrix(vl::mat4::getTranslation(-0.25f, 0, 0) * vl::mat4::getRotationXYZ(90, 0, 0));
+    vl::ref< vl::Transform > tr2 = new vl::Transform();
+    tr2->setLocalAndWorldMatrix(vl::mat4::getTranslation(-0.025f, 0, 0) * vl::mat4::getRotationXYZ(90, 0, 0));
 
-      vl::ref< vl::Geometry > torus = vl::makeTorus( vl::vec3( 0, 0, 0 ), 1.0f, 0.2f, 20, 40 );
+    vl::ref< vl::Geometry > torus = vl::makeTorus( vl::vec3( 0, 0, 0 ), 0.1f, 0.02f, 20, 40 );
 
-      sceneManager()->tree()->addActor( torus.get(), fx1.get(), tr1.get() );
-      sceneManager()->tree()->addActor( torus.get(), fx2.get(), tr2.get() );
-    }
+    sceneManager()->tree()->addActor( torus.get(), fx1.get(), tr1.get() );
+    sceneManager()->tree()->addActor( torus.get(), fx2.get(), tr2.get() );
 
+    adjustScene();
+  }
+
+  void adjustScene() {
     // position the camera to nicely see the objects in the scene
     trackball()->adjustView( rendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
 
@@ -1349,8 +1345,6 @@ public:
   void loadModel(const std::vector<vl::String>& files)
   {
     // default effects
-
-    vl::ref<vl::Light> camera_light = new vl::Light;
 
     for(unsigned int i=0; i<files.size(); ++i)
     {
@@ -1379,50 +1373,25 @@ public:
 
         // act->actorEventCallbacks()->push_back( new vl::DepthSortCallback );
 
-        /* define the Effect to be used */
-        vl::ref<vl::Effect> effect = new vl::Effect;
-        /* enable depth test and lighting */
-        effect->shader()->enable(vl::EN_DEPTH_TEST);
-        /* enable lighting and material properties */
-        effect->shader()->setRenderState( new vl::Light, 0 );
-        effect->shader()->enable(vl::EN_LIGHTING);
-        effect->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 1.0f, 1.0f, 1.0f) );
-        effect->shader()->gocMaterial()->setTransparency( 0.5f );
-        effect->shader()->gocLightModel()->setTwoSide(true);
-        /* enable alpha blending */
-        effect->shader()->enable(vl::EN_BLEND);
+        vl::ref<vl::Effect> fx1 = new vl::Effect;
+        fx1->shader()->enable(vl::EN_BLEND);
+        fx1->shader()->enable(vl::EN_DEPTH_TEST);
+        fx1->shader()->enable(vl::EN_LIGHTING);
+        fx1->shader()->setRenderState( new vl::Light, 0 );
+        fx1->shader()->gocLightModel()->setTwoSide(true);
+        fx1->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 1.0f, 1.0f, 1.0f) );
+        fx1->shader()->gocMaterial()->setTransparency( 0.5f );
 
-        act->setEffect(effect.get());
-
-        // Enable blending
-        // Load cessna or other more complex object OR build scene yourself
-        // Switch between the vivid and the normal key-binding
+        act->setEffect(fx1.get());
 
         vl::Geometry* geom = act->lod(0)->as<vl::Geometry>();
         geom->computeNormals();
 
         sceneManager()->tree()->addActor(act);
-
-        if (geom) {
-          if (geom->normalArray())
-          {
-            act->effect()->shader()->enable(vl::EN_LIGHTING);
-            act->effect()->shader()->gocLightModel()->setTwoSide(true);
-          }
-          else {
-            act->effect()->shader()->disable(vl::EN_LIGHTING);
-          }
-        }
-
-        if ( act->effect()->shader()->isEnabled(vl::EN_LIGHTING) && !act->effect()->shader()->getLight(0) )
-          act->effect()->shader()->setRenderState(camera_light.get(), 0);
-
-        VL_CHECK(act);
-        VL_CHECK(act->effect());
-
-        g_model = geom; // FIXME
       }
     }
+
+    adjustScene();
   }
 
   void showStatistics(vl::ref<vl::ResourceDatabase> res_db)
