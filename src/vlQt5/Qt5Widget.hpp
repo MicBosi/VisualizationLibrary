@@ -111,6 +111,10 @@ namespace vlQt5
       QGLContext* glctx = new QGLContext(context()->format(), this);
       QGLFormat fmt = context()->format();
 
+      // Switch to compatiblity profile by default.
+      // Options: QGLFormat::NoProfile, QGLFormat::CoreProfile, QGLFormat::CompatibilityProfile
+      fmt.setProfile(QGLFormat::CompatibilityProfile);
+
       // double buffer
       fmt.setDoubleBuffer( info.doubleBuffer() );
 

@@ -540,6 +540,13 @@ bool vl::initializeOpenGL()
   Is_Enable_Supported[EN_SAMPLE_ALPHA_TO_ONE]      = Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_1;
   Is_Enable_Supported[EN_SAMPLE_COVERAGE]          = Has_GL_Version_1_3||!Has_Fixed_Function_Pipeline||Has_GLES;
 
+  // Driver bugs
+  // MESA Mesa 11.2.0 advertises these extensions but does not support them!
+  if ( strstr( version_string, " Mesa " ) ) {
+    Has_GL_ARB_get_program_binary = false;
+    Has_GL_ARB_separate_shader_objects = false;
+  }
+
 #ifndef NDEBUG
   // Enables management debug code
   VL_CHECK_OGL();

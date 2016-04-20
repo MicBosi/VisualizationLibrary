@@ -512,12 +512,12 @@ void GLSLProgram::preLink()
 
   // OpenGL 4 program parameters
 
-  if(Has_GL_ARB_get_program_binary)
+  if( Has_GL_ARB_get_program_binary )
   {
     VL_glProgramParameteri(handle(), GL_PROGRAM_BINARY_RETRIEVABLE_HINT, programBinaryRetrievableHint()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
   }
 
-  if (Has_GL_ARB_separate_shader_objects)
+  if ( Has_GL_ARB_separate_shader_objects )
   {
     VL_glProgramParameteri(handle(), GL_PROGRAM_SEPARABLE, programSeparable()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
   }
