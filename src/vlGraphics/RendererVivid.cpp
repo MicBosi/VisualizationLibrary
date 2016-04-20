@@ -83,6 +83,58 @@ namespace
   };
 }
 //------------------------------------------------------------------------------
+void RendererVivid::renderQueue(const RenderQueue* render_queue, Camera* camera, real frame_clock) {
+  
+  OpenGLContext* opengl_context = framebuffer()->openglContext();
+
+  for(int itok=0; itok < render_queue->size(); ++itok)
+  {
+    const RenderToken* tok = render_queue->at(itok); VL_CHECK(tok);
+    Actor* actor = tok->mActor; VL_CHECK(actor);
+
+    if ( !isEnabled(actor->enableMask()) )
+      continue;
+
+    VL_CHECK_OGL()
+
+    // --------------- shader setup ---------------
+
+    const Shader* shader = tok->mShader;
+
+    shader->getMaterial()->apply(0, NULL, NULL); VL_CHECK_OGL()
+    shader->getLight(0)->apply(0, camera, NULL); VL_CHECK_OGL()
+    shader->getLightModel()->apply(0, NULL, NULL);
+
+    /* These two states are managed by the Depth Peeling algorithm
+    shader->isEnabled(vl::EN_BLEND) ? glEnable(GL_BLEND) : glDisable(GL_BLEND); VL_CHECK_OGL()
+    shader->isEnabled(vl::EN_DEPTH_TEST) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST); VL_CHECK_OGL()
+    */
+    shader->isEnabled(vl::EN_LIGHTING) ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING); VL_CHECK_OGL()
+
+    // --------------- Actor pre-render callback ---------------
+
+    // here the user has still the possibility to modify the Actor's uniforms
+
+    actor->dispatchOnActorRenderStarted( frame_clock, camera, tok->mRenderable, shader, /*ipass*/0 );
+
+    VL_CHECK_OGL()
+
+    // --------------- Transform setup ---------------
+
+    // Update camera/actor model-view transform
+    projViewTransfCallback()->updateMatrices( /*update_cm*/false, /*update_tr*/true, 0, camera, actor->transform() );
+
+    VL_CHECK_OGL()
+
+    // --------------- Actor rendering ---------------
+
+    // also compiles display lists and updates BufferObjects if necessary
+    tok->mRenderable->render( actor, shader, camera, opengl_context );
+
+    VL_CHECK_OGL()
+  }
+}
+//------------------------------------------------------------------------------
 const RenderQueue* RendererVivid::render(const RenderQueue* render_queue, Camera* camera, real frame_clock)
 {
   VL_CHECK_OGL()
@@ -159,85 +211,23 @@ const RenderQueue* RendererVivid::render(const RenderQueue* render_queue, Camera
 
   OpenGLContext* opengl_context = framebuffer()->openglContext();
 
-  // --------------- default scissor ---------------
-
-  // non GLSLProgram state sets
-  const RenderStateSet* cur_render_state_set = NULL;
-  const EnableSet* cur_enable_set = NULL;
-
   // --------------- rendering ---------------
 
-  // Update camera transform
+  // Update camera projection
   projViewTransfCallback()->updateMatrices( /*update_cm*/true, /*update_tr*/false, 0, camera, /*cur_transform*/NULL );
 
   // Disable scissor test
   glDisable(GL_SCISSOR_TEST);
 
-  for(int itok=0; itok < render_queue->size(); ++itok)
-  {
-    const RenderToken* tok = render_queue->at(itok); VL_CHECK(tok);
-    Actor* actor = tok->mActor; VL_CHECK(actor);
+  renderQueue(render_queue, camera, frame_clock);
 
-    if ( !isEnabled(actor->enableMask()) )
-      continue;
-
-    VL_CHECK_OGL()
-
-    // --------------- shader setup ---------------
-
-    const Shader* shader = tok->mShader;
-
-    // shader's render states
-
-    if ( cur_render_state_set != shader->getRenderStateSet() )
-    {
-      opengl_context->applyRenderStates( shader->getRenderStateSet(), camera );
-      cur_render_state_set = shader->getRenderStateSet();
-    }
-
-    VL_CHECK_OGL()
-
-    // shader's enables
-
-    if ( cur_enable_set != shader->getEnableSet() )
-    {
-      opengl_context->applyEnables( shader->getEnableSet() );
-      cur_enable_set = shader->getEnableSet();
-    }
-
-    #ifndef NDEBUG
-      if (glGetError() != GL_NO_ERROR)
-      {
-        Log::error("An unsupported OpenGL glEnable/glDisable capability has been enabled!\n");
-        VL_TRAP()
-      }
-    #endif
-
-    // --------------- Actor pre-render callback ---------------
-
-    // here the user has still the possibility to modify the Actor's uniforms
-
-    actor->dispatchOnActorRenderStarted( frame_clock, camera, tok->mRenderable, shader, /*ipass*/0 );
-
-    VL_CHECK_OGL()
-
-    // --------------- Transform setup ---------------
-
-    // Update actor's transform
-    projViewTransfCallback()->updateMatrices( /*update_cm*/false, /*update_tr*/true, 0, camera, actor->transform() );
-
-    VL_CHECK_OGL()
-
-    // --------------- Actor rendering ---------------
-
-    // also compiles display lists and updates BufferObjects if necessary
-    tok->mRenderable->render( actor, shader, camera, opengl_context );
-
-    VL_CHECK_OGL()
-  }
+  glDisable(GL_BLEND);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_LIGHT0);
 
   // clear enables
-  opengl_context->applyEnables( mDummyEnables.get() ); VL_CHECK_OGL();
+  // opengl_context->applyEnables( mDummyEnables.get() ); VL_CHECK_OGL();
 
   // clear render states
   opengl_context->applyRenderStates( mDummyStateSet.get(), NULL ); VL_CHECK_OGL();

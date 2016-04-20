@@ -1322,7 +1322,7 @@ public:
       fx2->shader()->setRenderState( new vl::Light, 0 );
       fx2->shader()->gocLightModel()->setTwoSide(true);
       fx2->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 0.0f, 0.0f, 1.0f) );
-      // fx2->shader()->gocMaterial()->setTransparency( 0.8f );
+      fx2->shader()->gocMaterial()->setTransparency( 1.0f );
 
       vl::ref< vl::Transform > tr1 = new vl::Transform();
       tr1->setLocalAndWorldMatrix(vl::mat4::getTranslation(+0.25f, 0, 0));
