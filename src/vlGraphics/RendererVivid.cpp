@@ -128,7 +128,6 @@ void RendererVivid::lazyInitialize()
     initDualPeelingRenderTargets();
     initFrontPeelingRenderTargets();
     buildShaders();
-    // makeFullScreenQuad();
     vl::glGenQueries(1, &mQueryID);
   } 
   else if (mImageSize != fb_size) 
@@ -570,66 +569,13 @@ void RendererVivid::buildShaders()
   mShaderWeightedSumFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "wsum_final_fragment.glsl" ) );
   mShaderWeightedSumFinal->linkProgram();
 }
-  
-//void RendererVivid::drawFullScreenQuad()
-//{
-//  glMatrixMode(GL_MODELVIEW);
-//  glPushMatrix();
-//  glLoadIdentity();
-//  gluOrtho2D(0.0, 1.0, 0.0, 1.0);
-//
-//  glBegin(GL_QUADS);
-//  {
-//	  glVertex2f(0.0, 0.0); 
-//	  glVertex2f(1.0, 0.0);
-//	  glVertex2f(1.0, 1.0);
-//	  glVertex2f(0.0, 1.0);
-//  }
-//  glEnd();
-//  glPopMatrix();
-//}
 
 void RendererVivid::drawFullScreenQuad()
 {
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
-  glLoadIdentity();
-  gluOrtho2D(0.0, 1.0, 0.0, 1.0);
-#if 1
-  mFullScreenQuad->render(NULL, NULL, NULL, framebuffer()->openglContext());
-  /*
-  GLfloat vertices[] = { 
-    0.0, 0.0, 
-    1.0, 0.0, 
-    1.0, 1.0, 
-    0.0, 1.0,
-  };
-  glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
-  glDisableClientState(GL_SECONDARY_COLOR_ARRAY);
-  glDisableClientState(GL_NORMAL_ARRAY);
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_INDEX_ARRAY);
-  glDisableClientState(GL_FOG_COORD_ARRAY);
-  glDisableClientState(GL_EDGE_FLAG_ARRAY);
-  glVertexPointer(2, GL_FLOAT, 0, vertices);
-  glDrawArrays(GL_QUADS, 0, 4);
-  glDisableClientState(GL_VERTEX_ARRAY);
-  glPopClientAttrib();
-  */
-#else
-  glBegin(GL_QUADS);
-  {
-	  glVertex2f(0.0, 0.0); 
-	  glVertex2f(1.0, 0.0);
-	  glVertex2f(1.0, 1.0);
-	  glVertex2f(0.0, 1.0);
-  }
-  glEnd();
-#endif
-
+  glLoadMatrixf( vl::mat4::getOrtho2D( 0.0, 1.0, 0.0, 1.0 ).ptr() );
+  mFullScreenQuad->render( NULL, NULL, NULL, framebuffer()->openglContext() );
   glPopMatrix();
 }
 
