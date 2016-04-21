@@ -40,17 +40,6 @@
 
 #define SHADER_PATH "/vivid/glsl/"
 
-#if 1
-#define CHECK_GL_ERRORS  \
-{ \
-    GLenum err = glGetError(); \
-    if (err) \
-        printf( "Error %x at line %d\n", err, __LINE__); \
-}
-#else
-#define CHECK_GL_ERRORS {}
-#endif
-
 #define MAX_DEPTH 1.0
 
 namespace 
@@ -429,7 +418,7 @@ void RendererVivid::initDualPeelingRenderTargets()
   vl::glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_RECTANGLE, 0);
 
-  CHECK_GL_ERRORS;
+  VL_CHECK_OGL();
 }
 
 //--------------------------------------------------------------------------
@@ -494,7 +483,7 @@ void RendererVivid::initFrontPeelingRenderTargets()
   // Cleanup
   glBindTexture(GL_TEXTURE_RECTANGLE, 0);
 
-  CHECK_GL_ERRORS;
+  VL_CHECK_OGL();
 }
 
 //--------------------------------------------------------------------------
@@ -610,7 +599,7 @@ void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* c
 
   vl::glUseProgram(0);
 
-  CHECK_GL_ERRORS;
+  VL_CHECK_OGL();
 
   // ---------------------------------------------------------------------
   // 2. Dual Depth Peeling + Blending
@@ -659,7 +648,7 @@ void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* c
 	  
     vl::glUseProgram(0);
 
-	  CHECK_GL_ERRORS;
+	  VL_CHECK_OGL();
 
 	  // Full screen pass to alpha-blend the back color
 	  glDrawBuffer(gDrawBuffers[6]);
@@ -677,7 +666,7 @@ void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* c
 	  drawFullScreenQuad();
 	  vl::glUseProgram(0);
 
-	  CHECK_GL_ERRORS;
+	  VL_CHECK_OGL();
 
 	  if (mUseQueryObject) {
 		  vl::glEndQuery(GL_SAMPLES_PASSED_ARB);
@@ -715,7 +704,7 @@ void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* c
   glBindTexture(GL_TEXTURE_RECTANGLE, 0);
   vl::glActiveTexture(GL_TEXTURE0);
 
-  CHECK_GL_ERRORS;
+  VL_CHECK_OGL();
 }
 
 //--------------------------------------------------------------------------
@@ -743,7 +732,7 @@ void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Ca
 
   vl::glUseProgram(0);
 
-  CHECK_GL_ERRORS;
+  VL_CHECK_OGL();
 
   // ---------------------------------------------------------------------
   // 2. Depth Peeling + Blending
@@ -782,7 +771,7 @@ void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Ca
 		  vl::glEndQuery(GL_SAMPLES_PASSED_ARB);
 	  }
 
-	  CHECK_GL_ERRORS;
+	  VL_CHECK_OGL();
 
 	  vl::glBindFramebuffer(GL_FRAMEBUFFER, mFrontColorBlenderFboId);
 	  glDrawBuffer(gDrawBuffers[0]);
@@ -801,7 +790,7 @@ void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Ca
 
 	  glDisable(GL_BLEND);
 
-	  CHECK_GL_ERRORS;
+	  VL_CHECK_OGL();
 
 	  if (mUseQueryObject) {
 		  GLuint sample_count;
@@ -836,7 +825,7 @@ void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Ca
   vl::glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_RECTANGLE, 0);
 
-  CHECK_GL_ERRORS;
+  VL_CHECK_OGL();
 }
 
 void RendererVivid::bindTexture(vl::GLSLProgram* glsl, GLenum target, std::string texname, GLuint texid, int texunit)
