@@ -33,9 +33,7 @@
 #define RendererVivid_INCLUDE_ONCE
 
 #include <vlGraphics/Renderer.hpp>
-#include <vlGraphics/ProjViewTransfCallback.hpp>
-#include <vlGraphics/Shader.hpp>
-#include <map>
+#include <vlGraphics/Geometry.hpp>
 
 namespace vl
 {
@@ -67,6 +65,19 @@ namespace vl
     void setRenderingMode(ERenderingMode mode) { mRenderingMode = mode; }
     ERenderingMode renderingMode() const { return mRenderingMode; }
 
+    /** Maximum number of passes to do if UseQueryObject is disabled. */
+    void setNumPasses(int n) { mNumPasses = n; VL_CHECK(mNumPasses >= 1 && mNumPasses <= 100); }
+    /** Maximum number of passes to do if UseQueryObject is disabled. */
+    int numPasses() const { return mNumPasses; }
+
+    /** When enabled will use as many passes as needed to create a 100% correct rendering. */
+    void setUseQueryObject(bool use) { mUseQueryObject = use; }
+    /** When enabled will use as many passes as needed to create a 100% correct rendering. */
+    bool useQueryObject() const { return mUseQueryObject;  }
+
+    /** The number of passes (renderQueue() calls) done for the last rendering including setup and finalization (may be > than NumPasses). */
+    int passCounter() const { return mPassCounter; }
+
   protected:
 
     void renderQueue(const RenderQueue* in_render_queue, Camera* camera, real frame_clock, bool depth_peeling_on=true);
@@ -77,7 +88,7 @@ namespace vl
     void deleteFrontPeelingRenderTargets();
     void initFrontPeelingRenderTargets();
     void buildShaders();
-    void makeFullScreenQuad();
+    void drawFullScreenQuad();
     void bindTexture(vl::GLSLProgram* glsl, GLenum target, std::string texname, GLuint texid, int texunit);
     void renderFrontToBackPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock);
     void renderDualPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock);
@@ -112,12 +123,12 @@ namespace vl
     GLuint mFrontColorBlenderTexId;
     GLuint mFrontColorBlenderFboId;
 
+    int mPassCounter;
     int mNumPasses;
-    bool mUseOQ;
+    bool mUseQueryObject;
     GLuint mQueryID;
 
-    // MIC FIXME: remove
-    GLuint g_quadDisplayList;
+    vl::ref<vl::Geometry> mFullScreenQuad;
   };
   //------------------------------------------------------------------------------
 }

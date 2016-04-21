@@ -67,8 +67,9 @@ namespace
 
   // MIC FIXME: remove these
   vl::ref<vl::Uniform> g_uniformAlpha = new vl::Uniform("Alpha");
+  float g_Alpha = 0.6f;
+
   vl::ref<vl::Uniform> g_uniformBackgroundColor = new vl::Uniform("BackgroundColor");
-  float g_opacity = 0.6f;
   float g_white[3] = { 1.0, 1.0, 1.0 };
   float g_black[3] = { 0.0 };
   float *g_backgroundColor = g_white;
@@ -84,7 +85,7 @@ RendererVivid::RendererVivid()
   mRenderingMode = DualDepthPeeling;
 
   mNumPasses = 4;
-  mUseOQ = true;
+  mUseQueryObject = true;
   mQueryID = 0;
 
   mShaderDualInit = new vl::GLSLProgram();
@@ -101,6 +102,21 @@ RendererVivid::RendererVivid()
   mShaderWeightedSumFinal = new vl::GLSLProgram();
 
   mImageSize = ivec2(0, 0);
+  mPassCounter = 0;
+
+  ref<ArrayFloat2> vert2 = new ArrayFloat2;
+  mFullScreenQuad = new Geometry();
+  mFullScreenQuad->setVertexArray(vert2.get());
+  vert2->resize(4);
+  const GLfloat vertices[] = { 
+    0.0f, 0.0f, 
+    1.0f, 0.0f, 
+    1.0f, 1.0f, 
+    0.0f, 1.0f,
+  };
+  memcpy(vert2->ptr(), vertices, vert2->bytesUsed());
+  ref<DrawArrays> polys = new DrawArrays(vl::PT_QUADS, 0, 4);
+  mFullScreenQuad->drawCalls().push_back( polys.get() );
 }
 //------------------------------------------------------------------------------
 void RendererVivid::lazyInitialize()
@@ -112,7 +128,7 @@ void RendererVivid::lazyInitialize()
     initDualPeelingRenderTargets();
     initFrontPeelingRenderTargets();
     buildShaders();
-    makeFullScreenQuad();
+    // makeFullScreenQuad();
     vl::glGenQueries(1, &mQueryID);
   } 
   else if (mImageSize != fb_size) 
@@ -160,6 +176,8 @@ namespace
 //------------------------------------------------------------------------------
 void RendererVivid::renderQueue(const RenderQueue* render_queue, Camera* camera, real frame_clock, bool depth_peeling_on) {
   
+  mPassCounter++;
+
   OpenGLContext* opengl_context = framebuffer()->openglContext();
 
   for(int itok=0; itok < render_queue->size(); ++itok)
@@ -186,6 +204,7 @@ void RendererVivid::renderQueue(const RenderQueue* render_queue, Camera* camera,
       // glDepthMask(shader->isEnabled(vl::EN_BLEND) ? GL_FALSE : GL_TRUE);
       shader->isEnabled(vl::EN_BLEND) ? glEnable(GL_BLEND) : glDisable(GL_BLEND); VL_CHECK_OGL()
       shader->isEnabled(vl::EN_DEPTH_TEST) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST); VL_CHECK_OGL()
+      shader->isEnabled(vl::EN_CULL_FACE) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE); VL_CHECK_OGL()
       shader->isEnabled(vl::EN_LIGHTING) ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING); VL_CHECK_OGL()
     }
 
@@ -218,6 +237,7 @@ const RenderQueue* RendererVivid::render(const RenderQueue* render_queue, Camera
   VL_CHECK_OGL()
 
   lazyInitialize();
+  mPassCounter = 0;
 
   // skip if renderer is disabled
 
@@ -319,6 +339,7 @@ const RenderQueue* RendererVivid::render(const RenderQueue* render_queue, Camera
   glDepthMask(GL_TRUE);
   glDisable(GL_BLEND);
   glDisable(GL_DEPTH_TEST);
+  glDisable(GL_CULL_FACE);
   glDisable(GL_LIGHTING);
   glDisable(GL_LIGHT0);
 
@@ -550,15 +571,55 @@ void RendererVivid::buildShaders()
   mShaderWeightedSumFinal->linkProgram();
 }
   
-void RendererVivid::makeFullScreenQuad()
-{
-  g_quadDisplayList = glGenLists(1);
-  glNewList(g_quadDisplayList, GL_COMPILE);
+//void RendererVivid::drawFullScreenQuad()
+//{
+//  glMatrixMode(GL_MODELVIEW);
+//  glPushMatrix();
+//  glLoadIdentity();
+//  gluOrtho2D(0.0, 1.0, 0.0, 1.0);
+//
+//  glBegin(GL_QUADS);
+//  {
+//	  glVertex2f(0.0, 0.0); 
+//	  glVertex2f(1.0, 0.0);
+//	  glVertex2f(1.0, 1.0);
+//	  glVertex2f(0.0, 1.0);
+//  }
+//  glEnd();
+//  glPopMatrix();
+//}
 
+void RendererVivid::drawFullScreenQuad()
+{
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
   gluOrtho2D(0.0, 1.0, 0.0, 1.0);
+#if 1
+  mFullScreenQuad->render(NULL, NULL, NULL, framebuffer()->openglContext());
+  /*
+  GLfloat vertices[] = { 
+    0.0, 0.0, 
+    1.0, 0.0, 
+    1.0, 1.0, 
+    0.0, 1.0,
+  };
+  glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
+  glDisableClientState(GL_SECONDARY_COLOR_ARRAY);
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glDisableClientState(GL_INDEX_ARRAY);
+  glDisableClientState(GL_FOG_COORD_ARRAY);
+  glDisableClientState(GL_EDGE_FLAG_ARRAY);
+  glVertexPointer(2, GL_FLOAT, 0, vertices);
+  glDrawArrays(GL_QUADS, 0, 4);
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glPopClientAttrib();
+  */
+#else
   glBegin(GL_QUADS);
   {
 	  glVertex2f(0.0, 0.0); 
@@ -567,9 +628,9 @@ void RendererVivid::makeFullScreenQuad()
 	  glVertex2f(0.0, 1.0);
   }
   glEnd();
-  glPopMatrix();
+#endif
 
-  glEndList();
+  glPopMatrix();
 }
 
 void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock)
@@ -618,7 +679,7 @@ void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* c
 
   int currId = 0;
 
-  for (int pass = 1; mUseOQ || pass < mNumPasses; pass++) {
+  for (int pass = 1; mUseQueryObject || pass < mNumPasses; pass++) {
 	  currId = pass % 2;
 	  int prevId = 1 - currId;
 	  int bufId = currId * 3;
@@ -643,9 +704,9 @@ void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* c
 	  bindTexture(mShaderDualPeel.get(), GL_TEXTURE_RECTANGLE, "DepthBlenderTex", mDualDepthTexId[prevId], 0);
 	  bindTexture(mShaderDualPeel.get(), GL_TEXTURE_RECTANGLE, "FrontBlenderTex", mDualFrontBlenderTexId[prevId], 1);
 	    
-    // mShaderDualPeel.setUniform("Alpha", (float*)&g_opacity, 1);
+    // mShaderDualPeel.setUniform("Alpha", (float*)&g_Alpha, 1);
     mShaderDualPeel->setUniform(g_uniformAlpha.get());
-    g_uniformAlpha->setUniform(1, (float*)&g_opacity);
+    g_uniformAlpha->setUniform(1, (float*)&g_Alpha);
     mShaderDualPeel->applyUniformSet();
     
     renderQueue(render_queue, camera, frame_clock); // DrawModel();
@@ -660,19 +721,19 @@ void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* c
 	  vl::glBlendEquation(GL_FUNC_ADD);
 	  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	  if (mUseOQ) {
+	  if (mUseQueryObject) {
       vl::glBeginQuery(GL_SAMPLES_PASSED_ARB, mQueryID);
 	  }
 
 	  mShaderDualBlend->useProgram();
 	  bindTexture(mShaderDualBlend.get(), GL_TEXTURE_RECTANGLE, "TempTex", mDualBackTempTexId[currId], 0);
     mShaderDualBlend->applyUniformSet();
-	  glCallList(g_quadDisplayList);
+	  drawFullScreenQuad();
 	  vl::glUseProgram(0);
 
 	  CHECK_GL_ERRORS;
 
-	  if (mUseOQ) {
+	  if (mUseQueryObject) {
 		  vl::glEndQuery(GL_SAMPLES_PASSED_ARB);
 		  GLuint sample_count;
 		  vl::glGetQueryObjectuiv(mQueryID, GL_QUERY_RESULT_ARB, &sample_count);
@@ -696,7 +757,7 @@ void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* c
   bindTexture(mShaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "FrontBlenderTex", mDualFrontBlenderTexId[currId], 1);
   bindTexture(mShaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "BackBlenderTex", mDualBackBlenderTexId, 2);
   mShaderDualFinal->applyUniformSet();
-  glCallList(g_quadDisplayList);
+  drawFullScreenQuad();
   vl::glUseProgram(0);
 
   // Cleanup
@@ -727,9 +788,9 @@ void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Ca
   glEnable(GL_DEPTH_TEST);
 
   mShaderFrontInit->useProgram();
-  // mShaderFrontInit.setUniform("Alpha", (float*)&g_opacity, 1);
+  // mShaderFrontInit.setUniform("Alpha", (float*)&g_Alpha, 1);
   mShaderFrontInit->setUniform(g_uniformAlpha.get());
-  g_uniformAlpha->setUniform(1, (float*)&g_opacity);    
+  g_uniformAlpha->setUniform(1, (float*)&g_Alpha);    
   mShaderFrontInit->applyUniformSet();
   
   renderQueue(render_queue, camera, frame_clock); // DrawModel();
@@ -743,7 +804,7 @@ void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Ca
   // ---------------------------------------------------------------------
 
   int numLayers = (mNumPasses - 1) * 2;
-  for (int layer = 1; mUseOQ || layer < numLayers; layer++) {
+  for (int layer = 1; mUseQueryObject || layer < numLayers; layer++) {
 	  int currId = layer % 2;
 	  int prevId = 1 - currId;
 
@@ -756,22 +817,22 @@ void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Ca
 	  glDisable(GL_BLEND);
 	  glEnable(GL_DEPTH_TEST);
 
-	  if (mUseOQ) {
+	  if (mUseQueryObject) {
 		  vl::glBeginQuery(GL_SAMPLES_PASSED_ARB, mQueryID);
 	  }
 
 	  mShaderFrontPeel->useProgram();
 	  bindTexture(mShaderFrontPeel.get(), GL_TEXTURE_RECTANGLE, "DepthTex", mFrontDepthTexId[prevId], 0);
-    // mShaderFrontPeel.setUniform("Alpha", (float*)&g_opacity, 1);
+    // mShaderFrontPeel.setUniform("Alpha", (float*)&g_Alpha, 1);
     mShaderFrontPeel->setUniform(g_uniformAlpha.get());
-    g_uniformAlpha->setUniform(1, (float*)&g_opacity);    
+    g_uniformAlpha->setUniform(1, (float*)&g_Alpha);    
 	  mShaderFrontPeel->applyUniformSet();
     
     renderQueue(render_queue, camera, frame_clock); // DrawModel();
 
 	  vl::glUseProgram(0);
 
-	  if (mUseOQ) {
+	  if (mUseQueryObject) {
 		  vl::glEndQuery(GL_SAMPLES_PASSED_ARB);
 	  }
 
@@ -789,14 +850,14 @@ void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Ca
 	  mShaderFrontBlend->useProgram();
 	  bindTexture(mShaderFrontBlend.get(), GL_TEXTURE_RECTANGLE, "TempTex", mFrontColorTexId[currId], 0);
     mShaderFrontBlend->applyUniformSet();
-	  glCallList(g_quadDisplayList);
+	  drawFullScreenQuad();
 	  vl::glUseProgram(0);
 
 	  glDisable(GL_BLEND);
 
 	  CHECK_GL_ERRORS;
 
-	  if (mUseOQ) {
+	  if (mUseQueryObject) {
 		  GLuint sample_count;
 		  vl::glGetQueryObjectuiv(mQueryID, GL_QUERY_RESULT_ARB, &sample_count);
 		  if (sample_count == 0) {
@@ -821,14 +882,13 @@ void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Ca
 
   bindTexture(mShaderFrontFinal.get(), GL_TEXTURE_RECTANGLE, "ColorTex", mFrontColorBlenderTexId, 0);
   mShaderFrontFinal->applyUniformSet();
-  glCallList(g_quadDisplayList);
+  drawFullScreenQuad();
   vl::glUseProgram(0);
 
   // cleanup
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   vl::glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_RECTANGLE, 0);
-
 
   CHECK_GL_ERRORS;
 }
