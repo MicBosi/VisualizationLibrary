@@ -165,7 +165,7 @@ class App_DepthPeeling: public BaseDemo
 {
 public:
   //--------------------------------------------------------------------------
-  void InitDualPeelingRenderTargets()
+  void initDualPeelingRenderTargets()
   {
     glGenTextures(2, g_dualDepthTexId);
     glGenTextures(2, g_dualFrontBlenderTexId);
@@ -236,7 +236,7 @@ public:
   }
 
   //--------------------------------------------------------------------------
-  void DeleteDualPeelingRenderTargets()
+  void deleteDualPeelingRenderTargets()
   {
     vl::glDeleteFramebuffers(1, &g_dualBackBlenderFboId);
     vl::glDeleteFramebuffers(1, &g_dualPeelingSingleFboId);
@@ -247,7 +247,7 @@ public:
   }
 
   //--------------------------------------------------------------------------
-  void InitFrontPeelingRenderTargets()
+  void initFrontPeelingRenderTargets()
   {
     glGenTextures(2, g_frontDepthTexId);
     glGenTextures(2, g_frontColorTexId);
@@ -301,7 +301,7 @@ public:
   }
 
   //--------------------------------------------------------------------------
-  void DeleteFrontPeelingRenderTargets()
+  void deleteFrontPeelingRenderTargets()
   {
     vl::glDeleteFramebuffers(2, g_frontFboId);
     vl::glDeleteFramebuffers(1, &g_frontColorBlenderFboId);
@@ -352,7 +352,7 @@ public:
   }
 
   //--------------------------------------------------------------------------
-  void MakeFullScreenQuad()
+  void makeFullScreenQuad()
   {
     g_quadDisplayList = glGenLists(1);
     glNewList(g_quadDisplayList, GL_COMPILE);
@@ -451,7 +451,7 @@ public:
   }
 
   //--------------------------------------------------------------------------
-  void BuildShaders()
+  void buildShaders()
   {
     printf("\nloading shaders...\n");
 
@@ -538,21 +538,21 @@ public:
   void ReloadShaders()
   {
     // DestroyShaders();
-    // BuildShaders();
+    // buildShaders();
   }
 
   //--------------------------------------------------------------------------
   void InitGL()
   { 
     // Allocate render targets first
-    InitDualPeelingRenderTargets();
-    InitFrontPeelingRenderTargets();
+    initDualPeelingRenderTargets();
+    initFrontPeelingRenderTargets();
     InitAccumulationRenderTargets();
     vl::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    BuildShaders();
+    buildShaders();
     // LoadModel(MODEL_FILENAME); // FIXME
-    MakeFullScreenQuad();
+    makeFullScreenQuad();
 
     glDisable(GL_CULL_FACE);
     glDisable(GL_LIGHTING);
@@ -584,7 +584,7 @@ public:
 
   //--------------------------------------------------------------------------
 
-  void RenderDualPeeling()
+  void renderDualPeeling()
   {
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -711,7 +711,7 @@ public:
   }
 
   //--------------------------------------------------------------------------
-  void RenderFrontToBackPeeling()
+  void renderFrontToBackPeeling()
   {
     // ---------------------------------------------------------------------
     // 1. Initialize Min Depth Buffer
@@ -943,10 +943,10 @@ public:
 
     switch (g_mode) {
 	    case DUAL_PEELING_MODE:
-		    RenderDualPeeling();
+		    renderDualPeeling();
 		    break;
 	    case F2B_PEELING_MODE:
-		    RenderFrontToBackPeeling();
+		    renderFrontToBackPeeling();
 		    break;
 	    case WEIGHTED_AVERAGE_MODE:
 		    RenderAverageColors();
@@ -994,11 +994,11 @@ public:
 	    g_imageWidth = w;
 	    g_imageHeight = h;
 
-	    DeleteDualPeelingRenderTargets();
-	    InitDualPeelingRenderTargets();
+	    deleteDualPeelingRenderTargets();
+	    initDualPeelingRenderTargets();
 
-	    DeleteFrontPeelingRenderTargets();
-	    InitFrontPeelingRenderTargets();
+	    deleteFrontPeelingRenderTargets();
+	    initFrontPeelingRenderTargets();
 
 	    DeleteAccumulationRenderTargets();
 	    InitAccumulationRenderTargets();

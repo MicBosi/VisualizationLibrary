@@ -71,19 +71,19 @@ namespace vl
 
     void renderQueue(const RenderQueue* in_render_queue, Camera* camera, real frame_clock, bool depth_peeling_on=true);
 
-    void DeleteDualPeelingRenderTargets();
-    void InitDualPeelingRenderTargets();
-    void DeleteFrontPeelingRenderTargets();
-    void InitFrontPeelingRenderTargets();
-    void BuildShaders();
-    void MakeFullScreenQuad();
-    void bindTexture(vl::GLSLProgram* glsl, GLenum target, std::string texname, GLuint texid, int texunit);
-    void RenderFrontToBackPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock);
-    void RenderDualPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock);
     void lazyInitialize();
-    ivec2 mImageSize;
+    void deleteDualPeelingRenderTargets();
+    void initDualPeelingRenderTargets();
+    void deleteFrontPeelingRenderTargets();
+    void initFrontPeelingRenderTargets();
+    void buildShaders();
+    void makeFullScreenQuad();
+    void bindTexture(vl::GLSLProgram* glsl, GLenum target, std::string texname, GLuint texid, int texunit);
+    void renderFrontToBackPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock);
+    void renderDualPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock);
 
   protected:
+    ivec2 mImageSize;
     ERenderingMode mRenderingMode;
 
     vl::ref<vl::GLSLProgram> mShaderDualInit;

@@ -53,24 +53,26 @@
 
 #define MAX_DEPTH 1.0
 
-const GLenum gDrawBuffers[] = {
-  GL_COLOR_ATTACHMENT0,
-  GL_COLOR_ATTACHMENT1,
-  GL_COLOR_ATTACHMENT2,
-  GL_COLOR_ATTACHMENT3,
-  GL_COLOR_ATTACHMENT4,
-  GL_COLOR_ATTACHMENT5,
-  GL_COLOR_ATTACHMENT6
-};
+namespace 
+{
+  const GLenum gDrawBuffers[] = {
+    GL_COLOR_ATTACHMENT0,
+    GL_COLOR_ATTACHMENT1,
+    GL_COLOR_ATTACHMENT2,
+    GL_COLOR_ATTACHMENT3,
+    GL_COLOR_ATTACHMENT4,
+    GL_COLOR_ATTACHMENT5,
+    GL_COLOR_ATTACHMENT6
+  };
 
-vl::ref<vl::Uniform> g_uniformAlpha = new vl::Uniform("Alpha");
-vl::ref<vl::Uniform> g_uniformBackgroundColor = new vl::Uniform("BackgroundColor");
-
-// MIC FIXME: remove these
-float g_opacity = 0.6f;
-float g_white[3] = {1.0,1.0,1.0};
-float g_black[3] = {0.0};
-float *g_backgroundColor = g_white;
+  // MIC FIXME: remove these
+  vl::ref<vl::Uniform> g_uniformAlpha = new vl::Uniform("Alpha");
+  vl::ref<vl::Uniform> g_uniformBackgroundColor = new vl::Uniform("BackgroundColor");
+  float g_opacity = 0.6f;
+  float g_white[3] = { 1.0, 1.0, 1.0 };
+  float g_black[3] = { 0.0 };
+  float *g_backgroundColor = g_white;
+}
 
 using namespace vl;
 
@@ -80,6 +82,10 @@ using namespace vl;
 RendererVivid::RendererVivid()
 {
   mRenderingMode = DualDepthPeeling;
+
+  mNumPasses = 4;
+  mUseOQ = true;
+  mQueryID = 0;
 
   mShaderDualInit = new vl::GLSLProgram();
   mShaderDualPeel = new vl::GLSLProgram();
@@ -94,10 +100,6 @@ RendererVivid::RendererVivid()
   mShaderWeightedSumInit = new vl::GLSLProgram();
   mShaderWeightedSumFinal = new vl::GLSLProgram();
 
-  mNumPasses = 4;
-  mUseOQ = true;
-  mQueryID = 0;
-
   mImageSize = ivec2(0, 0);
 }
 //------------------------------------------------------------------------------
@@ -107,20 +109,20 @@ void RendererVivid::lazyInitialize()
   if (mImageSize == ivec2(0, 0)) 
   {
     mImageSize = fb_size;
-    InitDualPeelingRenderTargets();
-    InitFrontPeelingRenderTargets();
-    BuildShaders();
-    MakeFullScreenQuad();
+    initDualPeelingRenderTargets();
+    initFrontPeelingRenderTargets();
+    buildShaders();
+    makeFullScreenQuad();
     vl::glGenQueries(1, &mQueryID);
   } 
   else if (mImageSize != fb_size) 
   {
     mImageSize = fb_size;
-	  DeleteDualPeelingRenderTargets();
-	  InitDualPeelingRenderTargets();
+	  deleteDualPeelingRenderTargets();
+	  initDualPeelingRenderTargets();
 
-	  DeleteFrontPeelingRenderTargets();
-	  InitFrontPeelingRenderTargets();
+	  deleteFrontPeelingRenderTargets();
+	  initFrontPeelingRenderTargets();
   }
 }
 //------------------------------------------------------------------------------
@@ -307,10 +309,10 @@ const RenderQueue* RendererVivid::render(const RenderQueue* render_queue, Camera
     renderQueue(render_queue, camera, frame_clock, false);
     break;
   case DualDepthPeeling: 
-    RenderDualPeeling(render_queue, camera, frame_clock);
+    renderDualPeeling(render_queue, camera, frame_clock);
     break;
   case FrontToBackDepthPeeling: 
-    RenderFrontToBackPeeling(render_queue, camera, frame_clock);
+    renderFrontToBackPeeling(render_queue, camera, frame_clock);
     break;
   }
 
@@ -340,7 +342,7 @@ const RenderQueue* RendererVivid::render(const RenderQueue* render_queue, Camera
   return render_queue;
 }
 //-----------------------------------------------------------------------------
-void RendererVivid::InitDualPeelingRenderTargets()
+void RendererVivid::initDualPeelingRenderTargets()
 {
   glGenTextures(2, mDualDepthTexId);
   glGenTextures(2, mDualFrontBlenderTexId);
@@ -411,7 +413,7 @@ void RendererVivid::InitDualPeelingRenderTargets()
 }
 
 //--------------------------------------------------------------------------
-void RendererVivid::DeleteDualPeelingRenderTargets()
+void RendererVivid::deleteDualPeelingRenderTargets()
 {
   vl::glDeleteFramebuffers(1, &mDualBackBlenderFboId);
   vl::glDeleteFramebuffers(1, &mDualPeelingSingleFboId);
@@ -422,7 +424,7 @@ void RendererVivid::DeleteDualPeelingRenderTargets()
 }
 
 //--------------------------------------------------------------------------
-void RendererVivid::InitFrontPeelingRenderTargets()
+void RendererVivid::initFrontPeelingRenderTargets()
 {
   glGenTextures(2, mFrontDepthTexId);
   glGenTextures(2, mFrontColorTexId);
@@ -476,7 +478,7 @@ void RendererVivid::InitFrontPeelingRenderTargets()
 }
 
 //--------------------------------------------------------------------------
-void RendererVivid::DeleteFrontPeelingRenderTargets()
+void RendererVivid::deleteFrontPeelingRenderTargets()
 {
   vl::glDeleteFramebuffers(2, mFrontFboId);
   vl::glDeleteFramebuffers(1, &mFrontColorBlenderFboId);
@@ -485,7 +487,7 @@ void RendererVivid::DeleteFrontPeelingRenderTargets()
   glDeleteTextures(1, &mFrontColorBlenderTexId);
 }
 
-void RendererVivid::BuildShaders()
+void RendererVivid::buildShaders()
 {
   printf("\nloading shaders...\n");
 
@@ -548,7 +550,7 @@ void RendererVivid::BuildShaders()
   mShaderWeightedSumFinal->linkProgram();
 }
   
-void RendererVivid::MakeFullScreenQuad()
+void RendererVivid::makeFullScreenQuad()
 {
   g_quadDisplayList = glGenLists(1);
   glNewList(g_quadDisplayList, GL_COMPILE);
@@ -570,7 +572,7 @@ void RendererVivid::MakeFullScreenQuad()
   glEndList();
 }
 
-void RendererVivid::RenderDualPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock)
+void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock)
 {
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
@@ -710,7 +712,7 @@ void RendererVivid::RenderDualPeeling(const RenderQueue* render_queue, Camera* c
 }
 
 //--------------------------------------------------------------------------
-void RendererVivid::RenderFrontToBackPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock)
+void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock)
 {
   // ---------------------------------------------------------------------
   // 1. Initialize Min Depth Buffer
