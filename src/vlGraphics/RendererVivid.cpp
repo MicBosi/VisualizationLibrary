@@ -29,6 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
+// This software contains source code provided by NVIDIA Corporation.
+
 #include <vlCore/GlobalSettings.hpp>
 #include <vlGraphics/RendererVivid.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
@@ -36,7 +38,7 @@
 #include <vlGraphics/RenderQueue.hpp>
 #include <vlCore/Log.hpp>
 
-#define SHADER_PATH "/depth-peeling/glsl/"
+#define SHADER_PATH "/vivid/glsl/"
 
 #if 1
 #define CHECK_GL_ERRORS  \
@@ -49,77 +51,9 @@
 #define CHECK_GL_ERRORS {}
 #endif
 
-vl::ref<vl::GLSLProgram> g_shaderDualInit = new vl::GLSLProgram();
-vl::ref<vl::GLSLProgram> g_shaderDualPeel = new vl::GLSLProgram();
-vl::ref<vl::GLSLProgram> g_shaderDualBlend = new vl::GLSLProgram();
-vl::ref<vl::GLSLProgram> g_shaderDualFinal = new vl::GLSLProgram();
-vl::ref<vl::GLSLProgram> g_shaderFrontInit = new vl::GLSLProgram();
-vl::ref<vl::GLSLProgram> g_shaderFrontPeel = new vl::GLSLProgram();
-vl::ref<vl::GLSLProgram> g_shaderFrontBlend = new vl::GLSLProgram();
-vl::ref<vl::GLSLProgram> g_shaderFrontFinal = new vl::GLSLProgram();
-vl::ref<vl::GLSLProgram> g_shaderAverageInit = new vl::GLSLProgram();
-vl::ref<vl::GLSLProgram> g_shaderAverageFinal = new vl::GLSLProgram();
-vl::ref<vl::GLSLProgram> g_shaderWeightedSumInit = new vl::GLSLProgram();
-vl::ref<vl::GLSLProgram> g_shaderWeightedSumFinal = new vl::GLSLProgram();
-
-vl::ref<vl::Uniform> g_uniformAlpha = new vl::Uniform("Alpha");
-vl::ref<vl::Uniform> g_uniformBackgroundColor = new vl::Uniform("BackgroundColor");
-
-enum {
-	DUAL_PEELING_MODE,
-	F2B_PEELING_MODE,
-	WEIGHTED_AVERAGE_MODE,
-	WEIGHTED_SUM_MODE
-};
-
-GLuint g_quadDisplayList;
-
 #define MAX_DEPTH 1.0
 
-int g_numPasses = 4;
-int g_imageWidth = 1024;
-int g_imageHeight = 768;
-
-bool g_useOQ = true;
-GLuint g_queryId;
-
-float g_opacity = 0.6f;
-char g_mode = DUAL_PEELING_MODE;
-bool g_showOsd = true;
-bool g_bShowUI = true;
-unsigned g_numGeoPasses = 0;
-
-int g_rotating = 0;
-int g_panning = 0;
-int g_scaling = 0;
-int g_oldX, g_oldY;
-int g_newX, g_newY;
-float g_bbScale = 1.0;
-vl::fvec3 g_bbTrans(0.0, 0.0, 0.0);
-vl::fvec2 g_rot(0.0, 45.0);
-vl::fvec3 g_pos(0.0, 0.0, 2.0);
-
-float g_white[3] = {1.0,1.0,1.0};
-float g_black[3] = {0.0};
-float *g_backgroundColor = g_white;
-
-GLuint g_dualBackBlenderFboId;
-GLuint g_dualPeelingSingleFboId;
-GLuint g_dualDepthTexId[2];
-GLuint g_dualFrontBlenderTexId[2];
-GLuint g_dualBackTempTexId[2];
-GLuint g_dualBackBlenderTexId;
-
-GLuint g_frontFboId[2];
-GLuint g_frontDepthTexId[2];
-GLuint g_frontColorTexId[2];
-GLuint g_frontColorBlenderTexId;
-GLuint g_frontColorBlenderFboId;
-
-GLuint g_accumulationTexId[2];
-GLuint g_accumulationFboId;
-
-GLenum g_drawBuffers[] = {
+const GLenum gDrawBuffers[] = {
   GL_COLOR_ATTACHMENT0,
   GL_COLOR_ATTACHMENT1,
   GL_COLOR_ATTACHMENT2,
@@ -129,6 +63,15 @@ GLenum g_drawBuffers[] = {
   GL_COLOR_ATTACHMENT6
 };
 
+vl::ref<vl::Uniform> g_uniformAlpha = new vl::Uniform("Alpha");
+vl::ref<vl::Uniform> g_uniformBackgroundColor = new vl::Uniform("BackgroundColor");
+
+// MIC FIXME: remove these
+float g_opacity = 0.6f;
+float g_white[3] = {1.0,1.0,1.0};
+float g_black[3] = {0.0};
+float *g_backgroundColor = g_white;
+
 using namespace vl;
 
 //------------------------------------------------------------------------------
@@ -136,31 +79,43 @@ using namespace vl;
 //------------------------------------------------------------------------------
 RendererVivid::RendererVivid()
 {
-  mInitSize = ivec2(0, 0);
+  mRenderingMode = DualDepthPeeling;
+
+  mShaderDualInit = new vl::GLSLProgram();
+  mShaderDualPeel = new vl::GLSLProgram();
+  mShaderDualBlend = new vl::GLSLProgram();
+  mShaderDualFinal = new vl::GLSLProgram();
+  mShaderFrontInit = new vl::GLSLProgram();
+  mShaderFrontPeel = new vl::GLSLProgram();
+  mShaderFrontBlend = new vl::GLSLProgram();
+  mShaderFrontFinal = new vl::GLSLProgram();
+  mShaderAverageInit = new vl::GLSLProgram();
+  mShaderAverageFinal = new vl::GLSLProgram();
+  mShaderWeightedSumInit = new vl::GLSLProgram();
+  mShaderWeightedSumFinal = new vl::GLSLProgram();
+
+  mNumPasses = 4;
+  mUseOQ = true;
+  mQueryID = 0;
+
+  mImageSize = ivec2(0, 0);
 }
 //------------------------------------------------------------------------------
 void RendererVivid::lazyInitialize()
 {
-  OpenGLContext* opengl_context = framebuffer()->openglContext();
   ivec2 fb_size = ivec2(framebuffer()->width(), framebuffer()->height());
-  if (mInitSize == ivec2(0, 0)) {
-    // MIC FIXME: remove and use mInitSize
-    mInitSize = fb_size;
-    g_imageWidth = fb_size.x();
-	  g_imageHeight = fb_size.y();
+  if (mImageSize == ivec2(0, 0)) 
+  {
+    mImageSize = fb_size;
     InitDualPeelingRenderTargets();
     InitFrontPeelingRenderTargets();
-    vl::glBindFramebuffer(GL_FRAMEBUFFER, 0); // MIC FIXME: remove
-
     BuildShaders();
     MakeFullScreenQuad();
-    vl::glGenQueries(1, &g_queryId);
-  } else
-  if (mInitSize != fb_size) {
-    mInitSize = fb_size;
-    g_imageWidth = fb_size.x();
-	  g_imageHeight = fb_size.y();
-
+    vl::glGenQueries(1, &mQueryID);
+  } 
+  else if (mImageSize != fb_size) 
+  {
+    mImageSize = fb_size;
 	  DeleteDualPeelingRenderTargets();
 	  InitDualPeelingRenderTargets();
 
@@ -346,9 +301,18 @@ const RenderQueue* RendererVivid::render(const RenderQueue* render_queue, Camera
   glDisable(GL_NORMALIZE);
   glDepthMask(GL_TRUE);
 
-  // renderQueue(render_queue, camera, frame_clock, false);
-  this->RenderDualPeeling(render_queue, camera, frame_clock);
-  // this->RenderFrontToBackPeeling(render_queue, camera, frame_clock);
+  switch (mRenderingMode)
+  {
+  case NoDepthPeeling: 
+    renderQueue(render_queue, camera, frame_clock, false);
+    break;
+  case DualDepthPeeling: 
+    RenderDualPeeling(render_queue, camera, frame_clock);
+    break;
+  case FrontToBackDepthPeeling: 
+    RenderFrontToBackPeeling(render_queue, camera, frame_clock);
+    break;
+  }
 
   glDepthMask(GL_TRUE);
   glDisable(GL_BLEND);
@@ -378,66 +342,66 @@ const RenderQueue* RendererVivid::render(const RenderQueue* render_queue, Camera
 //-----------------------------------------------------------------------------
 void RendererVivid::InitDualPeelingRenderTargets()
 {
-  glGenTextures(2, g_dualDepthTexId);
-  glGenTextures(2, g_dualFrontBlenderTexId);
-  glGenTextures(2, g_dualBackTempTexId);
-  vl::glGenFramebuffers(1, &g_dualPeelingSingleFboId);
+  glGenTextures(2, mDualDepthTexId);
+  glGenTextures(2, mDualFrontBlenderTexId);
+  glGenTextures(2, mDualBackTempTexId);
+  vl::glGenFramebuffers(1, &mDualPeelingSingleFboId);
   for (int i = 0; i < 2; i++)
   {
-	  glBindTexture(GL_TEXTURE_RECTANGLE, g_dualDepthTexId[i]);
+	  glBindTexture(GL_TEXTURE_RECTANGLE, mDualDepthTexId[i]);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RG32F, g_imageWidth, g_imageHeight, 0, GL_RGB, GL_FLOAT, 0);
+	  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RG32F, mImageSize.x(), mImageSize.y(), 0, GL_RGB, GL_FLOAT, 0);
 
-	  glBindTexture(GL_TEXTURE_RECTANGLE, g_dualFrontBlenderTexId[i]);
+	  glBindTexture(GL_TEXTURE_RECTANGLE, mDualFrontBlenderTexId[i]);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, g_imageWidth, g_imageHeight, 0, GL_RGBA, GL_FLOAT, 0);
+	  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, mImageSize.x(), mImageSize.y(), 0, GL_RGBA, GL_FLOAT, 0);
 
-	  glBindTexture(GL_TEXTURE_RECTANGLE, g_dualBackTempTexId[i]);
+	  glBindTexture(GL_TEXTURE_RECTANGLE, mDualBackTempTexId[i]);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, g_imageWidth, g_imageHeight, 0, GL_RGBA, GL_FLOAT, 0);
+	  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, mImageSize.x(), mImageSize.y(), 0, GL_RGBA, GL_FLOAT, 0);
   }
 
-  glGenTextures(1, &g_dualBackBlenderTexId);
-  glBindTexture(GL_TEXTURE_RECTANGLE, g_dualBackBlenderTexId);
+  glGenTextures(1, &mDualBackBlenderTexId);
+  glBindTexture(GL_TEXTURE_RECTANGLE, mDualBackBlenderTexId);
   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGB, g_imageWidth, g_imageHeight, 0, GL_RGB, GL_FLOAT, 0);
+  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGB, mImageSize.x(), mImageSize.y(), 0, GL_RGB, GL_FLOAT, 0);
 
-  vl::glGenFramebuffers(1, &g_dualBackBlenderFboId);
-  vl::glBindFramebuffer(GL_FRAMEBUFFER, g_dualBackBlenderFboId);
-  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, g_dualBackBlenderTexId, 0);
+  vl::glGenFramebuffers(1, &mDualBackBlenderFboId);
+  vl::glBindFramebuffer(GL_FRAMEBUFFER, mDualBackBlenderFboId);
+  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, mDualBackBlenderTexId, 0);
 
-  vl::glBindFramebuffer(GL_FRAMEBUFFER, g_dualPeelingSingleFboId);
+  vl::glBindFramebuffer(GL_FRAMEBUFFER, mDualPeelingSingleFboId);
 
   int j = 0;
 	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-							    GL_TEXTURE_RECTANGLE, g_dualDepthTexId[j], 0);
+							    GL_TEXTURE_RECTANGLE, mDualDepthTexId[j], 0);
 	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1,
-							    GL_TEXTURE_RECTANGLE, g_dualFrontBlenderTexId[j], 0);
+							    GL_TEXTURE_RECTANGLE, mDualFrontBlenderTexId[j], 0);
 	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2,
-							    GL_TEXTURE_RECTANGLE, g_dualBackTempTexId[j], 0);
+							    GL_TEXTURE_RECTANGLE, mDualBackTempTexId[j], 0);
 
   j = 1;
 	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3,
-							    GL_TEXTURE_RECTANGLE, g_dualDepthTexId[j], 0);
+							    GL_TEXTURE_RECTANGLE, mDualDepthTexId[j], 0);
 	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4,
-							    GL_TEXTURE_RECTANGLE, g_dualFrontBlenderTexId[j], 0);
+							    GL_TEXTURE_RECTANGLE, mDualFrontBlenderTexId[j], 0);
 	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5,
-							    GL_TEXTURE_RECTANGLE, g_dualBackTempTexId[j], 0);
+							    GL_TEXTURE_RECTANGLE, mDualBackTempTexId[j], 0);
 
   vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6,
-						    GL_TEXTURE_RECTANGLE, g_dualBackBlenderTexId, 0);
+						    GL_TEXTURE_RECTANGLE, mDualBackBlenderTexId, 0);
 
   // Cleanup
   vl::glActiveTexture(GL_TEXTURE0);
@@ -449,61 +413,61 @@ void RendererVivid::InitDualPeelingRenderTargets()
 //--------------------------------------------------------------------------
 void RendererVivid::DeleteDualPeelingRenderTargets()
 {
-  vl::glDeleteFramebuffers(1, &g_dualBackBlenderFboId);
-  vl::glDeleteFramebuffers(1, &g_dualPeelingSingleFboId);
-  glDeleteTextures(2, g_dualDepthTexId);
-  glDeleteTextures(2, g_dualFrontBlenderTexId);
-  glDeleteTextures(2, g_dualBackTempTexId);
-  glDeleteTextures(1, &g_dualBackBlenderTexId);
+  vl::glDeleteFramebuffers(1, &mDualBackBlenderFboId);
+  vl::glDeleteFramebuffers(1, &mDualPeelingSingleFboId);
+  glDeleteTextures(2, mDualDepthTexId);
+  glDeleteTextures(2, mDualFrontBlenderTexId);
+  glDeleteTextures(2, mDualBackTempTexId);
+  glDeleteTextures(1, &mDualBackBlenderTexId);
 }
 
 //--------------------------------------------------------------------------
 void RendererVivid::InitFrontPeelingRenderTargets()
 {
-  glGenTextures(2, g_frontDepthTexId);
-  glGenTextures(2, g_frontColorTexId);
-  vl::glGenFramebuffers(2, g_frontFboId);
+  glGenTextures(2, mFrontDepthTexId);
+  glGenTextures(2, mFrontColorTexId);
+  vl::glGenFramebuffers(2, mFrontFboId);
 
   for (int i = 0; i < 2; i++)
   {
-	  glBindTexture(GL_TEXTURE_RECTANGLE, g_frontDepthTexId[i]);
+	  glBindTexture(GL_TEXTURE_RECTANGLE, mFrontDepthTexId[i]);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_DEPTH_COMPONENT32F,
-				    g_imageWidth, g_imageHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+				    mImageSize.x(), mImageSize.y(), 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
-	  glBindTexture(GL_TEXTURE_RECTANGLE, g_frontColorTexId[i]);
+	  glBindTexture(GL_TEXTURE_RECTANGLE, mFrontColorTexId[i]);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, g_imageWidth, g_imageHeight,
+	  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, mImageSize.x(), mImageSize.y(),
 				    0, GL_RGBA, GL_FLOAT, 0);
 
-	  vl::glBindFramebuffer(GL_FRAMEBUFFER, g_frontFboId[i]);
+	  vl::glBindFramebuffer(GL_FRAMEBUFFER, mFrontFboId[i]);
 	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-							    GL_TEXTURE_RECTANGLE, g_frontDepthTexId[i], 0);
+							    GL_TEXTURE_RECTANGLE, mFrontDepthTexId[i], 0);
 	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-							    GL_TEXTURE_RECTANGLE, g_frontColorTexId[i], 0);
+							    GL_TEXTURE_RECTANGLE, mFrontColorTexId[i], 0);
   }
 
-  glGenTextures(1, &g_frontColorBlenderTexId);
-  glBindTexture(GL_TEXTURE_RECTANGLE, g_frontColorBlenderTexId);
+  glGenTextures(1, &mFrontColorBlenderTexId);
+  glBindTexture(GL_TEXTURE_RECTANGLE, mFrontColorBlenderTexId);
   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, g_imageWidth, g_imageHeight,
+  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, mImageSize.x(), mImageSize.y(),
 			    0, GL_RGBA, GL_FLOAT, 0);
 
-  vl::glGenFramebuffers(1, &g_frontColorBlenderFboId);
-  vl::glBindFramebuffer(GL_FRAMEBUFFER, g_frontColorBlenderFboId);
+  vl::glGenFramebuffers(1, &mFrontColorBlenderFboId);
+  vl::glBindFramebuffer(GL_FRAMEBUFFER, mFrontColorBlenderFboId);
   vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-						    GL_TEXTURE_RECTANGLE, g_frontDepthTexId[0], 0);
+						    GL_TEXTURE_RECTANGLE, mFrontDepthTexId[0], 0);
   vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-						    GL_TEXTURE_RECTANGLE, g_frontColorBlenderTexId, 0);
+						    GL_TEXTURE_RECTANGLE, mFrontColorBlenderTexId, 0);
 
   // Cleanup
   glBindTexture(GL_TEXTURE_RECTANGLE, 0);
@@ -514,74 +478,74 @@ void RendererVivid::InitFrontPeelingRenderTargets()
 //--------------------------------------------------------------------------
 void RendererVivid::DeleteFrontPeelingRenderTargets()
 {
-  vl::glDeleteFramebuffers(2, g_frontFboId);
-  vl::glDeleteFramebuffers(1, &g_frontColorBlenderFboId);
-  glDeleteTextures(2, g_frontDepthTexId);
-  glDeleteTextures(2, g_frontColorTexId);
-  glDeleteTextures(1, &g_frontColorBlenderTexId);
+  vl::glDeleteFramebuffers(2, mFrontFboId);
+  vl::glDeleteFramebuffers(1, &mFrontColorBlenderFboId);
+  glDeleteTextures(2, mFrontDepthTexId);
+  glDeleteTextures(2, mFrontColorTexId);
+  glDeleteTextures(1, &mFrontColorBlenderTexId);
 }
 
 void RendererVivid::BuildShaders()
 {
   printf("\nloading shaders...\n");
 
-  g_shaderDualInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_init_vertex.glsl" ) );
-  g_shaderDualInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_init_fragment.glsl" ) );
-  g_shaderDualInit->linkProgram();
+  mShaderDualInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_init_vertex.glsl" ) );
+  mShaderDualInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_init_fragment.glsl" ) );
+  mShaderDualInit->linkProgram();
 
-  g_shaderDualPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
-  g_shaderDualPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_peel_vertex.glsl" ) );
-  g_shaderDualPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
-  g_shaderDualPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_peel_fragment.glsl" ) );
-  g_shaderDualPeel->linkProgram();
+  mShaderDualPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
+  mShaderDualPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_peel_vertex.glsl" ) );
+  mShaderDualPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
+  mShaderDualPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_peel_fragment.glsl" ) );
+  mShaderDualPeel->linkProgram();
 
-  g_shaderDualBlend->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_blend_vertex.glsl" ) );
-  g_shaderDualBlend->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_blend_fragment.glsl" ) );
-  g_shaderDualBlend->linkProgram();
+  mShaderDualBlend->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_blend_vertex.glsl" ) );
+  mShaderDualBlend->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_blend_fragment.glsl" ) );
+  mShaderDualBlend->linkProgram();
 
-  g_shaderDualFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_final_vertex.glsl" ) );
-  g_shaderDualFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_final_fragment.glsl" ) );
-  g_shaderDualFinal->linkProgram();
+  mShaderDualFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_final_vertex.glsl" ) );
+  mShaderDualFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_final_fragment.glsl" ) );
+  mShaderDualFinal->linkProgram();
 
-  g_shaderFrontInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
-  g_shaderFrontInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_init_vertex.glsl" ) );
-  g_shaderFrontInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
-  g_shaderFrontInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_init_fragment.glsl" ) );
-  g_shaderFrontInit->linkProgram();
+  mShaderFrontInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
+  mShaderFrontInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_init_vertex.glsl" ) );
+  mShaderFrontInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
+  mShaderFrontInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_init_fragment.glsl" ) );
+  mShaderFrontInit->linkProgram();
 
-  g_shaderFrontPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
-  g_shaderFrontPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_peel_vertex.glsl" ) );
-  g_shaderFrontPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
-  g_shaderFrontPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_peel_fragment.glsl" ) );
-  g_shaderFrontPeel->linkProgram();
+  mShaderFrontPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
+  mShaderFrontPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_peel_vertex.glsl" ) );
+  mShaderFrontPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
+  mShaderFrontPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_peel_fragment.glsl" ) );
+  mShaderFrontPeel->linkProgram();
 
-  g_shaderFrontBlend->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_blend_vertex.glsl" ) );
-  g_shaderFrontBlend->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_blend_fragment.glsl" ) );
-  g_shaderFrontBlend->linkProgram();
+  mShaderFrontBlend->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_blend_vertex.glsl" ) );
+  mShaderFrontBlend->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_blend_fragment.glsl" ) );
+  mShaderFrontBlend->linkProgram();
 
-  g_shaderFrontFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_final_vertex.glsl" ) );
-  g_shaderFrontFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_final_fragment.glsl" ) );
-  g_shaderFrontFinal->linkProgram();
+  mShaderFrontFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_final_vertex.glsl" ) );
+  mShaderFrontFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_final_fragment.glsl" ) );
+  mShaderFrontFinal->linkProgram();
 
-  g_shaderAverageInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
-  g_shaderAverageInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "wavg_init_vertex.glsl" ) );
-  g_shaderAverageInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
-  g_shaderAverageInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "wavg_init_fragment.glsl" ) );
-  g_shaderAverageInit->linkProgram();
+  mShaderAverageInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
+  mShaderAverageInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "wavg_init_vertex.glsl" ) );
+  mShaderAverageInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
+  mShaderAverageInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "wavg_init_fragment.glsl" ) );
+  mShaderAverageInit->linkProgram();
 
-  g_shaderAverageFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "wavg_final_vertex.glsl" ) );
-  g_shaderAverageFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "wavg_final_fragment.glsl" ) );
-  g_shaderAverageFinal->linkProgram();
+  mShaderAverageFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "wavg_final_vertex.glsl" ) );
+  mShaderAverageFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "wavg_final_fragment.glsl" ) );
+  mShaderAverageFinal->linkProgram();
 
-  g_shaderWeightedSumInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
-  g_shaderWeightedSumInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "wsum_init_vertex.glsl" ) );
-  g_shaderWeightedSumInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
-  g_shaderWeightedSumInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "wsum_init_fragment.glsl" ) );
-  g_shaderWeightedSumInit->linkProgram();
+  mShaderWeightedSumInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
+  mShaderWeightedSumInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "wsum_init_vertex.glsl" ) );
+  mShaderWeightedSumInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
+  mShaderWeightedSumInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "wsum_init_fragment.glsl" ) );
+  mShaderWeightedSumInit->linkProgram();
 
-  g_shaderWeightedSumFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "wsum_final_vertex.glsl" ) );
-  g_shaderWeightedSumFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "wsum_final_fragment.glsl" ) );
-  g_shaderWeightedSumFinal->linkProgram();
+  mShaderWeightedSumFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "wsum_final_vertex.glsl" ) );
+  mShaderWeightedSumFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "wsum_final_fragment.glsl" ) );
+  mShaderWeightedSumFinal->linkProgram();
 }
   
 void RendererVivid::MakeFullScreenQuad()
@@ -615,23 +579,23 @@ void RendererVivid::RenderDualPeeling(const RenderQueue* render_queue, Camera* c
   // 1. Initialize Min-Max Depth Buffer
   // ---------------------------------------------------------------------
 
-  vl::glBindFramebuffer(GL_FRAMEBUFFER, g_dualPeelingSingleFboId);
+  vl::glBindFramebuffer(GL_FRAMEBUFFER, mDualPeelingSingleFboId);
 
   // Render targets 1 and 2 store the front and back colors
   // Clear to 0.0 and use MAX blending to filter written color
   // At most one front color and one back color can be written every pass
-  vl::glDrawBuffers(2, &g_drawBuffers[1]);
+  vl::glDrawBuffers(2, &gDrawBuffers[1]);
   glClearColor(0, 0, 0, 0);
   glClear(GL_COLOR_BUFFER_BIT);
 
   // Render target 0 stores (-minDepth, maxDepth, alphaMultiplier)
-  glDrawBuffer(g_drawBuffers[0]);
+  glDrawBuffer(gDrawBuffers[0]);
   glClearColor(-MAX_DEPTH, -MAX_DEPTH, 0, 0);
   glClear(GL_COLOR_BUFFER_BIT);
   vl::glBlendEquation(GL_MAX);
 
-  g_shaderDualInit->useProgram();
-  g_shaderDualInit->applyUniformSet();
+  mShaderDualInit->useProgram();
+  mShaderDualInit->applyUniformSet();
   
   renderQueue(render_queue, camera, frame_clock); // DrawModel();
 
@@ -645,42 +609,42 @@ void RendererVivid::RenderDualPeeling(const RenderQueue* render_queue, Camera* c
 
   // Since we cannot blend the back colors in the geometry passes,
   // we use another render target to do the alpha blending
-  //vl::glBindFramebuffer(GL_FRAMEBUFFER, g_dualBackBlenderFboId);
-  glDrawBuffer(g_drawBuffers[6]);
+  //vl::glBindFramebuffer(GL_FRAMEBUFFER, mDualBackBlenderFboId);
+  glDrawBuffer(gDrawBuffers[6]);
   glClearColor(g_backgroundColor[0], g_backgroundColor[1], g_backgroundColor[2], 0);
   glClear(GL_COLOR_BUFFER_BIT);
 
   int currId = 0;
 
-  for (int pass = 1; g_useOQ || pass < g_numPasses; pass++) {
+  for (int pass = 1; mUseOQ || pass < mNumPasses; pass++) {
 	  currId = pass % 2;
 	  int prevId = 1 - currId;
 	  int bufId = currId * 3;
 		
-	  //vl::glBindFramebuffer(GL_FRAMEBUFFER, g_dualPeelingFboId[currId]);
+	  //vl::glBindFramebuffer(GL_FRAMEBUFFER, mDualPeelingFboId[currId]);
       
-	  vl::glDrawBuffers(2, &g_drawBuffers[bufId+1]);
+	  vl::glDrawBuffers(2, &gDrawBuffers[bufId+1]);
 	  glClearColor(0, 0, 0, 0);
 	  glClear(GL_COLOR_BUFFER_BIT);
 
-	  glDrawBuffer(g_drawBuffers[bufId+0]);
+	  glDrawBuffer(gDrawBuffers[bufId+0]);
 	  glClearColor(-MAX_DEPTH, -MAX_DEPTH, 0, 0);
 	  glClear(GL_COLOR_BUFFER_BIT);
 
 	  // Render target 0: RG32F MAX blending
 	  // Render target 1: RGBA MAX blending
 	  // Render target 2: RGBA MAX blending
-	  vl::glDrawBuffers(3, &g_drawBuffers[bufId+0]);
+	  vl::glDrawBuffers(3, &gDrawBuffers[bufId+0]);
 	  vl::glBlendEquation(GL_MAX);
 
-	  g_shaderDualPeel->useProgram();
-	  bindTexture(g_shaderDualPeel.get(), GL_TEXTURE_RECTANGLE, "DepthBlenderTex", g_dualDepthTexId[prevId], 0);
-	  bindTexture(g_shaderDualPeel.get(), GL_TEXTURE_RECTANGLE, "FrontBlenderTex", g_dualFrontBlenderTexId[prevId], 1);
+	  mShaderDualPeel->useProgram();
+	  bindTexture(mShaderDualPeel.get(), GL_TEXTURE_RECTANGLE, "DepthBlenderTex", mDualDepthTexId[prevId], 0);
+	  bindTexture(mShaderDualPeel.get(), GL_TEXTURE_RECTANGLE, "FrontBlenderTex", mDualFrontBlenderTexId[prevId], 1);
 	    
-    // g_shaderDualPeel.setUniform("Alpha", (float*)&g_opacity, 1);
-    g_shaderDualPeel->setUniform(g_uniformAlpha.get());
+    // mShaderDualPeel.setUniform("Alpha", (float*)&g_opacity, 1);
+    mShaderDualPeel->setUniform(g_uniformAlpha.get());
     g_uniformAlpha->setUniform(1, (float*)&g_opacity);
-    g_shaderDualPeel->applyUniformSet();
+    mShaderDualPeel->applyUniformSet();
     
     renderQueue(render_queue, camera, frame_clock); // DrawModel();
 	  
@@ -689,27 +653,27 @@ void RendererVivid::RenderDualPeeling(const RenderQueue* render_queue, Camera* c
 	  CHECK_GL_ERRORS;
 
 	  // Full screen pass to alpha-blend the back color
-	  glDrawBuffer(g_drawBuffers[6]);
+	  glDrawBuffer(gDrawBuffers[6]);
 
 	  vl::glBlendEquation(GL_FUNC_ADD);
 	  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	  if (g_useOQ) {
-      vl::glBeginQuery(GL_SAMPLES_PASSED_ARB, g_queryId);
+	  if (mUseOQ) {
+      vl::glBeginQuery(GL_SAMPLES_PASSED_ARB, mQueryID);
 	  }
 
-	  g_shaderDualBlend->useProgram();
-	  bindTexture(g_shaderDualBlend.get(), GL_TEXTURE_RECTANGLE, "TempTex", g_dualBackTempTexId[currId], 0);
-    g_shaderDualBlend->applyUniformSet();
+	  mShaderDualBlend->useProgram();
+	  bindTexture(mShaderDualBlend.get(), GL_TEXTURE_RECTANGLE, "TempTex", mDualBackTempTexId[currId], 0);
+    mShaderDualBlend->applyUniformSet();
 	  glCallList(g_quadDisplayList);
 	  vl::glUseProgram(0);
 
 	  CHECK_GL_ERRORS;
 
-	  if (g_useOQ) {
+	  if (mUseOQ) {
 		  vl::glEndQuery(GL_SAMPLES_PASSED_ARB);
 		  GLuint sample_count;
-		  vl::glGetQueryObjectuiv(g_queryId, GL_QUERY_RESULT_ARB, &sample_count);
+		  vl::glGetQueryObjectuiv(mQueryID, GL_QUERY_RESULT_ARB, &sample_count);
 		  if (sample_count == 0) {
 			  break;
 		  }
@@ -725,11 +689,11 @@ void RendererVivid::RenderDualPeeling(const RenderQueue* render_queue, Camera* c
   vl::glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glDrawBuffer(GL_BACK);
 
-  g_shaderDualFinal->useProgram();
-  // bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "DepthBlenderTex", g_dualDepthTexId[currId], 0);
-  bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "FrontBlenderTex", g_dualFrontBlenderTexId[currId], 1);
-  bindTexture(g_shaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "BackBlenderTex", g_dualBackBlenderTexId, 2);
-  g_shaderDualFinal->applyUniformSet();
+  mShaderDualFinal->useProgram();
+  // bindTexture(mShaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "DepthBlenderTex", mDualDepthTexId[currId], 0);
+  bindTexture(mShaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "FrontBlenderTex", mDualFrontBlenderTexId[currId], 1);
+  bindTexture(mShaderDualFinal.get(), GL_TEXTURE_RECTANGLE, "BackBlenderTex", mDualBackBlenderTexId, 2);
+  mShaderDualFinal->applyUniformSet();
   glCallList(g_quadDisplayList);
   vl::glUseProgram(0);
 
@@ -752,19 +716,19 @@ void RendererVivid::RenderFrontToBackPeeling(const RenderQueue* render_queue, Ca
   // 1. Initialize Min Depth Buffer
   // ---------------------------------------------------------------------
 
-  vl::glBindFramebuffer(GL_FRAMEBUFFER, g_frontColorBlenderFboId);
-  glDrawBuffer(g_drawBuffers[0]);
+  vl::glBindFramebuffer(GL_FRAMEBUFFER, mFrontColorBlenderFboId);
+  glDrawBuffer(gDrawBuffers[0]);
 
   glClearColor(0, 0, 0, 1);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glEnable(GL_DEPTH_TEST);
 
-  g_shaderFrontInit->useProgram();
-  // g_shaderFrontInit.setUniform("Alpha", (float*)&g_opacity, 1);
-  g_shaderFrontInit->setUniform(g_uniformAlpha.get());
+  mShaderFrontInit->useProgram();
+  // mShaderFrontInit.setUniform("Alpha", (float*)&g_opacity, 1);
+  mShaderFrontInit->setUniform(g_uniformAlpha.get());
   g_uniformAlpha->setUniform(1, (float*)&g_opacity);    
-  g_shaderFrontInit->applyUniformSet();
+  mShaderFrontInit->applyUniformSet();
   
   renderQueue(render_queue, camera, frame_clock); // DrawModel();
 
@@ -776,13 +740,13 @@ void RendererVivid::RenderFrontToBackPeeling(const RenderQueue* render_queue, Ca
   // 2. Depth Peeling + Blending
   // ---------------------------------------------------------------------
 
-  int numLayers = (g_numPasses - 1) * 2;
-  for (int layer = 1; g_useOQ || layer < numLayers; layer++) {
+  int numLayers = (mNumPasses - 1) * 2;
+  for (int layer = 1; mUseOQ || layer < numLayers; layer++) {
 	  int currId = layer % 2;
 	  int prevId = 1 - currId;
 
-	  vl::glBindFramebuffer(GL_FRAMEBUFFER, g_frontFboId[currId]);
-	  glDrawBuffer(g_drawBuffers[0]);
+	  vl::glBindFramebuffer(GL_FRAMEBUFFER, mFrontFboId[currId]);
+	  glDrawBuffer(gDrawBuffers[0]);
 
 	  glClearColor(0, 0, 0, 0);
 	  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -790,29 +754,29 @@ void RendererVivid::RenderFrontToBackPeeling(const RenderQueue* render_queue, Ca
 	  glDisable(GL_BLEND);
 	  glEnable(GL_DEPTH_TEST);
 
-	  if (g_useOQ) {
-		  vl::glBeginQuery(GL_SAMPLES_PASSED_ARB, g_queryId);
+	  if (mUseOQ) {
+		  vl::glBeginQuery(GL_SAMPLES_PASSED_ARB, mQueryID);
 	  }
 
-	  g_shaderFrontPeel->useProgram();
-	  bindTexture(g_shaderFrontPeel.get(), GL_TEXTURE_RECTANGLE, "DepthTex", g_frontDepthTexId[prevId], 0);
-    // g_shaderFrontPeel.setUniform("Alpha", (float*)&g_opacity, 1);
-    g_shaderFrontPeel->setUniform(g_uniformAlpha.get());
+	  mShaderFrontPeel->useProgram();
+	  bindTexture(mShaderFrontPeel.get(), GL_TEXTURE_RECTANGLE, "DepthTex", mFrontDepthTexId[prevId], 0);
+    // mShaderFrontPeel.setUniform("Alpha", (float*)&g_opacity, 1);
+    mShaderFrontPeel->setUniform(g_uniformAlpha.get());
     g_uniformAlpha->setUniform(1, (float*)&g_opacity);    
-	  g_shaderFrontPeel->applyUniformSet();
+	  mShaderFrontPeel->applyUniformSet();
     
     renderQueue(render_queue, camera, frame_clock); // DrawModel();
 
 	  vl::glUseProgram(0);
 
-	  if (g_useOQ) {
+	  if (mUseOQ) {
 		  vl::glEndQuery(GL_SAMPLES_PASSED_ARB);
 	  }
 
 	  CHECK_GL_ERRORS;
 
-	  vl::glBindFramebuffer(GL_FRAMEBUFFER, g_frontColorBlenderFboId);
-	  glDrawBuffer(g_drawBuffers[0]);
+	  vl::glBindFramebuffer(GL_FRAMEBUFFER, mFrontColorBlenderFboId);
+	  glDrawBuffer(gDrawBuffers[0]);
 
 	  glDisable(GL_DEPTH_TEST);
 	  glEnable(GL_BLEND);
@@ -820,9 +784,9 @@ void RendererVivid::RenderFrontToBackPeeling(const RenderQueue* render_queue, Ca
 	  vl::glBlendEquation(GL_FUNC_ADD);
 	  vl::glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE, GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
 		
-	  g_shaderFrontBlend->useProgram();
-	  bindTexture(g_shaderFrontBlend.get(), GL_TEXTURE_RECTANGLE, "TempTex", g_frontColorTexId[currId], 0);
-    g_shaderFrontBlend->applyUniformSet();
+	  mShaderFrontBlend->useProgram();
+	  bindTexture(mShaderFrontBlend.get(), GL_TEXTURE_RECTANGLE, "TempTex", mFrontColorTexId[currId], 0);
+    mShaderFrontBlend->applyUniformSet();
 	  glCallList(g_quadDisplayList);
 	  vl::glUseProgram(0);
 
@@ -830,9 +794,9 @@ void RendererVivid::RenderFrontToBackPeeling(const RenderQueue* render_queue, Ca
 
 	  CHECK_GL_ERRORS;
 
-	  if (g_useOQ) {
+	  if (mUseOQ) {
 		  GLuint sample_count;
-		  vl::glGetQueryObjectuiv(g_queryId, GL_QUERY_RESULT_ARB, &sample_count);
+		  vl::glGetQueryObjectuiv(mQueryID, GL_QUERY_RESULT_ARB, &sample_count);
 		  if (sample_count == 0) {
 			  break;
 		  }
@@ -847,14 +811,14 @@ void RendererVivid::RenderFrontToBackPeeling(const RenderQueue* render_queue, Ca
   glDrawBuffer(GL_BACK);
   glDisable(GL_DEPTH_TEST);
 
-  g_shaderFrontFinal->useProgram();
+  mShaderFrontFinal->useProgram();
 
-  // g_shaderFrontFinal.setUniform("BackgroundColor", g_backgroundColor, 3);
-  g_shaderFrontFinal->setUniform(g_uniformBackgroundColor.get());
+  // mShaderFrontFinal.setUniform("BackgroundColor", g_backgroundColor, 3);
+  mShaderFrontFinal->setUniform(g_uniformBackgroundColor.get());
   g_uniformBackgroundColor->setUniform3f(1, g_backgroundColor);
 
-  bindTexture(g_shaderFrontFinal.get(), GL_TEXTURE_RECTANGLE, "ColorTex", g_frontColorBlenderTexId, 0);
-  g_shaderFrontFinal->applyUniformSet();
+  bindTexture(mShaderFrontFinal.get(), GL_TEXTURE_RECTANGLE, "ColorTex", mFrontColorBlenderTexId, 0);
+  mShaderFrontFinal->applyUniformSet();
   glCallList(g_quadDisplayList);
   vl::glUseProgram(0);
 

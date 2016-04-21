@@ -71,11 +71,11 @@ GLuint g_vboId;
 GLuint g_nboId;
 GLuint g_eboId;
 
-bool g_useOQ = true;
-GLuint g_queryId;
+bool mUseOQ = true;
+GLuint mQueryID;
 
-#define MODEL_FILENAME "/depth-peeling/bunny.ply"
-#define SHADER_PATH "/depth-peeling/glsl/"
+#define MODEL_FILENAME "/vivid/bunny.ply"
+#define SHADER_PATH "/vivid/glsl/"
 
 // static nv::SDKPath sdkPath;
 
@@ -558,7 +558,7 @@ public:
     glDisable(GL_LIGHTING);
     glDisable(GL_NORMALIZE);
 
-    vl::glGenQueries(1, &g_queryId);
+    vl::glGenQueries(1, &mQueryID);
   }
 
   //--------------------------------------------------------------------------
@@ -628,7 +628,7 @@ public:
 
     int currId = 0;
 
-    for (int pass = 1; g_useOQ || pass < g_numPasses; pass++) {
+    for (int pass = 1; mUseOQ || pass < g_numPasses; pass++) {
 	    currId = pass % 2;
 	    int prevId = 1 - currId;
 	    int bufId = currId * 3;
@@ -668,8 +668,8 @@ public:
 	    vl::glBlendEquation(GL_FUNC_ADD);
 	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	    if (g_useOQ) {
-        vl::glBeginQuery(GL_SAMPLES_PASSED_ARB, g_queryId);
+	    if (mUseOQ) {
+        vl::glBeginQuery(GL_SAMPLES_PASSED_ARB, mQueryID);
 	    }
 
 	    g_shaderDualBlend->useProgram();
@@ -680,10 +680,10 @@ public:
 
 	    CHECK_GL_ERRORS;
 
-	    if (g_useOQ) {
+	    if (mUseOQ) {
 		    vl::glEndQuery(GL_SAMPLES_PASSED_ARB);
 		    GLuint sample_count;
-		    vl::glGetQueryObjectuiv(g_queryId, GL_QUERY_RESULT_ARB, &sample_count);
+		    vl::glGetQueryObjectuiv(mQueryID, GL_QUERY_RESULT_ARB, &sample_count);
 		    if (sample_count == 0) {
 			    break;
 		    }
@@ -740,7 +740,7 @@ public:
     // ---------------------------------------------------------------------
 
     int numLayers = (g_numPasses - 1) * 2;
-    for (int layer = 1; g_useOQ || layer < numLayers; layer++) {
+    for (int layer = 1; mUseOQ || layer < numLayers; layer++) {
 	    int currId = layer % 2;
 	    int prevId = 1 - currId;
 
@@ -753,8 +753,8 @@ public:
 	    glDisable(GL_BLEND);
 	    glEnable(GL_DEPTH_TEST);
 
-	    if (g_useOQ) {
-		    vl::glBeginQuery(GL_SAMPLES_PASSED_ARB, g_queryId);
+	    if (mUseOQ) {
+		    vl::glBeginQuery(GL_SAMPLES_PASSED_ARB, mQueryID);
 	    }
 
 	    g_shaderFrontPeel->useProgram();
@@ -766,7 +766,7 @@ public:
       DrawModel();
 	    vl::glUseProgram(0);
 
-	    if (g_useOQ) {
+	    if (mUseOQ) {
 		    vl::glEndQuery(GL_SAMPLES_PASSED_ARB);
 	    }
 
@@ -792,9 +792,9 @@ public:
 
 	    CHECK_GL_ERRORS;
 
-	    if (g_useOQ) {
+	    if (mUseOQ) {
 		    GLuint sample_count;
-		    vl::glGetQueryObjectuiv(g_queryId, GL_QUERY_RESULT_ARB, &sample_count);
+		    vl::glGetQueryObjectuiv(mQueryID, GL_QUERY_RESULT_ARB, &sample_count);
 		    if (sample_count == 0) {
 			    break;
 		    }
@@ -1103,7 +1103,7 @@ public:
 		    g_bShowUI = !g_bShowUI;
 		    break;
 	    case 'q':
-		    g_useOQ = !g_useOQ;
+		    mUseOQ = !mUseOQ;
 		    break;
 	    case '+':
 		    g_numPasses++;
