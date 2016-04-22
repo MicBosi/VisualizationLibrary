@@ -90,7 +90,7 @@ BaseDemo* Create_App_Primitives();
 BaseDemo* Create_App_DrawCalls();
 BaseDemo* Create_App_VLX();
 BaseDemo* Create_App_Stereo();
-BaseDemo* Create_App_DepthPeeling();
+BaseDemo* Create_App_Vivid();
 
 // win32 console for sdtout output
 #if defined(WIN32) && !defined(NDEBUG)
@@ -199,7 +199,7 @@ public:
       { "picking", Create_App_Picking(), 10,10, 512, 512, vl::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
       { "tessellation_shader", Create_App_TessellationShader(), 10,10, 512, 512, vl::skyblue, vl::vec3(300,40,0), vl::vec3(1000,0,0) },
       { "stereo", Create_App_Stereo(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,2.5,15), vl::vec3(0,0,0) },
-      { "depth_peeling", Create_App_DepthPeeling(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,2.5,15), vl::vec3(0,0,0) },
+      { "vivid", Create_App_Vivid(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,2.5,15), vl::vec3(0,0,0) },
       // { "mini_earth", Create_App_MiniEarth(), 10,10, 512, 512, vl::black, vl::vec3(0,0,4), vl::vec3(0,0,0) },
     };
 
