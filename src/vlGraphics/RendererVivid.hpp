@@ -48,7 +48,7 @@ namespace vl
 
   public:
     typedef enum {
-      NoDepthPeeling,
+      FastRender,
       DualDepthPeeling,
       FrontToBackDepthPeeling
     } ERenderingMode;

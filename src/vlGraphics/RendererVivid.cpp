@@ -750,7 +750,7 @@ const RenderQueue* RendererVivid::render(const RenderQueue* render_queue, Camera
 
   switch (mRenderingMode)
   {
-  case NoDepthPeeling: 
+  case FastRender: 
     renderQueue(render_queue, camera, frame_clock, false);
     break;
   case DualDepthPeeling: 

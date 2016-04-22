@@ -201,7 +201,7 @@ public:
 		    vivid->setRenderingMode(vl::RendererVivid::FrontToBackDepthPeeling);
 		    break;
 	    case '3':
-		    vivid->setRenderingMode(vl::RendererVivid::NoDepthPeeling);
+		    vivid->setRenderingMode(vl::RendererVivid::FastRender);
 		    break;
 	    /*case 'a':
 		    g_opacity -= 0.05;
@@ -216,7 +216,7 @@ public:
 		    break;*/
     }
 
-    const char* method[] = { "NoDepthPeeling", "DualDepthPeeling", "FrontToBackDepthPeeling" };
+    const char* method[] = { "FastRender", "DualDepthPeeling", "FrontToBackDepthPeeling" };
     printf("method:           %s\n", method[vivid->renderingMode()]);
     printf("pass counter:     %d\n", vivid->passCounter());
     printf("num passes:       %d\n", vivid->numPasses());
