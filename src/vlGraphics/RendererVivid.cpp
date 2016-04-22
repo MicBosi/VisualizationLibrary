@@ -557,7 +557,7 @@ void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* c
   mShaderDualInit->useProgram();
   mShaderDualInit->applyUniformSet();
   
-  renderQueue(render_queue, camera, frame_clock); // DrawModel();
+  renderQueue(render_queue, camera, frame_clock); 
 
   vl::glUseProgram(0);
 
@@ -606,7 +606,7 @@ void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* c
     g_uniformAlpha->setUniform(1, (float*)&g_Alpha);
     mShaderDualPeel->applyUniformSet();
     
-    renderQueue(render_queue, camera, frame_clock); // DrawModel();
+    renderQueue(render_queue, camera, frame_clock); 
 	  
     vl::glUseProgram(0);
 
@@ -690,7 +690,7 @@ void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Ca
   g_uniformAlpha->setUniform(1, (float*)&g_Alpha);    
   mShaderFrontInit->applyUniformSet();
   
-  renderQueue(render_queue, camera, frame_clock); // DrawModel();
+  renderQueue(render_queue, camera, frame_clock); 
 
   vl::glUseProgram(0);
 
@@ -725,7 +725,7 @@ void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Ca
     g_uniformAlpha->setUniform(1, (float*)&g_Alpha);    
 	  mShaderFrontPeel->applyUniformSet();
     
-    renderQueue(render_queue, camera, frame_clock); // DrawModel();
+    renderQueue(render_queue, camera, frame_clock); 
 
 	  vl::glUseProgram(0);
 
