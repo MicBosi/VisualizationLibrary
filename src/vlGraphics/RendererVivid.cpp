@@ -392,23 +392,16 @@ void RendererVivid::initDualPeelingRenderTargets()
   vl::glBindFramebuffer(GL_FRAMEBUFFER, mDualPeelingSingleFboId);
 
   int j = 0;
-	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-							    GL_TEXTURE_RECTANGLE, mDualDepthTexId[j], 0);
-	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1,
-							    GL_TEXTURE_RECTANGLE, mDualFrontBlenderTexId[j], 0);
-	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2,
-							    GL_TEXTURE_RECTANGLE, mDualBackTempTexId[j], 0);
+	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, mDualDepthTexId[j], 0);
+	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_RECTANGLE, mDualFrontBlenderTexId[j], 0);
+	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_RECTANGLE, mDualBackTempTexId[j], 0);
 
   j = 1;
-	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3,
-							    GL_TEXTURE_RECTANGLE, mDualDepthTexId[j], 0);
-	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4,
-							    GL_TEXTURE_RECTANGLE, mDualFrontBlenderTexId[j], 0);
-	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5,
-							    GL_TEXTURE_RECTANGLE, mDualBackTempTexId[j], 0);
+	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_RECTANGLE, mDualDepthTexId[j], 0);
+	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_RECTANGLE, mDualFrontBlenderTexId[j], 0);
+	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, GL_TEXTURE_RECTANGLE, mDualBackTempTexId[j], 0);
 
-  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6,
-						    GL_TEXTURE_RECTANGLE, mDualBackBlenderTexId, 0);
+  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6, GL_TEXTURE_RECTANGLE, mDualBackBlenderTexId, 0);
 
   // Cleanup
   vl::glActiveTexture(GL_TEXTURE0);
@@ -442,22 +435,18 @@ void RendererVivid::initFrontPeelingRenderTargets()
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_DEPTH_COMPONENT32F,
-				    mImageSize.x(), mImageSize.y(), 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_DEPTH_COMPONENT32F, mImageSize.x(), mImageSize.y(), 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
 	  glBindTexture(GL_TEXTURE_RECTANGLE, mFrontColorTexId[i]);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	  glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, mImageSize.x(), mImageSize.y(),
-				    0, GL_RGBA, GL_FLOAT, 0);
+	  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, mImageSize.x(), mImageSize.y(), 0, GL_RGBA, GL_FLOAT, 0);
 
 	  vl::glBindFramebuffer(GL_FRAMEBUFFER, mFrontFboId[i]);
-	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-							    GL_TEXTURE_RECTANGLE, mFrontDepthTexId[i], 0);
-	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-							    GL_TEXTURE_RECTANGLE, mFrontColorTexId[i], 0);
+	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_RECTANGLE, mFrontDepthTexId[i], 0);
+	  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, mFrontColorTexId[i], 0);
   }
 
   glGenTextures(1, &mFrontColorBlenderTexId);
@@ -466,15 +455,12 @@ void RendererVivid::initFrontPeelingRenderTargets()
   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, mImageSize.x(), mImageSize.y(),
-			    0, GL_RGBA, GL_FLOAT, 0);
+  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, mImageSize.x(), mImageSize.y(), 0, GL_RGBA, GL_FLOAT, 0);
 
   vl::glGenFramebuffers(1, &mFrontColorBlenderFboId);
   vl::glBindFramebuffer(GL_FRAMEBUFFER, mFrontColorBlenderFboId);
-  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-						    GL_TEXTURE_RECTANGLE, mFrontDepthTexId[0], 0);
-  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-						    GL_TEXTURE_RECTANGLE, mFrontColorBlenderTexId, 0);
+  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_RECTANGLE, mFrontDepthTexId[0], 0);
+  vl::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, mFrontColorBlenderTexId, 0);
 
   // Cleanup
   glBindTexture(GL_TEXTURE_RECTANGLE, 0);
