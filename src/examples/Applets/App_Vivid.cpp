@@ -96,7 +96,7 @@ public:
 
     vl::ref< vl::Transform > tr1 = new vl::Transform();
     tr1->setLocalAndWorldMatrix(vl::mat4::getTranslation(+0.025f, 0, 0));
-      
+
     vl::ref< vl::Transform > tr2 = new vl::Transform();
     tr2->setLocalAndWorldMatrix(vl::mat4::getTranslation(-0.025f, 0, 0) * vl::mat4::getRotationXYZ(90, 0, 0));
 

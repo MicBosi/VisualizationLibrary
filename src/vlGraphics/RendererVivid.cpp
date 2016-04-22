@@ -625,12 +625,12 @@ void RendererVivid::renderQueue(const RenderQueue* render_queue, Camera* camera,
     /* These two states are managed by the Depth Peeling algorithm */
     if (!depth_peeling_on) {
       shader->isEnabled(vl::EN_BLEND) ? glEnable(GL_BLEND) : glDisable(GL_BLEND); VL_CHECK_OGL()
-      // glDepthMask(shader->isEnabled(vl::EN_BLEND) ? GL_FALSE : GL_TRUE);
+      glDepthMask(shader->isEnabled(vl::EN_BLEND) ? GL_FALSE : GL_TRUE);
       shader->isEnabled(vl::EN_BLEND) ? glEnable(GL_BLEND) : glDisable(GL_BLEND); VL_CHECK_OGL()
       shader->isEnabled(vl::EN_DEPTH_TEST) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST); VL_CHECK_OGL()
       shader->isEnabled(vl::EN_CULL_FACE) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE); VL_CHECK_OGL()
+      shader->isEnabled(vl::EN_LIGHTING) ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING); VL_CHECK_OGL()
     }
-    shader->isEnabled(vl::EN_LIGHTING) ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING); VL_CHECK_OGL()
 
     // --------------- Actor pre-render callback ---------------
 
