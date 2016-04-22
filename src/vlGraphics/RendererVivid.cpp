@@ -77,15 +77,6 @@ RendererVivid::RendererVivid()
   mUseQueryObject = true;
   mQueryID = 0;
 
-  mShaderDualInit = new vl::GLSLProgram();
-  mShaderDualPeel = new vl::GLSLProgram();
-  mShaderDualBlend = new vl::GLSLProgram();
-  mShaderDualFinal = new vl::GLSLProgram();
-  mShaderFrontInit = new vl::GLSLProgram();
-  mShaderFrontPeel = new vl::GLSLProgram();
-  mShaderFrontBlend = new vl::GLSLProgram();
-  mShaderFrontFinal = new vl::GLSLProgram();
-
   mImageSize = ivec2(0, 0);
   mPassCounter = 0;
 
@@ -112,7 +103,7 @@ void RendererVivid::lazyInitialize()
     mImageSize = fb_size;
     initDualPeelingRenderTargets();
     initFrontPeelingRenderTargets();
-    buildShaders();
+    initShaders();
     vl::glGenQueries(1, &mQueryID);
   } 
   else if (mImageSize != fb_size) 
@@ -125,226 +116,58 @@ void RendererVivid::lazyInitialize()
 	  initFrontPeelingRenderTargets();
   }
 }
-//------------------------------------------------------------------------------
-namespace
+void RendererVivid::initShaders()
 {
-  struct GLSLProgState
-  {
-  public:
-    GLSLProgState(): mCamera(NULL), mTransform(NULL), mGLSLProgUniformSet(NULL), mShaderUniformSet(NULL), mActorUniformSet(NULL) {}
+  printf("\nLoading shaders...\n");
 
-    bool operator<(const GLSLProgState& other) const
-    {
-      if ( mCamera != other.mCamera )
-        return mCamera < other.mCamera;
-      else
-      if ( mTransform != other.mTransform )
-        return mTransform < other.mTransform;
-      else
-      if ( mGLSLProgUniformSet != other.mGLSLProgUniformSet )
-        return mGLSLProgUniformSet < other.mGLSLProgUniformSet;
-      else
-      if ( mShaderUniformSet != other.mShaderUniformSet ) 
-        return mShaderUniformSet < other.mShaderUniformSet;
-      else
-        return mActorUniformSet < other.mActorUniformSet;
-    }
+  mShaderDualInit = new vl::GLSLProgram();
+  mShaderDualPeel = new vl::GLSLProgram();
+  mShaderDualBlend = new vl::GLSLProgram();
+  mShaderDualFinal = new vl::GLSLProgram();
+  mShaderFrontInit = new vl::GLSLProgram();
+  mShaderFrontPeel = new vl::GLSLProgram();
+  mShaderFrontBlend = new vl::GLSLProgram();
+  mShaderFrontFinal = new vl::GLSLProgram();
 
-    const Camera* mCamera;
-    const Transform* mTransform;
-    const UniformSet* mGLSLProgUniformSet;
-    const UniformSet* mShaderUniformSet;
-    const UniformSet* mActorUniformSet;
-  };
-}
-//------------------------------------------------------------------------------
-void RendererVivid::renderQueue(const RenderQueue* render_queue, Camera* camera, real frame_clock, bool depth_peeling_on) {
-  
-  mPassCounter++;
+  mShaderDualInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_init_vertex.glsl" ) );
+  mShaderDualInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_init_fragment.glsl" ) );
+  mShaderDualInit->linkProgram();
 
-  OpenGLContext* opengl_context = framebuffer()->openglContext();
+  // mShaderDualPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
+  mShaderDualPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_peel_vertex_ppdl.glsl" ) );
+  mShaderDualPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment_ppdl.glsl" ) );
+  mShaderDualPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_peel_fragment_ppdl.glsl" ) );
+  mShaderDualPeel->linkProgram();
 
-  for(int itok=0; itok < render_queue->size(); ++itok)
-  {
-    const RenderToken* tok = render_queue->at(itok); VL_CHECK(tok);
-    Actor* actor = tok->mActor; VL_CHECK(actor);
+  mShaderDualBlend->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_blend_vertex.glsl" ) );
+  mShaderDualBlend->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_blend_fragment.glsl" ) );
+  mShaderDualBlend->linkProgram();
 
-    if ( !isEnabled(actor->enableMask()) )
-      continue;
+  mShaderDualFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_final_vertex.glsl" ) );
+  mShaderDualFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_final_fragment.glsl" ) );
+  mShaderDualFinal->linkProgram();
 
-    VL_CHECK_OGL()
+  mShaderFrontInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
+  mShaderFrontInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_init_vertex.glsl" ) );
+  mShaderFrontInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
+  mShaderFrontInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_init_fragment.glsl" ) );
+  mShaderFrontInit->linkProgram();
 
-    // --------------- shader setup ---------------
+  mShaderFrontPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
+  mShaderFrontPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_peel_vertex.glsl" ) );
+  mShaderFrontPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
+  mShaderFrontPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_peel_fragment.glsl" ) );
+  mShaderFrontPeel->linkProgram();
 
-    const Shader* shader = tok->mShader;
+  mShaderFrontBlend->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_blend_vertex.glsl" ) );
+  mShaderFrontBlend->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_blend_fragment.glsl" ) );
+  mShaderFrontBlend->linkProgram();
 
-    shader->getMaterial()->apply(0, NULL, NULL); VL_CHECK_OGL()
-    shader->getLight(0)->apply(0, camera, NULL); VL_CHECK_OGL()
-    shader->getLightModel()->apply(0, NULL, NULL);
+  mShaderFrontFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_final_vertex.glsl" ) );
+  mShaderFrontFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_final_fragment.glsl" ) );
+  mShaderFrontFinal->linkProgram();
 
-    /* These two states are managed by the Depth Peeling algorithm */
-    if (!depth_peeling_on) {
-      shader->isEnabled(vl::EN_BLEND) ? glEnable(GL_BLEND) : glDisable(GL_BLEND); VL_CHECK_OGL()
-      // glDepthMask(shader->isEnabled(vl::EN_BLEND) ? GL_FALSE : GL_TRUE);
-      shader->isEnabled(vl::EN_BLEND) ? glEnable(GL_BLEND) : glDisable(GL_BLEND); VL_CHECK_OGL()
-      shader->isEnabled(vl::EN_DEPTH_TEST) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST); VL_CHECK_OGL()
-      shader->isEnabled(vl::EN_CULL_FACE) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE); VL_CHECK_OGL()
-      shader->isEnabled(vl::EN_LIGHTING) ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING); VL_CHECK_OGL()
-    }
-
-    // --------------- Actor pre-render callback ---------------
-
-    // here the user has still the possibility to modify the Actor's uniforms
-
-    actor->dispatchOnActorRenderStarted( frame_clock, camera, tok->mRenderable, shader, /*ipass*/0 );
-
-    VL_CHECK_OGL()
-
-    // --------------- Transform setup ---------------
-
-    // Update camera/actor model-view transform
-    projViewTransfCallback()->updateMatrices( /*update_cm*/false, /*update_tr*/true, 0, camera, actor->transform() );
-
-    VL_CHECK_OGL()
-
-    // --------------- Actor rendering ---------------
-
-    // also compiles display lists and updates BufferObjects if necessary
-    tok->mRenderable->render( actor, shader, camera, opengl_context );
-
-    VL_CHECK_OGL()
-  }
-}
-//------------------------------------------------------------------------------
-const RenderQueue* RendererVivid::render(const RenderQueue* render_queue, Camera* camera, real frame_clock)
-{
-  VL_CHECK_OGL()
-
-  lazyInitialize();
-  mPassCounter = 0;
-
-  // skip if renderer is disabled
-
-  if (enableMask() == 0)
-    return render_queue;
-
-  // enter/exit behavior contract
-
-  class InOutContract 
-  {
-    RendererVivid* mRenderer;
-    std::vector<RenderStateSlot> mOriginalDefaultRS;
-  public:
-    InOutContract(RendererVivid* renderer, Camera* camera): mRenderer(renderer)
-    {
-      // increment the render tick.
-      mRenderer->mRenderTick++;
-
-      // render-target activation.
-      // note: an OpenGL context can have multiple rendering targets!
-      mRenderer->framebuffer()->activate();
-
-      // viewport setup.
-      camera->viewport()->setClearFlags( mRenderer->clearFlags() );
-      camera->viewport()->activate();
-
-      OpenGLContext* gl_context = renderer->framebuffer()->openglContext();
-
-      // default render states override
-      for(size_t i=0; i<renderer->overriddenDefaultRenderStates().size(); ++i)
-      {
-        // save overridden default render state to be restored later
-        ERenderState type = renderer->overriddenDefaultRenderStates()[i].type();
-        mOriginalDefaultRS.push_back(gl_context->defaultRenderState(type));
-        // set new default render state
-        gl_context->setDefaultRenderState(renderer->overriddenDefaultRenderStates()[i]);
-      }
-
-      // dispatch the renderer-started event.
-      mRenderer->dispatchOnRendererStarted();
-
-      // check user-generated errors.
-      VL_CHECK_OGL()
-    }
-
-    ~InOutContract()
-    {
-      // dispatch the renderer-finished event
-      mRenderer->dispatchOnRendererFinished();
-
-      OpenGLContext* gl_context = mRenderer->framebuffer()->openglContext();
-
-      // restore default render states
-      for(size_t i=0; i<mOriginalDefaultRS.size(); ++i)
-      {
-        gl_context->setDefaultRenderState(mOriginalDefaultRS[i]);
-      }
-
-      VL_CHECK( !globalSettings()->checkOpenGLStates() || mRenderer->framebuffer()->openglContext()->isCleanState(true) );
-
-      // check user-generated errors.
-      VL_CHECK_OGL()
-
-      // note: we don't reset the render target here
-    }
-  } contract(this, camera);
-
-  // --------------- rendering --------------- 
-
-  std::map<const GLSLProgram*, GLSLProgState> glslprogram_map;
-
-  OpenGLContext* opengl_context = framebuffer()->openglContext();
-
-  // --------------- rendering ---------------
-
-  // Update camera projection
-  projViewTransfCallback()->updateMatrices( /*update_cm*/true, /*update_tr*/false, 0, camera, /*cur_transform*/NULL );
-
-  // Disable scissor test
-  glDisable(GL_SCISSOR_TEST);
-  glDisable(GL_CULL_FACE);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_NORMALIZE);
-  glDepthMask(GL_TRUE);
-
-  switch (mRenderingMode)
-  {
-  case NoDepthPeeling: 
-    renderQueue(render_queue, camera, frame_clock, false);
-    break;
-  case DualDepthPeeling: 
-    renderDualPeeling(render_queue, camera, frame_clock);
-    break;
-  case FrontToBackDepthPeeling: 
-    renderFrontToBackPeeling(render_queue, camera, frame_clock);
-    break;
-  }
-
-  glDepthMask(GL_TRUE);
-  glDisable(GL_BLEND);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_CULL_FACE);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_LIGHT0);
-
-  // clear enables
-  // opengl_context->applyEnables( mDummyEnables.get() ); VL_CHECK_OGL();
-
-  // clear render states
-  opengl_context->applyRenderStates( mDummyStateSet.get(), NULL ); VL_CHECK_OGL();
-
-  // enabled texture unit #0
-  VL_glActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
-  if (Has_Fixed_Function_Pipeline)
-    VL_glClientActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
-
-  // disable scissor test
-  glDisable(GL_SCISSOR_TEST); VL_CHECK_OGL();
-
-  // disable all vertex arrays, note this also calls "glBindBuffer(GL_ARRAY_BUFFER, 0)"
-  opengl_context->bindVAS(NULL, false, false); VL_CHECK_OGL();
-
-  return render_queue;
+  printf("Shaders %s\n\n", this->shadersReady() ? "ready." : "error.");
 }
 //-----------------------------------------------------------------------------
 void RendererVivid::initDualPeelingRenderTargets()
@@ -467,8 +290,7 @@ void RendererVivid::initFrontPeelingRenderTargets()
 
   VL_CHECK_OGL();
 }
-
-//--------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 void RendererVivid::deleteFrontPeelingRenderTargets()
 {
   vl::glDeleteFramebuffers(2, mFrontFboId);
@@ -477,50 +299,18 @@ void RendererVivid::deleteFrontPeelingRenderTargets()
   glDeleteTextures(2, mFrontColorTexId);
   glDeleteTextures(1, &mFrontColorBlenderTexId);
 }
-
-void RendererVivid::buildShaders()
-{
-  printf("\nloading shaders...\n");
-
-  mShaderDualInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_init_vertex.glsl" ) );
-  mShaderDualInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_init_fragment.glsl" ) );
-  mShaderDualInit->linkProgram();
-
-  mShaderDualPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
-  mShaderDualPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_peel_vertex.glsl" ) );
-  mShaderDualPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
-  mShaderDualPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_peel_fragment.glsl" ) );
-  mShaderDualPeel->linkProgram();
-
-  mShaderDualBlend->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_blend_vertex.glsl" ) );
-  mShaderDualBlend->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_blend_fragment.glsl" ) );
-  mShaderDualBlend->linkProgram();
-
-  mShaderDualFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "dual_peeling_final_vertex.glsl" ) );
-  mShaderDualFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "dual_peeling_final_fragment.glsl" ) );
-  mShaderDualFinal->linkProgram();
-
-  mShaderFrontInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
-  mShaderFrontInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_init_vertex.glsl" ) );
-  mShaderFrontInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
-  mShaderFrontInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_init_fragment.glsl" ) );
-  mShaderFrontInit->linkProgram();
-
-  mShaderFrontPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
-  mShaderFrontPeel->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_peel_vertex.glsl" ) );
-  mShaderFrontPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
-  mShaderFrontPeel->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_peel_fragment.glsl" ) );
-  mShaderFrontPeel->linkProgram();
-
-  mShaderFrontBlend->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_blend_vertex.glsl" ) );
-  mShaderFrontBlend->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_blend_fragment.glsl" ) );
-  mShaderFrontBlend->linkProgram();
-
-  mShaderFrontFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_final_vertex.glsl" ) );
-  mShaderFrontFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_final_fragment.glsl" ) );
-  mShaderFrontFinal->linkProgram();
+//-------------------------------------------------------------------------------------------------
+bool RendererVivid::shadersReady() const {
+  return mShaderDualInit->linked() &&
+         mShaderDualPeel->linked() &&
+         mShaderDualBlend->linked() &&
+         mShaderDualFinal->linked() &&
+         mShaderFrontInit->linked() &&
+         mShaderFrontPeel->linked() &&
+         mShaderFrontBlend->linked() &&
+         mShaderFrontFinal->linked();
 }
-
+//-------------------------------------------------------------------------------------------------
 void RendererVivid::drawFullScreenQuad()
 {
   glMatrixMode(GL_MODELVIEW);
@@ -529,7 +319,26 @@ void RendererVivid::drawFullScreenQuad()
   mFullScreenQuad->render( NULL, NULL, NULL, framebuffer()->openglContext() );
   glPopMatrix();
 }
+//-------------------------------------------------------------------------------------------------
+void RendererVivid::bindTexture(vl::GLSLProgram* glsl, GLenum target, std::string texname, GLuint texid, int texunit)
+{
+  vl::glActiveTexture(GL_TEXTURE0 + texunit);
+	glBindTexture(target, texid);
+	vl::glActiveTexture(GL_TEXTURE0);
 
+  int current_glsl_program = -1;
+  glGetIntegerv(GL_CURRENT_PROGRAM, &current_glsl_program); VL_CHECK_OGL();
+  VL_CHECK(current_glsl_program == (int)glsl->handle())
+
+	// setTextureUnit(texname, texunit);
+  int location = glsl->getUniformLocation(texname.c_str());
+	if (location == -1) {
+    printf("Warning: Invalid texture %s\n", texname.c_str());
+		return;
+	}
+  vl::glUniform1i(location, texunit);
+}
+//-------------------------------------------------------------------------------------------------
 void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock)
 {
   glDisable(GL_DEPTH_TEST);
@@ -668,8 +477,7 @@ void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* c
 
   VL_CHECK_OGL();
 }
-
-//--------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock)
 {
   // ---------------------------------------------------------------------
@@ -789,23 +597,194 @@ void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Ca
 
   VL_CHECK_OGL();
 }
+//-------------------------------------------------------------------------------------------------
+void RendererVivid::renderQueue(const RenderQueue* render_queue, Camera* camera, real frame_clock, bool depth_peeling_on) {
+  
+  mPassCounter++;
 
-void RendererVivid::bindTexture(vl::GLSLProgram* glsl, GLenum target, std::string texname, GLuint texid, int texunit)
-{
-  vl::glActiveTexture(GL_TEXTURE0 + texunit);
-	glBindTexture(target, texid);
-	vl::glActiveTexture(GL_TEXTURE0);
+  OpenGLContext* opengl_context = framebuffer()->openglContext();
 
-  int current_glsl_program = -1;
-  glGetIntegerv(GL_CURRENT_PROGRAM, &current_glsl_program); VL_CHECK_OGL();
-  VL_CHECK(current_glsl_program == (int)glsl->handle())
+  for(int itok=0; itok < render_queue->size(); ++itok)
+  {
+    const RenderToken* tok = render_queue->at(itok); VL_CHECK(tok);
+    Actor* actor = tok->mActor; VL_CHECK(actor);
 
-	// setTextureUnit(texname, texunit);
-  int location = glsl->getUniformLocation(texname.c_str());
-	if (location == -1) {
-    printf("Warning: Invalid texture %s\n", texname.c_str());
-		return;
-	}
-  vl::glUniform1i(location, texunit);
+    if ( !isEnabled(actor->enableMask()) )
+      continue;
+
+    VL_CHECK_OGL()
+
+    // --------------- shader setup ---------------
+
+    const Shader* shader = tok->mShader;
+
+    shader->getMaterial()->apply(0, NULL, NULL); VL_CHECK_OGL()
+    shader->getLight(0)->apply(0, camera, NULL); VL_CHECK_OGL()
+    shader->getLightModel()->apply(0, NULL, NULL);
+
+    /* These two states are managed by the Depth Peeling algorithm */
+    if (!depth_peeling_on) {
+      shader->isEnabled(vl::EN_BLEND) ? glEnable(GL_BLEND) : glDisable(GL_BLEND); VL_CHECK_OGL()
+      // glDepthMask(shader->isEnabled(vl::EN_BLEND) ? GL_FALSE : GL_TRUE);
+      shader->isEnabled(vl::EN_BLEND) ? glEnable(GL_BLEND) : glDisable(GL_BLEND); VL_CHECK_OGL()
+      shader->isEnabled(vl::EN_DEPTH_TEST) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST); VL_CHECK_OGL()
+      shader->isEnabled(vl::EN_CULL_FACE) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE); VL_CHECK_OGL()
+    }
+    shader->isEnabled(vl::EN_LIGHTING) ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING); VL_CHECK_OGL()
+
+    // --------------- Actor pre-render callback ---------------
+
+    // here the user has still the possibility to modify the Actor's uniforms
+
+    actor->dispatchOnActorRenderStarted( frame_clock, camera, tok->mRenderable, shader, /*ipass*/0 );
+
+    VL_CHECK_OGL()
+
+    // --------------- Transform setup ---------------
+
+    // Update camera/actor model-view transform
+    projViewTransfCallback()->updateMatrices( /*update_cm*/false, /*update_tr*/true, 0, camera, actor->transform() );
+
+    VL_CHECK_OGL()
+
+    // --------------- Actor rendering ---------------
+
+    // also compiles display lists and updates BufferObjects if necessary
+    tok->mRenderable->render( actor, shader, camera, opengl_context );
+
+    VL_CHECK_OGL()
+  }
 }
+//-------------------------------------------------------------------------------------------------
+const RenderQueue* RendererVivid::render(const RenderQueue* render_queue, Camera* camera, real frame_clock)
+{
+  VL_CHECK_OGL()
 
+  lazyInitialize();
+  mPassCounter = 0;
+
+  if (!shadersReady()) {
+    return NULL;
+  }
+
+  // skip if renderer is disabled
+
+  if (enableMask() == 0)
+    return render_queue;
+
+  // enter/exit behavior contract
+
+  class InOutContract 
+  {
+    RendererVivid* mRenderer;
+    std::vector<RenderStateSlot> mOriginalDefaultRS;
+  public:
+    InOutContract(RendererVivid* renderer, Camera* camera): mRenderer(renderer)
+    {
+      // increment the render tick.
+      mRenderer->mRenderTick++;
+
+      // render-target activation.
+      // note: an OpenGL context can have multiple rendering targets!
+      mRenderer->framebuffer()->activate();
+
+      // viewport setup.
+      camera->viewport()->setClearFlags( mRenderer->clearFlags() );
+      camera->viewport()->activate();
+
+      OpenGLContext* gl_context = renderer->framebuffer()->openglContext();
+
+      // default render states override
+      for(size_t i=0; i<renderer->overriddenDefaultRenderStates().size(); ++i)
+      {
+        // save overridden default render state to be restored later
+        ERenderState type = renderer->overriddenDefaultRenderStates()[i].type();
+        mOriginalDefaultRS.push_back(gl_context->defaultRenderState(type));
+        // set new default render state
+        gl_context->setDefaultRenderState(renderer->overriddenDefaultRenderStates()[i]);
+      }
+
+      // dispatch the renderer-started event.
+      mRenderer->dispatchOnRendererStarted();
+
+      // check user-generated errors.
+      VL_CHECK_OGL()
+    }
+
+    ~InOutContract()
+    {
+      // dispatch the renderer-finished event
+      mRenderer->dispatchOnRendererFinished();
+
+      OpenGLContext* gl_context = mRenderer->framebuffer()->openglContext();
+
+      // restore default render states
+      for(size_t i=0; i<mOriginalDefaultRS.size(); ++i)
+      {
+        gl_context->setDefaultRenderState(mOriginalDefaultRS[i]);
+      }
+
+      VL_CHECK( !globalSettings()->checkOpenGLStates() || mRenderer->framebuffer()->openglContext()->isCleanState(true) );
+
+      // check user-generated errors.
+      VL_CHECK_OGL()
+
+      // note: we don't reset the render target here
+    }
+  } contract(this, camera);
+
+
+  OpenGLContext* opengl_context = framebuffer()->openglContext();
+
+  // --------------- rendering ---------------
+
+  // Update camera projection
+  projViewTransfCallback()->updateMatrices( /*update_cm*/true, /*update_tr*/false, 0, camera, /*cur_transform*/NULL );
+
+  // Disable scissor test
+  glDisable(GL_SCISSOR_TEST);
+  glDisable(GL_CULL_FACE);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_NORMALIZE);
+  glDepthMask(GL_TRUE);
+
+  switch (mRenderingMode)
+  {
+  case NoDepthPeeling: 
+    renderQueue(render_queue, camera, frame_clock, false);
+    break;
+  case DualDepthPeeling: 
+    renderDualPeeling(render_queue, camera, frame_clock);
+    break;
+  case FrontToBackDepthPeeling: 
+    renderFrontToBackPeeling(render_queue, camera, frame_clock);
+    break;
+  }
+
+  glDepthMask(GL_TRUE);
+  glDisable(GL_BLEND);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_CULL_FACE);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_LIGHT0);
+
+  // clear enables
+  // opengl_context->applyEnables( mDummyEnables.get() ); VL_CHECK_OGL();
+
+  // clear render states
+  opengl_context->applyRenderStates( mDummyStateSet.get(), NULL ); VL_CHECK_OGL();
+
+  // enabled texture unit #0
+  VL_glActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
+  if (Has_Fixed_Function_Pipeline)
+    VL_glClientActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
+
+  // disable scissor test
+  glDisable(GL_SCISSOR_TEST); VL_CHECK_OGL();
+
+  // disable all vertex arrays, note this also calls "glBindBuffer(GL_ARRAY_BUFFER, 0)"
+  opengl_context->bindVAS(NULL, false, false); VL_CHECK_OGL();
+
+  return render_queue;
+}
+//-------------------------------------------------------------------------------------------------
