@@ -752,7 +752,7 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
   {
     const Uniform* uniform = uniforms->uniforms()[i].get();
 
-    #if 1
+    #if 0
       const UniformInfo* uinfo = activeUniformInfo(uniform->name().c_str());
       int location = uinfo ? uinfo->Location : -1;
 
@@ -763,25 +763,24 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
         Log::warning("\nActive uniforms:\n");
         for( ; it != activeUniforms().end(); ++it )
           Log::warning( Say("\t%s\n") << it->first.c_str() );
+  
+        // Check the following:
+        // (1) Is the uniform variable declared but not used in your GLSL program?
+        // (2) Double-check the spelling of the uniform variable name.
+        vl::Log::warning( vl::Say(
+          "warning:\n"
+          "GLSLProgram::applyUniformSet(): uniform '%s' not found!\n"
+          "Is the uniform variable declared but not used in your GLSL program?\n"
+          "Also double-check the spelling of the uniform variable name.\n") << uniform->name() );
+        continue;
       }
       #endif
-
     #else
       int location = glGetUniformLocation(handle(), uniform->name().c_str());
+      if (location == -1) {
+        continue;
+      }
     #endif
-
-    if (location == -1)
-    {
-      // Check the following:
-      // (1) Is the uniform variable declared but not used in your GLSL program?
-      // (2) Double-check the spelling of the uniform variable name.
-      vl::Log::warning( vl::Say(
-        "warning:\n"
-        "GLSLProgram::applyUniformSet(): uniform '%s' not found!\n"
-        "Is the uniform variable declared but not used in your GLSL program?\n"
-        "Also double-check the spelling of the uniform variable name.\n") << uniform->name() );
-      continue;
-    }
 
     // finally transmits the uniform
     // note: we don't perform delta binding per-uniform variable at the moment!
