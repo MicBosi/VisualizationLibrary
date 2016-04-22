@@ -55,58 +55,6 @@ vl::ref<vl::RendererVivid> vivid = new vl::RendererVivid();
 class App_Vivid: public BaseDemo
 {
 public:
-  //--------------------------------------------------------------------------
-  void keyPressEvent(unsigned short unicode_ch, vl::EKey key)
-  {
-    // BaseDemo::keyReleaseEvent(unicode_ch, key);
-
-    switch((unsigned char)tolower(unicode_ch))
-    {
-	    case 'r':
-        vivid->initShaders();
-		    break;
-	    case 'q':
-        vivid->setUseQueryObject(!vivid->useQueryObject());
-		    break;
-	    case '+':
-        vivid->setNumPasses(vivid->numPasses() + 1);
-		    break;
-	    case '-':
-        if (vivid->numPasses() > 1) {
-          vivid->setNumPasses(vivid->numPasses() - 1);
-        }
-		    break;
-	    case '1':
-        vivid->setRenderingMode(vl::RendererVivid::DualDepthPeeling);
-		    break;
-	    case '2':
-		    vivid->setRenderingMode(vl::RendererVivid::FrontToBackDepthPeeling);
-		    break;
-	    case '3':
-		    vivid->setRenderingMode(vl::RendererVivid::NoDepthPeeling);
-		    break;
-	    /*case 'a':
-		    g_opacity -= 0.05;
-        g_opacity = vl::max(g_opacity, 0.0f);
-		    break;
-	    case 'd':
-		    g_opacity += 0.05;
-		    g_opacity = vl::min(g_opacity, 1.0f);
-		    break;
-	    case 'b':
-		    g_backgroundColor = (g_backgroundColor == g_white) ? g_black : g_white;
-		    break;*/
-    }
-
-    const char* method[] = { "NoDepthPeeling", "DualDepthPeeling", "FrontToBackDepthPeeling" };
-    printf("method:           %s\n", method[vivid->renderingMode()]);
-    printf("pass counter:     %d\n", vivid->passCounter());
-    printf("num passes:       %d\n", vivid->numPasses());
-    printf("use query object: %d\n", vivid->useQueryObject());
-    printf("---\n");
-    openglContext()->update();
-  }
-
   void initEvent()
   {
     vl::Log::print( vl::Say("GL_VERSION: %s\n") << glGetString(GL_VERSION));
@@ -120,10 +68,13 @@ public:
     vivid->setFramebuffer(openglContext()->framebuffer());
     rendering()->as<vl::Rendering>()->setRenderer( vivid.get() );
 
-    // initScene();
+#if 1
+    initScene();
+#else
     std::vector<vl::String> files;
     files.push_back(MODEL_FILENAME);
     loadModel(files);
+#endif
   }
 
   void initScene() {
@@ -220,6 +171,58 @@ public:
     }
 
     adjustScene();
+  }
+
+  //--------------------------------------------------------------------------
+  void keyPressEvent(unsigned short unicode_ch, vl::EKey key)
+  {
+    // BaseDemo::keyReleaseEvent(unicode_ch, key);
+
+    switch((unsigned char)tolower(unicode_ch))
+    {
+	    case 'r':
+        vivid->initShaders();
+		    break;
+	    case 'q':
+        vivid->setUseQueryObject(!vivid->useQueryObject());
+		    break;
+	    case '+':
+        vivid->setNumPasses(vivid->numPasses() + 1);
+		    break;
+	    case '-':
+        if (vivid->numPasses() > 1) {
+          vivid->setNumPasses(vivid->numPasses() - 1);
+        }
+		    break;
+	    case '1':
+        vivid->setRenderingMode(vl::RendererVivid::DualDepthPeeling);
+		    break;
+	    case '2':
+		    vivid->setRenderingMode(vl::RendererVivid::FrontToBackDepthPeeling);
+		    break;
+	    case '3':
+		    vivid->setRenderingMode(vl::RendererVivid::NoDepthPeeling);
+		    break;
+	    /*case 'a':
+		    g_opacity -= 0.05;
+        g_opacity = vl::max(g_opacity, 0.0f);
+		    break;
+	    case 'd':
+		    g_opacity += 0.05;
+		    g_opacity = vl::min(g_opacity, 1.0f);
+		    break;
+	    case 'b':
+		    g_backgroundColor = (g_backgroundColor == g_white) ? g_black : g_white;
+		    break;*/
+    }
+
+    const char* method[] = { "NoDepthPeeling", "DualDepthPeeling", "FrontToBackDepthPeeling" };
+    printf("method:           %s\n", method[vivid->renderingMode()]);
+    printf("pass counter:     %d\n", vivid->passCounter());
+    printf("num passes:       %d\n", vivid->numPasses());
+    printf("use query object: %d\n", vivid->useQueryObject());
+    printf("---\n");
+    openglContext()->update();
   }
 
   void showStatistics(vl::ref<vl::ResourceDatabase> res_db)
