@@ -466,7 +466,7 @@ bool GLSLProgram::linkProgram(bool force_relink)
     {
       Log::bug("GLSLProgram::linkProgram() failed! (" + String(objectName().c_str()) + ")\n");
       Log::bug( Say("Info log:\n%s\n") << infoLog() );
-      VL_TRAP()
+      // VL_TRAP()
       return false;
     }
   }
