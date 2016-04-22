@@ -62,6 +62,9 @@ public:
 
     switch((unsigned char)tolower(unicode_ch))
     {
+	    case 'r':
+        vivid->initShaders();
+		    break;
 	    case 'q':
         vivid->setUseQueryObject(!vivid->useQueryObject());
 		    break;
@@ -100,6 +103,7 @@ public:
     printf("pass counter:     %d\n", vivid->passCounter());
     printf("num passes:       %d\n", vivid->numPasses());
     printf("use query object: %d\n", vivid->useQueryObject());
+    printf("---\n");
     openglContext()->update();
   }
 
@@ -129,8 +133,7 @@ public:
     fx1->shader()->enable(vl::EN_LIGHTING);
     fx1->shader()->setRenderState( new vl::Light, 0 );
     fx1->shader()->gocLightModel()->setTwoSide(true);
-    fx1->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 1.0f, 1.0f, 1.0f) );
-    fx1->shader()->gocMaterial()->setTransparency( 0.5f );
+    fx1->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 1.0f, 1.0f, 0.5f) );
 
     vl::ref<vl::Effect> fx2 = new vl::Effect;
     fx2->shader()->disable(vl::EN_BLEND);
@@ -139,7 +142,6 @@ public:
     fx2->shader()->setRenderState( new vl::Light, 0 );
     fx2->shader()->gocLightModel()->setTwoSide(true);
     fx2->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 0.0f, 0.0f, 1.0f) );
-    fx2->shader()->gocMaterial()->setTransparency( 1.0f );
 
     vl::ref< vl::Transform > tr1 = new vl::Transform();
     tr1->setLocalAndWorldMatrix(vl::mat4::getTranslation(+0.025f, 0, 0));
@@ -207,7 +209,6 @@ public:
         fx1->shader()->setRenderState( new vl::Light, 0 );
         fx1->shader()->gocLightModel()->setTwoSide(true);
         fx1->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 0.0f, 0.0f, 1.0f) );
-        fx1->shader()->gocMaterial()->setTransparency( 0.5f );
 
         act->setEffect(fx1.get());
 
