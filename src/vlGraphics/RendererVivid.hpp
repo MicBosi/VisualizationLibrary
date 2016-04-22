@@ -105,10 +105,6 @@ namespace vl
     vl::ref<vl::GLSLProgram> mShaderFrontPeel;
     vl::ref<vl::GLSLProgram> mShaderFrontBlend;
     vl::ref<vl::GLSLProgram> mShaderFrontFinal;
-    vl::ref<vl::GLSLProgram> mShaderAverageInit;
-    vl::ref<vl::GLSLProgram> mShaderAverageFinal;
-    vl::ref<vl::GLSLProgram> mShaderWeightedSumInit;
-    vl::ref<vl::GLSLProgram> mShaderWeightedSumFinal;
 
     GLuint mDualBackBlenderFboId;
     GLuint mDualPeelingSingleFboId;

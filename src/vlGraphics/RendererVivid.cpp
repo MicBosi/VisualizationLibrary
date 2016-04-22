@@ -85,10 +85,6 @@ RendererVivid::RendererVivid()
   mShaderFrontPeel = new vl::GLSLProgram();
   mShaderFrontBlend = new vl::GLSLProgram();
   mShaderFrontFinal = new vl::GLSLProgram();
-  mShaderAverageInit = new vl::GLSLProgram();
-  mShaderAverageFinal = new vl::GLSLProgram();
-  mShaderWeightedSumInit = new vl::GLSLProgram();
-  mShaderWeightedSumFinal = new vl::GLSLProgram();
 
   mImageSize = ivec2(0, 0);
   mPassCounter = 0;
@@ -537,26 +533,6 @@ void RendererVivid::buildShaders()
   mShaderFrontFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "front_peeling_final_vertex.glsl" ) );
   mShaderFrontFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "front_peeling_final_fragment.glsl" ) );
   mShaderFrontFinal->linkProgram();
-
-  mShaderAverageInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
-  mShaderAverageInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "wavg_init_vertex.glsl" ) );
-  mShaderAverageInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
-  mShaderAverageInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "wavg_init_fragment.glsl" ) );
-  mShaderAverageInit->linkProgram();
-
-  mShaderAverageFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "wavg_final_vertex.glsl" ) );
-  mShaderAverageFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "wavg_final_fragment.glsl" ) );
-  mShaderAverageFinal->linkProgram();
-
-  mShaderWeightedSumInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "shade_vertex.glsl" ) );
-  mShaderWeightedSumInit->attachShader( new vl::GLSLVertexShader( SHADER_PATH "wsum_init_vertex.glsl" ) );
-  mShaderWeightedSumInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "shade_fragment.glsl" ) );
-  mShaderWeightedSumInit->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "wsum_init_fragment.glsl" ) );
-  mShaderWeightedSumInit->linkProgram();
-
-  mShaderWeightedSumFinal->attachShader( new vl::GLSLVertexShader( SHADER_PATH "wsum_final_vertex.glsl" ) );
-  mShaderWeightedSumFinal->attachShader( new vl::GLSLFragmentShader(SHADER_PATH "wsum_final_fragment.glsl" ) );
-  mShaderWeightedSumFinal->linkProgram();
 }
 
 void RendererVivid::drawFullScreenQuad()
