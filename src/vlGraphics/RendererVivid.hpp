@@ -78,6 +78,9 @@ namespace vl
     /** The number of passes (renderQueue() calls) done for the last rendering including setup and finalization (may be > than NumPasses). */
     int passCounter() const { return mPassCounter; }
 
+    void initShaders();
+    bool shadersReady() const;
+
   protected:
 
     void renderQueue(const RenderQueue* in_render_queue, Camera* camera, real frame_clock, bool depth_peeling_on=true);
@@ -87,7 +90,6 @@ namespace vl
     void initDualPeelingRenderTargets();
     void deleteFrontPeelingRenderTargets();
     void initFrontPeelingRenderTargets();
-    void buildShaders();
     void drawFullScreenQuad();
     void bindTexture(vl::GLSLProgram* glsl, GLenum target, std::string texname, GLuint texid, int texunit);
     void renderFrontToBackPeeling(const RenderQueue* render_queue, Camera* camera, real frame_clock);
