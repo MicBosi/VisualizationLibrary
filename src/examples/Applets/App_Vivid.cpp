@@ -79,20 +79,27 @@ public:
 
   void initScene() {
     vl::ref<vl::Effect> fx1 = new vl::Effect;
-    fx1->shader()->enable(vl::EN_BLEND);
+    fx1->shader()->disable(vl::EN_BLEND);
     fx1->shader()->enable(vl::EN_DEPTH_TEST);
     fx1->shader()->enable(vl::EN_LIGHTING);
     fx1->shader()->setRenderState( new vl::Light, 0 );
     fx1->shader()->gocLightModel()->setTwoSide(true);
-    fx1->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 1.0f, 1.0f, 0.5f) );
+    fx1->shader()->gocLightModel()->setLocalViewer(true);
+    fx1->shader()->gocMaterial()->setAmbient( vl::fvec4(1.0f, 1.0f, 1.0f, 1.0f) );
+    fx1->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 0.0f, 0.0f, 1.0f) );
+    fx1->shader()->gocMaterial()->setSpecular( vl::fvec4(1.0f, 1.0f, 1.0f, 1.0f) );
+    fx1->shader()->gocMaterial()->setShininess(128.0f);
 
     vl::ref<vl::Effect> fx2 = new vl::Effect;
-    fx2->shader()->disable(vl::EN_BLEND);
+    fx2->shader()->enable(vl::EN_BLEND);
     fx2->shader()->enable(vl::EN_DEPTH_TEST);
     fx2->shader()->enable(vl::EN_LIGHTING);
     fx2->shader()->setRenderState( new vl::Light, 0 );
     fx2->shader()->gocLightModel()->setTwoSide(true);
-    fx2->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 0.0f, 0.0f, 1.0f) );
+    fx2->shader()->gocLightModel()->setLocalViewer(true);
+    fx2->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 1.0f, 0.0f, 0.25f) );
+    fx2->shader()->gocMaterial()->setSpecular( vl::fvec4(1.0f, 1.0f, 1.0f, 1.0f) );
+    fx2->shader()->gocMaterial()->setShininess(128.0f);
 
     vl::ref< vl::Transform > tr1 = new vl::Transform();
     tr1->setLocalAndWorldMatrix(vl::mat4::getTranslation(+0.025f, 0, 0));
@@ -156,10 +163,12 @@ public:
         fx1->shader()->enable(vl::EN_BLEND);
         fx1->shader()->enable(vl::EN_DEPTH_TEST);
         fx1->shader()->enable(vl::EN_LIGHTING);
-        fx1->shader()->disable(vl::EN_CULL_FACE);
         fx1->shader()->setRenderState( new vl::Light, 0 );
         fx1->shader()->gocLightModel()->setTwoSide(true);
-        fx1->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 0.0f, 0.0f, 1.0f) );
+        fx1->shader()->gocLightModel()->setLocalViewer(true);
+        fx1->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f, 1.0f, 0.0f, 0.25f) );
+        fx1->shader()->gocMaterial()->setSpecular( vl::fvec4(1.0f, 1.0f, 1.0f, 1.0f) );
+        fx1->shader()->gocMaterial()->setShininess(128.0f);
 
         act->setEffect(fx1.get());
 

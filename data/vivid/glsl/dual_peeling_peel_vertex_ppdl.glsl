@@ -11,13 +11,12 @@
 #version 120
 
 varying vec3 N;
-varying vec3 L;
+varying vec3 V;
 
 void main(void)
 {
   gl_Position = ftransform();
-  vec3 V = (gl_ModelViewMatrix * gl_Vertex).xyz;
-  L = normalize(gl_LightSource[0].position.xyz - V);
+  V = (gl_ModelViewMatrix * gl_Vertex).xyz;
   N = normalize(gl_NormalMatrix * gl_Normal);
   // gl_FrontColor = gl_FrontMaterial.diffuse;
 }
