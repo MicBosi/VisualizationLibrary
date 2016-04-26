@@ -48,9 +48,7 @@
 #include <vlGraphics/GeometryPrimitives.hpp>
 #include <vlGraphics/RendererVivid.hpp>
 
-#define MODEL_FILENAME "/vivid/bunny.ply"
-
-vl::ref<vl::RendererVivid> vivid = new vl::RendererVivid();
+#define MODEL_FILENAME "/mVivid/bunny.ply"
 
 class App_Vivid: public BaseDemo
 {
@@ -64,9 +62,10 @@ public:
     openglContext()->setContinuousUpdate(false);
     rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(true);
     
-    // Setup the vivid renderer
-    vivid->setFramebuffer(openglContext()->framebuffer());
-    rendering()->as<vl::Rendering>()->setRenderer( vivid.get() );
+    // Setup the mVivid renderer
+    mVivid = new vl::RendererVivid();
+    mVivid->setFramebuffer(openglContext()->framebuffer());
+    rendering()->as<vl::Rendering>()->setRenderer( mVivid.get() );
 
 #if 1
     initScene();
@@ -190,27 +189,27 @@ public:
     switch((unsigned char)tolower(unicode_ch))
     {
 	    case 'r':
-        vivid->initShaders();
+        mVivid->initShaders();
 		    break;
 	    case 'q':
-        vivid->setUseQueryObject(!vivid->useQueryObject());
+        mVivid->setUseQueryObject(!mVivid->useQueryObject());
 		    break;
 	    case '+':
-        vivid->setNumPasses(vivid->numPasses() + 1);
+        mVivid->setNumPasses(mVivid->numPasses() + 1);
 		    break;
 	    case '-':
-        if (vivid->numPasses() > 1) {
-          vivid->setNumPasses(vivid->numPasses() - 1);
+        if (mVivid->numPasses() > 1) {
+          mVivid->setNumPasses(mVivid->numPasses() - 1);
         }
 		    break;
 	    case '1':
-        vivid->setRenderingMode(vl::RendererVivid::DualDepthPeeling);
+        mVivid->setRenderingMode(vl::RendererVivid::DualDepthPeeling);
 		    break;
 	    case '2':
-		    vivid->setRenderingMode(vl::RendererVivid::FrontToBackDepthPeeling);
+		    mVivid->setRenderingMode(vl::RendererVivid::FrontToBackDepthPeeling);
 		    break;
 	    case '3':
-		    vivid->setRenderingMode(vl::RendererVivid::FastRender);
+		    mVivid->setRenderingMode(vl::RendererVivid::FastRender);
 		    break;
 	    /*case 'a':
 		    g_opacity -= 0.05;
@@ -226,10 +225,10 @@ public:
     }
 
     const char* method[] = { "FastRender", "DualDepthPeeling", "FrontToBackDepthPeeling" };
-    printf("method:           %s\n", method[vivid->renderingMode()]);
-    printf("pass counter:     %d\n", vivid->passCounter());
-    printf("num passes:       %d\n", vivid->numPasses());
-    printf("use query object: %d\n", vivid->useQueryObject());
+    printf("method:           %s\n", method[mVivid->renderingMode()]);
+    printf("pass counter:     %d\n", mVivid->passCounter());
+    printf("num passes:       %d\n", mVivid->numPasses());
+    printf("use query object: %d\n", mVivid->useQueryObject());
     printf("---\n");
     openglContext()->update();
   }
@@ -280,6 +279,7 @@ public:
 
 
 protected:
+  vl::ref<vl::RendererVivid> mVivid = new vl::RendererVivid();
   std::set< vl::ref<vl::Effect> > mEffects;
   std::vector<vl::String> mLastShaders;
 };
