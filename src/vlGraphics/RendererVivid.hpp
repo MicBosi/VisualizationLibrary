@@ -126,7 +126,8 @@ namespace vl
     bool mUseQueryObject;
     GLuint mQueryID;
 
-    vl::ref<vl::Geometry> mFullScreenQuad;
+    vec4 mBackgroundColor;
+    ref<Geometry> mFullScreenQuad;
   };
   //------------------------------------------------------------------------------
 }

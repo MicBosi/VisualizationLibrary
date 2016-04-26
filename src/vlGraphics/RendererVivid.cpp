@@ -61,7 +61,7 @@ namespace
   vl::ref<vl::Uniform> g_uniformBackgroundColor = new vl::Uniform("BackgroundColor");
   float g_white[3] = { 1.0, 1.0, 1.0 };
   float g_black[3] = { 0.0 };
-  float *g_backgroundColor = g_white;
+  // float *mBackgroundColor = g_white;
 }
 
 using namespace vl;
@@ -73,6 +73,7 @@ RendererVivid::RendererVivid()
 {
   mRenderingMode = DualDepthPeeling;
 
+  mBackgroundColor = vl::lightgray;
   mNumPasses = 4;
   mUseQueryObject = true;
   mQueryID = 0;
@@ -380,7 +381,7 @@ void RendererVivid::renderDualPeeling(const RenderQueue* render_queue, Camera* c
   // we use another render target to do the alpha blending
   //vl::glBindFramebuffer(GL_FRAMEBUFFER, mDualBackBlenderFboId);
   glDrawBuffer(gDrawBuffers[6]);
-  glClearColor(g_backgroundColor[0], g_backgroundColor[1], g_backgroundColor[2], 0);
+  glClearColor(mBackgroundColor[0], mBackgroundColor[1], mBackgroundColor[2], 0);
   glClear(GL_COLOR_BUFFER_BIT);
 
   int currId = 0;
@@ -581,9 +582,9 @@ void RendererVivid::renderFrontToBackPeeling(const RenderQueue* render_queue, Ca
 
   mShaderFrontFinal->useProgram();
 
-  // mShaderFrontFinal.setUniform("BackgroundColor", g_backgroundColor, 3);
+  // mShaderFrontFinal.setUniform("BackgroundColor", mBackgroundColor, 3);
   mShaderFrontFinal->setUniform(g_uniformBackgroundColor.get());
-  g_uniformBackgroundColor->setUniform3f(1, g_backgroundColor);
+  g_uniformBackgroundColor->setUniform3f(1, mBackgroundColor.ptr());
 
   bindTexture(mShaderFrontFinal.get(), GL_TEXTURE_RECTANGLE, "ColorTex", mFrontColorBlenderTexId, 0);
   mShaderFrontFinal->applyUniformSet();
