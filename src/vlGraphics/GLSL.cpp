@@ -509,6 +509,11 @@ void GLSLProgram::preLink()
       }
     }
   }
+  
+  if (Has_Transform_Feedback && transformFeedback() )
+  {
+	glTransformFeedbackVaryings(handle(), transformFeedback()->transformFeedbackVaryingsCount(), transformFeedback()->transformFeedbackVaryings(), transformFeedback()->bufferMode());
+  }
 
   // OpenGL 4 program parameters
 

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://visualizationlibrary.org                                                   */
+/*  http://www.visualizationlibrary.org                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -32,11 +32,13 @@
 #ifndef CoreText_INCLUDE_ONCE
 #define CoreText_INCLUDE_ONCE
 
-#include <vlGraphics/Font.hpp>
-#include <vlGraphics/Renderable.hpp>
+#include <vlGraphics/CoreFont.hpp>
+#include <vlGraphics/Geometry.hpp>
+#include <vlGraphics/Texture.hpp>
 #include <vlCore/vlnamespace.hpp>
 #include <vlCore/String.hpp>
 #include <vlCore/Rect.hpp>
+#include <vlCore/Image.hpp>
 #include <map>
 
 namespace vl
@@ -51,15 +53,18 @@ namespace vl
   public:
     CoreText(): mColor(1,1,1,1), mBorderColor(0,0,0,1), mBackgroundColor(1,1,1,1), mOutlineColor(0,0,0,1), mShadowColor(0,0,0,0.5f), mShadowVector(2,-2), 
       mTextOrigin(AlignBottom|AlignLeft), mMargin(5), mLayout(LeftToRightText), mTextAlignment(TextAlignLeft), 
-      mBorderEnabled(false), mBackgroundEnabled(false), mOutlineEnabled(false), mShadowEnabled(false), mKerningEnabled(true) 
+      mBorderEnabled(false), mBackgroundEnabled(false), mOutlineEnabled(false), mShadowEnabled(false), mKerningEnabled(true),
+	  mBufferID(0)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
+	
+	~CoreText();
 
     //! The text to be rendered.
     const String& text() const { return mText; }
     //! The text to be rendered.
-    void setText(const String& text) { mText = text; }
+    void setText(const String& text);
 
     //! The color of the text.
     const fvec4& color() const { return mColor; }
@@ -72,12 +77,12 @@ namespace vl
     void setMargin(int margin) { mMargin = margin; }
 
     //! The font to be used to render the text.
-    const Font* font() const { return mFont.get(); }
+    const CoreFont* font() const { return mFont.get(); }
     //! The font to be used to render the text.
-    Font* font() { return mFont.get(); }
+    CoreFont* font() { return mFont.get(); }
     //! The font to be used to render the text.
-    void setFont(Font* font) { mFont = font; }
-
+    void setFont(CoreFont* font) { mFont = font; }
+	
     //! Text layout: left to right, right to left.
     ETextLayout layout() const { return mLayout; }
     //! Text layout: left to right, right to left.
@@ -147,8 +152,17 @@ namespace vl
     AABB boundingRect() const;
 
     //! Returns the plain 2D bounding box of the text, in local coordinates.
-    AABB boundingRect(const String& text) const;
+    //AABB boundingRect(const String& text) const;
+	
+	//! Get the sampler of the texture
+	int getSampler() const;
 
+    //! Get the Image of the texture
+    vl::Image* getImage();
+	
+	//! Get the texture
+	vl::Texture* getTexture() { return mTextTexture.get(); }
+	
     // --- Renderable interface implementation ---
 
     virtual void updateDirtyBufferObject(EBufferObjectUpdateMode) {}
@@ -162,10 +176,17 @@ namespace vl
     void renderText(const Actor*, const Camera* camera, const fvec4& color, const fvec2& offset) const;
     void renderBackground(const Actor* actor, const Camera* camera) const;
     void renderBorder(const Actor* actor, const Camera* camera) const;
-    AABB rawboundingRect(const String& text) const;
+    AABB computeRawBoundingRect(const String& text) const;
+	
+	Image* textImage(const String& text);
+	
+	//! Get the texture 
+	vl::Texture* textTexture(const String& text);
+	
+	void getCoordinates(float* texc);
 
   protected:
-    mutable ref<Font> mFont;
+	mutable ref<CoreFont> mFont;
     String mText;
     fvec4 mColor;
     fvec4 mBorderColor;
@@ -182,6 +203,14 @@ namespace vl
     bool mOutlineEnabled;
     bool mShadowEnabled;
     bool mKerningEnabled;
+	GLuint mBufferID;
+	
+  private:
+	mutable std::vector< String > mLines;
+	mutable std::vector< AABB > mDimensionsLines;
+	AABB mRawBoundingRect;
+	ref< Image > mTextImage;
+	ref< Texture > mTextTexture;
   };
 }
 

@@ -35,7 +35,7 @@
 
 using namespace vl;
 
-ref<Geometry> Extrusion::extrude()
+ref<Geometry> Extrusion::extrude(bool compatibilityProfile)
 {
   if (silhouette().empty())
   {
@@ -190,13 +190,19 @@ ref<Geometry> Extrusion::extrude()
   }
 
   ref<ArrayFloat3> vert_array = new ArrayFloat3;
-  geom->setVertexArray( vert_array.get() );
+  if(compatibilityProfile)
+	geom->setVertexArray( vert_array.get() );
+  else
+	geom->setVertexAttribArray(VA_Position, vert_array.get());
   vert_array->initFrom(verts);
 
   if (!colorPath().empty())
   {
     ref<ArrayFloat4> col_array = new ArrayFloat4;
-    geom->setColorArray(col_array.get());
+	if(compatibilityProfile)
+      geom->setColorArray(col_array.get());
+	else
+	  geom->setVertexAttribArray(VA_Color, col_array.get());
     col_array->resize(geom->vertexArray()->size());
     int offs = 0;
     for(size_t iseg=0; iseg<segments; ++iseg)

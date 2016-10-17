@@ -250,7 +250,10 @@ void FramebufferObject::addColorAttachment( EAttachmentPoint attach_point, FBOCo
 //-----------------------------------------------------------------------------
 void FramebufferObject::addTextureAttachment( EAttachmentPoint attach_point, FBOAbstractTextureAttachment* attachment )
 {
-  VL_CHECK( attach_point >= AP_COLOR_ATTACHMENT0 && attach_point <= AP_COLOR_ATTACHMENT15 );
+  VL_CHECK( attach_point >= AP_COLOR_ATTACHMENT0 && attach_point <= AP_COLOR_ATTACHMENT15 ||
+            attach_point == AP_DEPTH_ATTACHMENT ||
+            attach_point == AP_STENCIL_ATTACHMENT ||
+            attach_point == AP_DEPTH_STENCIL_ATTACHMENT);   // Texture attachment can be depth or stencil too (see glFrameBufferTexture documentation)
   VL_CHECK( Has_FBO )
   if( !Has_FBO )
     return;

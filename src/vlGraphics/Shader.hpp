@@ -43,6 +43,7 @@
 #include <vlGraphics/Scissor.hpp>
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/ClipPlane.hpp>
+#include <vlGraphics/TransformFeedback.hpp>
 #include <vector>
 
 namespace vl
@@ -2102,6 +2103,10 @@ namespace vl
     SampleCoverage* gocSampleCoverage();
     const SampleCoverage* getSampleCoverage() const { if (!getRenderStateSet()) return NULL; else return static_cast<const SampleCoverage*>( getRenderStateSet()->renderState( RS_SampleCoverage ) ); }
     SampleCoverage* getSampleCoverage() { if (!getRenderStateSet()) return NULL; else return static_cast<SampleCoverage*>( getRenderStateSet()->renderState( RS_SampleCoverage ) ); }
+	
+	TransformFeedback* gocTransformFeedback();
+	const TransformFeedback* getTransformFeedback() const { if(!getRenderStateSet()) return NULL; else return static_cast<const TransformFeedback*>( getRenderStateSet()->renderState( RS_TransformFeedback ) ); }
+	TransformFeedback* getTransformFeedback() { if(!getRenderStateSet()) return NULL; else return static_cast<TransformFeedback*>( getRenderStateSet()->renderState( RS_TransformFeedback ) ); }
 
     // indexed render states
 

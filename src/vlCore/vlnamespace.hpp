@@ -845,6 +845,9 @@ namespace vl
     EN_POINT_SPRITE, //!< If enabled, calculate texture coordinates for points based on texture environment and point parameter settings; Otherwise texture coordinates are constant across points.
     EN_PROGRAM_POINT_SIZE, //!< [GL_VERTEX_PROGRAM_POINT_SIZE/GL_PROGRAM_POINT_SIZE] If enabled, and a vertex shader is active, then the derived point size is taken from the (potentially clipped) shader builtin \p gl_PointSize and clamped to the implementation-dependent point size range|
 
+	// Rasterizer
+	EN_RASTERIZER_DISCARD,
+	
     // Fixed function pipeline
     EN_ALPHA_TEST, //!< If enabled, performs alpha testing, see also AlphaFunc for more information.
     EN_LIGHTING, //!< If enabled, use the current lighting parameters to compute the vertex color; Otherwise, simply associate the current color with each vertex, see also Material, LightModel, and Light.
@@ -1001,6 +1004,8 @@ namespace vl
     RS_StencilMask,
     RS_StencilOp,
     RS_GLSLProgram,
+	
+	RS_TransformFeedback,
 
     RS_Light,
     RS_Light0 = RS_Light,
@@ -1532,6 +1537,12 @@ namespace vl
     RCS_RenderingStarted,
     RCS_RenderingFinished
   } EResetContextStates;
+  
+  typedef enum
+  {
+	BM_SeparateAttribs = GL_SEPARATE_ATTRIBS,
+	BM_InterleavedAttribs = GL_INTERLEAVED_ATTRIBS
+  } EBufferMode;
 }
 
 

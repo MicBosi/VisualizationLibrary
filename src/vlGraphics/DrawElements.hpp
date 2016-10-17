@@ -34,6 +34,7 @@
 
 #include <vlGraphics/DrawCall.hpp>
 #include <vlGraphics/TriangleIterator.hpp>
+#include <vlGraphics/LineIterator.hpp>
 #include <vlGraphics/Array.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
@@ -352,6 +353,33 @@ namespace vl
             baseVertex(), primitiveRestartEnabled(), primitive_restart_index );
       it->initialize();
       return TriangleIterator(it.get());
+    }
+
+    LineIterator lineIterator() const
+    {
+      ref< LineIteratorIndexed<arr_type> > it =
+        new LineIteratorIndexed<arr_type>( mIndexBuffer.get(), primitiveType(),
+            baseVertex(), primitiveRestartEnabled(), primitive_restart_index );
+      it->initialize();
+      return LineIterator(it.get());
+    }
+	
+	TriangleAccessor triangleAccessor() const
+    {
+      ref< TriangleAccessorIndexed<arr_type> > it = 
+        new TriangleAccessorIndexed<arr_type>( mIndexBuffer.get(), primitiveType(), 
+            baseVertex(), primitiveRestartEnabled(), primitive_restart_index );
+      it->initialize();
+      return TriangleAccessor(it.get());
+    }
+
+    LineAccessor lineAccessor() const
+    {
+      ref< LineAccessorIndexed<arr_type> > it =
+        new LineAccessorIndexed<arr_type>( mIndexBuffer.get(), primitiveType(),
+            baseVertex(), primitiveRestartEnabled(), primitive_restart_index );
+      it->initialize();
+      return LineAccessor(it.get());
     }
 
     IndexIterator indexIterator() const

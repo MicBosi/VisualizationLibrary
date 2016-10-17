@@ -383,6 +383,13 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       }
 
       VL_CHECK_OGL()
+	  
+	  if( shader->glslProgram() && shader->glslProgram()->handle() && shader->glslProgram()->transformFeedback() )
+	  {	
+		shader->glslProgram()->transformFeedback()->beginTransformFeedback();
+	  }
+	  
+	  VL_CHECK_OGL()
 
       // --------------- Actor rendering ---------------
 
@@ -390,6 +397,13 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       tok->mRenderable->render( actor, shader, camera, opengl_context );
 
       VL_CHECK_OGL()
+	  
+	  if( shader->glslProgram() && shader->glslProgram()->handle() && shader->glslProgram()->transformFeedback() )
+	  {
+		shader->glslProgram()->transformFeedback()->endTransformFeedback();
+	  }
+	  
+	  VL_CHECK_OGL()
 
       // if shader is overridden it does not make sense to perform multipassing so we break the loop here.
       if (shader != tok->mShader)
