@@ -34,6 +34,7 @@
 
 #include <vlGraphics/DrawCall.hpp>
 #include <vlGraphics/TriangleIterator.hpp>
+#include <vlGraphics/LineIterator.hpp>
 
 namespace vl
 {
@@ -138,6 +139,27 @@ namespace vl
       tid->initialize(mStart, mStart+mCount);
       return TriangleIterator(tid.get());
     }
+
+    LineIterator lineIterator() const
+    {
+      ref<LineIteratorDirect> lid = new LineIteratorDirect( primitiveType() );
+      lid->initialize(mStart, mStart+mCount);
+      return LineIterator(lid.get());
+    }
+	
+	TriangleAccessor triangleAccessor() const
+	{
+	  ref<TriangleAccessorDirect> tad = new TriangleAccessorDirect( primitiveType() );
+	  tad->initialize(mStart, mStart+mCount);
+	  return TriangleAccessor(tad.get());
+	}
+
+    LineAccessor lineAccessor() const
+	{
+	  ref<LineAccessorDirect> lad = new LineAccessorDirect( primitiveType() );
+	  lad->initialize(mStart, mStart+mCount);
+	  return LineAccessor(lad.get());
+	}
 
     IndexIterator indexIterator() const
     {

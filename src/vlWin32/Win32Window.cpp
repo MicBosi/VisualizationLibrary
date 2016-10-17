@@ -325,7 +325,8 @@ void Win32Window::destroyWin32GLWindow()
     }
     if (mHDC)
     {
-      DeleteDC(mHDC);
+      //DeleteDC(mHDC);
+	  ReleaseDC(mHWND, mHDC);
       mHDC = NULL;
     }
   }

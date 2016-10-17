@@ -58,6 +58,7 @@ FontManager::FontManager(void* free_type_library)
 FontManager::~FontManager()
 {
   releaseAllFonts();
+  releaseAllCoreFonts();
   if (mFreeTypeLibrary)
   {
     FT_Done_FreeType( (FT_Library)mFreeTypeLibrary );
@@ -84,6 +85,25 @@ Font* FontManager::acquireFont(const String& path, int size, bool smooth)
   return font.get();
 }
 //-----------------------------------------------------------------------------
+CoreFont* FontManager::acquireCoreFont(const String& path, int size, bool smooth)
+{
+  ref<CoreFont> coreFont;
+  for(unsigned i=0; !coreFont && i<mCoreFonts.size(); ++i)
+    if (coreFonts()[i]->filePath() == path && coreFonts()[i]->size() == size/* && coreFonts()[i]->smooth() == smooth*/)
+      coreFont = coreFonts()[i];
+
+  if (!coreFont)
+  {
+    coreFont = new CoreFont(this);
+	coreFont->setSize(size);
+    coreFont->loadFont(path);
+    coreFont->setSmooth(smooth);
+    mCoreFonts.push_back( coreFont );
+  }
+
+  return coreFont.get();
+}
+//-----------------------------------------------------------------------------
 void FontManager::releaseFont(Font* font)
 { 
   std::vector< ref<Font> >::iterator it = std::find(mFonts.begin(), mFonts.end(), font);
@@ -91,9 +111,22 @@ void FontManager::releaseFont(Font* font)
     mFonts.erase(it);
 }
 //-----------------------------------------------------------------------------
+void FontManager::releaseCoreFont(CoreFont* coreFont)
+{ 
+  std::vector< ref<CoreFont> >::iterator it = std::find(mCoreFonts.begin(), mCoreFonts.end(), coreFont);
+  if (it != mCoreFonts.end())
+    mCoreFonts.erase(it);
+}
+//-----------------------------------------------------------------------------
 void FontManager::releaseAllFonts()
 { 
   for(unsigned i=0; i<mFonts.size(); ++i)
     mFonts[i]->releaseFreeTypeData(); 
+}
+//-----------------------------------------------------------------------------
+void FontManager::releaseAllCoreFonts()
+{ 
+  for(unsigned i=0; i<mCoreFonts.size(); ++i)
+    mCoreFonts[i]->releaseFreeTypeData(); 
 }
 //-----------------------------------------------------------------------------

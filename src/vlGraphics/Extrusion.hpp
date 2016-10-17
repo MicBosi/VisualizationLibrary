@@ -66,7 +66,7 @@ namespace vl
     }
 
     //! Performs the actual extrusion.
-    vl::ref<vl::Geometry> extrude();
+    vl::ref<vl::Geometry> extrude(bool compatibilityProfile = true);
 
     //! Sets the silhouette to be extruded.
     void setSilhouette(const std::vector<vl::fvec2>& silhouette) { mSilhouette = silhouette; }

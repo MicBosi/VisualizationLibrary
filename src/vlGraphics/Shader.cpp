@@ -108,6 +108,8 @@ Normal* Shader::gocNormal() { GET_OR_CREATE(Normal) }
 //------------------------------------------------------------------------------
 ColorMask* Shader::gocColorMask() { GET_OR_CREATE(ColorMask) }
 //------------------------------------------------------------------------------
+TransformFeedback* Shader::gocTransformFeedback() { GET_OR_CREATE(TransformFeedback) }
+//------------------------------------------------------------------------------
 PolygonMode* Shader::gocPolygonMode() { GET_OR_CREATE(PolygonMode) }
 //------------------------------------------------------------------------------
 ShadeModel* Shader::gocShadeModel() { GET_OR_CREATE(ShadeModel) }

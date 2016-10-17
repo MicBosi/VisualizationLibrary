@@ -624,6 +624,7 @@ void OpenGLContext::setupDefaultRenderStates()
   mDefaultRenderStates[RS_StencilMask] = RenderStateSlot(new StencilMask, 0);
   mDefaultRenderStates[RS_StencilOp]   = RenderStateSlot(new StencilOp, 0);
   mDefaultRenderStates[RS_GLSLProgram] = RenderStateSlot(new GLSLProgram, 0);
+  mDefaultRenderStates[RS_TransformFeedback] = RenderStateSlot(new TransformFeedback, 0);
 
   for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
   {

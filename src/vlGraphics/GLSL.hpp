@@ -36,6 +36,7 @@
 #include <vlCore/glsl_math.hpp>
 #include <vlGraphics/RenderState.hpp>
 #include <vlCore/String.hpp>
+#include <vlGraphics/TransformFeedback.hpp>
 
 namespace vl
 {
@@ -508,6 +509,27 @@ namespace vl
       int location = glGetUniformLocation(handle(), name);
       return location;
     }
+	
+	// --------------- transform feedback -----------------------
+	
+	void setTransformFeedback(TransformFeedback* transformFeedback)
+	{
+	  VL_CHECK( Has_Transform_Feedback )
+	  if( !Has_Transform_Feedback )
+		return;
+	  VL_CHECK(!linked())
+	  
+	  mTransformFeedback = transformFeedback;
+	}
+	
+	const TransformFeedback* transformFeedback() const
+	{
+	  VL_CHECK( Has_Transform_Feedback )
+	  if( !Has_Transform_Feedback )
+		return NULL;
+	  
+	  return mTransformFeedback.get();
+	}
 
     // --------------- uniform variables: getters ---------------
 
@@ -641,6 +663,8 @@ namespace vl
     EGeometryOutputType mGeometryOutputType;
     bool mProgramBinaryRetrievableHint;
     bool mProgramSeparable;
+	
+	vl::ref< TransformFeedback > mTransformFeedback;
 
     int m_vl_ModelViewMatrix;
     int m_vl_ProjectionMatrix;
