@@ -491,22 +491,51 @@ namespace vl
     //! Utility function using getUniformSet(). Erases all the uniforms.
     void eraseAllUniforms() { if(getUniformSet()) getUniformSet()->eraseAllUniforms(); }
 
+    //! Returns the binding location of the vl_WorldMatrix uniform variable or -1 if no such variable is used by the GLSLProgram.
+    //! vl_WorldMatrix transforms a point from object space to world space.
+    int vl_WorldMatrix() const { return m_vl_WorldMatrix; }
 
-    //! Returns the binding location of the vl_ModelViewMatrix uniform variable or -1 if no such variable is used by the GLSLProgram
+    //! Returns the binding location of the vl_ModelViewMatrix uniform variable or -1 if no such variable is used by the GLSLProgram.
+    //! vl_ModelViewMatrix transforms a point from object space to camera space.
     int vl_ModelViewMatrix() const { return m_vl_ModelViewMatrix; }
 
-    //! Returns the binding location of the vl_ProjectionMatrix uniform variable or -1 if no such variable is used by the GLSLProgram
+    //! Returns the binding location of the vl_ProjectionMatrix uniform variable or -1 if no such variable is used by the GLSLProgram.
+    //! vl_ProjectionMatrix is used to transform a point from camera space to projection space (ie. clip coordinates; you can get `normalized device coordinates` by dividing x, y & z by w).
+    //! See http://www.songho.ca/opengl/gl_projectionmatrix.html.
     int vl_ProjectionMatrix() const  { return m_vl_ProjectionMatrix; }
 
-    //! Returns the binding location of the vl_ModelViewProjectionMatrix uniform variable or -1 if no such variable is used by the GLSLProgram
+    //! Returns the binding location of the vl_ModelViewProjectionMatrix uniform variable or -1 if no such variable is used by the GLSLProgram.
     int vl_ModelViewProjectionMatrix() const  { return m_vl_ModelViewProjectionMatrix; }
 
     //! Returns the binding location of the vl_NormalMatrix uniform variable or -1 if no such variable is used by the GLSLProgram
+    //! vl_NormalMatrix is simply transpose( inverse( vl_ModelViewMatrix ) ) which usually allows to transform normals without having
+    //! to renormalized them one by one by `undoing` the scaling that might be present in vl_ModelViewMatrix.
     int vl_NormalMatrix() const { return m_vl_NormalMatrix; }
+
+    // --- vertex attribute binding ---
+
+    int vl_VertexPosition() const { return m_vl_VertexPosition; }
+    int vl_VertexNormal() const { return m_vl_VertexNormal; }
+    int vl_VertexColor() const { return m_vl_VertexColor; }
+    int vl_VertexSecondaryColor() const { return m_vl_VertexSecondaryColor; }
+    int vl_VertexFogCoord() const { return m_vl_VertexFogCoord; }
+    int vl_VertexTexCoord0() const { return m_vl_VertexTexCoord0; }
+    int vl_VertexTexCoord1() const { return m_vl_VertexTexCoord1; }
+    int vl_VertexTexCoord2() const { return m_vl_VertexTexCoord2; }
+    int vl_VertexTexCoord3() const { return m_vl_VertexTexCoord3; }
+    int vl_VertexTexCoord4() const { return m_vl_VertexTexCoord4; }
+    int vl_VertexTexCoord5() const { return m_vl_VertexTexCoord5; }
+    int vl_VertexTexCoord6() const { return m_vl_VertexTexCoord6; }
+    int vl_VertexTexCoord7() const { return m_vl_VertexTexCoord7; }
+    int vl_VertexTexCoord8() const { return m_vl_VertexTexCoord8; }
+    int vl_VertexTexCoord9() const { return m_vl_VertexTexCoord9; }
+    int vl_VertexTexCoord10() const { return m_vl_VertexTexCoord10; }
 
   private:
     void preLink();
     void postLink();
+    void operator=(const GLSLProgram&) { }
+    void resetBindingLocations();
 
   protected:
     std::vector< ref<GLSLShader> > mShaders;
@@ -519,10 +548,32 @@ namespace vl
     bool mProgramBinaryRetrievableHint;
     bool mProgramSeparable;
 
+    // VL standard uniforms
+
+    int m_vl_WorldMatrix;
     int m_vl_ModelViewMatrix;
     int m_vl_ProjectionMatrix;
     int m_vl_ModelViewProjectionMatrix;
     int m_vl_NormalMatrix;
+
+    // VL standard vertex attributes
+
+    int m_vl_VertexPosition;
+    int m_vl_VertexNormal;
+    int m_vl_VertexColor;
+    int m_vl_VertexSecondaryColor;
+    int m_vl_VertexFogCoord;
+    int m_vl_VertexTexCoord0;
+    int m_vl_VertexTexCoord1;
+    int m_vl_VertexTexCoord2;
+    int m_vl_VertexTexCoord3;
+    int m_vl_VertexTexCoord4;
+    int m_vl_VertexTexCoord5;
+    int m_vl_VertexTexCoord6;
+    int m_vl_VertexTexCoord7;
+    int m_vl_VertexTexCoord8;
+    int m_vl_VertexTexCoord9;
+    int m_vl_VertexTexCoord10;
   };
 }
 

@@ -283,10 +283,8 @@ GLSLProgram::GLSLProgram()
   mHandle = 0;
   mProgramBinaryRetrievableHint = false;
   mProgramSeparable = false;
-  m_vl_ModelViewMatrix = -1;
-  m_vl_ProjectionMatrix = -1;
-  m_vl_ModelViewProjectionMatrix = -1;
-  m_vl_NormalMatrix = -1;
+
+  resetBindingLocations();
 }
 //-----------------------------------------------------------------------------
 GLSLProgram::~GLSLProgram()
@@ -295,42 +293,33 @@ GLSLProgram::~GLSLProgram()
     deleteProgram();
 }
 //-----------------------------------------------------------------------------
-GLSLProgram& GLSLProgram::operator=(const GLSLProgram& other)
+void GLSLProgram::resetBindingLocations()
 {
-  super::operator=(other);
-
-  // unsigned int mHandle;
-  // bool mScheduleLink;
-  deleteProgram();
-
-  // attach shader
-  mShaders.clear();
-  for(size_t i=0; i<other.mShaders.size(); ++i)
-    attachShader( other.mShaders[i].get_writable() );
-
-  mFragDataLocation = other.mFragDataLocation;
-  mActiveUniforms.clear();
-  mActiveAttribs.clear();
-  if (other.mUniformSet)
-  {
-    if (mUniformSet.get() == NULL)
-      mUniformSet = new UniformSet;
-    *mUniformSet = *other.mUniformSet;
-  }
-  else
-    mUniformSet = NULL;
-
-  // glProgramParameter
-  mProgramBinaryRetrievableHint = other.mProgramBinaryRetrievableHint;
-  mProgramSeparable = other.mProgramSeparable;
-
+  // standard uniform binding
   m_vl_ModelViewMatrix = -1;
   m_vl_ProjectionMatrix = -1;
   m_vl_ModelViewProjectionMatrix = -1;
   m_vl_NormalMatrix = -1;
 
-  return *this;
+  // vertex attrib binding
+  m_vl_VertexPosition = -1;
+  m_vl_VertexNormal = -1;
+  m_vl_VertexColor = -1;
+  m_vl_VertexSecondaryColor = -1;
+  m_vl_VertexFogCoord = -1;
+  m_vl_VertexTexCoord0 = -1;
+  m_vl_VertexTexCoord1 = -1;
+  m_vl_VertexTexCoord2 = -1;
+  m_vl_VertexTexCoord3 = -1;
+  m_vl_VertexTexCoord4 = -1;
+  m_vl_VertexTexCoord5 = -1;
+  m_vl_VertexTexCoord6 = -1;
+  m_vl_VertexTexCoord7 = -1;
+  m_vl_VertexTexCoord8 = -1;
+  m_vl_VertexTexCoord9 = -1;
+  m_vl_VertexTexCoord10 = -1;
 }
+//-----------------------------------------------------------------------------
 void GLSLProgram::createProgram()
 {
   VL_CHECK_OGL();
@@ -338,7 +327,7 @@ void GLSLProgram::createProgram()
   if( !Has_GLSL )
     return;
 
-  if (handle() == 0)
+  if ( handle() == 0 )
   {
     scheduleRelinking();
     mHandle = glCreateProgram(); VL_CHECK_OGL();
@@ -527,17 +516,64 @@ void GLSLProgram::preLink()
     VL_glProgramParameteri(handle(), GL_PROGRAM_SEPARABLE, programSeparable()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
   }
 
+  // Automatically binds the specified attributes to the desired values
+
+  //======================================================================================
+  // MIC FIXME
+  // Test with float and matrix attribute types, how does it work, what errors do you get?
+  // Ex. this should give an error:
+  // mat4 vl_VertexTexCoord0;
+  // mat4 vl_VertexTexCoord1;
+  //======================================================================================
+
+  glBindAttribLocation( handle(), vl::VA_Position, "vl_VertexPosition" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_Normal, "vl_VertexNormal" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_Color, "vl_VertexColor" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_SecondaryColor, "vl_VertexSecondaryColor" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_FogCoord, "vl_VertexFogCoord" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_TexCoord0, "vl_VertexTexCoord0" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_TexCoord1, "vl_VertexTexCoord1" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_TexCoord2, "vl_VertexTexCoord2" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_TexCoord3, "vl_VertexTexCoord3" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_TexCoord4, "vl_VertexTexCoord4" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_TexCoord5, "vl_VertexTexCoord5" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_TexCoord6, "vl_VertexTexCoord6" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_TexCoord7, "vl_VertexTexCoord7" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_TexCoord8, "vl_VertexTexCoord8" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_TexCoord9, "vl_VertexTexCoord9" ); VL_CHECK_OGL();
+  glBindAttribLocation( handle(), vl::VA_TexCoord10, "vl_VertexTexCoord10" ); VL_CHECK_OGL();
 }
 //-----------------------------------------------------------------------------
 void GLSLProgram::postLink()
 {
   VL_CHECK_OGL();
 
+  // track standard vl uniforms
 
+  m_vl_WorldMatrix               = glGetUniformLocation(handle(), "vl_WorldMatrix");
   m_vl_ModelViewMatrix           = glGetUniformLocation(handle(), "vl_ModelViewMatrix");
   m_vl_ProjectionMatrix          = glGetUniformLocation(handle(), "vl_ProjectionMatrix");
   m_vl_ModelViewProjectionMatrix = glGetUniformLocation(handle(), "vl_ModelViewProjectionMatrix");
   m_vl_NormalMatrix              = glGetUniformLocation(handle(), "vl_NormalMatrix");
+
+  // track vertex attribute bindings
+
+  m_vl_VertexPosition       = glGetAttribLocation( handle(), "vl_VertexPosition" );
+  m_vl_VertexNormal         = glGetAttribLocation( handle(), "vl_VertexNormal" );
+  m_vl_VertexColor          = glGetAttribLocation( handle(), "vl_VertexColor" );
+  m_vl_VertexSecondaryColor = glGetAttribLocation( handle(), "vl_VertexSecondaryColor" );
+  m_vl_VertexFogCoord       = glGetAttribLocation( handle(), "vl_VertexFogCoord" );
+  m_vl_VertexTexCoord0      = glGetAttribLocation( handle(), "vl_VertexTexCoord0" );
+  m_vl_VertexTexCoord1      = glGetAttribLocation( handle(), "vl_VertexTexCoord1" );
+  m_vl_VertexTexCoord2      = glGetAttribLocation( handle(), "vl_VertexTexCoord2" );
+  m_vl_VertexTexCoord3      = glGetAttribLocation( handle(), "vl_VertexTexCoord3" );
+  m_vl_VertexTexCoord4      = glGetAttribLocation( handle(), "vl_VertexTexCoord4" );
+  m_vl_VertexTexCoord5      = glGetAttribLocation( handle(), "vl_VertexTexCoord5" );
+  m_vl_VertexTexCoord6      = glGetAttribLocation( handle(), "vl_VertexTexCoord6" );
+  m_vl_VertexTexCoord7      = glGetAttribLocation( handle(), "vl_VertexTexCoord7" );
+  m_vl_VertexTexCoord8      = glGetAttribLocation( handle(), "vl_VertexTexCoord8" );
+  m_vl_VertexTexCoord9      = glGetAttribLocation( handle(), "vl_VertexTexCoord9" );
+  m_vl_VertexTexCoord10     = glGetAttribLocation( handle(), "vl_VertexTexCoord10" );
 }
 //-----------------------------------------------------------------------------
 bool GLSLProgram::linkStatus() const
