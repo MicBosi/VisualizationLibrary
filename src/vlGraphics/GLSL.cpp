@@ -82,21 +82,44 @@ std::string GLSLShader::getShaderSource() const
   return "";
 }
 //-----------------------------------------------------------------------------
+String GLSLShader::processSource( const String& source ) {
+  String new_source;
+  std::vector<String> lines;
+  source.splitLines( lines );
+  for( size_t i=0; i<lines.size(); ++i ) {
+    if ( lines[i].startsWith( "#pragma VL include" ) ) {
+      String file_path = lines[i].substring( 18 /*strlen("#pragma VL include")*/ ).trim();
+      String include = processSource( vl::String::loadText( file_path ) );
+      new_source += String::printf( "#line %d 1", 0) + '\n';
+      new_source += include + '\n';
+      new_source += String::printf( "#line %d 0", i + 1) + '\n';
+    } else {
+      new_source += lines[i] + '\n';
+    }
+  }
+
+  return new_source;
+}
+//-----------------------------------------------------------------------------
 void GLSLShader::setSource( const String& source_or_path )
 {
-  std::string new_src = "ERROR";
+  // make sure `source_or_path` is not `mPath` since we clear it at the beginning.
+  VL_CHECK( &source_or_path != &mPath );
 
-  if (source_or_path.empty())
+  std::string new_src = "ERROR";
+  mSource.clear();
+  mPath.clear();
+
+  if ( source_or_path.empty() )
   {
-    mSource.clear();
     return;
   }
   else
-  if (vl::locateFile(source_or_path))
+  if ( vl::locateFile( source_or_path ) )
   {
-    new_src = vl::String::loadText(source_or_path).toStdString();
+    new_src = processSource( vl::String::loadText( source_or_path ) ).toStdString();
+    setPath( source_or_path );
     setObjectName( source_or_path.toStdString().c_str() );
-    setPath( source_or_path.toStdString().c_str() );
   }
   else
   {

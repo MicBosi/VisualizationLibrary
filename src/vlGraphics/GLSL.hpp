@@ -51,6 +51,9 @@ namespace vl
   {
     VL_INSTRUMENT_CLASS(vl::GLSLShader, Object)
 
+    //! Implements the `#pragma VL include /path/to/file.glsl` directive
+    static String processSource( const String& source );
+
   public:
     GLSLShader();
 
