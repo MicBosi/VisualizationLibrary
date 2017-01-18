@@ -29,20 +29,63 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLQT5_CONFIG_INCLUDE_ONCE
-#define VLQT5_CONFIG_INCLUDE_ONCE
+#ifndef QtDirectory_INCLUDE_ONCE
+#define QtDirectory_INCLUDE_ONCE
 
-#include <vlCore/config.hpp>
+#include <vlQt4/link_config.hpp>
+#include <vlCore/VirtualDirectory.hpp>
 
-// VLQT5_EXPORT macro
-#if defined(_WIN32) && !defined(VL_STATIC_LINKING)
-  #ifdef VLQt5_EXPORTS
-    #define VLQT5_EXPORT __declspec(dllexport)
-  #else
-    #define VLQT5_EXPORT __declspec(dllimport)
-  #endif
-#else
-  #define VLQT5_EXPORT
+namespace vl
+{
+  class QtFile;
+//---------------------------------------------------------------------------
+// QtDirectory
+//---------------------------------------------------------------------------
+  /**
+   * A VirtualDirectory that uses Qt's QDir.
+   *
+   * \sa
+   * - MemoryDirectory
+   * - DiskDirectory
+   * - ZippedDirectory
+   * - FileSystem
+   * - VirtualFile
+   * - DiskFile
+   * - QtFile
+   * - MemoryFile
+   * - ZippedFile
+  */
+  class VLQT4_EXPORT QtDirectory: public VirtualDirectory
+  {
+    VL_INSTRUMENT_CLASS(vl::QtDirectory, VirtualDirectory)
+
+  public:
+    QtDirectory();
+
+    QtDirectory( const String& path );
+
+    //! Use carefully this function, since this search the whole given file system tree.
+    void listFilesRecursive(std::vector<String>& file_list) const;
+
+    void listFiles(std::vector<String>& file_list, bool append=false) const;
+
+    void listFiles(std::vector< ref<QtFile> >& file_list, bool append=false) const;
+
+    void listSubDirs(std::vector<String>& dirs, bool append=false) const;
+
+    ref<QtDirectory> qtSubDir(const String& subdir_name) const;
+
+    ref<VirtualDirectory> subDir(const String& subdir_name) const { return qtSubDir(subdir_name); }
+
+    virtual ref<VirtualFile> file(const String& name) const;
+
+    virtual ref<QtFile> qtFile(const String& name) const;
+
+    bool exists() const;
+
+  protected:
+    void listFilesRecursive_internal(std::vector<String>& file_list) const;
+  };
+}
+
 #endif
-
-#endif // VLQT5_CONFIG_INCLUDE_ONCE

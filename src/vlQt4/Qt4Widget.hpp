@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -57,7 +57,7 @@ namespace vlQt4
   public:
     using vl::Object::setObjectName;
     using QObject::setObjectName;
-  
+
     Qt4Widget(QWidget* parent=NULL, const QGLWidget* shareWidget=NULL, Qt::WindowFlags f=0)
       :QGLWidget(parent,shareWidget,f),
       mRefresh(10) // 100 fps
@@ -75,10 +75,10 @@ namespace vlQt4
       dispatchDestroyEvent();
     }
 
-    void dragEnterEvent(QDragEnterEvent *ev) 
-    { 
-      if (ev->mimeData()->hasUrls()) 
-        ev->acceptProposedAction(); 
+    void dragEnterEvent(QDragEnterEvent *ev)
+    {
+      if (ev->mimeData()->hasUrls())
+        ev->acceptProposedAction();
     }
 
     void dropEvent(QDropEvent* ev)
@@ -159,8 +159,6 @@ namespace vlQt4
       // even if the created context seem to have the alpha buffer
       /*bool ok = */glctx->create(shareContext);
       setContext(glctx);
-
-      initGLContext();
 
       framebuffer()->setWidth(width);
       framebuffer()->setHeight(height);
@@ -244,6 +242,8 @@ namespace vlQt4
     void initializeGL()
     {
       // OpenGL extensions initialization
+      initGLContext();
+
       dispatchInitEvent();
     }
 
@@ -254,7 +254,7 @@ namespace vlQt4
 
     void paintGL()
     {
-      dispatchRunEvent();
+      dispatchUpdateEvent();
     }
 
     void update()

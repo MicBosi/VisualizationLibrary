@@ -29,20 +29,81 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLQT5_CONFIG_INCLUDE_ONCE
-#define VLQT5_CONFIG_INCLUDE_ONCE
+#ifndef QtFile_INCLUDE_ONCE
+#define QtFile_INCLUDE_ONCE
 
-#include <vlCore/config.hpp>
+#include <vlQt4/link_config.hpp>
+#include <vlCore/VirtualFile.hpp>
+#include <vlQt4/QtDirectory.hpp>
+#include <QFile>
 
-// VLQT5_EXPORT macro
-#if defined(_WIN32) && !defined(VL_STATIC_LINKING)
-  #ifdef VLQt5_EXPORTS
-    #define VLQT5_EXPORT __declspec(dllexport)
-  #else
-    #define VLQT5_EXPORT __declspec(dllimport)
-  #endif
-#else
-  #define VLQT5_EXPORT
+namespace vl
+{
+  class QtDirectory;
+//---------------------------------------------------------------------------
+// QtFile
+//---------------------------------------------------------------------------
+  /**
+   * A VirtualFile that uses Qt's QFile.
+   *
+   * \sa
+   * - VirtualDirectory
+   * - DiskDirectory
+   * - QtDirectory
+   * - MemoryDirectory
+   * - ZippedDirectory
+   * - FileSystem
+   * - VirtualFile
+   * - MemoryFile
+   * - DiskFile
+   * - ZippedFile
+  */
+  class VLQT4_EXPORT QtFile: public VirtualFile
+  {
+    VL_INSTRUMENT_CLASS(vl::QtFile, VirtualFile)
+
+    friend class QtDirectory;
+  protected:
+    QtFile(const QtFile& other): VirtualFile(other) {}
+
+  public:
+    QtFile(const String& path = String());
+
+    ~QtFile();
+
+    //! The specified path is relative to the parent directory. See setPhysicalPath().
+    bool open(const String& path, EOpenMode mode);
+
+    virtual bool open(EOpenMode mode);
+
+    virtual bool isOpen() const;
+
+    virtual void close();
+
+    //! Returns the file size in bytes or -1 on error.
+    virtual long long size() const;
+
+    virtual bool exists() const;
+
+    QtFile& operator=(const QtFile& other) { close(); super::operator=(other); return *this; }
+
+    virtual ref<VirtualFile> clone() const;
+
+  protected:
+    virtual long long read_Implementation(void* buffer, long long byte_count);
+
+    virtual long long write_Implementation(const void* buffer, long long byte_count);
+
+    virtual long long position_Implementation() const;
+
+    virtual bool seekSet_Implementation(long long offset);
+
+  protected:
+    QFile mQFile;
+
+  protected:
+  };
+
+}
+
 #endif
-
-#endif // VLQT5_CONFIG_INCLUDE_ONCE
