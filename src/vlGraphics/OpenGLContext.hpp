@@ -593,13 +593,13 @@ namespace vl
     VertexArrayInfo mSecondaryColorArray;
     VertexArrayInfo mFogArray;
     VertexArrayInfo mTexCoordArray[VL_MAX_TEXTURE_UNITS];
-    VertexArrayInfo mVertexAttrib[VL_MAX_GENERIC_VERTEX_ATTRIB];
+    VertexArrayInfo mVertexAttrib[VA_MaxAttribCount];
 
     // save and restore constant attributes
     fvec3 mNormal;
     fvec4 mColor;
     fvec3 mSecondaryColor;
-    fvec4 mVertexAttribValue[VL_MAX_GENERIC_VERTEX_ATTRIB];
+    fvec4 mVertexAttribValue[VA_MaxAttribCount];
 
   private:
     void setupDefaultRenderStates();

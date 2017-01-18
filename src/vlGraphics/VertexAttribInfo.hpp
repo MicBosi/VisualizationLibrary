@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,8 +40,9 @@ namespace vl
   //------------------------------------------------------------------------------
   // VertexAttribInfo
   //------------------------------------------------------------------------------
+  // MIC FIXME: we could now move mInterpretation and mNormalize to ArrayAbstract and delete this class.
   /**
-   * Implements a generic OpenGL Shading Language vertex attribute to be used with a Geometry, 
+   * Implements a generic OpenGL Shading Language vertex attribute to be used with a Geometry,
    * see also http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
   */
   class VertexAttribInfo: public Object
@@ -49,31 +50,19 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::VertexAttribInfo, Object)
 
   public:
-    VertexAttribInfo(unsigned int location, ArrayAbstract* data, bool normalize=true, EVertexAttribInterpretation data_behav=VAI_NORMAL): mData(data), mAttribLocation(location), mInterpretation(data_behav), mNormalize(normalize) {}
-    
-    VertexAttribInfo(): mAttribLocation((unsigned int)-1), mInterpretation(VAI_NORMAL), mNormalize(false) {}
+    VertexAttribInfo(ArrayAbstract* data, EVertexAttribInterpretation data_behav=VAI_NORMAL, bool normalize=false): mData(data), mInterpretation(data_behav), mNormalize(normalize) {}
+
+    VertexAttribInfo(): mInterpretation(VAI_NORMAL), mNormalize(false) {}
 
     //! The GPU buffer that stores the data
     void setData(ArrayAbstract* data) { mData = data; }
-    
+
     //! The GPU buffer that stores the data
     const ArrayAbstract* data() const { return mData.get(); }
-    
+
     //! The GPU buffer that stores the data
     ArrayAbstract* data() { return mData.get(); }
-    
-    //! The 'index' parameter of the vertex attribute as used with glVertexAttribPointer() and glEnableVertexAttribArray().
-    //! \sa
-    //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
-    //! - http://www.opengl.org/sdk/docs/man/xhtml/glEnableVertexAttribArray.xml
-    void setAttribLocation(unsigned int index) { mAttribLocation = index; }
-    
-    //! The 'index' parameter of the vertex attribute as used with glVertexAttribPointer() and glEnableVertexAttribArray().
-    //! \sa
-    //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
-    //! - http://www.opengl.org/sdk/docs/man/xhtml/glEnableVertexAttribArray.xml
-    unsigned int attribLocation() const { return mAttribLocation; }
-    
+
     //! The 'normalized' parameter as used with glVertexAttribPointer()
     //! \sa
     //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
@@ -83,7 +72,7 @@ namespace vl
     //! \sa
     //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
     bool normalize() const { return mNormalize; }
-    
+
     //! How the data is interpreted by the OpenGL, see EVertexAttribInterpretation.
     void setInterpretation(EVertexAttribInterpretation behavior) { mInterpretation = behavior; }
 
@@ -92,7 +81,6 @@ namespace vl
 
   protected:
     ref<ArrayAbstract> mData;
-    unsigned int mAttribLocation;
     EVertexAttribInterpretation mInterpretation;
     bool mNormalize;
   };

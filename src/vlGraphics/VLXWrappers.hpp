@@ -681,30 +681,31 @@ namespace vl
         else
         if (strstr(key.c_str(), "VertexAttribArray") == key.c_str())
         {
-          const char* ch = key.c_str() + 17/*strlen("VertexAttribArray")*/;
-          int attrib_location = 0;
-          for(; *ch; ++ch)
-          {
-            if (*ch>='0' && *ch<='9')
-              attrib_location = attrib_location*10 + (*ch - '0');
-            else
-            {
-              Log::error( Say("Line %n : error. ") << value.lineNumber() );
-              Log::error( "VertexAttribArray must end with a number!\n" );
-              s.signalImportError( Say("Line %n : import error.\n") << value.lineNumber() );
-            }
-          }
-        
-          VLX_IMPORT_CHECK_RETURN(value.type() == VLXValue::Structure, value)
-          VertexAttribInfo* info_ptr = s.importVLX(value.getStructure())->as<VertexAttribInfo>();
-          if (info_ptr)
-          {
-            VertexAttribInfo info = *info_ptr;
-            info.setAttribLocation(attrib_location);
-            geom->setVertexAttribArray(info);
-          }
-          else
-            s.signalImportError( Say("Line %n : import error.\n") << value.lineNumber() );
+          // MIC FIXME
+          //const char* ch = key.c_str() + 17/*strlen("VertexAttribArray")*/;
+          //int attrib_location = 0;
+          //for(; *ch; ++ch)
+          //{
+          //  if (*ch>='0' && *ch<='9')
+          //    attrib_location = attrib_location*10 + (*ch - '0');
+          //  else
+          //  {
+          //    Log::error( Say("Line %n : error. ") << value.lineNumber() );
+          //    Log::error( "VertexAttribArray must end with a number!\n" );
+          //    s.signalImportError( Say("Line %n : import error.\n") << value.lineNumber() );
+          //  }
+          //}
+
+          //VLX_IMPORT_CHECK_RETURN(value.type() == VLXValue::Structure, value)
+          //VertexAttribInfo* info_ptr = s.importVLX(value.getStructure())->as<VertexAttribInfo>();
+          //if (info_ptr)
+          //{
+          //  VertexAttribInfo info = *info_ptr;
+          //  info.setAttribLocation(attrib_location);
+          //  geom->setVertexAttribArray(info);
+          //}
+          //else
+          //  s.signalImportError( Say("Line %n : import error.\n") << value.lineNumber() );
         }
         else
         if (key == "DrawCall")
@@ -734,36 +735,37 @@ namespace vl
       VLXClassWrapper_Renderable::exportRenderable(geom, vlx);
 
       // Geometry
-      if (geom->vertexArray()) 
+      if (geom->vertexArray())
         *vlx << "VertexArray" << s.exportVLX(geom->vertexArray());
-    
-      if (geom->normalArray()) 
+
+      if (geom->normalArray())
         *vlx << "NormalArray" << s.exportVLX(geom->normalArray());
-    
-      if (geom->colorArray()) 
+
+      if (geom->colorArray())
         *vlx << "ColorArray" << s.exportVLX(geom->colorArray());
-    
-      if (geom->secondaryColorArray()) 
+
+      if (geom->secondaryColorArray())
         *vlx << "SecondaryColorArray" << s.exportVLX(geom->secondaryColorArray());
-    
-      if (geom->fogCoordArray()) 
+
+      if (geom->fogCoordArray())
         *vlx << "FogCoordArray" << s.exportVLX(geom->fogCoordArray());
 
-      for( int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
+      for( int i=0; i<VA_MaxTexCoordCount; ++i)
       {
-        if (geom->texCoordArray(i)) 
+        if (geom->texCoordArray(i))
         {
           std::string tex_coord_array = String::printf("TexCoordArray%d", i).toStdString();
-          *vlx << tex_coord_array.c_str() << s.exportVLX(geom->texCoordArray(i)); 
+          *vlx << tex_coord_array.c_str() << s.exportVLX(geom->texCoordArray(i));
         }
       }
 
-      for(size_t i=0; i<VL_MAX_GENERIC_VERTEX_ATTRIB; ++i)
+      // MIC FIXME: VertexAttribInfo should go away
+      for(size_t i=0; i<VA_MaxAttribCount; ++i)
       {
-        if (geom->vertexAttribArray(i))
+        if (geom->vertexAttribArray(i).data())
         {
           std::string vertex_attrib_array = String::printf("VertexAttribArray%d", i).toStdString();
-          *vlx << vertex_attrib_array.c_str() << s.exportVLX(geom->vertexAttribArray(i));
+          *vlx << vertex_attrib_array.c_str() << s.exportVLX(&geom->vertexAttribArray(i));
         }
       }
 
@@ -2732,18 +2734,19 @@ namespace vl
           int index = (int)list->value()[1].getInteger();
           obj->bindFragDataLocation(index, name);
         }
-        else
-        if (key == "AttribLocation")
-        {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::List, value )
-          const VLXList* list = value.getList();
-          VLX_IMPORT_CHECK_RETURN( list->value().size() == 2, *list )
-          VLX_IMPORT_CHECK_RETURN( list->value()[0].type() == VLXValue::Identifier, *list )
-          VLX_IMPORT_CHECK_RETURN( list->value()[1].type() == VLXValue::Integer, *list )
-          const char* name = list->value()[0].getIdentifier().c_str();
-          int index = (int)list->value()[1].getInteger();
-          obj->addAutoAttribLocation(index, name);
-        }
+        // MIC FIXME
+        //else
+        //if (key == "AttribLocation")
+        //{
+        //  VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::List, value )
+        //  const VLXList* list = value.getList();
+        //  VLX_IMPORT_CHECK_RETURN( list->value().size() == 2, *list )
+        //  VLX_IMPORT_CHECK_RETURN( list->value()[0].type() == VLXValue::Identifier, *list )
+        //  VLX_IMPORT_CHECK_RETURN( list->value()[1].type() == VLXValue::Integer, *list )
+        //  const char* name = list->value()[0].getIdentifier().c_str();
+        //  int index = (int)list->value()[1].getInteger();
+        //  obj->addAutoAttribLocation(index, name);
+        //}
         else
         if (key == "Uniforms")
         {
@@ -2794,14 +2797,15 @@ namespace vl
         *vlx << "FragDataLocation" << location;
       }
 
-      // auto attrib locations
-      for(std::map<std::string, int>::const_iterator it = obj->autoAttribLocations().begin(); it != obj->autoAttribLocations().end(); ++it)
-      {
-        VLXList* location = new VLXList;
-        *location << vlx_Identifier(it->first); // Name
-        *location << (long long)it->second;   // Location
-        *vlx << "AttribLocation" << location;
-      }
+      //// auto attrib locations
+      // MIC FIXME
+      //for(std::map<std::string, int>::const_iterator it = obj->autoAttribLocations().begin(); it != obj->autoAttribLocations().end(); ++it)
+      //{
+      //  VLXList* location = new VLXList;
+      //  *location << vlx_Identifier(it->first); // Name
+      //  *location << (long long)it->second;   // Location
+      //  *vlx << "AttribLocation" << location;
+      //}
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)

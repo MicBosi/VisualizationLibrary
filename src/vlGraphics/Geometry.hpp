@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -57,7 +57,7 @@ namespace vl
    * The Geometry class is a Renderable that implements a polygonal mesh made of
    * polygons, lines and points.
    *
-   * @sa 
+   * @sa
    * - ArrayAbstract
    * - Renderable
    * - Actor
@@ -71,17 +71,6 @@ namespace vl
     // use deepCopy() and shallowCopy() instead
     // Geometry(const Geometry& other): Renderable(other) { }
     Geometry& operator=(const Geometry&) { return *this; }
-
-  private:
-    class TextureArray: public Object
-    {
-    public:
-      TextureArray(int unit, ArrayAbstract* data): mTextureSampler(unit), mTexCoordArray(data) { }
-      const BufferObject* bufferObject() const { return mTexCoordArray->bufferObject(); }
-      BufferObject* bufferObject() { return mTexCoordArray->bufferObject(); }
-      int mTextureSampler;
-      ref<ArrayAbstract> mTexCoordArray;
-    };
 
   public:
     /** Constructor. */
@@ -163,15 +152,15 @@ namespace vl
     void convertToVertexAttribs();
 
     /**
-     * Computes the normals in a "smooth" way, i.e. averaging the normals of those 
+     * Computes the normals in a "smooth" way, i.e. averaging the normals of those
      * polygons that share one or more vertices.
      *
-     * This function computes smoothed normals for triangle primitives and leaves 
-     * unchanged the normals of line and point primitives when possible, i.e. when 
+     * This function computes smoothed normals for triangle primitives and leaves
+     * unchanged the normals of line and point primitives when possible, i.e. when
      * they don't share vertices with the polygonal primitives.
      *
-     * \note 
-     * This function modifies the local buffers. After calling this you might want 
+     * \note
+     * This function modifies the local buffers. After calling this you might want
      * to update the buffers allocated on the GPU.
     */
     void computeNormals(bool verbose=false);
@@ -184,7 +173,7 @@ namespace vl
     //! Converts all draw calls to triangles and fixes their winding according to the Geometry's normals.
     void fixTriangleWinding();
 
-    /** 
+    /**
     * Transforms vertices and normals belonging to this geometry.
     * If 'normalize' == true the normals are normalized after being transformed
     * \note This functions supports every possible vertex format, type and layout.
@@ -222,7 +211,7 @@ namespace vl
     //! @note Primitive type can be any.
     void shrinkDrawCalls();
 
-    //! Calls triangulateDrawCalls(), shrinkDrawCalls() and convertToVertexAttribs().
+    //! Calls triangulateDrawCalls() and shrinkDrawCalls().
     //! @note At the moment this method does support MultiDrawElements nor DrawRangeElements but only DrawElements.
     void makeGLESFriendly();
 
@@ -248,15 +237,15 @@ namespace vl
     //! @param tangent [out] Returns the tangent vector of the vertices. This parameter is mandatory.
     //! @param bitangent [out] Returns the bitangent vector of the vertics. This parameter can be NULL.
     // Based on:
-    // Lengyel, Eric. “Computing Tangent Space Basis Vectors for an Arbitrary Mesh”. Terathon Software 3D Graphics Library, 2001. 
+    // Lengyel, Eric. “Computing Tangent Space Basis Vectors for an Arbitrary Mesh”. Terathon Software 3D Graphics Library, 2001.
     // http://www.terathon.com/code/tangent.html
     static void computeTangentSpace(
-      u32 vert_count, 
-      const vl::fvec3 *vertex, 
+      u32 vert_count,
+      const vl::fvec3 *vertex,
       const vl::fvec3* normal,
-      const vl::fvec2 *texcoord, 
+      const vl::fvec2 *texcoord,
       const vl::DrawCall* primitives,
-      vl::fvec3 *tangent, 
+      vl::fvec3 *tangent,
       vl::fvec3 *bitangent );
 
     // ------------------------------------------------------------------------
@@ -265,92 +254,60 @@ namespace vl
 
     void setVertexArray(ArrayAbstract* data);
 
-    const ArrayAbstract* vertexArray() const { return mVertexArray.get(); }
+    const ArrayAbstract* vertexArray() const { return mVertexAttribArrays[VA_Position].data(); }
 
-    ArrayAbstract* vertexArray() { return mVertexArray.get(); }
+    ArrayAbstract* vertexArray() { return mVertexAttribArrays[VA_Position].data(); }
 
     void setNormalArray(ArrayAbstract* data);
 
-    const ArrayAbstract* normalArray() const { return mNormalArray.get(); }
+    const ArrayAbstract* normalArray() const { return mVertexAttribArrays[VA_Normal].data(); }
 
-    ArrayAbstract* normalArray() { return mNormalArray.get(); }
+    ArrayAbstract* normalArray() { return mVertexAttribArrays[VA_Normal].data(); }
 
     void setColorArray(ArrayAbstract* data);
 
-    const ArrayAbstract* colorArray() const { return mColorArray.get(); }
+    const ArrayAbstract* colorArray() const { return mVertexAttribArrays[VA_Color].data(); }
 
-    ArrayAbstract* colorArray() { return mColorArray.get(); }
+    ArrayAbstract* colorArray() { return mVertexAttribArrays[VA_Color].data(); }
 
     void setSecondaryColorArray(ArrayAbstract* data);
 
-    const ArrayAbstract* secondaryColorArray() const { return mSecondaryColorArray.get(); }
+    const ArrayAbstract* secondaryColorArray() const { return mVertexAttribArrays[VA_SecondaryColor].data(); }
 
-    ArrayAbstract* secondaryColorArray() { return mSecondaryColorArray.get(); }
+    ArrayAbstract* secondaryColorArray() { return mVertexAttribArrays[VA_SecondaryColor].data(); }
 
     void setFogCoordArray(ArrayAbstract* data);
 
-    const ArrayAbstract* fogCoordArray() const { return mFogCoordArray.get(); }
+    const ArrayAbstract* fogCoordArray() const { return mVertexAttribArrays[VA_FogCoord].data(); }
 
-    ArrayAbstract* fogCoordArray() { return mFogCoordArray.get(); }
+    ArrayAbstract* fogCoordArray() { return mVertexAttribArrays[VA_FogCoord].data(); }
 
     void setTexCoordArray(int tex_unit, ArrayAbstract* data);
 
-    const ArrayAbstract* texCoordArray(int tex_unit) const
-    { 
-      for(int i=0; i<mTexCoordArrays.size(); ++i)
-        if (mTexCoordArrays.at(i)->mTextureSampler == tex_unit)
-          return mTexCoordArrays.at(i)->mTexCoordArray.get();
-      return NULL;
+    const ArrayAbstract* texCoordArray(int tex_unit) const { return mVertexAttribArrays[VA_TexCoord0 + tex_unit].data(); }
+
+    ArrayAbstract* texCoordArray(int tex_unit) { return mVertexAttribArrays[VA_TexCoord0 + tex_unit].data(); }
+
+    void setVertexAttribArray(int attrib_location, ArrayAbstract* data, bool normalize=true, EVertexAttribInterpretation data_behav=VAI_NORMAL) {
+      setVertexAttribArray( attrib_location, VertexAttribInfo(data, data_behav, normalize) );
     }
 
-    ArrayAbstract* texCoordArray(int tex_unit) 
-    { 
-      for(int i=0; i<mTexCoordArrays.size(); ++i)
-        if (mTexCoordArrays.at(i)->mTextureSampler == tex_unit)
-          return mTexCoordArrays.at(i)->mTexCoordArray.get();
-      return NULL;
-    }
+    void setVertexAttribArray(int attrib_location, const VertexAttribInfo& info);
 
-    int texCoordArrayCount() const { return mTexCoordArrays.size(); }
+    const VertexAttribInfo& vertexAttribArray(int attrib_location) const;
 
-    void getTexCoordArrayAt(int i, int& out_tex_unit, const ArrayAbstract* &tex_array) const
-    {
-      VL_CHECK(i<mTexCoordArrays.size());
-      out_tex_unit = mTexCoordArrays[i]->mTextureSampler;
-      tex_array = mTexCoordArrays[i]->mTexCoordArray.get();
-    }
-
-    void setVertexAttribArray(unsigned int attrib_location, ArrayAbstract* data, bool normalize=true, EVertexAttribInterpretation data_behav=VAI_NORMAL) { setVertexAttribArray(VertexAttribInfo(attrib_location, data, normalize, data_behav)); }
-
-    void setVertexAttribArray(const VertexAttribInfo& info);
-
-    const VertexAttribInfo* vertexAttribArray(unsigned int attrib_location) const;
-
-    VertexAttribInfo* vertexAttribArray(unsigned int attrib_location);
-
-    Collection<VertexAttribInfo>& vertexAttribArrays() { return mVertexAttribArrays; }
-
-    const Collection<VertexAttribInfo>& vertexAttribArrays() const { return mVertexAttribArrays; }
+    VertexAttribInfo& vertexAttribArray(int attrib_location);
 
   protected:
     virtual void computeBounds_Implementation();
-    
+
     virtual void render_Implementation(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context) const;
 
     // render calls
     Collection<DrawCall> mDrawCalls;
 
-    //  --- IVertexAttribSet interface concrete implementation ---
-
-    // conventional vertex attributes
-    ref<ArrayAbstract> mVertexArray;
-    ref<ArrayAbstract> mNormalArray;
-    ref<ArrayAbstract> mColorArray;
-    ref<ArrayAbstract> mSecondaryColorArray;
-    ref<ArrayAbstract> mFogCoordArray;
-    Collection<TextureArray> mTexCoordArrays;
-    // generic vertex attributes
-    Collection<VertexAttribInfo> mVertexAttribArrays;
+    // vertex attributes
+    VertexAttribInfo mVertexAttribArrays[VA_MaxAttribCount];
   };
   //------------------------------------------------------------------------------
 }

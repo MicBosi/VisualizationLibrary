@@ -1345,10 +1345,40 @@ namespace vl
   //! Default vertex attribute bindings
   typedef enum
   {
-    VA_Position  = 0,
-    VA_Normal    = 1,
-    VA_Color     = 2,
-    VA_TexCoord0 = 3,
+    VA_Position       = 0,
+    VA_Normal         = 1,
+    VA_Color          = 2,
+    VA_SecondaryColor = 3,
+    VA_FogCoord       = 4,
+    VA_TexCoord0      = 5,
+    VA_TexCoord1      = 6,
+    VA_TexCoord2      = 7,
+    VA_TexCoord3      = 8,
+    VA_TexCoord4      = 9,
+    VA_TexCoord5      = 10,
+    VA_TexCoord6      = 11,
+    VA_TexCoord7      = 12,
+    VA_TexCoord8      = 13,
+    VA_TexCoord9      = 14,
+    VA_TexCoord10     = 15,
+
+    // Max number of tex coord attribute arrays
+    VA_MaxTexCoordCount  = 11,
+
+    // Max vertex attribute arrays
+    VA_MaxAttribCount  = 16,
+
+    // Handy aliases
+    VA_TexCoordDiffuse   = VA_TexCoord0, // diffuse texture coords
+    VA_TexCoordDetail    = VA_TexCoord1, // detail texture coords
+    VA_TexCoordShadow    = VA_TexCoord2, // precomputed shadow/light map texture coords
+    VA_TexCoordSpecular  = VA_TexCoord3, // specular texture coords
+    VA_TexCoordNormalMap = VA_TexCoord4, // normalmap texture coords
+    VA_TexCoordDisplace  = VA_TexCoord5, // dispace texture coords for tesselation, heightmap etc.
+    VA_Tangent           = VA_TexCoord6, // tangent vectors (normal mapping)
+    VA_Bitangent         = VA_TexCoord7, // bitangent vectors (normal mapping)
+    VA_NextPosition      = VA_TexCoord8, // next frame vertex position for vertex blending
+    VA_NextNormal        = VA_TexCoord9, // next frame normal position for vertex blending
   } EVertexAttribBinding;
 
   //! Uniform types, see also vl::UniformInfo, vl::GLSLProgram, vl::Uniform, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml

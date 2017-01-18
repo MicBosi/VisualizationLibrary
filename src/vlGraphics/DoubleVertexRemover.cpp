@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -41,25 +41,13 @@ namespace
   public:
     LessCompare(const Geometry* geom)
     {
-      if (geom->vertexArray())
-        mAttribs.push_back(geom->vertexArray());
-      if (geom->normalArray())
-        mAttribs.push_back(geom->normalArray());
-      if (geom->colorArray())
-        mAttribs.push_back(geom->colorArray());
-      if (geom->secondaryColorArray())
-        mAttribs.push_back(geom->secondaryColorArray());
-      if (geom->fogCoordArray())
-        mAttribs.push_back(geom->fogCoordArray());
-      for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
-        if (geom->texCoordArray(i))
-          mAttribs.push_back(geom->texCoordArray(i));
-      for(int i=0; i<geom->vertexAttribArrays().size(); ++i)
-        mAttribs.push_back(geom->vertexAttribArrays().at(i)->data());
+      for(int i=0; i<VA_MaxAttribCount; ++i)
+        if (geom->vertexAttribArray(i).data())
+          mAttribs.push_back(geom->vertexAttribArray(i).data());
     }
 
-    bool operator()(u32 a, u32 b) const 
-    { 
+    bool operator()(u32 a, u32 b) const
+    {
       for(unsigned i=0; i<mAttribs.size(); ++i)
       {
         int val = mAttribs[i]->compare(a,b);
@@ -78,25 +66,13 @@ namespace
   public:
     EqualsCompare(const Geometry* geom)
     {
-      if (geom->vertexArray())
-        mAttribs.push_back(geom->vertexArray());
-      if (geom->normalArray())
-        mAttribs.push_back(geom->normalArray());
-      if (geom->colorArray())
-        mAttribs.push_back(geom->colorArray());
-      if (geom->secondaryColorArray())
-        mAttribs.push_back(geom->secondaryColorArray());
-      if (geom->fogCoordArray())
-        mAttribs.push_back(geom->fogCoordArray());
-      for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
-        if (geom->texCoordArray(i))
-          mAttribs.push_back(geom->texCoordArray(i));
-      for(int i=0; i<geom->vertexAttribArrays().size(); ++i)
-        mAttribs.push_back(geom->vertexAttribArrays().at(i)->data());
+      for(int i=0; i<VA_MaxAttribCount; ++i)
+        if (geom->vertexAttribArray(i).data())
+          mAttribs.push_back(geom->vertexAttribArray(i).data());
     }
 
-    bool operator()(u32 a, u32 b) const 
-    { 
+    bool operator()(u32 a, u32 b) const
+    {
       for(unsigned i=0; i<mAttribs.size(); ++i)
       {
         if (mAttribs[i]->compare(a,b) != 0)
@@ -119,8 +95,10 @@ ref<ArrayAbstract> VertexMapper::regenerateT(ArrayAbstract* data, const std::vec
   {
     ref<T> out_data = new T;
     out_data->resize(map_new_to_old.size());
-    for(unsigned i=0; i<map_new_to_old.size(); ++i)
-        out_data->at(i) = in_data->at(map_new_to_old[i]);
+    for(unsigned i=0; i<map_new_to_old.size(); ++i) {
+      int j = map_new_to_old[i];
+      out_data->at(i) = in_data->at(j);
+    }
     return out_data;
   }
   return NULL;
@@ -237,8 +215,8 @@ void DoubleVertexRemover::removeDoubles(Geometry* geom)
   mMapNewToOld.clear();
   mMapOldToNew.clear();
 
-  u32 vert_count = (u32)(geom->vertexArray() ? geom->vertexArray()->size() : geom->vertexAttribArray(VA_Position) ? geom->vertexAttribArray(VA_Position)->data()->size() : 0);
-  
+  u32 vert_count = (u32)(geom->vertexArray() ? geom->vertexArray()->size() : 0);
+
   VL_CHECK(vert_count);
   if (!vert_count)
     return;

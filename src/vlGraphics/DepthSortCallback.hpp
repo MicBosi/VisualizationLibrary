@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,7 +40,7 @@ namespace vl
 {
   /**
    * DepthSortCallback sorts the primitives of the Geometry bound to the Actor in which the callback is installed.
-   * 
+   *
    * In order to work properly DepthSortCallback requires the following:
    * - The Actor must be bound to a Geometry or subclass.
    * - Sorts only draw calls of type DrawElementsUInt/UShort/UByte.
@@ -61,10 +61,9 @@ namespace vl
    *
    * \remarks
    *
-   * - The sorting is based on the position of the vertices as specified by Geometry::vertexArray() or 
-   *   vertexAttribArray(vl::VA_Position) and for obvious
+   * - The sorting is based on the position of the vertices as specified by Geometry::vertexArray() and for obvious
    *   reasons cannot take into consideration transformations made in the vertex shader or in the geometry shader.
-   * - The sorting is performed on a per DrawCall basis. For example, if a Geometry has 2 DrawCall A and B bound to it, 
+   * - The sorting is performed on a per DrawCall basis. For example, if a Geometry has 2 DrawCall A and B bound to it,
    *   then the polygons, lines or points of A will always be rendered before the ones specified by B. If you need the
    *   two sets of polygons to be correctly sorted with respect to one another you will need to merge them in one single
    *   draw call.
@@ -164,7 +163,7 @@ namespace vl
       if (!geometry)
         return;
 
-      const ArrayAbstract* verts = geometry->vertexArray() ? geometry->vertexArray() : geometry->vertexAttribArray(vl::VA_Position) ? geometry->vertexAttribArray(vl::VA_Position)->data() : NULL;
+      const ArrayAbstract* verts = geometry->vertexArray();
 
       if (!verts)
         return;

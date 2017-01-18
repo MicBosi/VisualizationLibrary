@@ -66,7 +66,7 @@ void RayIntersector::intersect(Actor* act)
 //-----------------------------------------------------------------------------
 void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
 {
-  ArrayAbstract* posarr = geom->vertexArray() ? geom->vertexArray() : geom->vertexAttribArray(vl::VA_Position) ? geom->vertexAttribArray(vl::VA_Position)->data() : NULL;
+  ArrayAbstract* posarr = geom->vertexArray();
   if (posarr)
   {
     mat4 matrix = act->transform() ? act->transform()->worldMatrix() : mat4();

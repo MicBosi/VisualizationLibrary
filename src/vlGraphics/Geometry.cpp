@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -45,8 +45,6 @@ using namespace vl;
 Geometry::Geometry()
 {
   VL_DEBUG_SET_OBJECT_NAME()
-  mVertexAttribArrays.setAutomaticDelete(false);
-  mTexCoordArrays.setAutomaticDelete(false);
   mDrawCalls.setAutomaticDelete(false);
 }
 //-----------------------------------------------------------------------------
@@ -56,7 +54,7 @@ Geometry::~Geometry()
 //-----------------------------------------------------------------------------
 void Geometry::computeBounds_Implementation()
 {
-  const ArrayAbstract* coords = vertexArray() ? vertexArray() : vertexAttribArray(vl::VA_Position) ? vertexAttribArray(vl::VA_Position)->data() : NULL;
+  const ArrayAbstract* coords = vertexArray();
 
   if (coords == NULL)
   {
@@ -107,32 +105,23 @@ Geometry& Geometry::deepCopyFrom(const Geometry& other)
   // copy the base class Renderable
   super::operator=(other);
 
-  // copy Geometry
-  mVertexArray         = other.mVertexArray         ? other.mVertexArray->clone().get()         : NULL;
-  mNormalArray         = other.mNormalArray         ? other.mNormalArray->clone().get()         : NULL;
-  mColorArray          = other.mColorArray          ? other.mColorArray->clone().get()          : NULL;
-  mSecondaryColorArray = other.mSecondaryColorArray ? other.mSecondaryColorArray->clone().get() : NULL;
-  mFogCoordArray       = other.mFogCoordArray       ? other.mFogCoordArray->clone().get()       : NULL;
-
-  mTexCoordArrays.resize( other.mTexCoordArrays.size() );
-  for(int i=0; i<mTexCoordArrays.size(); ++i)
-    mTexCoordArrays[i] = new TextureArray(other.mTexCoordArrays[i]->mTextureSampler, other.mTexCoordArrays[i]->mTexCoordArray ? other.mTexCoordArrays[i]->mTexCoordArray->clone().get() : NULL);
-
-  // custom arrays
-  mVertexAttribArrays.resize( other.mVertexAttribArrays.size() );
-  for(int i=0; i<mVertexAttribArrays.size(); ++i)
+  // clone generic vertex attribs
+  for(int i=0; i<VA_MaxAttribCount; ++i)
   {
-    mVertexAttribArrays[i] = new VertexAttribInfo;
-    mVertexAttribArrays[i]->setNormalize( other.mVertexAttribArrays[i]->normalize() );
-    mVertexAttribArrays[i]->setInterpretation( other.mVertexAttribArrays[i]->interpretation() );
-    mVertexAttribArrays[i]->setAttribLocation( other.mVertexAttribArrays[i]->attribLocation() );
-    mVertexAttribArrays[i]->setData( other.mVertexAttribArrays[i]->data() ? other.mVertexAttribArrays[i]->data()->clone().get() : NULL );
+    if ( other.mVertexAttribArrays[i].data() ) {
+      mVertexAttribArrays[i].setNormalize( other.mVertexAttribArrays[i].normalize() );
+      mVertexAttribArrays[i].setInterpretation( other.mVertexAttribArrays[i].interpretation() );
+      mVertexAttribArrays[i].setData( other.mVertexAttribArrays[i].data()->clone().get() );
+    } else {
+      mVertexAttribArrays[i] = VertexAttribInfo();
+    }
   }
 
   // primitives
   mDrawCalls.clear();
-  for(int i=0; i<other.mDrawCalls.size(); ++i)
+  for(int i=0; i<other.mDrawCalls.size(); ++i) {
     mDrawCalls.push_back( other.mDrawCalls[i]->clone().get() );
+  }
 
   return *this;
 }
@@ -149,31 +138,36 @@ Geometry& Geometry::shallowCopyFrom(const Geometry& other)
   // copy the base class Renderable
   super::operator=(other);
 
-  // copy Geometry attributes
-  mVertexArray = other.mVertexArray;
-  mNormalArray = other.mNormalArray;
-  mColorArray = other.mColorArray;
-  mSecondaryColorArray = other.mSecondaryColorArray;
-  mFogCoordArray = other.mFogCoordArray;
-  mTexCoordArrays = other.mTexCoordArrays;
-  mVertexAttribArrays = other.mVertexAttribArrays;
+  // draw calls
   mDrawCalls = other.mDrawCalls;
+
+  // copy generic vertex attribs
+  for(int i=0; i<VA_MaxAttribCount; ++i)
+  {
+    if ( other.mVertexAttribArrays[i].data() ) {
+      mVertexAttribArrays[i].setNormalize( other.mVertexAttribArrays[i].normalize() );
+      mVertexAttribArrays[i].setInterpretation( other.mVertexAttribArrays[i].interpretation() );
+      mVertexAttribArrays[i].setData( const_cast<ArrayAbstract*>( other.mVertexAttribArrays[i].data() ) );
+    } else {
+      mVertexAttribArrays[i] = VertexAttribInfo();
+    }
+  }
 
   return *this;
 }
 //-----------------------------------------------------------------------------
 void Geometry::setVertexArray(ArrayAbstract* data)
 {
-  // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual 
+  // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual
   // to see what "size" and "type" are allowed for glVertexPointer
   VL_CHECK( !data || (data->glSize() >=2 && data->glSize()<=4) )
 
-  mVertexArray = data;
+  mVertexAttribArrays[VA_Position] = VertexAttribInfo(data);
 }
 //-----------------------------------------------------------------------------
 void Geometry::setNormalArray(ArrayAbstract* data)
 {
-  // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual 
+  // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual
   // to see what "size" and "type" are allowed for glNormalPointer
   VL_CHECK( !data || data->glSize() == 3 )
   VL_CHECK( !data || (data->glType() == GL_BYTE||
@@ -182,12 +176,12 @@ void Geometry::setNormalArray(ArrayAbstract* data)
                       data->glType() == GL_FLOAT ||
                       data->glType() == GL_DOUBLE) );
 
-  mNormalArray = data;
+  mVertexAttribArrays[VA_Normal] = VertexAttribInfo(data);
 }
 //-----------------------------------------------------------------------------
 void Geometry::setColorArray(ArrayAbstract* data)
 {
-  // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual 
+  // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual
   // to see what "size" and "type" are allowed for glColorPointer
   VL_CHECK( !data || (data->glSize() >=3 && data->glSize()<=4) )
   VL_CHECK( !data || (data->glType() == GL_BYTE ||
@@ -199,12 +193,12 @@ void Geometry::setColorArray(ArrayAbstract* data)
                       data->glType() == GL_FLOAT ||
                       data->glType() == GL_DOUBLE) );
 
-  mColorArray = data;
+  mVertexAttribArrays[VA_Color] = VertexAttribInfo(data);
 }
 //-----------------------------------------------------------------------------
 void Geometry::setSecondaryColorArray(ArrayAbstract* data)
 {
-  // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual 
+  // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual
   // to see what "size" and "type" are allowed for glSecondaryColorPointer
   VL_CHECK( !data || (data->glSize() >=3 && data->glSize()<=4) )
   VL_CHECK( !data || (data->glType() == GL_BYTE ||
@@ -216,63 +210,50 @@ void Geometry::setSecondaryColorArray(ArrayAbstract* data)
                       data->glType() == GL_FLOAT ||
                       data->glType() == GL_DOUBLE) );
 
-  mSecondaryColorArray = data;
+  mVertexAttribArrays[VA_SecondaryColor] = VertexAttribInfo(data);
 }
 //-----------------------------------------------------------------------------
 void Geometry::setFogCoordArray(ArrayAbstract* data)
 {
-  // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual 
+  // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual
   // to see what "size" and "type" are allowed for glFogCoordPointer
   VL_CHECK( !data || (data->glSize() == 1) )
   VL_CHECK( !data || (data->glType() == GL_FLOAT || data->glType() == GL_DOUBLE) );
-  
-  mFogCoordArray = data;
+
+  mVertexAttribArrays[VA_FogCoord] = VertexAttribInfo(data);
 }
 //-----------------------------------------------------------------------------
 void Geometry::setTexCoordArray(int tex_unit, ArrayAbstract* data)
 {
-  // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual 
+  // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual
   // to see what "size" and "type" are allowed for glTexCoordPointer
   VL_CHECK( !data || (data->glSize() == 1 || data->glSize() == 2 || data->glSize() == 3 || data->glSize() == 4) )
-  VL_CHECK( !data || (data->glType() == GL_FLOAT  || 
+  VL_CHECK( !data || (data->glType() == GL_FLOAT  ||
                       data->glType() == GL_DOUBLE ||
                       data->glType() == GL_SHORT  ||
                       data->glType() == GL_INT) );
 
-  VL_CHECK(tex_unit<VL_MAX_TEXTURE_UNITS);
+  VL_CHECK( tex_unit < VA_MaxTexCoordCount );
 
-  for(int i=0; i<mTexCoordArrays.size(); ++i)
-  {
-    if (mTexCoordArrays.at(i)->mTextureSampler == tex_unit)
-    {
-      if (data)
-        mTexCoordArrays.at(i)->mTexCoordArray = data;
-      else
-        mTexCoordArrays.erase(i,1); // removes if NULL
-      return;
-    }
-  }
-  if (data)
-    mTexCoordArrays.push_back(new TextureArray(tex_unit,data));
+  mVertexAttribArrays[VA_TexCoord0 + tex_unit] = VertexAttribInfo(data);
 }
 //-----------------------------------------------------------------------------
 void Geometry::clearArrays(bool clear_draw_calls)
 {
   setBufferObjectDirty(true);
-  mVertexArray = NULL;
-  mNormalArray = NULL;
-  mColorArray = NULL;
-  mSecondaryColorArray = NULL;
-  mFogCoordArray = NULL;
-  mTexCoordArrays.clear();
-  mVertexAttribArrays.clear();
-  if (clear_draw_calls)
+
+  if (clear_draw_calls) {
     mDrawCalls.clear();
+  }
+
+  for(int i=0; i<VA_MaxAttribCount; ++i) {
+    mVertexAttribArrays[i] = VertexAttribInfo();
+  }
 }
 //-----------------------------------------------------------------------------
 bool Geometry::flipNormals()
 {
-  ArrayAbstract* normarr = normalArray() ? normalArray() : vertexAttribArray(vl::VA_Normal) ? vertexAttribArray(vl::VA_Normal)->data() : NULL;
+  ArrayAbstract* normarr = normalArray();
 
   if (normarr)
   {
@@ -289,64 +270,10 @@ bool Geometry::flipNormals()
   return false;
 }
 //-----------------------------------------------------------------------------
-void Geometry::convertToVertexAttribs()
-{
-  std::map<int, ref<ArrayAbstract> > attrib_map;
-
-  if (vertexArray())
-  {
-    attrib_map[VA_Position] = vertexArray();
-    setVertexArray(NULL);
-  }
-  
-  if (normalArray())
-  {
-    attrib_map[VA_Normal] = normalArray();
-    setNormalArray(NULL);
-  }
-  
-  if (colorArray())
-  {
-    attrib_map[VA_Color] = colorArray();
-    setColorArray(NULL);
-  }
-
-  // Texture coordinates starting from VA_TexCoord0
-  for(int i=0; i<mTexCoordArrays.size(); i++)
-  {
-    attrib_map[VA_TexCoord0+i] = mTexCoordArrays[i]->mTexCoordArray;
-  }
-  mTexCoordArrays.clear();
-  
-  // Secondary color and fog are packed right after the texture coordinates
-  int index = VA_TexCoord0 + mTexCoordArrays.size();
-  if (secondaryColorArray())
-  {
-    attrib_map[index++] = secondaryColorArray();
-    setSecondaryColorArray(NULL);
-  }
-
-  if (fogCoordArray())
-  {
-    attrib_map[index++] = fogCoordArray();
-    setFogCoordArray(NULL);
-  }
-
-  // copy over the collected attributes
-  // note: we override eventual existing vertex attributes if they are in busy positions, the other are left where they are
-  for(std::map<int, ref<ArrayAbstract> >::iterator it=attrib_map.begin(); it != attrib_map.end(); ++it)
-  {
-    if (vertexAttribArray(it->first) != NULL)
-      Log::warning( Say("Geometry::convertToVertexAttribs(): vertex attrib index #%n is already in use, it will be overwritten.\n") << it->first );
-    setVertexAttribArray(it->first, it->second.get());
-  }
-
-}
-//-----------------------------------------------------------------------------
 void Geometry::computeNormals(bool verbose)
 {
   // Retrieve vertex position array
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttribArray(vl::VA_Position) ? vertexAttribArray(vl::VA_Position)->data() : NULL;
+  ArrayAbstract* posarr = vertexArray();
   if (!posarr || posarr->size() == 0)
   {
     Log::warning("Geometry::computeNormals() failed: no vertices found!\n");
@@ -357,10 +284,7 @@ void Geometry::computeNormals(bool verbose)
   norm3f->resize( posarr->size() );
 
   // Install the normal array
-  if (vertexArray())
-    setNormalArray( norm3f.get() );
-  else
-    setVertexAttribArray(VA_Normal, norm3f.get());
+  setNormalArray( norm3f.get() );
 
   // zero the normals
   for(u32 i=0; i<norm3f->size(); ++i)
@@ -428,30 +352,15 @@ void Geometry::deleteBufferObject()
   if (!Has_BufferObject)
     return;
 
-  for(int i=0; i<(int)drawCalls().size(); ++i)
+  for(int i=0; i<(int)drawCalls().size(); ++i) {
     drawCalls().at(i)->deleteBufferObject();
+  }
 
-  if (mVertexArray)
-    mVertexArray->bufferObject()->deleteBufferObject();
-  
-  if (mNormalArray)
-    mNormalArray->bufferObject()->deleteBufferObject();
-  
-  if (mColorArray)
-    mColorArray->bufferObject()->deleteBufferObject();
-  
-  if (mSecondaryColorArray)
-    mSecondaryColorArray->bufferObject()->deleteBufferObject();
-  
-  if (mFogCoordArray)
-    mFogCoordArray->bufferObject()->deleteBufferObject();
-  
-  for (int i=0; i<mTexCoordArrays.size(); ++i)
-    mTexCoordArrays[i]->mTexCoordArray->bufferObject()->deleteBufferObject();
-
-  for(int i=0; i<vertexAttribArrays().size(); ++i)
-    if ( vertexAttribArrays().at(i)->data() )
-      vertexAttribArrays().at(i)->data()->bufferObject()->deleteBufferObject();
+  for(int i=0; i<VA_MaxAttribCount; ++i) {
+    if ( mVertexAttribArrays[i].data()->bufferObject() ) {
+      mVertexAttribArrays[i].data()->bufferObject()->deleteBufferObject();
+    }
+  }
 }
 //-----------------------------------------------------------------------------
 void Geometry::updateDirtyBufferObject(EBufferObjectUpdateMode mode)
@@ -461,60 +370,43 @@ void Geometry::updateDirtyBufferObject(EBufferObjectUpdateMode mode)
 
   bool force_update = (mode & BUF_ForceUpdate) != 0;
 
-  if ( mVertexArray && (mVertexArray->isBufferObjectDirty() || force_update) )
-    mVertexArray->updateBufferObject(mode);
-  
-  if ( mNormalArray && (mNormalArray->isBufferObjectDirty() || force_update) )
-    mNormalArray->updateBufferObject(mode);
-  
-  if ( mColorArray && (mColorArray->isBufferObjectDirty() || force_update) )
-    mColorArray->updateBufferObject(mode);
-  
-  if ( mSecondaryColorArray && (mSecondaryColorArray->isBufferObjectDirty() || force_update) )
-    mSecondaryColorArray->updateBufferObject(mode);
-  
-  if ( mFogCoordArray && (mFogCoordArray->isBufferObjectDirty() || force_update) )
-    mFogCoordArray->updateBufferObject(mode);
-  
-  for(int i=0; i<mTexCoordArrays.size(); ++i)
-  {
-    if ( mTexCoordArrays[i]->mTexCoordArray->isBufferObjectDirty() || force_update )
-      mTexCoordArrays[i]->mTexCoordArray->updateBufferObject(mode);
+  for(int i=0; i<VA_MaxAttribCount; ++i) {
+    if ( mVertexAttribArrays[i].data() && mVertexAttribArrays[i].data()->bufferObject() && (mVertexAttribArrays[i].data()->isBufferObjectDirty() || force_update) ) {
+      mVertexAttribArrays[i].data()->updateBufferObject(mode);
+    }
   }
-  
-  for(int i=0; i<vertexAttribArrays().size(); ++i)
-    if ( vertexAttribArrays().at(i)->data() && (vertexAttribArrays().at(i)->data()->isBufferObjectDirty() || force_update) )
-      vertexAttribArrays().at(i)->data()->updateBufferObject(mode);
 
   for(int i=0; i<drawCalls().size(); ++i)
     drawCalls().at(i)->updateDirtyBufferObject(mode);
 }
 //-----------------------------------------------------------------------------
-void Geometry::render_Implementation(const Actor*, const Shader*, const Camera*, OpenGLContext* gl_context) const
+void Geometry::render_Implementation(const Actor*, const Shader*, const Camera*, OpenGLContext* gl_ctx) const
 {
   VL_CHECK_OGL()
 
   // bind Vertex Attrib Set
 
-  bool vbo_on = Has_BufferObject && isBufferObjectEnabled() && !isDisplayListEnabled();
-  gl_context->bindVAS(this, vbo_on, false);
+  bool vbo_on = Has_BufferObject && isBufferObjectEnabled() && ! isDisplayListEnabled();
+  gl_ctx->bindVAS(this, vbo_on, false);
 
   // actual draw
 
-  for(int i=0; i<(int)drawCalls().size(); i++)
-    if (drawCalls().at(i)->isEnabled())
+  for( int i = 0; i < (int)drawCalls().size(); i++ ) {
+    if ( drawCalls().at(i)->isEnabled() ) {
       drawCalls().at(i)->render( vbo_on );
+    }
+  }
 
   VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
 void Geometry::transform(const mat4& m, bool normalize)
 {
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttribArray(vl::VA_Position) ? vertexAttribArray(vl::VA_Position)->data() : NULL;
+  ArrayAbstract* posarr = vertexArray();
   if (posarr)
     posarr->transform(m);
 
-  ArrayAbstract* normarr = normalArray() ? normalArray() : vertexAttribArray(vl::VA_Normal) ? vertexAttribArray(vl::VA_Normal)->data() : NULL;
+  ArrayAbstract* normarr = normalArray();
   if (normarr)
   {
     mat4 nmat = m.as3x3().invert().transpose();
@@ -524,39 +416,24 @@ void Geometry::transform(const mat4& m, bool normalize)
   }
 }
 //-----------------------------------------------------------------------------
-void Geometry::setVertexAttribArray(const VertexAttribInfo& info)
+void Geometry::setVertexAttribArray(int attrib_location, const VertexAttribInfo& info)
 {
-  for(int i=0; i<vertexAttribArrays().size(); ++i)
-  {
-    VL_CHECK(vertexAttribArrays().at(i))
-    if (vertexAttribArrays().at(i)->attribLocation() == info.attribLocation())
-    {
-      *vertexAttribArrays().at(i) = info;
-      return;
-    }
-  }
-  mVertexAttribArrays.push_back( new VertexAttribInfo(info) );
+  mVertexAttribArrays[attrib_location] = info;
 }
 //-----------------------------------------------------------------------------
-const VertexAttribInfo* Geometry::vertexAttribArray(unsigned int attrib_location) const
+const VertexAttribInfo& Geometry::vertexAttribArray(int attrib_location) const
 {
-  for(int i=0; i<vertexAttribArrays().size(); ++i)
-    if (vertexAttribArrays().at(i)->attribLocation() == attrib_location)
-      return vertexAttribArrays().at(i);
-  return NULL;
+  return mVertexAttribArrays[attrib_location];
 }
 //-----------------------------------------------------------------------------
-VertexAttribInfo* Geometry::vertexAttribArray(unsigned int attrib_location)
+VertexAttribInfo& Geometry::vertexAttribArray(int attrib_location)
 {
-  for(int i=0; i<vertexAttribArrays().size(); ++i)
-    if (vertexAttribArrays().at(i)->attribLocation() == attrib_location)
-      return vertexAttribArrays().at(i);
-  return NULL;
+  return mVertexAttribArrays[attrib_location];
 }
 //-----------------------------------------------------------------------------
 DrawCall* Geometry::mergeTriangleStrips()
 {
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttribArray(vl::VA_Position) ? vertexAttribArray(vl::VA_Position)->data() : NULL;
+  ArrayAbstract* posarr = vertexArray();
 
   if (!posarr)
     return NULL;
@@ -588,7 +465,7 @@ DrawCall* Geometry::mergeTriangleStrips()
 
     if (index_count == 0)
       continue;
-    
+
     // odd -> even
     if ( index_count % 2 )
       indices.push_back( indices.back() );
@@ -648,9 +525,9 @@ void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
   if (mergendo_calls.empty())
     return;
 
-#ifndef NDEBUG
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttribArray(vl::VA_Position) ? vertexAttribArray(vl::VA_Position)->data() : NULL;
-#endif
+//#ifndef NDEBUG
+//  ArrayAbstract* posarr = vertexArray();
+//#endif
 
   ref<DrawElementsUInt> de_prim_restart = new DrawElementsUInt(primitive_type);
   // make space for all the indices plus the primitive restart markers.
@@ -662,7 +539,7 @@ void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
     for( IndexIterator it = mergendo_calls[i]->indexIterator(); it.hasNext(); it.next(), ++index )
     {
       *index = it.index();
-      VL_CHECK(*index < posarr->size());
+      // VL_CHECK(*index < posarr->size());
     }
     if ( i != mergendo_calls.size() -1 )
     {
@@ -704,9 +581,9 @@ void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type
   if (mergendo_calls.empty())
     return;
 
-#ifndef NDEBUG
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttribArray(vl::VA_Position) ? vertexAttribArray(vl::VA_Position)->data() : NULL;
-#endif
+//#ifndef NDEBUG
+//  ArrayAbstract* posarr = vertexArray();
+//#endif
 
   ref<MultiDrawElementsUInt> de_multi = new MultiDrawElementsUInt(primitive_type);
   // make space for all the indices plus the primitive restart markers.
@@ -718,7 +595,7 @@ void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type
     for( IndexIterator it = mergendo_calls[i]->indexIterator(); it.hasNext(); it.next(), ++index )
     {
       *index = it.index();
-      VL_CHECK(*index < posarr->size());
+      // VL_CHECK(*index < posarr->size());
     }
   }
   VL_CHECK( index == de_multi->indexBuffer()->end() )
@@ -772,9 +649,9 @@ void Geometry::mergeDrawCallsWithTriangles(EPrimitiveType primitive_type)
     return;
   }
 
-#ifndef NDEBUG
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttribArray(vl::VA_Position) ? vertexAttribArray(vl::VA_Position)->data() : NULL;
-#endif
+//#ifndef NDEBUG
+//  ArrayAbstract* posarr = vertexArray();
+//#endif
 
   ref<DrawElementsUInt> de = new DrawElementsUInt;
   ArrayUInt1& index_buffer = *de->indexBuffer();
@@ -791,7 +668,7 @@ void Geometry::mergeDrawCallsWithTriangles(EPrimitiveType primitive_type)
       index_buffer[idx+2] = it.c();
 
       // some sanity checks since we are here...
-      VL_CHECK( it.a() < (int)posarr->size() && it.b() < (int)posarr->size() && it.c() < (int)posarr->size() );
+      // VL_CHECK( it.a() < (int)posarr->size() && it.b() < (int)posarr->size() && it.c() < (int)posarr->size() );
       VL_CHECK( it.a() >= 0 && it.b() >= 0 && it.c() >= 0 );
     }
   }
@@ -801,9 +678,9 @@ void Geometry::mergeDrawCallsWithTriangles(EPrimitiveType primitive_type)
 //-----------------------------------------------------------------------------
 void Geometry::fixTriangleWinding()
 {
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttribArray(vl::VA_Position) ? vertexAttribArray(vl::VA_Position)->data() : NULL;
+  ArrayAbstract* posarr = vertexArray();
 
-  ArrayAbstract* normarr = normalArray() ? normalArray() : vertexAttribArray(vl::VA_Normal) ? vertexAttribArray(vl::VA_Normal)->data() : NULL;
+  ArrayAbstract* normarr = normalArray();
 
   // fixing the triangle winding requires normals
   if ( normarr == NULL || posarr == NULL )
@@ -885,34 +762,16 @@ void Geometry::regenerateVertices(const std::vector<u32>& map_new_to_old)
 {
   VertexMapper mapper;
 
-  if (vertexArray())
-    setVertexArray( mapper.regenerate( vertexArray(), map_new_to_old ).get() );
-
-  if (normalArray())
-    setNormalArray( mapper.regenerate( normalArray(), map_new_to_old ).get() );
-
-  if (colorArray())
-    setColorArray( mapper.regenerate( colorArray(), map_new_to_old ).get() );
-
-  if (secondaryColorArray())
-    setSecondaryColorArray( mapper.regenerate( secondaryColorArray(), map_new_to_old ).get() );
-
-  if (fogCoordArray())
-    setFogCoordArray( mapper.regenerate( fogCoordArray(), map_new_to_old ).get() );
-
-  for(int itex=0; itex<VL_MAX_TEXTURE_UNITS; ++itex)
-    if (texCoordArray(itex))
-      setTexCoordArray( itex, mapper.regenerate( texCoordArray(itex), map_new_to_old ).get() );
-
-  for(int i=0; i<vertexAttribArrays().size(); ++i)
-    vertexAttribArrays().at(i)->setData( mapper.regenerate(vertexAttribArrays().at(i)->data(), map_new_to_old ).get() );
+  for(int i=0; i<VA_MaxAttribCount; ++i) {
+    vertexAttribArray(i).setData( mapper.regenerate(vertexAttribArray(i).data(), map_new_to_old ).get() );
+  }
 }
 //-----------------------------------------------------------------------------
 void Geometry::convertDrawCallToDrawArrays()
 {
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttribArray(vl::VA_Position) ? vertexAttribArray(vl::VA_Position)->data() : NULL;
+  ArrayAbstract* posarr = vertexArray();
 
-  // generate mapping 
+  // generate mapping
   std::vector<u32> map_new_to_old;
   map_new_to_old.reserve( posarr ? (posarr->size() * 3) : (1024 * 64) );
 
@@ -967,10 +826,10 @@ void Geometry::triangulateDrawCalls()
 //-----------------------------------------------------------------------------
 void Geometry::shrinkDrawCalls()
 {
-#ifndef NDEBUG
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttribArray(vl::VA_Position) ? vertexAttribArray(vl::VA_Position)->data() : NULL;
-  VL_CHECK(posarr);
-#endif
+//#ifndef NDEBUG
+//  ArrayAbstract* posarr = vertexArray();
+//  VL_CHECK(posarr);
+//#endif
 
   for( int idraw=this->drawCalls().size(); idraw--; )
   {
@@ -990,7 +849,7 @@ void Geometry::shrinkDrawCalls()
       else
         max_idx = it.index() > max_idx ? it.index() : max_idx;
     }
-    
+
     // can use UByte
     if ( max_idx < 0xFF || (max_idx == 0xFF && !restart_on) )
     {
@@ -1011,7 +870,7 @@ void Geometry::shrinkDrawCalls()
             de->indexBuffer()->at(i) = DrawElementsUByte::primitive_restart_index;
           else
           {
-            VL_CHECK( it.index() >= 0 && it.index() < (int)posarr->size() );
+            // VL_CHECK( it.index() >= 0 && it.index() < (int)posarr->size() );
             de->indexBuffer()->at(i) = (DrawElementsUByte::index_type)it.index();
           }
         }
@@ -1092,7 +951,7 @@ void Geometry::shrinkDrawCalls()
             de->indexBuffer()->at(i) = DrawElementsUShort::primitive_restart_index;
           else
           {
-            VL_CHECK( it.index() >= 0 && it.index() < (int)posarr->size() );
+            // VL_CHECK( it.index() >= 0 && it.index() < (int)posarr->size() );
             de->indexBuffer()->at(i) = (DrawElementsUShort::index_type)it.index();
           }
         }
@@ -1158,14 +1017,9 @@ void Geometry::shrinkDrawCalls()
 //-----------------------------------------------------------------------------
 void Geometry::makeGLESFriendly()
 {
-  // converts legacy vertex arrays into generic vertex attributes
-#if defined(VL_OPENGL_ES2)
-  convertToVertexAttribs();
-#endif
-
   // converts quads and polygons into triangles
   triangulateDrawCalls();
-  
+
   // use short or byte instead of int
   shrinkDrawCalls();
 
@@ -1206,7 +1060,7 @@ void Geometry::makeGLESFriendly()
 //-----------------------------------------------------------------------------
 bool Geometry::sortVertices()
 {
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttribArray(vl::VA_Position) ? vertexAttribArray(vl::VA_Position)->data() : NULL;
+  ArrayAbstract* posarr = vertexArray();
 
   if (!posarr)
   {
@@ -1317,7 +1171,7 @@ bool Geometry::sortVertices()
 //-----------------------------------------------------------------------------
 void Geometry::colorizePrimitives()
 {
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttribArray(vl::VA_Position) ? vertexAttribArray(vl::VA_Position)->data() : NULL;
+  ArrayAbstract* posarr = vertexArray();
 
   if (!posarr)
     return;
@@ -1325,10 +1179,7 @@ void Geometry::colorizePrimitives()
   ref<ArrayFloat4> col = new vl::ArrayFloat4;
   col->resize( posarr->size() );
 
-  if (vertexArray())
-    setColorArray( col.get() );
-  else
-    setVertexAttribArray( vl::VA_Color, col.get() );
+  setColorArray( col.get() );
 
   for(int i=0; i<drawCalls().size(); ++i)
   {
@@ -1344,19 +1195,19 @@ void Geometry::colorizePrimitives()
 }
 //-----------------------------------------------------------------------------
 void Geometry::computeTangentSpace(
-  u32 vert_count, 
-  const fvec3 *vertex, 
+  u32 vert_count,
+  const fvec3 *vertex,
   const fvec3* normal,
-  const fvec2 *texcoord, 
+  const fvec2 *texcoord,
   const DrawCall* prim,
-  fvec3 *tangent, 
+  fvec3 *tangent,
   fvec3 *bitangent )
 {
   std::vector<fvec3> tan1;
   std::vector<fvec3> tan2;
   tan1.resize(vert_count);
   tan2.resize(vert_count);
-  
+
   for ( TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next() )
   {
     int tri[] = { trit.a(), trit.b(), trit.c() };
@@ -1364,27 +1215,27 @@ void Geometry::computeTangentSpace(
     VL_CHECK(tri[0] < (int)vert_count );
     VL_CHECK(tri[1] < (int)vert_count );
     VL_CHECK(tri[2] < (int)vert_count );
-    
+
     const fvec3& v1 = vertex[tri[0]];
     const fvec3& v2 = vertex[tri[1]];
     const fvec3& v3 = vertex[tri[2]];
-    
+
     const fvec2& w1 = texcoord[tri[0]];
     const fvec2& w2 = texcoord[tri[1]];
     const fvec2& w3 = texcoord[tri[2]];
-    
+
     float x1 = v2.x() - v1.x();
     float x2 = v3.x() - v1.x();
     float y1 = v2.y() - v1.y();
     float y2 = v3.y() - v1.y();
     float z1 = v2.z() - v1.z();
     float z2 = v3.z() - v1.z();
-    
+
     float s1 = w2.x() - w1.x();
     float s2 = w3.x() - w1.x();
     float t1 = w2.y() - w1.y();
     float t2 = w3.y() - w1.y();
-    
+
     float r = 1.0F / (s1 * t2 - s2 * t1);
     fvec3 sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
     fvec3 tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
