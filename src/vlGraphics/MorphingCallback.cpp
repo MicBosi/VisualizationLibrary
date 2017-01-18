@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -60,10 +60,10 @@ MorphingCallback::~MorphingCallback()
 void MorphingCallback::onActorRenderStarted(Actor*, real frame_clock, const Camera*, Renderable*, const Shader* shader, int pass)
 {
   // perform only on the first pass
-  if (pass>0)
+  if ( pass > 0 )
     return;
 
-  if (!mAnimationStarted)
+  if ( ! mAnimationStarted )
     return;
 
   mElapsedTime = frame_clock - mAnimationStartTime;
@@ -99,7 +99,7 @@ void MorphingCallback::onActorRenderStarted(Actor*, real frame_clock, const Came
     // memo:
     // Since every character is in a different stage of the animation they all have different vertex/normal/etc. arrays pointers,
     // thus the lazy-vertex-array setup is forced to call glVertexAttribPointer/glVertexPointer/glBindBuffer continuously.
-    // We may be able to partially solve this by putting all the animations in a single ArrayFloat3 and let the draw_calls 
+    // We may be able to partially solve this by putting all the animations in a single ArrayFloat3 and let the draw_calls
     // switch the frame by using the base-vertex functionality.
     // I modified the App_MorphAnimation test so that all the characters share the same animation (thus the same vertex arrays) and don't have
     // transforms attached to eliminate the cost of glLoadMatrix/glMatrixMode. The resulting frame to frame time resulted only 1.2% reduced.
@@ -254,7 +254,7 @@ void MorphingCallback::blendFrames(int a, int b, float t)
   if (mGeometry->isBufferObjectEnabled() && Has_BufferObject)
   {
     // mic fixme:
-    // Come si vede qui' sta nomenclatura non e' chiara: 
+    // Come si vede qui' sta nomenclatura non e' chiara:
     // sembra che stiamo semplicemente cambiano un po di flags invece stiamo updatando tutto il BufferObject!!!
     mVertices->bufferObject()->setBufferData(BU_DYNAMIC_DRAW, false);
     mNormals ->bufferObject()->setBufferData(BU_DYNAMIC_DRAW, false);

@@ -277,7 +277,7 @@ bool OpenGLContext::initGLContext(bool log)
 
   setupDefaultRenderStates();
 
-  return mIsInitialized = true;;
+  return mIsInitialized = true;
 }
 //-----------------------------------------------------------------------------
 bool OpenGLContext::isExtensionSupported(const char* ext_name)
@@ -800,15 +800,15 @@ bool OpenGLContext::isCleanState(bool verbose)
 	    {
 	      error_msg += Say(" - Texture matrix was not set to identity on texture unit %n!\n") << coord_count;
 	    }
-	
+
 	    if (glIsEnabled(GL_TEXTURE_COORD_ARRAY))
 	    {
           error_msg += Say(" - GL_TEXTURE_COORD_ARRAY was enabled on texture unit %n!\n") << coord_count;
           glDisable(GL_TEXTURE_COORD_ARRAY);
 	    }
-	
+
 	    // check that all texture targets are disabled and bound to texture #0
-	
+
       if (!Has_GLES)
       {
 	      if (glIsEnabled(GL_TEXTURE_1D))
@@ -816,7 +816,7 @@ bool OpenGLContext::isCleanState(bool verbose)
 	        error_msg += Say(" - GL_TEXTURE_1D was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
           glDisable(GL_TEXTURE_1D);
 	      }
-	
+
         GLint bound_tex = 0;
 	      glGetIntegerv(GL_TEXTURE_BINDING_1D, &bound_tex); VL_CHECK_OGL()
 	      if (bound_tex != 0)
@@ -824,7 +824,7 @@ bool OpenGLContext::isCleanState(bool verbose)
 	        error_msg += Say(" - GL_TEXTURE_BINDING_1D != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
 	      }
       }
-	
+
 	    if (glIsEnabled(GL_TEXTURE_2D))
 	    {
 	      error_msg += Say(" - GL_TEXTURE_2D was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
@@ -939,19 +939,19 @@ bool OpenGLContext::isCleanState(bool verbose)
 	      error_msg += Say(" - GL_TEXTURE_GEN_S was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
         glDisable(GL_TEXTURE_GEN_S);
 	    }
-	
+
 	    if (glIsEnabled(GL_TEXTURE_GEN_T))
 	    {
 	      error_msg += Say(" - GL_TEXTURE_GEN_T was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
         glDisable(GL_TEXTURE_GEN_T);
 	    }
-	
+
 	    if (glIsEnabled(GL_TEXTURE_GEN_R))
 	    {
 	      error_msg += Say(" - GL_TEXTURE_GEN_R was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
         glDisable(GL_TEXTURE_GEN_R);
 	    }
-	
+
 	    if (glIsEnabled(GL_TEXTURE_GEN_Q))
 	    {
 	      error_msg += Say(" - GL_TEXTURE_GEN_Q was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
@@ -997,7 +997,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     glDisable(GL_COLOR_ARRAY);
   }
 
-  if (Has_GL_Version_1_1 && glIsEnabled(GL_EDGE_FLAG_ARRAY)) // excludes GLES 
+  if (Has_GL_Version_1_1 && glIsEnabled(GL_EDGE_FLAG_ARRAY)) // excludes GLES
   {
     error_msg += " - GL_EDGE_FLAG_ARRAY was enabled!\n";
     glDisable(GL_EDGE_FLAG_ARRAY);
@@ -1180,11 +1180,11 @@ bool OpenGLContext::isCleanState(bool verbose)
     Log::error("Dirty OpenGL context state:\n");
     Log::error(error_msg);
     Log::error("To disable this check use globalSettings()->setCheckOpenGLStates(false);\n");
-    Log::error( Say("Driver info: %s, %s, OpenGL %s\n") 
+    Log::error( Say("Driver info: %s, %s, OpenGL %s\n")
                 << glGetString(GL_VENDOR) << glGetString(GL_RENDERER) << glGetString(GL_VERSION) );
   }
 
-  VL_CHECK_OGL(); 
+  VL_CHECK_OGL();
 
   return error_msg.empty();
 }

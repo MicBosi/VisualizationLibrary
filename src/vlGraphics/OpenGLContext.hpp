@@ -405,7 +405,7 @@ namespace vl
     }
 
     //! Dispatches the UIEventListener::visibilityEvent() notification to the subscribed UIEventListener objects.
-    void dispatchVisibilityEvent(bool visible) 
+    void dispatchVisibilityEvent(bool visible)
     {
       makeCurrent();
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
@@ -437,7 +437,7 @@ namespace vl
         if ( temp_clients[i]->isEnabled() )
           temp_clients[i]->fileDroppedEvent(files);
     }
-    
+
     //! Returns the std::set containing the currently pressed keys.
     const std::set<EKey>& keyboard() const { return mKeyboard; }
 

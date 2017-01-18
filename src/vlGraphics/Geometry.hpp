@@ -136,21 +136,6 @@ namespace vl
     // Geometry Tools
     // ------------------------------------------------------------------------
 
-    /** Converts the fixed function pipeline arrays (vertex array, normal arrays) into the generic ones.
-    * The generic attribute indices are allocated in the following way:
-    * - vertex array -> vl::VA_Position
-    * - normal array -> vl::VA_Normal
-    * - color array  -> vl::VA_Color
-    * - texture array 0..N -> vl::VA_TexCoord0 .. N
-    * - secondary color array -> at the first free position from vl::VA_TexCoord0 (included)
-    * - fog coord array  -> at the first free position from vl::VA_TexCoord0 (included)
-    *
-    * \remarks
-    * - Already existing generic vertex attributes are overwritten if their binding location collides with one of the non-NULL fixed function pipeline arrays being converted. 
-    * - After this function all the fixed function pipeline arrays are set to NULL.
-    */
-    void convertToVertexAttribs();
-
     /**
      * Computes the normals in a "smooth" way, i.e. averaging the normals of those
      * polygons that share one or more vertices.
