@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -58,6 +58,7 @@ namespace vl
   public:
     virtual ~Image();
 
+    //! Constructor.
     Image();
 
     Image(const String& path);
@@ -73,8 +74,6 @@ namespace vl
     bool isValid() const;
 
     EImageDimension dimension() const;
-
-    void allocate();
 
     void allocate1D(int x, EImageFormat format, EImageType type);
 
@@ -102,33 +101,33 @@ namespace vl
 
     static int requiredMemory(int x, int y, int z, int bytealign, EImageFormat format, EImageType type, bool is_cubemap);
 
-    static int requiredMemory1D(int x, EImageFormat format, EImageType type) { return requiredMemory(x, 0, 0, 1, format, type, false); } 
+    static int requiredMemory1D(int x, EImageFormat format, EImageType type) { return requiredMemory(x, 0, 0, 1, format, type, false); }
 
-    static int requiredMemory2D(int x, int y, int bytealign, EImageFormat format, EImageType type) { return requiredMemory(x, y, 0, bytealign, format, type, false); } 
+    static int requiredMemory2D(int x, int y, int bytealign, EImageFormat format, EImageType type) { return requiredMemory(x, y, 0, bytealign, format, type, false); }
 
-    static int requiredMemory3D(int x, int y, int z, int bytealign, EImageFormat format, EImageType type) { return requiredMemory(x, y, z, bytealign, format, type, false); } 
+    static int requiredMemory3D(int x, int y, int z, int bytealign, EImageFormat format, EImageType type) { return requiredMemory(x, y, z, bytealign, format, type, false); }
 
-    static int requiredMemoryCubemap(int x, int y, int bytealign, EImageFormat format, EImageType type) { return requiredMemory(x, y, 0, bytealign, format, type, true); } 
+    static int requiredMemoryCubemap(int x, int y, int bytealign, EImageFormat format, EImageType type) { return requiredMemory(x, y, 0, bytealign, format, type, true); }
 
     String print() const;
 
     String printType() const;
 
     String printFormat() const;
-    
+
     void setWidth(int x) { mWidth = x; updatePitch(); }
-    
+
     void setHeight(int y) { mHeight = y; }
-    
+
     void setDepth(int z) { mDepth = z; }
-    
+
     void setFormat(EImageFormat format) { mFormat = format; updatePitch(); }
-    
+
     void setType(EImageType type) { mType=type; updatePitch(); }
 
     //! Whether an image contains relevant alpha information.
     bool hasAlpha() const { return mHasAlpha; }
-    
+
     //! Whether an image contains relevant alpha information.
     void setHasAlpha(bool has_alpha) { mHasAlpha = has_alpha; }
 
@@ -161,21 +160,31 @@ namespace vl
     //! The buffer used to store the image pixels.
     const Buffer* imageBuffer() const { return mPixels.get(); }
 
+    //! Raw pointer to pixels
     const unsigned char* pixels() const { if (mPixels->bytesUsed()) return mPixels->ptr(); else return NULL; }
-    
+
+    //! Raw pointer to pixels
     unsigned char* pixels() { if (mPixels->bytesUsed()) return mPixels->ptr(); else return NULL; }
-    
+
+    //! True if image is empty
     bool empty() { return pixels() == NULL; }
-    
-    unsigned char* pixelsZSlice(int slice);
-    
+
+    //! Zth slice of 3D image
+    unsigned char* pixelsZSlice(int zth_slice);
+
+    //! X-positive cubemap face
     unsigned char* pixelsXP();
+    //! X-negative cubemap face
     unsigned char* pixelsXN();
+    //! Y-positive cubemap face
     unsigned char* pixelsYP();
+    //! Y-negative cubemap face
     unsigned char* pixelsYN();
+    //! Z-positive cubemap face
     unsigned char* pixelsZP();
+    //! Z-negative cubemap face
     unsigned char* pixelsZN();
-    
+
     const unsigned char* pixelsXP() const;
     const unsigned char* pixelsXN() const;
     const unsigned char* pixelsYP() const;
@@ -184,23 +193,23 @@ namespace vl
     const unsigned char* pixelsZN() const;
 
     void setMipmaps(const std::vector< ref<Image> >& mipmaps) { mMipmaps = mipmaps; };
-    
+
     const std::vector< ref<Image> >& mipmaps() const { return mMipmaps; };
-    
+
     std::vector< ref<Image> >& mipmaps() { return mMipmaps; };
-    
+
     int width() const { return mWidth; }
-    
+
     int height() const { return mHeight; }
-    
+
     int depth() const { return mDepth; }
-    
+
     int pitch() const { return mPitch; }
-    
+
     EImageFormat format() const { return mFormat; }
-    
+
     EImageType type() const { return mType; }
-    
+
     int isCompressedFormat(EImageFormat fmt);
 
     void flipVertically();
@@ -210,11 +219,11 @@ namespace vl
      *
      * The source image type and the new type must be one of the following:
      * - IT_UNSIGNED_BYTE
-     * - IT_BYTE         
+     * - IT_BYTE
      * - IT_UNSIGNED_SHORT
-     * - IT_SHORT         
-     * - IT_UNSIGNED_INT  
-     * - IT_INT           
+     * - IT_SHORT
+     * - IT_UNSIGNED_INT
+     * - IT_INT
      * - IT_FLOAT
      *
      * The source image format must be one of the following:
@@ -237,11 +246,11 @@ namespace vl
      *
      * The source image type must be one of the following:
      * - IT_UNSIGNED_BYTE
-     * - IT_BYTE         
+     * - IT_BYTE
      * - IT_UNSIGNED_SHORT
-     * - IT_SHORT         
-     * - IT_UNSIGNED_INT  
-     * - IT_INT           
+     * - IT_SHORT
+     * - IT_UNSIGNED_INT
+     * - IT_INT
      * - IT_FLOAT
      *
      * The source image format and the new format must be one of the following:
@@ -264,10 +273,10 @@ namespace vl
     //! Adjusts the contrast of an image. Returns false if the image format() or type() is not supported. This function supports both 3D images and cubemaps.
     bool contrast(float black, float white);
 
-    //! Adjusts the contrast of an image using the window-center/window-with method used for CT images. Returns false if the image format() or type() is not supported. This function supports both 3D images and cubemaps.
+    //! Adjusts the contrast of an image using the window-center/window-width method used for CT images. Returns false if the image format() or type() is not supported. This function supports both 3D images and cubemaps.
     bool contrastHounsfieldAuto();
 
-    //! Adjusts the contrast of an image using the window-center/window-with method used for CT images. Returns false if the image format() or type() is not supported. This function supports both 3D images and cubemaps.
+    //! Adjusts the contrast of an image using the window-center/window-width method used for CT images. Returns false if the image format() or type() is not supported. This function supports both 3D images and cubemaps.
     bool contrastHounsfield(float center, float width, float intercept, float range);
 
     //! Performs a sampling on a 1d image using linear filtering.
@@ -287,11 +296,11 @@ namespace vl
      *
      * The image type() must be one of the following:
      * - IT_UNSIGNED_BYTE
-     * - IT_BYTE         
+     * - IT_BYTE
      * - IT_UNSIGNED_SHORT
-     * - IT_SHORT         
-     * - IT_UNSIGNED_INT  
-     * - IT_INT           
+     * - IT_SHORT
+     * - IT_UNSIGNED_INT
+     * - IT_INT
      * - IT_FLOAT
      *
      * The image format() must be one of the following:
@@ -312,7 +321,7 @@ namespace vl
     /**
      * Creates a new image containing the specified rectangular pixel area taken from the source image.
      * The returned image is of the same type() and format() of the original one.
-     * \note 
+     * \note
      * - This function supports only 2d images.
      * - This function does not support compressed types and formats.
     */
@@ -360,6 +369,7 @@ namespace vl
 
   protected:
     void updatePitch();
+    void allocate();
 
   protected:
     ref<Buffer> mPixels;
@@ -385,7 +395,7 @@ namespace vl
   VLCORE_EXPORT ref<Image> loadCubemap(const String& xp_file, const String& xn_file, const String& yp_file, const String& yn_file, const String& zp_file, const String& zn_file);
 
   //! Loads a raw image file.
-  //! \param file The file from which the data is read. This function also opens the file if it is not open already. Note that this function 
+  //! \param file The file from which the data is read. This function also opens the file if it is not open already. Note that this function
   //! never closes the file so that you can read sequentially several raw image data from the same file.
   //! \param file_offset The offset in the file from where the data is read. If set to -1 the data is read from the current file position.
   VLCORE_EXPORT ref<Image> loadRAW(VirtualFile* file, long long file_offset, int width, int height, int depth, int bytealign, EImageFormat format, EImageType type);

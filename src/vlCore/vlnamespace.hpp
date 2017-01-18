@@ -42,48 +42,48 @@
 
 namespace vl
 {
-  typedef enum 
+  typedef enum
   {
     TF_UNKNOWN = 0,
 
-    TF_ALPHA   = GL_ALPHA, 
-    TF_ALPHA4  = GL_ALPHA4, 
-    TF_ALPHA8  = GL_ALPHA8, 
-    TF_ALPHA12 = GL_ALPHA12, 
-    TF_ALPHA16 = GL_ALPHA16, 
+    TF_ALPHA   = GL_ALPHA,
+    TF_ALPHA4  = GL_ALPHA4,
+    TF_ALPHA8  = GL_ALPHA8,
+    TF_ALPHA12 = GL_ALPHA12,
+    TF_ALPHA16 = GL_ALPHA16,
 
-    TF_INTENSITY   = GL_INTENSITY, 
-    TF_INTENSITY4  = GL_INTENSITY4, 
-    TF_INTENSITY8  = GL_INTENSITY8, 
-    TF_INTENSITY12 = GL_INTENSITY12, 
-    TF_INTENSITY16 = GL_INTENSITY16, 
-    TF_LUMINANCE   = GL_LUMINANCE, 
-    TF_LUMINANCE4  = GL_LUMINANCE4, 
-    TF_LUMINANCE8  = GL_LUMINANCE8, 
-    TF_LUMINANCE12 = GL_LUMINANCE12, 
-    TF_LUMINANCE16 = GL_LUMINANCE16, 
-    TF_LUMINANCE_ALPHA     = GL_LUMINANCE_ALPHA, 
-    TF_LUMINANCE4_ALPHA4   = GL_LUMINANCE4_ALPHA4, 
-    TF_LUMINANCE6_ALPHA2   = GL_LUMINANCE6_ALPHA2, 
-    TF_LUMINANCE8_ALPHA8   = GL_LUMINANCE8_ALPHA8, 
-    TF_LUMINANCE12_ALPHA4  = GL_LUMINANCE12_ALPHA4, 
-    TF_LUMINANCE12_ALPHA12 = GL_LUMINANCE12_ALPHA12, 
-    TF_LUMINANCE16_ALPHA16 = GL_LUMINANCE16_ALPHA16, 
-    TF_R3_G3_B2 = GL_R3_G3_B2, 
-    TF_RGB      = GL_RGB, 
-    TF_RGB4     = GL_RGB4, 
-    TF_RGB5     = GL_RGB5, 
-    TF_RGB8     = GL_RGB8, 
-    TF_RGB10    = GL_RGB10, 
-    TF_RGB12    = GL_RGB12, 
-    TF_RGB16    = GL_RGB16, 
-    TF_RGBA     = GL_RGBA, 
-    TF_RGBA2    = GL_RGBA2, 
-    TF_RGBA4    = GL_RGBA4, 
-    TF_RGB5_A1  = GL_RGB5_A1, 
-    TF_RGBA8    = GL_RGBA8, 
-    TF_RGB10_A2 = GL_RGB10_A2, 
-    TF_RGBA12   = GL_RGBA12, 
+    TF_INTENSITY   = GL_INTENSITY,
+    TF_INTENSITY4  = GL_INTENSITY4,
+    TF_INTENSITY8  = GL_INTENSITY8,
+    TF_INTENSITY12 = GL_INTENSITY12,
+    TF_INTENSITY16 = GL_INTENSITY16,
+    TF_LUMINANCE   = GL_LUMINANCE,
+    TF_LUMINANCE4  = GL_LUMINANCE4,
+    TF_LUMINANCE8  = GL_LUMINANCE8,
+    TF_LUMINANCE12 = GL_LUMINANCE12,
+    TF_LUMINANCE16 = GL_LUMINANCE16,
+    TF_LUMINANCE_ALPHA     = GL_LUMINANCE_ALPHA,
+    TF_LUMINANCE4_ALPHA4   = GL_LUMINANCE4_ALPHA4,
+    TF_LUMINANCE6_ALPHA2   = GL_LUMINANCE6_ALPHA2,
+    TF_LUMINANCE8_ALPHA8   = GL_LUMINANCE8_ALPHA8,
+    TF_LUMINANCE12_ALPHA4  = GL_LUMINANCE12_ALPHA4,
+    TF_LUMINANCE12_ALPHA12 = GL_LUMINANCE12_ALPHA12,
+    TF_LUMINANCE16_ALPHA16 = GL_LUMINANCE16_ALPHA16,
+    TF_R3_G3_B2 = GL_R3_G3_B2,
+    TF_RGB      = GL_RGB,
+    TF_RGB4     = GL_RGB4,
+    TF_RGB5     = GL_RGB5,
+    TF_RGB8     = GL_RGB8,
+    TF_RGB10    = GL_RGB10,
+    TF_RGB12    = GL_RGB12,
+    TF_RGB16    = GL_RGB16,
+    TF_RGBA     = GL_RGBA,
+    TF_RGBA2    = GL_RGBA2,
+    TF_RGBA4    = GL_RGBA4,
+    TF_RGB5_A1  = GL_RGB5_A1,
+    TF_RGBA8    = GL_RGBA8,
+    TF_RGB10_A2 = GL_RGB10_A2,
+    TF_RGBA12   = GL_RGBA12,
     TF_RGBA16   = GL_RGBA16,
 
     // ARB_texture_float / OpenGL 3
@@ -135,22 +135,22 @@ namespace vl
     TF_DEPTH_COMPONENT32 = GL_DEPTH_COMPONENT32,
 
     // ARB_texture_compression
-    TF_COMPRESSED_ALPHA           = GL_COMPRESSED_ALPHA_ARB,        
+    TF_COMPRESSED_ALPHA           = GL_COMPRESSED_ALPHA_ARB,
     TF_COMPRESSED_INTENSITY       = GL_COMPRESSED_INTENSITY_ARB,
-    TF_COMPRESSED_LUMINANCE       = GL_COMPRESSED_LUMINANCE_ARB,      
-    TF_COMPRESSED_LUMINANCE_ALPHA = GL_COMPRESSED_LUMINANCE_ALPHA_ARB,      
-    TF_COMPRESSED_RGB             = GL_COMPRESSED_RGB_ARB,        
+    TF_COMPRESSED_LUMINANCE       = GL_COMPRESSED_LUMINANCE_ARB,
+    TF_COMPRESSED_LUMINANCE_ALPHA = GL_COMPRESSED_LUMINANCE_ALPHA_ARB,
+    TF_COMPRESSED_RGB             = GL_COMPRESSED_RGB_ARB,
     TF_COMPRESSED_RGBA            = GL_COMPRESSED_RGBA_ARB,
 
     // 3DFX_texture_compression_FXT1
-    TF_COMPRESSED_RGB_FXT1_3DFX  = GL_COMPRESSED_RGB_FXT1_3DFX,        
-    TF_COMPRESSED_RGBA_FXT1_3DFX = GL_COMPRESSED_RGBA_FXT1_3DFX,        
+    TF_COMPRESSED_RGB_FXT1_3DFX  = GL_COMPRESSED_RGB_FXT1_3DFX,
+    TF_COMPRESSED_RGBA_FXT1_3DFX = GL_COMPRESSED_RGBA_FXT1_3DFX,
 
     // EXT_texture_compression_s3tc
-    TF_COMPRESSED_RGB_S3TC_DXT1_EXT  = GL_COMPRESSED_RGB_S3TC_DXT1_EXT,                   
-    TF_COMPRESSED_RGBA_S3TC_DXT1_EXT = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,               
-    TF_COMPRESSED_RGBA_S3TC_DXT3_EXT = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,                  
-    TF_COMPRESSED_RGBA_S3TC_DXT5_EXT = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,                 
+    TF_COMPRESSED_RGB_S3TC_DXT1_EXT  = GL_COMPRESSED_RGB_S3TC_DXT1_EXT,
+    TF_COMPRESSED_RGBA_S3TC_DXT1_EXT = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,
+    TF_COMPRESSED_RGBA_S3TC_DXT3_EXT = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,
+    TF_COMPRESSED_RGBA_S3TC_DXT5_EXT = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,
 
     // EXT_texture_compression_latc
     TF_COMPRESSED_LUMINANCE_LATC1_EXT              = GL_COMPRESSED_LUMINANCE_LATC1_EXT,
@@ -159,45 +159,45 @@ namespace vl
     TF_COMPRESSED_SIGNED_LUMINANCE_ALPHA_LATC2_EXT = GL_COMPRESSED_SIGNED_LUMINANCE_ALPHA_LATC2_EXT,
 
     // EXT_texture_compression_rgtc
-    TF_COMPRESSED_RED_RGTC1_EXT              = GL_COMPRESSED_RED_RGTC1_EXT,                       
-    TF_COMPRESSED_SIGNED_RED_RGTC1_EXT       = GL_COMPRESSED_SIGNED_RED_RGTC1_EXT,                
-    TF_COMPRESSED_RED_GREEN_RGTC2_EXT        = GL_COMPRESSED_RED_GREEN_RGTC2_EXT,                 
+    TF_COMPRESSED_RED_RGTC1_EXT              = GL_COMPRESSED_RED_RGTC1_EXT,
+    TF_COMPRESSED_SIGNED_RED_RGTC1_EXT       = GL_COMPRESSED_SIGNED_RED_RGTC1_EXT,
+    TF_COMPRESSED_RED_GREEN_RGTC2_EXT        = GL_COMPRESSED_RED_GREEN_RGTC2_EXT,
     TF_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT = GL_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT,
 
     // EXT_texture_integer
-    TF_RGBA32UI_EXT = GL_RGBA32UI_EXT,           
-    TF_RGB32UI_EXT = GL_RGB32UI_EXT,            
-    TF_ALPHA32UI_EXT = GL_ALPHA32UI_EXT,          
-    TF_INTENSITY32UI_EXT = GL_INTENSITY32UI_EXT,      
-    TF_LUMINANCE32UI_EXT = GL_LUMINANCE32UI_EXT,      
+    TF_RGBA32UI_EXT = GL_RGBA32UI_EXT,
+    TF_RGB32UI_EXT = GL_RGB32UI_EXT,
+    TF_ALPHA32UI_EXT = GL_ALPHA32UI_EXT,
+    TF_INTENSITY32UI_EXT = GL_INTENSITY32UI_EXT,
+    TF_LUMINANCE32UI_EXT = GL_LUMINANCE32UI_EXT,
     TF_LUMINANCE_ALPHA32UI_EXT = GL_LUMINANCE_ALPHA32UI_EXT,
 
-    TF_RGBA16UI_EXT = GL_RGBA16UI_EXT,           
-    TF_RGB16UI_EXT = GL_RGB16UI_EXT,            
-    TF_ALPHA16UI_EXT = GL_ALPHA16UI_EXT,          
-    TF_INTENSITY16UI_EXT = GL_INTENSITY16UI_EXT,      
-    TF_LUMINANCE16UI_EXT = GL_LUMINANCE16UI_EXT,      
-    TF_LUMINANCE_ALPHA16UI_EXT = GL_LUMINANCE_ALPHA16UI_EXT, 
+    TF_RGBA16UI_EXT = GL_RGBA16UI_EXT,
+    TF_RGB16UI_EXT = GL_RGB16UI_EXT,
+    TF_ALPHA16UI_EXT = GL_ALPHA16UI_EXT,
+    TF_INTENSITY16UI_EXT = GL_INTENSITY16UI_EXT,
+    TF_LUMINANCE16UI_EXT = GL_LUMINANCE16UI_EXT,
+    TF_LUMINANCE_ALPHA16UI_EXT = GL_LUMINANCE_ALPHA16UI_EXT,
 
-    TF_RGBA8UI_EXT = GL_RGBA8UI_EXT,           
-    TF_RGB8UI_EXT = GL_RGB8UI_EXT,            
-    TF_ALPHA8UI_EXT = GL_ALPHA8UI_EXT,          
-    TF_INTENSITY8UI_EXT = GL_INTENSITY8UI_EXT,      
-    TF_LUMINANCE8UI_EXT = GL_LUMINANCE8UI_EXT,      
+    TF_RGBA8UI_EXT = GL_RGBA8UI_EXT,
+    TF_RGB8UI_EXT = GL_RGB8UI_EXT,
+    TF_ALPHA8UI_EXT = GL_ALPHA8UI_EXT,
+    TF_INTENSITY8UI_EXT = GL_INTENSITY8UI_EXT,
+    TF_LUMINANCE8UI_EXT = GL_LUMINANCE8UI_EXT,
     TF_LUMINANCE_ALPHA8UI_EXT = GL_LUMINANCE_ALPHA8UI_EXT,
 
-    TF_RGBA32I_EXT = GL_RGBA32I_EXT,           
-    TF_RGB32I_EXT = GL_RGB32I_EXT,            
-    TF_ALPHA32I_EXT = GL_ALPHA32I_EXT,          
-    TF_INTENSITY32I_EXT = GL_INTENSITY32I_EXT,      
-    TF_LUMINANCE32I_EXT = GL_LUMINANCE32I_EXT,      
+    TF_RGBA32I_EXT = GL_RGBA32I_EXT,
+    TF_RGB32I_EXT = GL_RGB32I_EXT,
+    TF_ALPHA32I_EXT = GL_ALPHA32I_EXT,
+    TF_INTENSITY32I_EXT = GL_INTENSITY32I_EXT,
+    TF_LUMINANCE32I_EXT = GL_LUMINANCE32I_EXT,
     TF_LUMINANCE_ALPHA32I_EXT = GL_LUMINANCE_ALPHA32I_EXT,
 
-    TF_RGBA16I_EXT = GL_RGBA16I_EXT,           
-    TF_RGB16I_EXT = GL_RGB16I_EXT,            
-    TF_ALPHA16I_EXT = GL_ALPHA16I_EXT,          
-    TF_INTENSITY16I_EXT = GL_INTENSITY16I_EXT,      
-    TF_LUMINANCE16I_EXT = GL_LUMINANCE16I_EXT,      
+    TF_RGBA16I_EXT = GL_RGBA16I_EXT,
+    TF_RGB16I_EXT = GL_RGB16I_EXT,
+    TF_ALPHA16I_EXT = GL_ALPHA16I_EXT,
+    TF_INTENSITY16I_EXT = GL_INTENSITY16I_EXT,
+    TF_LUMINANCE16I_EXT = GL_LUMINANCE16I_EXT,
     TF_LUMINANCE_ALPHA16I_EXT = GL_LUMINANCE_ALPHA16I_EXT,
 
     TF_RGBA8I_EXT = GL_RGBA8I_EXT,
@@ -280,7 +280,7 @@ namespace vl
     TF_RGBA32UI = GL_RGBA32UI
 
   } ETextureFormat;
-    
+
   typedef enum
   {
     IF_RGB   = GL_RGB,
@@ -477,7 +477,7 @@ namespace vl
     CF_CLEAR_DEPTH_STENCIL = CF_CLEAR_DEPTH + CF_CLEAR_STENCIL,
     CF_CLEAR_COLOR_DEPTH_STENCIL = CF_CLEAR_COLOR + CF_CLEAR_DEPTH + CF_CLEAR_STENCIL,
   } EClearFlags;
-  
+
   typedef enum
   {
     CCM_Float,
@@ -485,35 +485,35 @@ namespace vl
     CCM_UInt
   } EClearColorMode;
 
-  typedef enum 
-  { 
-    BF_ZERO=GL_ZERO, 
-    BF_ONE=GL_ONE, 
-    BF_SRC_COLOR=GL_SRC_COLOR, 
-    BF_ONE_MINUS_SRC_COLOR=GL_ONE_MINUS_SRC_COLOR, 
-    BF_DST_COLOR=GL_DST_COLOR, 
-    BF_ONE_MINUS_DST_COLOR=GL_ONE_MINUS_DST_COLOR, 
-    BF_SRC_ALPHA=GL_SRC_ALPHA, 
-    BF_ONE_MINUS_SRC_ALPHA=GL_ONE_MINUS_SRC_ALPHA, 
-    BF_DST_ALPHA=GL_DST_ALPHA, 
-    BF_ONE_MINUS_DST_ALPHA=GL_ONE_MINUS_DST_ALPHA, 
-    BF_CONSTANT_COLOR=GL_CONSTANT_COLOR, 
-    BF_ONE_MINUS_CONSTANT_COLOR=GL_ONE_MINUS_CONSTANT_COLOR, 
-    BF_CONSTANT_ALPHA=GL_CONSTANT_ALPHA, 
-    BF_ONE_MINUS_CONSTANT_ALPHA=GL_ONE_MINUS_CONSTANT_ALPHA, 
+  typedef enum
+  {
+    BF_ZERO=GL_ZERO,
+    BF_ONE=GL_ONE,
+    BF_SRC_COLOR=GL_SRC_COLOR,
+    BF_ONE_MINUS_SRC_COLOR=GL_ONE_MINUS_SRC_COLOR,
+    BF_DST_COLOR=GL_DST_COLOR,
+    BF_ONE_MINUS_DST_COLOR=GL_ONE_MINUS_DST_COLOR,
+    BF_SRC_ALPHA=GL_SRC_ALPHA,
+    BF_ONE_MINUS_SRC_ALPHA=GL_ONE_MINUS_SRC_ALPHA,
+    BF_DST_ALPHA=GL_DST_ALPHA,
+    BF_ONE_MINUS_DST_ALPHA=GL_ONE_MINUS_DST_ALPHA,
+    BF_CONSTANT_COLOR=GL_CONSTANT_COLOR,
+    BF_ONE_MINUS_CONSTANT_COLOR=GL_ONE_MINUS_CONSTANT_COLOR,
+    BF_CONSTANT_ALPHA=GL_CONSTANT_ALPHA,
+    BF_ONE_MINUS_CONSTANT_ALPHA=GL_ONE_MINUS_CONSTANT_ALPHA,
     BF_SRC_ALPHA_SATURATE=GL_SRC_ALPHA_SATURATE
   } EBlendFactor;
 
-  typedef enum 
-  { 
+  typedef enum
+  {
     TD_TEXTURE_UNKNOWN = 0,
-    TD_TEXTURE_1D = GL_TEXTURE_1D, 
-    TD_TEXTURE_2D = GL_TEXTURE_2D, 
-    TD_TEXTURE_3D = GL_TEXTURE_3D, 
+    TD_TEXTURE_1D = GL_TEXTURE_1D,
+    TD_TEXTURE_2D = GL_TEXTURE_2D,
+    TD_TEXTURE_3D = GL_TEXTURE_3D,
     TD_TEXTURE_CUBE_MAP  = GL_TEXTURE_CUBE_MAP,
     TD_TEXTURE_RECTANGLE = GL_TEXTURE_RECTANGLE,
-    TD_TEXTURE_1D_ARRAY  = GL_TEXTURE_1D_ARRAY, 
-    TD_TEXTURE_2D_ARRAY  = GL_TEXTURE_2D_ARRAY, 
+    TD_TEXTURE_1D_ARRAY  = GL_TEXTURE_1D_ARRAY,
+    TD_TEXTURE_2D_ARRAY  = GL_TEXTURE_2D_ARRAY,
     TD_TEXTURE_BUFFER    = GL_TEXTURE_BUFFER,
     TD_TEXTURE_2D_MULTISAMPLE = GL_TEXTURE_2D_MULTISAMPLE,
     TD_TEXTURE_2D_MULTISAMPLE_ARRAY = GL_TEXTURE_2D_MULTISAMPLE_ARRAY
@@ -527,7 +527,7 @@ namespace vl
   } ETexCompareMode;
 
   typedef enum
-  { 
+  {
     TCF_LEQUAL   = GL_LEQUAL,
     TCF_GEQUAL   = GL_GEQUAL,
     TCF_LESS     = GL_LESS,
@@ -538,10 +538,10 @@ namespace vl
     TCF_NEVER    = GL_NEVER
   } ETexCompareFunc;
 
-  typedef enum 
+  typedef enum
   {
-    DTM_LUMINANCE = GL_LUMINANCE, 
-    DTM_INTENSITY = GL_INTENSITY, 
+    DTM_LUMINANCE = GL_LUMINANCE,
+    DTM_INTENSITY = GL_INTENSITY,
     DTM_ALPHA     = GL_ALPHA,
     DTM_RED       = GL_RED
   } EDepthTextureMode;
@@ -640,189 +640,189 @@ namespace vl
 
   } EPrimitiveType;
 
-  typedef enum 
-  { 
-    PF_FRONT=GL_FRONT, 
-    PF_BACK=GL_BACK, 
-    PF_FRONT_AND_BACK=GL_FRONT_AND_BACK 
+  typedef enum
+  {
+    PF_FRONT=GL_FRONT,
+    PF_BACK=GL_BACK,
+    PF_FRONT_AND_BACK=GL_FRONT_AND_BACK
   } EPolygonFace;
 
-  typedef enum 
-  { 
-    HM_FASTEST=GL_FASTEST, 
-    HM_NICEST=GL_NICEST, 
-    HM_DONT_CARE=GL_DONT_CARE 
+  typedef enum
+  {
+    HM_FASTEST=GL_FASTEST,
+    HM_NICEST=GL_NICEST,
+    HM_DONT_CARE=GL_DONT_CARE
   } EHintMode;
 
-  typedef enum 
-  { 
-    FF_CW=GL_CW, 
-    FF_CCW=GL_CCW 
+  typedef enum
+  {
+    FF_CW=GL_CW,
+    FF_CCW=GL_CCW
   } EFrontFace;
 
-  typedef enum 
-  { 
-    FU_NEVER=GL_NEVER, 
-    FU_LESS=GL_LESS, 
-    FU_EQUAL=GL_EQUAL, 
-    FU_LEQUAL=GL_LEQUAL, 
-    FU_GREATER=GL_GREATER, 
-    FU_NOTEQUAL=GL_NOTEQUAL, 
-    FU_GEQUAL=GL_GEQUAL, 
-    FU_ALWAYS=GL_ALWAYS 
+  typedef enum
+  {
+    FU_NEVER=GL_NEVER,
+    FU_LESS=GL_LESS,
+    FU_EQUAL=GL_EQUAL,
+    FU_LEQUAL=GL_LEQUAL,
+    FU_GREATER=GL_GREATER,
+    FU_NOTEQUAL=GL_NOTEQUAL,
+    FU_GEQUAL=GL_GEQUAL,
+    FU_ALWAYS=GL_ALWAYS
   } EFunction;
 
-  typedef enum 
-  { 
-    PM_FILL=GL_FILL, 
-    PM_LINE=GL_LINE, 
-    PM_POINT=GL_POINT 
+  typedef enum
+  {
+    PM_FILL=GL_FILL,
+    PM_LINE=GL_LINE,
+    PM_POINT=GL_POINT
   } EPolygonMode;
 
-  typedef enum 
-  { 
-    SM_FLAT=GL_FLAT, 
-    SM_SMOOTH=GL_SMOOTH 
+  typedef enum
+  {
+    SM_FLAT=GL_FLAT,
+    SM_SMOOTH=GL_SMOOTH
   } EShadeModel;
 
-  typedef enum 
+  typedef enum
   {
-    BE_FUNC_ADD=GL_FUNC_ADD, 
-    BE_FUNC_SUBTRACT=GL_FUNC_SUBTRACT, 
-    BE_FUNC_REVERSE_SUBTRACT=GL_FUNC_REVERSE_SUBTRACT, 
-    BE_MIN=GL_MIN, 
-    BE_MAX=GL_MAX 
+    BE_FUNC_ADD=GL_FUNC_ADD,
+    BE_FUNC_SUBTRACT=GL_FUNC_SUBTRACT,
+    BE_FUNC_REVERSE_SUBTRACT=GL_FUNC_REVERSE_SUBTRACT,
+    BE_MIN=GL_MIN,
+    BE_MAX=GL_MAX
   } EBlendEquation;
 
-  typedef enum 
-  { 
-    CM_EMISSION=GL_EMISSION, 
-    CM_AMBIENT=GL_AMBIENT, 
-    CM_DIFFUSE=GL_DIFFUSE, 
-    CM_SPECULAR=GL_SPECULAR, 
-    CM_AMBIENT_AND_DIFFUSE=GL_AMBIENT_AND_DIFFUSE 
+  typedef enum
+  {
+    CM_EMISSION=GL_EMISSION,
+    CM_AMBIENT=GL_AMBIENT,
+    CM_DIFFUSE=GL_DIFFUSE,
+    CM_SPECULAR=GL_SPECULAR,
+    CM_AMBIENT_AND_DIFFUSE=GL_AMBIENT_AND_DIFFUSE
   } EColorMaterial;
 
-  typedef enum 
-  { 
-    CC_SEPARATE_SPECULAR_COLOR=GL_SEPARATE_SPECULAR_COLOR, 
-    CC_SINGLE_COLOR=GL_SINGLE_COLOR 
+  typedef enum
+  {
+    CC_SEPARATE_SPECULAR_COLOR=GL_SEPARATE_SPECULAR_COLOR,
+    CC_SINGLE_COLOR=GL_SINGLE_COLOR
   } EColorControl;
 
-  typedef enum 
+  typedef enum
   {
-    FM_LINEAR=GL_LINEAR, 
-    FM_EXP=GL_EXP, 
-    FM_EXP2=GL_EXP2 
+    FM_LINEAR=GL_LINEAR,
+    FM_EXP=GL_EXP,
+    FM_EXP2=GL_EXP2
   } EFogMode;
 
-  typedef enum 
-  { 
-    LO_CLEAR=GL_CLEAR, 
-    LO_SET=GL_SET, 
-    LO_COPY=GL_COPY, 
-    LO_COPY_INVERTED=GL_COPY_INVERTED, 
-    LO_NOOP=GL_NOOP, 
-    LO_INVERT=GL_INVERT, 
-    LO_AND=GL_AND, 
-    LO_NAND=GL_NAND, 
-    LO_OR=GL_OR, 
-    LO_NOR=GL_NOR, 
-    LO_XOR=GL_XOR, 
-    LO_EQUIV=GL_EQUIV, 
-    LO_AND_REVERSE=GL_AND_REVERSE, 
-    LO_AND_INVERTED=GL_AND_INVERTED, 
-    LO_OR_REVERSE=GL_OR_REVERSE, 
-    LO_OR_INVERTED=GL_OR_INVERTED 
+  typedef enum
+  {
+    LO_CLEAR=GL_CLEAR,
+    LO_SET=GL_SET,
+    LO_COPY=GL_COPY,
+    LO_COPY_INVERTED=GL_COPY_INVERTED,
+    LO_NOOP=GL_NOOP,
+    LO_INVERT=GL_INVERT,
+    LO_AND=GL_AND,
+    LO_NAND=GL_NAND,
+    LO_OR=GL_OR,
+    LO_NOR=GL_NOR,
+    LO_XOR=GL_XOR,
+    LO_EQUIV=GL_EQUIV,
+    LO_AND_REVERSE=GL_AND_REVERSE,
+    LO_AND_INVERTED=GL_AND_INVERTED,
+    LO_OR_REVERSE=GL_OR_REVERSE,
+    LO_OR_INVERTED=GL_OR_INVERTED
   } ELogicOp;
 
-  typedef enum 
-  { 
-    SO_KEEP=GL_KEEP, 
-    SO_ZERO=GL_ZERO, 
-    SO_REPLACE=GL_REPLACE, 
-    SO_INCR=GL_INCR, 
-    SO_INCR_WRAP=GL_INCR_WRAP, 
-    SO_DECR=GL_DECR, 
-    SO_DECR_WRAP=GL_DECR_WRAP, 
-    SO_INVERT=GL_INVERT 
+  typedef enum
+  {
+    SO_KEEP=GL_KEEP,
+    SO_ZERO=GL_ZERO,
+    SO_REPLACE=GL_REPLACE,
+    SO_INCR=GL_INCR,
+    SO_INCR_WRAP=GL_INCR_WRAP,
+    SO_DECR=GL_DECR,
+    SO_DECR_WRAP=GL_DECR_WRAP,
+    SO_INVERT=GL_INVERT
   } EStencilOp;
 
- typedef enum 
-  { 
-    TPF_NEAREST=GL_NEAREST, 
-    TPF_LINEAR=GL_LINEAR, 
-    TPF_NEAREST_MIPMAP_NEAREST=GL_NEAREST_MIPMAP_NEAREST, 
-    TPF_LINEAR_MIPMAP_NEAREST=GL_LINEAR_MIPMAP_NEAREST, 
-    TPF_NEAREST_MIPMAP_LINEAR=GL_NEAREST_MIPMAP_LINEAR, 
-    TPF_LINEAR_MIPMAP_LINEAR=GL_LINEAR_MIPMAP_LINEAR 
+ typedef enum
+  {
+    TPF_NEAREST=GL_NEAREST,
+    TPF_LINEAR=GL_LINEAR,
+    TPF_NEAREST_MIPMAP_NEAREST=GL_NEAREST_MIPMAP_NEAREST,
+    TPF_LINEAR_MIPMAP_NEAREST=GL_LINEAR_MIPMAP_NEAREST,
+    TPF_NEAREST_MIPMAP_LINEAR=GL_NEAREST_MIPMAP_LINEAR,
+    TPF_LINEAR_MIPMAP_LINEAR=GL_LINEAR_MIPMAP_LINEAR
   } ETexParamFilter;
 
-  typedef enum 
-  { 
-    TPW_CLAMP           = GL_CLAMP, 
+  typedef enum
+  {
+    TPW_CLAMP           = GL_CLAMP,
     TPW_CLAMP_TO_BORDER = GL_CLAMP_TO_BORDER,
     TPW_CLAMP_TO_EDGE   = GL_CLAMP_TO_EDGE,
     TPW_MIRRORED_REPEAT = GL_MIRRORED_REPEAT,
     TPW_REPEAT          = GL_REPEAT
   } ETexParamWrap;
 
-  typedef enum 
+  typedef enum
   {
-    TEM_DECAL=GL_DECAL, 
-    TEM_MODULATE=GL_MODULATE, 
-    TEM_ADD=GL_ADD, 
-    TEM_BLEND=GL_BLEND, 
-    TEM_REPLACE=GL_REPLACE, 
-    TEM_COMBINE=GL_COMBINE, 
-    TEM_ADD_SIGN=GL_ADD_SIGNED, 
-    TEM_INTERPOLATE=GL_INTERPOLATE, 
-    TEM_SUBTRACT=GL_SUBTRACT, 
-    TEM_DOT3_RGB=GL_DOT3_RGB, 
-    TEM_DOT3_RGBA=GL_DOT3_RGBA 
+    TEM_DECAL=GL_DECAL,
+    TEM_MODULATE=GL_MODULATE,
+    TEM_ADD=GL_ADD,
+    TEM_BLEND=GL_BLEND,
+    TEM_REPLACE=GL_REPLACE,
+    TEM_COMBINE=GL_COMBINE,
+    TEM_ADD_SIGN=GL_ADD_SIGNED,
+    TEM_INTERPOLATE=GL_INTERPOLATE,
+    TEM_SUBTRACT=GL_SUBTRACT,
+    TEM_DOT3_RGB=GL_DOT3_RGB,
+    TEM_DOT3_RGBA=GL_DOT3_RGBA
   } ETexEnvMode;
 
-  typedef enum 
+  typedef enum
   {
-    TES_TEXTURE=GL_TEXTURE, 
-    TES_TEXTURE0=GL_TEXTURE0, 
-    TES_TEXTURE1=GL_TEXTURE1, 
-    TES_TEXTURE2=GL_TEXTURE2, 
-    TES_TEXTURE3=GL_TEXTURE3, 
-    TES_TEXTURE4=GL_TEXTURE4, 
-    TES_TEXTURE5=GL_TEXTURE5, 
-    TES_TEXTURE6=GL_TEXTURE6, 
-    TES_TEXTURE7=GL_TEXTURE7, 
+    TES_TEXTURE=GL_TEXTURE,
+    TES_TEXTURE0=GL_TEXTURE0,
+    TES_TEXTURE1=GL_TEXTURE1,
+    TES_TEXTURE2=GL_TEXTURE2,
+    TES_TEXTURE3=GL_TEXTURE3,
+    TES_TEXTURE4=GL_TEXTURE4,
+    TES_TEXTURE5=GL_TEXTURE5,
+    TES_TEXTURE6=GL_TEXTURE6,
+    TES_TEXTURE7=GL_TEXTURE7,
     TES_CONSTANT=GL_CONSTANT,
-    TES_PRIMARY_COLOR=GL_PRIMARY_COLOR, 
+    TES_PRIMARY_COLOR=GL_PRIMARY_COLOR,
     TES_PREVIOUS=GL_PREVIOUS
   } ETexEnvSource;
 
-  typedef enum 
+  typedef enum
   {
-    TEO_SRC_COLOR=GL_SRC_COLOR, 
+    TEO_SRC_COLOR=GL_SRC_COLOR,
     TEO_ONE_MINUS_SRC_COLOR=GL_ONE_MINUS_SRC_COLOR,
-    TEO_SRC_ALPHA=GL_SRC_ALPHA, 
+    TEO_SRC_ALPHA=GL_SRC_ALPHA,
     TEO_ONE_MINUS_SRC_ALPHA=GL_ONE_MINUS_SRC_ALPHA
   } ETexEnvOperand;
 
   //! Texture generation modes, see also http://www.opengl.org/sdk/docs/man/xhtml/glTexGen.xml for more information.
-  typedef enum 
+  typedef enum
   {
-    TGM_DISABLED = 0, 
+    TGM_DISABLED = 0,
     TGM_EYE_LINEAR = GL_EYE_LINEAR,         //!< Not supported under OpenGL ES 1.x
     TGM_OBJECT_LINEAR = GL_OBJECT_LINEAR,   //!< Not supported under OpenGL ES 1.x
     TGM_SPHERE_MAP = GL_SPHERE_MAP,         //!< Not supported under OpenGL ES 1.x
     TGM_REFLECTION_MAP = GL_REFLECTION_MAP,
-    TGM_NORMAL_MAP = GL_NORMAL_MAP           
+    TGM_NORMAL_MAP = GL_NORMAL_MAP
   } ETexGenMode;
 
   //! Constant that enable/disable a specific OpenGL feature, see also Shader, Shader::enable(), Shader::disable(), Shader::isEnabled()
-  typedef enum 
+  typedef enum
   {
     // Common ones
     EN_BLEND, //!< If enabled, blend the incoming RGBA color values with the values in the color buffers, see also BlendFunc for more information.
-    EN_CULL_FACE, //!< If enabled, cull polygons based on their winding in window coordinates, see also CullFace. 
+    EN_CULL_FACE, //!< If enabled, cull polygons based on their winding in window coordinates, see also CullFace.
     EN_DEPTH_TEST, //!< If enabled, do depth comparisons and update the depth buffer; Note that even if the depth buffer exists and the depth mask is non-zero, the depth buffer is not updated if the depth test is disabled, see also DepthFunc and DepthRange.
     EN_STENCIL_TEST, //!< If enabled, do stencil testing and update the stencil buffer, see also StencilFunc and StencilOp.
     EN_DITHER, //!< If enabled, dither color components or indices before they are written to the color buffer.
@@ -848,7 +848,7 @@ namespace vl
     // Fixed function pipeline
     EN_ALPHA_TEST, //!< If enabled, performs alpha testing, see also AlphaFunc for more information.
     EN_LIGHTING, //!< If enabled, use the current lighting parameters to compute the vertex color; Otherwise, simply associate the current color with each vertex, see also Material, LightModel, and Light.
-    EN_COLOR_SUM, //!< If enabled, add the secondary color value to the computed fragment color. 
+    EN_COLOR_SUM, //!< If enabled, add the secondary color value to the computed fragment color.
     EN_FOG, //!< If enabled, blend a fog color into the post-texturing color, see also Fog.
     EN_NORMALIZE, //!< If enabled, normal vectors are scaled to unit length after transformation, see also vl::EN_RESCALE_NORMAL.
     EN_RESCALE_NORMAL, //!< If enabled, normals are scaled by a scaling factor derived from the modelview matrix; vl::EN_RESCALE_NORMAL requires that the originally specified normals were of unit length, and that the modelview matrix contain only uniform scales for proper results, see also vl::EN_NORMALIZE.
@@ -896,7 +896,7 @@ namespace vl
   typedef enum
   {
     BA_READ_ONLY  = GL_READ_ONLY,
-    BA_WRITE_ONLY = GL_WRITE_ONLY, 
+    BA_WRITE_ONLY = GL_WRITE_ONLY,
     BA_READ_WRITE = GL_READ_WRITE
   } EBufferObjectAccess;
 
@@ -1104,24 +1104,8 @@ namespace vl
 
   typedef enum
   {
-    GIT_POINTS              = GL_POINTS, 
-    GIT_LINES               = GL_LINES,
-    GIT_LINES_ADJACENCY     = GL_LINES_ADJACENCY_EXT, 
-    GIT_TRIANGLES           = GL_TRIANGLES,
-    GIT_TRIANGLES_ADJACENCY = GL_TRIANGLES_ADJACENCY_EXT
-  } EGeometryInputType;
-
-  typedef enum
-  {
-    GOT_POINTS = GL_POINTS, 
-    GOT_LINE_STRIP = GL_LINE_STRIP,
-    GOT_TRIANGLE_STRIP = GL_TRIANGLE_STRIP,
-  } EGeometryOutputType;
-
-  typedef enum
-  {
     BB_COLOR_BUFFER_BIT   = GL_COLOR_BUFFER_BIT,
-    BB_DEPTH_BUFFER_BIT   = GL_DEPTH_BUFFER_BIT, 
+    BB_DEPTH_BUFFER_BIT   = GL_DEPTH_BUFFER_BIT,
     BB_STENCIL_BUFFER_BIT = GL_STENCIL_BUFFER_BIT
   } EBufferBits;
 
@@ -1321,15 +1305,15 @@ namespace vl
     TW_TESS_WINDING_ABS_GEQ_TWO = GLU_TESS_WINDING_ABS_GEQ_TWO
   } ETessellationWinding;
 
-  typedef enum { 
+  typedef enum {
     VEL_VERBOSITY_SILENT, //!<< No log information is generated.
     VEL_VERBOSITY_ERROR,  //!<< Outputs critical and runtime error messages.
     VEL_VERBOSITY_NORMAL, //!<< Outputs normal information messages, plus all error messages.
     VEL_VERBOSITY_DEBUG   //!<< Outputs extra information messages useful for debugging, plus all normal and error messages.
   } EVerbosityLevel;
 
-  typedef enum 
-  { 
+  typedef enum
+  {
     LL_LogNotify,
     LL_LogPrint,
     LL_LogBug,
@@ -1351,10 +1335,10 @@ namespace vl
     VAI_NORMAL,  //!< Data will be sent using glVertexAttribPointer(), that is,
                  //!< data will be converted to floating point precision and eventually normalized.
 
-    VAI_INTEGER, //!< Data will be sent using glVertexAttribIPointer(), that is, 
+    VAI_INTEGER, //!< Data will be sent using glVertexAttribIPointer(), that is,
                  //!< values are always left as integer values, data format must be an \a integer type.
 
-    VAI_DOUBLE,  //!< Data will be sent using glVertexAttribLPointer(), that is, it will be associated with a 
+    VAI_DOUBLE,  //!< Data will be sent using glVertexAttribLPointer(), that is, it will be associated with a
                  //!< shader attribute variable declared with 64-bit double precision components, data format must be \a double.
   } EVertexAttribInterpretation;
 
@@ -1512,7 +1496,7 @@ namespace vl
     BUM_KeepRamBuffer = 0x0,
 
     //! Keeps the local buffer on RAM and updates the BufferObject always, even if it is not marked as dirty. The BufferObject is marked as clean after the update.
-    BUM_KeepRamBufferAndForceUpdate = BUF_ForceUpdate, 
+    BUM_KeepRamBufferAndForceUpdate = BUF_ForceUpdate,
 
     //! Discards the local buffer on RAM and updates the BufferObject only if it is marked as dirty. The BufferObject is marked as clean after the update.
     BUM_DiscardRamBuffer = BUF_DiscardRamBuffer,

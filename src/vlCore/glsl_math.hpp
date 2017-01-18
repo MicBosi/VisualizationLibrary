@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -35,9 +35,9 @@
 /**
   \file glsl_math.hpp Implements the OpenGL Shading Language convenience functions for scalar and vector operations.
 
-  This functions are particularly useful when you want to port C++ code to GLSL and vice versa, or when you want to quickly 
-  prototype in C++ an algorithm that will be ported later to GLSL. 
-  
+  This functions are particularly useful when you want to port C++ code to GLSL and vice versa, or when you want to quickly
+  prototype in C++ an algorithm that will be ported later to GLSL.
+
   Note that most of this functions take as arguments not only \p int, \p unsigned \p int, \p float and \p double variables
   but also their vector counterparts like \p fvec4, \p Vector4<T>, \p ivec4, \p uvec4, \p fvec3, \p fvec2 etc.
   For example you can do the following:
@@ -64,7 +64,7 @@ v = vl::clamp(v, vl::fvec4(1,2,3,4), vl::fvec4(5,6,7,8));
   sinh(), cosh(), tanh(), asinh(), acosh(), atanh()
 
   \par Exponential functions
-  pow(), exp(), log(), exp2(), log2(), log10(), sqrt(), inversesqrt(), 
+  pow(), exp(), log(), exp2(), log2(), log10(), sqrt(), inversesqrt(),
 
   \par Common functions
   abs(), sign(), floor(), trunc(), round(), roundEven(), ceil(), fract(), mod(), modf(), min(), max(), clamp(), mix(), step(), smoothstep(), isnan(), isinf()
@@ -73,7 +73,7 @@ v = vl::clamp(v, vl::fvec4(1,2,3,4), vl::fvec4(5,6,7,8));
   length(), distance(), dot(), cross(), normalize(), faceforward(), reflect(), refract()
 
   \par Matrix functions
-  matrixCompMult(), outerProduct(), transpose(), 
+  matrixCompMult(), outerProduct(), transpose(),
 
   \par Vector relational functions
   lessThan(), lessThanEqual(), greaterThan(), greaterThanEqual(), equal(), notEqual(), any(), all(), not()
@@ -223,20 +223,20 @@ namespace vl
 
   template<typename T>
   T cos(T a) { return ::cos(a); }
-  
+
   template<typename T>
   Vector2<T> cos(const Vector2<T>& angle) {
     return Vector2<T>( ::cos(angle.x()),
                            ::cos(angle.y()) );
   }
-  
+
   template<typename T>
   Vector3<T> cos(const Vector3<T>& angle) {
     return Vector3<T>( ::cos(angle.x()),
                        ::cos(angle.y()),
                        ::cos(angle.z()) );
   }
-  
+
   template<typename T>
   Vector4<T> cos(const Vector4<T>& angle) {
     return Vector4<T>( ::cos(angle.x()),
@@ -824,7 +824,7 @@ namespace vl
 
   // --------------- roundEven ---------------
 
-  inline 
+  inline
   float roundEven(float a, float epsilon)
   {
     if( a < 0 )
@@ -850,7 +850,7 @@ namespace vl
     }
   }
 
-  inline 
+  inline
   double roundEven(double a, double epsilon)
   {
     if( a < 0 )

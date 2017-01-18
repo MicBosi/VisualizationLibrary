@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -121,7 +121,7 @@
 
 
 /**
- * Enable this to be able to attach user data to any vl::Object using the 
+ * Enable this to be able to attach user data to any vl::Object using the
  * "setUserData(Object*)" and "Object* userData()" methods.
  * Useful to glue VL classes to the user's application logic.
  * \note This will add 4 or 8 bytes to each vl::Object instance.
@@ -130,8 +130,8 @@
 
 
 /**
- * Enable this to be able to attach user data to any vl::Actor using the 
- * "setActorUserData(Object*)" and "Object* actorUserData()" methods. 
+ * Enable this to be able to attach user data to any vl::Actor using the
+ * "setActorUserData(Object*)" and "Object* actorUserData()" methods.
  * Useful to glue VL classes to the user's application logic.
  * \note This will add 4 or 8 bytes to each vl::Actor instance.
  */
@@ -139,8 +139,8 @@
 
 
 /**
- * Enable this to be able to attach user data to any vl::Transform using the 
- * "void setTransformUserData(Object*)" and "Object* transformUserData()" methods. 
+ * Enable this to be able to attach user data to any vl::Transform using the
+ * "void setTransformUserData(Object*)" and "Object* transformUserData()" methods.
  * Useful to glue Transform objects to the user's application animation engine.
  * \note This will add 4 or 8 bytes to each vl::Transform instance.
  */
@@ -148,8 +148,8 @@
 
 
 /**
- * Enable this to be able to attach user data to any vl::Shader using the 
- * "void setShaderUserData(Object*)" and "Object* shaderUserData()" methods. 
+ * Enable this to be able to attach user data to any vl::Shader using the
+ * "void setShaderUserData(Object*)" and "Object* shaderUserData()" methods.
  * Useful to glue Shader objects and the user's application logic.
  * \note This will add 4 or 8 bytes to each vl::Shader instance.
  */
@@ -212,6 +212,7 @@
 
 #define VL_MAX_TEXTURE_IMAGE_UNITS 32
 #define VL_MAX_LEGACY_TEXTURE_UNITS 8
+
 ///////////////////////////////////////////////////
 
 #ifndef NDEBUG
@@ -228,7 +229,7 @@
   //! Defined as \p glLoadMatrixd, used internally.
   #define VL_glLoadMatrix glLoadMatrixd
   //! Defined as \p glMultMatrixd, used internally.
-  #define VL_glMultMatrix glMultMatrixd 
+  #define VL_glMultMatrix glMultMatrixd
 #else
   namespace vl { /** Defined as \p 'typedef \p float \p real' */ typedef float real; }
   namespace vl { typedef float real; }
