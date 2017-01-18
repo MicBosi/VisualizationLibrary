@@ -378,10 +378,10 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
         shader_set.insert(shader);
 
         // link GLSLProgram
-        if (shader->glslProgram() && !shader->glslProgram()->linked())
+        if ( shader->glslProgram() && ! shader->glslProgram()->linked() )
         {
           shader->glslProgram()->linkProgram();
-          VL_CHECK( shader->glslProgram()->linked() );
+          // VL_CHECK( shader->glslProgram()->linked() );
         }
 
         // lazy texture creation
@@ -397,12 +397,12 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
               VL_CHECK(tex_unit);
               if (tex_unit)
               {
-                if (tex_unit->texture() && tex_unit->texture()->setupParams())
+                if (tex_unit->texture() && tex_unit->texture()->setupParams() && ! tex_unit->texture()->handle() ) {
                   tex_unit->texture()->createTexture();
+                }
               }
             }
           }
-          
         }
       }
 
