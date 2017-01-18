@@ -1,13 +1,13 @@
 /**
 
 	\page pagMainClasses Grouped classes and functions
-	
-	This are the most important Visualization Library classes and functions divided into groups. 
-	
+
+	This are the most important Visualization Library classes and functions divided into groups.
+
 	Some items might appear in more than one group. Hovering with the mouse on the name of a class or function will display a tooltip with a brief description.
 
 	\par Math
-	
+
 	- vl::half
 	- vl::real
 	- vl::degree
@@ -31,11 +31,11 @@
 	- vl::AABB
 	- vl::RectI
 	- vl::RectF
-	
+
 	- glsl_math.hpp
-	
+
 	\par Text manipulation and rendering
-	
+
 	- vl::String
 	- vl::TextStream
 	- vl::Say
@@ -45,9 +45,9 @@
 	- vl::FontManager
 	- vl::defFontManager() [DEPRECATED]
 	- vl::setDefFontManager() [DEPRECATED]
-	
+
 	\par Image
-	
+
 	- vl::loadImage()
 	- vl::saveImage()
 	- vl::loadRAW()
@@ -62,7 +62,7 @@
 	- vl::Image::sampleLinear()
 	- vl::makeColorSpectrum()
 	- vl::Image::subImage()
-	
+
 	\par Input / Output
 
 	- vl::defLoadWriterManager()
@@ -95,9 +95,9 @@
 	- vl::LoadWriterPLY
 	- vl::LoadWriterSTL
 	- vl::LoadWriterMD2
-	
+
 	\par Virtual File System
-	
+
 	- vl::defFileSystem()
 	- vl::setDefFileSystem()
 	- vl::locateFile()
@@ -111,9 +111,9 @@
 	- vl::ZippedFile
 	- vl::MemoryFile
 	- vl::GZipCodec
-	
+
 	\par OpenGL Shading Language
-	
+
 	- vl::GLSLProgram
 	- vl::GLSLVertexShader
 	- vl::GLSLTessControlShader
@@ -122,9 +122,9 @@
 	- vl::GLSLFragmentShader
 	- vl::Shader::glslProgram()
 	- vl::Uniform
-	
+
 	\par Framebuffer Objects
-	
+
 	- vl::FramebufferObject
 	- vl::FBOAbstractAttachment
 		- vl::FBORenderbufferAttachment
@@ -140,18 +140,18 @@
 			- vl::FBOTextureLayerAttachment
 	- vl::BlitFramebuffer
 	- vl::OpenGLContext::createFramebufferObject()
-	
+
 	\par Renderables
-	
+
 	- vl::Renderable
 		- vl::Geometry
 		- vl::BezierSurface
 		- vl::Text
 		- vl::DrawPixels
 		- vl::Clear
-		
+
 	\par Texturing
-	
+
 	- vl::Image
 	- vl::Texture
 	- vl::TexParameter
@@ -179,7 +179,7 @@
 	- vl::WriteCallback
 
 	\par Rendering definition
-	
+
 	- vl::SceneManager
 	- vl::Rendering
 	- vl::Renderer
@@ -196,9 +196,9 @@
 	- vl::Transform
 	- vl::Billboard
 	- vl::Scissor
-	
+
 	\par Scene managers and spatial partitioning
-	
+
 	- vl::SceneManager
 		- vl::SceneManagerBVH
 			- vl::SceneManagerActorTree
@@ -208,10 +208,9 @@
 		- vl::SceneManagerVectorGraphics
 	- vl::ActorTree
 	- vl::ActorKdTree
-	
+
 	\par Geometry Tools
 
-	- vl::Geometry::convertToVertexAttribs()
 	- vl::Geometry::computeNormals()
 	- vl::Geometry::flipNormals()
 	- vl::Geometry::fixTriangleWinding()
@@ -228,9 +227,9 @@
 	- vl::Geometry::regenerateVertices()
 	- vl::Geometry::colorizePrimitives()
 	- vl::Geometry::computeTangentSpace()
-	
+
 	\par Geometry
-	
+
 	- vl::Geometry
 	- vl::BezierSurface
 	- vl::Tessellator
@@ -249,9 +248,9 @@
 	- vl::ArrayAbstract::transform()
 	- vl::ArrayAbstract::normalize()
 	- vl::ArrayAbstract::getAsVec4()
-	
+
 	\par Geometry primitives
-	
+
 	- vl::makeIcosphere()
 	- vl::makeCylinder()
 	- vl::makeUVSphere()
@@ -264,16 +263,16 @@
 	- vl::makePoints()
 	- vl::makeCircle()
 	- vl::makeCapsule()
-	
+
 	\par Animation
-	
+
 	- vl::Time
 	- vl::ActorEventCallback
 	- vl::ShaderAnimator
 	- vl::MorphingCallback
 	- vl::Interpolator
 	- vl::LinearInterpolator
-	- vl::CatmullRomInterpolator 
+	- vl::CatmullRomInterpolator
 
 	\par User interaction
 
@@ -281,9 +280,9 @@
 	- vl::OpenGLContext
 	- vl::TrackballManipulator
 	- vl::GhostCameraManipulator
-	
+
 	\par Threading
-	
+
 	- vl::Object::setRefCountMutex()
 	- vl::Log::setLogMutex()
 	- vl::IMutex
@@ -315,7 +314,7 @@
 	- vl::RingExtractor
 
 	\par GUI bindings
-	
+
 	- vlWin32::Win32Window
 	- vlWin32::Win32Context
 	- vlMFC::MFCWindow
@@ -334,7 +333,7 @@
 	- vl::Array, vl::ArrayFloat3, vl::ArrayUByte4 etc.
 
 	\par Shader render states
-	
+
 	- vl::Shader
 	- vl::Shader::enable()
 	- vl::Shader::disable()
@@ -377,5 +376,5 @@
 	- vl::TextureMatrix
 	- vl::TextureSampler
 	- vl::ShaderNode
-	
+
 */
