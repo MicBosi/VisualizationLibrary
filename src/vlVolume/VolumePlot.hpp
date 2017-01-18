@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -76,9 +76,9 @@ namespace vl
     //! The Geometry representing the isosurface
     Geometry* isosurfaceGeometry() { return mIsosurfaceGeometry.get(); }
 
-    //! Used to get/set the rendering options (like color, material, transparency) etc. of the isosurface 
+    //! Used to get/set the rendering options (like color, material, transparency) etc. of the isosurface
     const Effect* isosurfaceEffect() const { return mIsosurfaceEffect.get(); }
-    //! Used to get/set the rendering options (like color, material, transparency) etc. of the isosurface 
+    //! Used to get/set the rendering options (like color, material, transparency) etc. of the isosurface
     Effect* isosurfaceEffect() { return mIsosurfaceEffect.get(); }
 
     //! Used to get/set the rendering options (like color, material, transparency) etc. of the box

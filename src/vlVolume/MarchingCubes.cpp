@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -514,7 +514,7 @@ void Volume::setupInternalData()
     {
       for(int x = 0; x < w; ++x)
       {
-        float v[] = 
+        float v[] =
         {
           value(x+0,y+0,z+0),
           value(x+0,y+0,z+1),
@@ -541,7 +541,7 @@ void Volume::setupInternalData()
 void Volume::setup( float* data, bool use_directly, bool copy_data, const fvec3& bottom_left, const fvec3& top_right, const ivec3& slices )
 {
   fvec3 size = top_right-bottom_left;
-  
+
   if (use_directly)
   {
     VL_CHECK(data);
@@ -947,7 +947,7 @@ const int MarchingCubes::mTriangleConnectionTable[256][16] =
   {4, 11, 7, 9, 11, 4, 9, 2, 11, 9, 1, 2, -1, -1, -1, -1},
   {9, 7, 4, 9, 11, 7, 9, 1, 11, 2, 11, 1, 0, 8, 3, -1},
   {11, 7, 4, 11, 4, 2, 2, 4, 0, -1, -1, -1, -1, -1, -1, -1},
-  {11, 7, 4, 11, 4, 2, 8, 3, 4, 3, 2, 4, -1, -1, -1, -1}, 
+  {11, 7, 4, 11, 4, 2, 8, 3, 4, 3, 2, 4, -1, -1, -1, -1},
   {2, 9, 10, 2, 7, 9, 2, 3, 7, 7, 4, 9, -1, -1, -1, -1},
   {9, 10, 7, 9, 7, 4, 10, 2, 7, 8, 7, 0, 2, 0, 7, -1},
   {3, 7, 10, 3, 10, 2, 7, 4, 10, 1, 10, 0, 4, 0, 10, -1},

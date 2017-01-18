@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -211,7 +211,7 @@ ref<Image> vl::genRGBAVolumeT(const Image* data, const Image* trfunc, bool alpha
   {
     Log::error("genRGBAVolume() called with invalid data type().\n");
     return NULL;
-  }  
+  }
   if (data->dimension() != ID_3D)
   {
     Log::error("genRGBAVolume() called with non 3D data.\n");
@@ -297,6 +297,52 @@ ref<Image> vl::genRGBAVolumeT(const Image* data, const Image* trfunc, bool alpha
   return volume;
 }
 //-----------------------------------------------------------------------------
+#if 1
+ref<Image> vl::genGradientNormals(const Image* in_img)
+{
+  ref<Image> img = in_img->convertFormat( IF_LUMINANCE );
+  img = img->convertType( IT_FLOAT );
+  ref<Image> gradient = new Image;
+  gradient->allocate3D(img->width(), img->height(), img->depth(), 1, IF_RGB, IT_FLOAT);
+  float* src_px = (float*)img->pixels();
+  fvec3* dst_px = (fvec3*)gradient->pixels();
+  int w = img->width();
+  int h = img->height();
+
+  fvec3 A, B;
+  for(int z=0; z<gradient->depth(); ++z)
+  {
+    for(int y=0; y<gradient->height(); ++y)
+    {
+      for(int x=0; x<gradient->width(); ++x)
+      {
+        // clamped coordinates
+        int xp = x+1, xn = x-1;
+        int yp = y+1, yn = y-1;
+        int zp = z+1, zn = z-1;
+        if (xn<0) xn = 0;
+        if (yn<0) yn = 0;
+        if (zn<0) zn = 0;
+        if (xp>img->width() -1) xp = img->width() -1;
+        if (yp>img->height()-1) yp = img->height()-1;
+        if (zp>img->depth() -1) zp = img->depth() -1;
+
+        A.x() = src_px[xn + w*y  + w*h*z];
+        B.x() = src_px[xp + w*y  + w*h*z];
+        A.y() = src_px[x  + w*yn + w*h*z];
+        B.y() = src_px[x  + w*yp + w*h*z];
+        A.z() = src_px[x  + w*y  + w*h*zn];
+        B.z() = src_px[x  + w*y  + w*h*zp];
+
+        // write normal packed into 0..1 format
+        dst_px[x + w*y + w*h*z] = (normalize(A - B) * 0.5f + 0.5f);
+      }
+    }
+  }
+  return gradient;
+}
+//-----------------------------------------------------------------------------
+#else
 ref<Image> vl::genGradientNormals(const Image* img)
 {
   ref<Image> gradient = new Image;
@@ -334,4 +380,4 @@ ref<Image> vl::genGradientNormals(const Image* img)
   }
   return gradient;
 }
-//-----------------------------------------------------------------------------
+#endif

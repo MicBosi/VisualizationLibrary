@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -46,47 +46,54 @@ namespace vl
   public:
     //! Constructor.
     SlicedVolume();
-    
+
     void onActorRenderStarted(Actor* actor, real frame_clock, const Camera* cam, Renderable* renderable, const Shader* shader, int pass);
 
-    void onActorDelete(Actor* ) {}
+    void onActorDelete(Actor*) { mActor = NULL; }
 
     //! Binds a SlicedVolume to an Actor so that the SlicedVolume can generate the viewport aligned slices' geometry for the Actor as appropriate.
     void bindActor(Actor*);
 
     //! Updates the uniforms used by the GLSLProgram to render the volume each time the onActorRenderStarted() method is called.
     virtual void updateUniforms(Actor* actor, real clock, const Camera* camera, Renderable* rend, const Shader* shader);
-    
-    //! Defines the number of slices used to render the volume: more slices generate a better (and slower) rendering.
+
+    //! Defines the number of slices used to render the volume: more slices generate a better (and slower) rendering. Default is 0.
+    //! If equal to 0 the number of slices is computed automatically as max(viewport.width, viewport.height).
     void setSliceCount(int count) { mSliceCount = count; }
-    
+
     //! Returns the number of slices used to render the volume.
+    //! If equal to 0 the number of slices is computed automatically as max(viewport.width, viewport.height).
     int sliceCount() const { return mSliceCount; }
-    
+
     //! Returns the Geometry associated to a SlicedVolume and its bound Actor
     Geometry* geometry() { return mGeometry.get(); }
-    
+
     //! Returns the Geometry associated to a SlicedVolume and its bound Actor
     const Geometry* geometry() const { return mGeometry.get(); }
-    
+
     //! Defines the dimensions of the box enclosing the volume
     void setBox(const AABB& box);
-    
+
     //! The dimensions of the box enclosing the volume
     const AABB& box() const { return mBox; }
-    
+
     //! Returns the texture coordinates assigned to each of the 8 box corners of the volume
     const fvec3* texCoords() const { return mTexCoord; }
-    
+
     //! Returns the texture coordinates assigned to each of the 8 box corners of the volume
     fvec3* texCoords() { return mTexCoord; }
-    
+
     //! Generates a default set of texture coordinates for the 8 box corners of the volume based on the given texture dimensions.
     void generateTextureCoordinates(const ivec3& size);
-    
+
     //! Generates a default set of texture coordinates for the 8 box corners of the volume based on the given texture dimensions.
     //! Use this function to visualize a subset of the volume. The subset is defined by \p min_corner and \p max_corner.
     void generateTextureCoordinates(const ivec3& img_size, const ivec3& min_corner, const ivec3& max_corner);
+
+    //! Returns the currently bound actor
+    const Actor* actor() const { return mActor; }
+    //! Returns the currently bound actor
+    Actor* actor() { return mActor; }
 
   protected:
     int mSliceCount;
@@ -94,6 +101,8 @@ namespace vl
     AABB mBox;
     fmat4 mCache;
     fvec3 mTexCoord[8];
+    // Naked pointer on purpose in order not to create cyclical dependencies and mem leaks: the Actor owns the SlicedVolume
+    Actor* mActor;
   };
 }
 

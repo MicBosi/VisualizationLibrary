@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -119,12 +119,12 @@ namespace vl
 
     float average() const { return mAverage; }
 
-    const Volume::Cube& cube(int x, int y, int z) const 
-    { 
+    const Volume::Cube& cube(int x, int y, int z) const
+    {
       VL_CHECK(x<slices().x()-1)
       VL_CHECK(y<slices().y()-1)
       VL_CHECK(z<slices().z()-1)
-      return mCubes[ x + y*(slices().x()-1) + z*(slices().x()-1)*(slices().y()-1) ]; 
+      return mCubes[ x + y*(slices().x()-1) + z*(slices().x()-1)*(slices().y()-1) ];
     }
 
     //! Returns the x/y/z size of a cell
@@ -224,7 +224,7 @@ namespace vl
   {
   public:
     MarchingCubes();
-  
+
     void run(bool generate_colors);
 
     void reset();
@@ -245,7 +245,7 @@ namespace vl
     ref<ArrayFloat3> mVertsArray;
     ref<ArrayFloat3> mNormsArray;
     ref<ArrayFloat4> mColorArray;
-    
+
     // OpenGL ES does not support DrawElementsUInt
 #if defined(VL_OPENGL)
     ref<DrawElementsUInt> mDrawElements;
@@ -261,7 +261,7 @@ namespace vl
     std::vector<fvec3> mVerts;
     std::vector<fvec3> mNorms;
     std::vector<fvec4> mColors;
-    
+
 #if defined(VL_OPENGL)
     typedef unsigned int IndexType;
 #else

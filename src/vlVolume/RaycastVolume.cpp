@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -56,7 +56,7 @@ using namespace vl;
  * </table>
  * </center>
  *
- * \sa 
+ * \sa
  * - \ref pagGuideRaycastVolume
  * - \ref pagGuideSlicedVolume
  * - SlicedVolume
@@ -81,7 +81,7 @@ RaycastVolume::RaycastVolume()
   // install index array
   ref<DrawElementsUInt> de = new DrawElementsUInt( PT_QUADS );
   mGeometry->drawCalls().push_back( de.get() );
-  unsigned int de_indices[] = 
+  unsigned int de_indices[] =
   {
     0,1,2,3, 1,5,6,2, 5,4,7,6, 4,0,3,7, 3,2,6,7, 4,5,1,0
   };
@@ -89,7 +89,7 @@ RaycastVolume::RaycastVolume()
   memcpy( de->indexBuffer()->ptr(), de_indices, sizeof( de_indices ) );
 
   // generate default texture coordinates
-  fvec3 texc[] = 
+  fvec3 texc[] =
   {
     fvec3( 0,0,0 ), fvec3( 1,0,0 ), fvec3( 1,1,0 ), fvec3( 0,1,0 ),
     fvec3( 0,0,1 ), fvec3( 1,0,1 ), fvec3( 1,1,1 ), fvec3( 0,1,1 )
@@ -102,11 +102,11 @@ RaycastVolume::RaycastVolume()
 //-----------------------------------------------------------------------------
 /** Reimplement this method to update the uniform variables of your GLSL program before the volume is rendered.
  * - By default updateUniforms() updates the position of up to 4 lights in object space. Such positions are stored in the
- *   \p "uniform vec3 light_position[4]" variable. The updateUniforms() method also fills the 
- *   \p "uniform bool light_enable[4]" variable with a flag marking if the Nth light is active or not. 
+ *   \p "uniform vec3 light_position[4]" variable. The updateUniforms() method also fills the
+ *   \p "uniform bool light_enable[4]" variable with a flag marking if the Nth light is active or not.
  *   These light values are computed based on the lights bound to the current Shader.
- * - The \p "uniform vec3 eye_position" variable contains the camera position in object space, useful to compute 
- *   specular highlights, raycast direction etc. 
+ * - The \p "uniform vec3 eye_position" variable contains the camera position in object space, useful to compute
+ *   specular highlights, raycast direction etc.
  * - The \p "uniform vec3 eye_look" variable contains the camera look vector in object space. */
 void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera* camera, vl::Renderable*, const vl::Shader* shader )
 {
@@ -118,7 +118,7 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera*
   if (actor->transform())
     inv_mat = ( fmat4 )actor->transform()->worldMatrix().getInverse();
 
-  if ( glsl->getUniformLocation( "light_position" ) != -1 && glsl->getUniformLocation( "light_enable" ) != -1 )
+  if ( glsl->getUniformLocation( "light_position[0]" ) != -1 && glsl->getUniformLocation( "light_enable[0]" ) != -1 )
   {
     // computes up to 4 light positions ( in object space ) and enables
 
@@ -174,6 +174,18 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera*
     }
     actor->gocUniform( "eye_look" )->setUniform( look );
   }
+
+  // Normalized x/y/z offeset required to center on a texel
+  const Texture* tex = shader->getTextureSampler( 0 )->texture();
+  fvec3 centering = fvec3(
+    0.5 / tex->width(),
+    0.5 / tex->height(),
+    0.5 / tex->depth()
+  );
+  actor->gocUniform( "texel_centering" )->setUniform( centering );
+
+  // Compute gradient delta: 0.25 seems to produce better results than 0.5.
+  actor->gocUniform( "gradient_delta" )->setUniform( fvec3( 0.25f / tex->width(), 0.25f / tex->height(), 0.25f / tex->depth() ) );
 }
 //-----------------------------------------------------------------------------
 void RaycastVolume::bindActor( Actor* actor )
@@ -190,21 +202,22 @@ void RaycastVolume::onActorRenderStarted( Actor* actor, real clock, const Camera
 
   // setup uniform variables
 
-  if ( shader->getGLSLProgram() )
+  if ( shader->getGLSLProgram() ) {
     updateUniforms( actor, clock, camera, rend, shader );
+  }
 }
 //-----------------------------------------------------------------------------
-void RaycastVolume::generateTextureCoordinates( const ivec3& size )
+void RaycastVolume::generateTextureCoordinates( const ivec3& img_size )
 {
-  if ( !size.x() || !size.y() || !size.z() )
+  if ( ! img_size.x() || ! img_size.y() || ! img_size.z() )
   {
     Log::error( "RaycastVolume::generateTextureCoordinates(): failed! The size passed does not represent a 3D image.\n" );
     return;
   }
 
-  float dx = 0.5f/size.x();
-  float dy = 0.5f/size.y();
-  float dz = 0.5f/size.z();
+  float dx = 0.5f / img_size.x();
+  float dy = 0.5f / img_size.y();
+  float dz = 0.5f / img_size.z();
 
   float x0 = 0.0f + dx;
   float x1 = 1.0f - dx;
@@ -213,42 +226,15 @@ void RaycastVolume::generateTextureCoordinates( const ivec3& size )
   float z0 = 0.0f + dz;
   float z1 = 1.0f - dz;
 
-  fvec3 texc[] = 
+  fvec3 texc[] =
   {
-    fvec3( x0,y0,z1 ), fvec3( x1,y0,z1 ), fvec3( x1,y1,z1 ), fvec3( x0,y1,z1 ), // mic fixme: i don't remember why we need z1 here and z0 below...
-    fvec3( x0,y0,z0 ), fvec3( x1,y0,z0 ), fvec3( x1,y1,z0 ), fvec3( x0,y1,z0 ), 
+    fvec3( x0,y0,z1 ), fvec3( x1,y0,z1 ), fvec3( x1,y1,z1 ), fvec3( x0,y1,z1 ),
+    fvec3( x0,y0,z0 ), fvec3( x1,y0,z0 ), fvec3( x1,y1,z0 ), fvec3( x0,y1,z0 ),
   };
   memcpy( mTexCoord->ptr(), texc, sizeof( texc ) );
 }
 //-----------------------------------------------------------------------------
-void RaycastVolume::generateTextureCoordinates(const ivec3& img_size, const ivec3& min_corner, const ivec3& max_corner)
-{
-    if (!img_size.x() || !img_size.y() || !img_size.z())
-    {
-        Log::error("RaycastVolume::setDisplayRegion(): failed! The size passed does not represent a 3D image.\n");
-        return;
-    }
-
-    float dx = 0.5f/img_size.x();
-    float dy = 0.5f/img_size.y();
-    float dz = 0.5f/img_size.z();
-
-    float x0 = min_corner.x()/(float)img_size.x() + dx;
-    float x1 = max_corner.x()/(float)img_size.x() - dx;
-    float y0 = min_corner.y()/(float)img_size.y() + dy;
-    float y1 = max_corner.y()/(float)img_size.y() - dy;
-    float z0 = min_corner.z()/(float)img_size.z() + dz;
-    float z1 = max_corner.z()/(float)img_size.z() - dz;
-
-    fvec3 texc[] = 
-    {
-      fvec3( x0,y0,z1 ), fvec3( x1,y0,z1 ), fvec3( x1,y1,z1 ), fvec3( x0,y1,z1 ), 
-      fvec3( x0,y0,z0 ), fvec3( x1,y0,z0 ), fvec3( x1,y1,z0 ), fvec3( x0,y1,z0 ), 
-    };
-    memcpy( mTexCoord->ptr(), texc, sizeof(texc) );
-}
-//-----------------------------------------------------------------------------
-void RaycastVolume::setBox( const AABB& box ) 
+void RaycastVolume::setBox( const AABB& box )
 {
   mBox = box;
   // generate the box geometry
@@ -258,10 +244,10 @@ void RaycastVolume::setBox( const AABB& box )
   float x1 = box.maxCorner().x();
   float y1 = box.maxCorner().y();
   float z1 = box.maxCorner().z();
-  fvec3 box_verts[] = 
+  fvec3 box_verts[] =
   {
-    fvec3( x0,y0,z1 ), fvec3( x1,y0,z1 ), fvec3( x1,y1,z1 ), fvec3( x0,y1,z1 ), 
-    fvec3( x0,y0,z0 ), fvec3( x1,y0,z0 ), fvec3( x1,y1,z0 ), fvec3( x0,y1,z0 ), 
+    fvec3( x0,y0,z1 ), fvec3( x1,y0,z1 ), fvec3( x1,y1,z1 ), fvec3( x0,y1,z1 ),
+    fvec3( x0,y0,z0 ), fvec3( x1,y0,z0 ), fvec3( x1,y1,z0 ), fvec3( x0,y1,z0 ),
   };
   memcpy( mVertCoord->ptr(), box_verts, sizeof( box_verts ) );
   mGeometry->setBoundsDirty( true );

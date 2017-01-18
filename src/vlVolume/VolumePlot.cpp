@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -129,7 +129,7 @@ void VolumePlot::compute(const Function& func, float threshold)
 
   ref<Volume> volume = new Volume;
   volume->setup( NULL, false, false, minCorner(), maxCorner(), mSamplingResolution );
-  
+
   mc.volumeInfo()->push_back( new VolumeInfo( volume.get(), threshold ) );
 
   evaluateFunction(volume->values(), minCorner(), maxCorner(), func);
@@ -162,7 +162,7 @@ void VolumePlot::setupLabels(const String& format, const fvec3& min_corner, cons
     {min_corner.x(), max_corner.y(), max_corner.z()}
   };
 
-  String coord_label[] = 
+  String coord_label[] =
   {
     Say(format) << min_corner.x() << min_corner.y() <<  min_corner.z(),
     Say(format) << max_corner.x() << min_corner.y() <<  min_corner.z(),

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -44,47 +44,44 @@ namespace vl
 
   public:
     RaycastVolume();
-    
+
     void onActorRenderStarted( Actor* actor, real frame_clock, const Camera* cam, Renderable* renderable, const Shader* shader, int pass );
 
     void onActorDelete( Actor* ) {}
 
-    //! Binds a RaycastVolume to an Actor.
+    /** Binds a RaycastVolume to an Actor. */
     void bindActor( Actor* );
 
-    //! Updates the uniforms used by the GLSLProgram to render the volume each time the onActorRenderStarted() method is called.
+    /** Updates the uniforms used by the GLSLProgram to render the volume each time the onActorRenderStarted() method is called. */
     virtual void updateUniforms( Actor* actor, real clock, const Camera* camera, Renderable* rend, const Shader* shader );
-    
-    //! Returns the Geometry associated to a RaycastVolume and its bound Actor
+
+    /** Returns the Geometry associated to a RaycastVolume and its bound Actor. */
     Geometry* geometry() { return mGeometry.get(); }
-    
-    //! Returns the Geometry associated to a RaycastVolume and its bound Actor
+
+    /** Returns the Geometry associated to a RaycastVolume and its bound Actor. */
     const Geometry* geometry() const { return mGeometry.get(); }
-    
-    //! Defines the dimensions of the box enclosing the volume and generates the actual geometry of the box to be rendered
+
+    /** Defines the dimensions of the box in model coordinates enclosing the volume and generates the actual geometry of the box to be rendered. */
     void setBox( const AABB& box );
-    
-    //! The dimensions of the box enclosing the volume
+
+    /** The dimensions of the box enclosing the volume. */
     const AABB& box() const { return mBox; }
-    
-    //! Returns the coordinates assigned to each of the 8 box corners of the volume
+
+    /** Returns the coordinates assigned to each of the 8 box corners of the volume. */
     const fvec3* vertCoords() const { return mVertCoord->begin(); }
-    
-    //! Returns the coordinates assigned to each of the 8 box corners of the volume
+
+    /** Returns the coordinates assigned to each of the 8 box corners of the volume. */
     fvec3* vertCoords() { return mVertCoord->begin(); }
-    
-    //! Returns the texture coordinates assigned to each of the 8 box corners of the volume
+
+    /** Returns the texture coordinates assigned to each of the 8 box corners of the volume. */
     const fvec3* texCoords() const { return mTexCoord->begin(); }
-    
-    //! Returns the texture coordinates assigned to each of the 8 box corners of the volume
+
+    /** Returns the texture coordinates assigned to each of the 8 box corners of the volume. */
     fvec3* texCoords() { return mTexCoord->begin(); }
-    
-    //! Generates a default set of texture coordinates for the 8 box corners of the volume based on the given texture dimensions.
-    void generateTextureCoordinates( const ivec3& size );
-    
-    //! Generates a default set of texture coordinates for the 8 box corners of the volume based on the given texture dimensions.
-    //! Use this function to visualize a subset of the volume. The subset is defined by \p min_corner and \p max_corner.
-    void generateTextureCoordinates(const ivec3& img_size, const ivec3& min_corner, const ivec3& max_corner);
+
+    /** Generates a default set of texture coordinates for the 8 box corners of the volume based on the given texture dimensions.
+    \param img_size Size in texels of the volume texture. */
+    void generateTextureCoordinates( const ivec3& img_size );
 
   protected:
     ref<Geometry> mGeometry;

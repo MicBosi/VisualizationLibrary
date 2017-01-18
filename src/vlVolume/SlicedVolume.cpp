@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -64,12 +64,12 @@ using namespace vl;
  * The user can reimplement the updateUniforms() method to update his own uniform variables before the volume is rendered.
  * By default updateUniforms() updates the position of up to 4 lights in object space. Such positions are stored in the
  * \p "uniform vec3 light_position[4]" variable.
- * The updateUniforms() method also fills the \p "uniform bool light_enable[4]" variable with a flag marking if the Nth 
+ * The updateUniforms() method also fills the \p "uniform bool light_enable[4]" variable with a flag marking if the Nth
  * light is active or not. These light values are computed based on the lights bound to the current Shader.
  * The updateUniforms() method also fills the \p "uniform vec3 eye_position" variable which contains the camera position in
  * object space, useful to compute specular highlights etc.
  *
- * \sa 
+ * \sa
  * - \ref pagGuideSlicedVolume
  * - \ref pagGuideRaycastVolume
  * - RaycastVolume
@@ -79,11 +79,12 @@ using namespace vl;
 SlicedVolume::SlicedVolume()
 {
   VL_DEBUG_SET_OBJECT_NAME()
+  mActor = NULL;
   mSliceCount = 1024;
   mGeometry = new Geometry;
   mGeometry->setObjectName("vl::SlicedVolume");
-  
-  fvec3 texc[] = 
+
+  fvec3 texc[] =
   {
     fvec3(0,0,0), fvec3(1,0,0), fvec3(1,1,0), fvec3(0,1,0),
     fvec3(0,0,1), fvec3(1,0,1), fvec3(1,1,1), fvec3(0,1,1)
@@ -94,16 +95,18 @@ SlicedVolume::SlicedVolume()
 /** Reimplement this method to update the uniform variables of your GLSL program before the volume is rendered.
  * By default updateUniforms() updates the position of up to 4 lights in object space. Such positions are stored in the
  * \p "uniform vec3 light_position[4]" variable.
- * The updateUniforms() method also fills the \p "uniform bool light_enable[4]" variable with a flag marking if the Nth 
+ * The updateUniforms() method also fills the \p "uniform bool light_enable[4]" variable with a flag marking if the Nth
  * light is active or not. These light values are computed based on the lights bound to the current Shader.
  * The updateUniforms() method also fills the \p "uniform vec3 eye_position" variable which contains the camera position in
  * object space, useful to compute specular highlights etc.
  */
 void SlicedVolume::updateUniforms(Actor*actor, real, const Camera* camera, Renderable*, const Shader* shader)
 {
+  // FIXME: move all computation to eye coordinates.
+
   const GLSLProgram* glsl = shader->getGLSLProgram();
 
-  if (glsl->getUniformLocation("light_position") != -1 && glsl->getUniformLocation("light_enable") != -1)
+  if (glsl->getUniformLocation("light_position[0]") != -1 && glsl->getUniformLocation("light_enable[0]") != -1)
   {
     // computes up to 4 light positions (in object space) and enables
 
@@ -144,6 +147,9 @@ void SlicedVolume::updateUniforms(Actor*actor, real, const Camera* camera, Rende
       eye = (fmat4)actor->transform()->worldMatrix().getInverse() * eye;
     actor->gocUniform("eye_position")->setUniform(eye);
   }
+
+  //// Compute gradient delta: 0.25 seems to produce better results than 0.5.
+  //actor->gocUniform( "gradientDelta" )->setUniform( fvec3( 0.25f / tex->width(), 0.25f / tex->height(), 0.25f / tex->depth() ) );
 }
 //-----------------------------------------------------------------------------
 namespace
@@ -162,18 +168,20 @@ namespace
 void SlicedVolume::bindActor(Actor* actor)
 {
   actor->actorEventCallbacks()->push_back( this );
-  actor->setLod(0, mGeometry.get());
+  actor->setLod( 0, mGeometry.get() );
 }
 //-----------------------------------------------------------------------------
 void SlicedVolume::onActorRenderStarted(Actor* actor, real clock, const Camera* camera, Renderable* rend, const Shader* shader, int pass)
 {
-  if (pass>0)
+  if ( pass > 0 ) {
     return;
+  }
 
   // setup uniform variables
 
-  if (shader->getGLSLProgram())
+  if (shader->getGLSLProgram()) {
     updateUniforms(actor, clock, camera, rend, shader);
+  }
 
   // setup geometry: generate viewport aligned slices
 
@@ -238,12 +246,14 @@ void SlicedVolume::onActorRenderStarted(Actor* actor, real clock, const Camera* 
   std::vector<fvec3> polygons;
   std::vector<fvec3> polygons_t;
 
-  polygons.reserve(sliceCount()*5);
-  polygons_t.reserve(sliceCount()*5);
+  int slice_count = sliceCount() ? sliceCount() : vl::max( camera->viewport()->width(), camera->viewport()->height() );
+
+  polygons.reserve(slice_count*5);
+  polygons_t.reserve(slice_count*5);
   float zrange = cube_verts[max_idx].z() - cube_verts[min_idx].z();
-  float zstep  = zrange/(sliceCount()+1);
+  float zstep  = zrange/(slice_count+1);
   int vert_idx[12];
-  for(int islice=0; islice<sliceCount(); ++islice)
+  for(int islice=0; islice<slice_count; ++islice)
   {
     float z = cube_verts[max_idx].z() - zstep*(islice+1);
     fvec3 plane_o(0,0,z);
@@ -327,7 +337,7 @@ void SlicedVolume::onActorRenderStarted(Actor* actor, real clock, const Camera* 
   mGeometry->setDisplayListDirty(true);
   mGeometry->setBufferObjectDirty(true);
 
-  // fixme: 
+  // fixme:
   // it seems we have some problems with camera clipping/culling when the camera is close to the volume: the slices disappear or degenerate.
   // it does not seem to depend from camera clipping plane optimization.
 }
@@ -351,7 +361,7 @@ void SlicedVolume::generateTextureCoordinates(const ivec3& img_size)
   float z0 = 0.0f + dz;
   float z1 = 1.0f - dz;
 
-  fvec3 texc[] = 
+  fvec3 texc[] =
   {
     fvec3(x0,y0,z0), fvec3(x1,y0,z0), fvec3(x1,y1,z0), fvec3(x0,y1,z0),
     fvec3(x0,y0,z1), fvec3(x1,y0,z1), fvec3(x1,y1,z1), fvec3(x0,y1,z1),
@@ -378,7 +388,7 @@ void SlicedVolume::generateTextureCoordinates(const ivec3& img_size, const ivec3
     float z0 = min_corner.z()/(float)img_size.z() + dz;
     float z1 = max_corner.z()/(float)img_size.z() - dz;
 
-    fvec3 texc[] = 
+    fvec3 texc[] =
     {
         fvec3(x0,y0,z0), fvec3(x1,y0,z0), fvec3(x1,y1,z0), fvec3(x0,y1,z0),
         fvec3(x0,y0,z1), fvec3(x1,y0,z1), fvec3(x1,y1,z1), fvec3(x0,y1,z1)
@@ -386,9 +396,9 @@ void SlicedVolume::generateTextureCoordinates(const ivec3& img_size, const ivec3
     memcpy(mTexCoord, texc, sizeof(texc));
 }
 //-----------------------------------------------------------------------------
-void SlicedVolume::setBox(const AABB& box) 
+void SlicedVolume::setBox(const AABB& box)
 {
-  mBox = box; 
+  mBox = box;
   mCache.fill(0);
   mGeometry->setBoundingBox( box );
   mGeometry->setBoundingSphere( box );
