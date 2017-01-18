@@ -292,7 +292,7 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
 
     VL_CHECK(actor->lod(0))
 
-    if ( !isEnabled(actor->enableMask()) )
+    if ( ! isEnabled(actor) )
       continue;
 
     // update the Actor's bounds
@@ -302,7 +302,6 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
     VL_CHECK(effect)
 
     // effect override: select the first that matches
-    
 
     for( std::map< unsigned int, ref<Effect> >::iterator eom_it = mEffectOverrideMask.begin();
          eom_it != mEffectOverrideMask.end();

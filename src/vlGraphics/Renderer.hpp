@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -35,6 +35,7 @@
 #include <vlGraphics/RendererAbstract.hpp>
 #include <vlGraphics/ProjViewTransfCallback.hpp>
 #include <vlGraphics/Shader.hpp>
+#include <vlGraphics/Actor.hpp>
 #include <map>
 
 namespace vl
@@ -61,40 +62,42 @@ namespace vl
       * Does not activate the framebuffer, does not activate the viewport, does not clear the viewport, does not
       * setup the override states, does not issue the OnRendererStarted/Finished callbacks. */
     const RenderQueue* renderRaw(const RenderQueue* in_render_queue, Camera* camera, real frame_clock);
+
     void setProjViewTransfCallback(ProjViewTransfCallback* callback) { mProjViewTransfCallback = callback; }
-    
+
     const ProjViewTransfCallback* projViewTransfCallback() const { return mProjViewTransfCallback.get(); }
-    
+
     ProjViewTransfCallback* projViewTransfCallback() { return mProjViewTransfCallback.get(); }
 
-    /** A bitmask/Shader map used to everride the Shader of those Actors whose enable mask satisfy the following condition: 
+    /** A bitmask/Shader map used to everride the Shader of those Actors whose enable mask satisfy the following condition:
         (Actors::enableMask() & bitmask) != 0. Useful when you want to override the Shader of a whole set of Actors.
         If multiple mask/shader pairs match an Actor's enable mask then the shader with the corresponding lowest mask will be used.
         See also vl::Actor::enableMask() and vl::Rendering::effectOverrideMask(). */
     const std::map<unsigned int, ref<Shader> >& shaderOverrideMask() const { return mShaderOverrideMask; }
 
-    /** A bitmask/Shader map used to everride the Shader of those Actors whose enable mask satisfy the following condition: 
+    /** A bitmask/Shader map used to everride the Shader of those Actors whose enable mask satisfy the following condition:
         (Actors::enableMask() & bitmask) != 0. Useful when you want to override the Shader of a whole set of Actors.
         If multiple mask/shader pairs match an Actor's enable mask then the shader with the corresponding lowest mask will be used.
         See also vl::Actor::enableMask() and vl::Rendering::effectOverrideMask(). */
     std::map<unsigned int, ref<Shader> >& shaderOverrideMask() { return mShaderOverrideMask; }
 
-    /** Render states that will be used as default by the opengl context by this renderer. 
+    /** Render states that will be used as default by the opengl context by this renderer.
         Useful for example to setup the default left/right color mask for anaglyph stereo rendering. */
     std::vector<RenderStateSlot>& overriddenDefaultRenderStates() { return mOverriddenDefaultRenderStates; }
 
-    /** Render states that will be used as default by the opengl context by this renderer. 
+    /** Render states that will be used as default by the opengl context by this renderer.
         Useful for example to setup the default left/right color mask for anaglyph stereo rendering. */
     const std::vector<RenderStateSlot>& overriddenDefaultRenderStates() const { return mOverriddenDefaultRenderStates; }
 
     bool isEnabled(unsigned int mask) { return (mask & mEnableMask) != 0; }
+    bool isEnabled(const Actor* actor) { return actor->isEnabled() && (actor->enableMask() & mEnableMask) != 0; }
 
     /** The Framebuffer on which the rendering is performed. */
     void setFramebuffer(Framebuffer* framebuffer) { mFramebuffer = framebuffer; }
 
     /** The Framebuffer on which the rendering is performed. */
     const Framebuffer* framebuffer() const { return mFramebuffer.get(); }
-    
+
     /** The Framebuffer on which the rendering is performed. */
     Framebuffer* framebuffer() { return mFramebuffer.get(); }
 

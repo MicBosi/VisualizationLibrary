@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -41,7 +41,7 @@ namespace vl
 //-------------------------------------------------------------------------------------------------------------------------------------------
   /**
    * The SceneManagerBVH class implements the basic functionalities for bounding-volume-hierarchy based scene managers.
-   * 
+   *
    * \sa
    * - Actor
    * - ActorKdTree
@@ -66,17 +66,19 @@ namespace vl
 
     virtual void extractVisibleActors(ActorCollection& list, const Camera* camera)
     {
-      // extracts Actor[s] from the hierarchical volume tree
-      if (cullingEnabled())
-        tree()->extractVisibleActors(list, camera, enableMask());
-      else
+      // extracts Actors from the hierarchical volume tree
+      if ( cullingEnabled() ) {
+        tree()->extractVisibleActors( list, camera, enableMask() );
+      }
+      else {
         extractActors(list);
+      }
     }
 
     virtual void extractActors(ActorCollection& list)
     {
-      // extracts Actor[s] from the hierarchical volume tree
-      tree()->extractActors(list);
+      // extracts Actors from the hierarchical volume tree
+      tree()->extractActors( list );
     }
 
   protected:

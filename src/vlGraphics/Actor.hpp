@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -50,20 +50,20 @@ namespace vl
   //------------------------------------------------------------------------------
   /** The ActorEventCallback class defines a callback object to react to Actor-related events.
 
-  Usually an ActorEventCallback is used to perform a per-Actor operation 
+  Usually an ActorEventCallback is used to perform a per-Actor operation
   like changing some attributes of the Actor itself or of the associated Renderable/Geometry.
   For example the MorphingCallback class is used to aid the rendering of a MorphingCallback, while the
   DepthSortCallback class is used to perform per-Actor polygon sorting.
 
   \note
   You can manipulate Uniforms within this class, for more information see vl::GLSLProgram documentation.
-  If you want to update the state of a Uniform variable from here you can simply call glUniform* since the 
-  GLSLProgram (if any) has been already activated by the time this function is called. 
+  If you want to update the state of a Uniform variable from here you can simply call glUniform* since the
+  GLSLProgram (if any) has been already activated by the time this function is called.
   You can also modify the Actor's uniforms using the Actor's uniform manipulation routines Actor::setUniform()
   Actor::getUniform() etc.
-  
-  You can test whether the shader has a GLSLProgram bound to it or not by simply testing 
-  shader->glslProgram() != NULL. If you update a uniform you must ensure that all the Actor[s] using the same 
+
+  You can test whether the shader has a GLSLProgram bound to it or not by simply testing
+  shader->glslProgram() != NULL. If you update a uniform you must ensure that all the Actor[s] using the same
   GLSLProgram appropriately setup such uniform.
 
   \note
@@ -93,7 +93,6 @@ namespace vl
     virtual void onActorDelete(Actor* actor) = 0;
 
     void setEnabled(bool enabled) { mEnabled = enabled; }
-
     bool isEnabled() const { return mEnabled; }
 
   protected:
@@ -117,13 +116,13 @@ namespace vl
 
   \remarks
 
-  An Actor must always have a Renderable and Effect bound. If no Transform is 
+  An Actor must always have a Renderable and Effect bound. If no Transform is
   specified the Renderable will be rendered as if it had an identity matrix
   transformation.
   \par Uniforms
 
   The Uniforms defined in the Actor and the ones defined in the Shader must not
-  overlap, that is, an Actor must not define Uniforms that are also present 
+  overlap, that is, an Actor must not define Uniforms that are also present
   in the Shader's Uniform and vice versa.
 
   \sa Transform, Effect, Renderable, Geometry
@@ -142,7 +141,7 @@ namespace vl
     */
     Actor(Renderable* renderable = NULL, Effect* effect = NULL, Transform* transform = NULL, int block = 0, int rank = 0):
       mEffect(effect), mTransform(transform), mRenderBlock(block), mRenderRank(rank),
-      mTransformUpdateTick(-1), mBoundsUpdateTick(-1), mEnableMask(0xFFFFFFFF), mOcclusionQuery(0), mOcclusionQueryTick(0xFFFFFFFF), mIsOccludee(true)
+      mTransformUpdateTick(-1), mBoundsUpdateTick(-1), mEnableMask(0xFFFFFFFF), mOcclusionQuery(0), mOcclusionQueryTick(0xFFFFFFFF), mIsOccludee(true), mEnabled(true)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mActorEventCallbacks.setAutomaticDelete(false);
@@ -157,10 +156,10 @@ namespace vl
     virtual ~Actor();
 
     /** Sets the Renderable object representing the LOD level specifed by \p lod_index. */
-    void setLod(int lod_index, Renderable* renderable) 
-    { 
+    void setLod(int lod_index, Renderable* renderable)
+    {
       mRenderables[lod_index] = renderable;
-      
+
       // schedule update of the Actor's bounds.
       if (lod_index == 0)
       {
@@ -186,19 +185,19 @@ namespace vl
       mTransformUpdateTick = -1;
       mBoundsUpdateTick    = -1;
     }
-    
+
     /** Returns the Transform bound tho an Actor */
     Transform* transform()  { return mTransform.get(); }
-    
+
     /** Returns the Transform bound tho an Actor */
     const Transform* transform() const { return mTransform.get(); }
 
     /** Binds an Effect to an Actor */
     void setEffect(Effect* effect) { mEffect = effect; }
-    
+
     /** Returns the Effect bound to an Actor */
     Effect* effect() { return mEffect.get(); }
-    
+
     /** Returns the Effect bound to an Actor */
     const Effect* effect() const { return mEffect.get(); }
 
@@ -214,7 +213,7 @@ namespace vl
     /** Returns the bounding sphere (\p guaranteed to be up to date) that contains this Actor. \sa boundingSphere() */
     const Sphere& boundingSphereSafe() { computeBounds(); return mSphere; }
 
-    /** Computes the bounding box and bounding sphere of an Actor. */
+    /** Computes the bounding box and bounding sphere of an Actor if boundsDirty(). */
     void computeBounds();
 
     /** Returns whether the Actor's bounding box and sphere are up to date. */
@@ -222,8 +221,8 @@ namespace vl
 
     /** Modifies the rendering rank of an Actor.
 
-    The rendering rank affects the order in which an Actor is rendered, the greater the rank the later the Actor is rendered. 
-    The default render rank is zero. 
+    The rendering rank affects the order in which an Actor is rendered, the greater the rank the later the Actor is rendered.
+    The default render rank is zero.
 
     To know more about rendering order please see \ref pagGuideRenderOrder "Rendering Order".
 
@@ -234,7 +233,7 @@ namespace vl
     /**
     Modifies the rendering block of an Actor.
 
-    The rendering block affects the order in which an Actor is rendered, the greater the block the later the Actor is rendered. 
+    The rendering block affects the order in which an Actor is rendered, the greater the block the later the Actor is rendered.
     The default render block is zero.
 
     To know more about rendering order please see \ref pagGuideRenderOrder "Rendering Order".
@@ -260,15 +259,22 @@ namespace vl
 
     int evaluateLOD(Camera* camera);
 
-    /** The enable mask of an Actor is usually used to defines whether the actor should be rendered or not 
+    /** The enable mask of an Actor is usually used to defines whether the actor should be rendered or not
       * depending on the Rendering::enableMask() but it can also be used for user-specific tasks (set to 0xFFFFFFFF by default).
-      * See also vl::Rendering::effectOverrideMask() and vl::Renderer::shaderOverrideMask(). */
+      * \see Actor::enableMask(), Actor::isEnabled(), ActorTreeAbstract::isEnabled(), SceneManager::enableMask(), Rendering::enableMask(), Rendering::effectOverrideMask(), Renderer::enableMask(), Renderer::shaderOverrideMask(). */
     void setEnableMask(unsigned int mask) { mEnableMask = mask; }
 
-    /** The enable mask of an Actor is usually used to defines whether the actor should be rendered or not 
+    /** The enable mask of an Actor is usually used to defines whether the actor should be rendered or not
       * depending on the Rendering::enableMask() but it can also be used for user-specific tasks (set to 0xFFFFFFFF by default).
-      * See also vl::Rendering::effectOverrideMask() and vl::Renderer::shaderOverrideMask(). */
+      * \see Actor::enableMask(), Actor::isEnabled(), ActorTreeAbstract::isEnabled(), SceneManager::enableMask(), Rendering::enableMask(), Rendering::effectOverrideMask(), Renderer::enableMask(), Renderer::shaderOverrideMask(). */
     unsigned int enableMask() const { return mEnableMask; }
+
+    //! Whether an Actor should be considered for rendering, picking, scene bounding box calculation etc.
+    //! \see Actor::enableMask(), Actor::isEnabled(), ActorTreeAbstract::isEnabled(), SceneManager::enableMask(), Rendering::enableMask(), Rendering::effectOverrideMask(), Renderer::enableMask(), Renderer::shaderOverrideMask().
+    void setEnabled(bool enabled) { mEnabled = enabled; }
+    //! Whether an Actor should be considered for rendering, picking, scene bounding box calculation etc.
+    //! \see Actor::enableMask(), Actor::isEnabled(), ActorTreeAbstract::isEnabled(), SceneManager::enableMask(), Rendering::enableMask(), Rendering::effectOverrideMask(), Renderer::enableMask(), Renderer::shaderOverrideMask().
+    bool isEnabled() const { return mEnabled; }
 
     // uniforms methods
 
@@ -311,7 +317,7 @@ namespace vl
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function. */
     Uniform* getUniform(const char* name);
-    
+
     /** Equivalent to getUniformSet()->getUniform(name, get_mode)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function. */
@@ -327,7 +333,7 @@ namespace vl
      - getUniform() */
     void setUniformSet(UniformSet* uniforms) { mUniformSet = uniforms; }
 
-    /** Returns the installed UniformSet 
+    /** Returns the installed UniformSet
      \sa
      - setUniform()
      - uniforms()
@@ -337,8 +343,8 @@ namespace vl
      - getUniform()
     */
     const UniformSet* getUniformSet() const { return mUniformSet.get(); }
-    
-    /** Returns the installed UniformSet 
+
+    /** Returns the installed UniformSet
      \sa
      - setUniform()
      - uniforms()
@@ -349,7 +355,7 @@ namespace vl
     */
     UniformSet* getUniformSet() { return mUniformSet.get(); }
 
-    /** Creates and/or returns the installed UniformSet 
+    /** Creates and/or returns the installed UniformSet
      \sa
      - setUniform()
      - uniforms()
@@ -389,7 +395,7 @@ namespace vl
 
     /** Sets the Scissor to be used when rendering an Actor.
      \note
-     You can also define a Scissor on a per-Shader basis using the function Shader::setScissor(). 
+     You can also define a Scissor on a per-Shader basis using the function Shader::setScissor().
      In case both the Shader's and the Actor's Scissor are defined the Actor's Scissor is used.
      \sa
      - Scissor
@@ -403,7 +409,7 @@ namespace vl
      - Shader::setScissor()
     */
     const Scissor* scissor() const { return mScissor.get(); }
-    
+
     /** Returns the Scissor used when rendering an Actor.
      \sa
      - Scissor
@@ -466,6 +472,7 @@ namespace vl
     GLuint mOcclusionQuery;
     unsigned mOcclusionQueryTick;
     bool mIsOccludee;
+    bool mEnabled;
   };
   //---------------------------------------------------------------------------
   /** Defined as a simple subclass of Collection<Actor>, see Collection for more information. */

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,6 +40,7 @@ ActorTreeAbstract::ActorTreeAbstract()
   VL_DEBUG_SET_OBJECT_NAME()
   mActors.setAutomaticDelete(false);
   mParent = NULL;
+  mEnabled = true;
 }
 //-----------------------------------------------------------------------------
 void ActorTreeAbstract::computeAABB()
@@ -63,32 +64,43 @@ void ActorTreeAbstract::computeAABB()
 //-----------------------------------------------------------------------------
 void ActorTreeAbstract::extractActors(ActorCollection& list)
 {
-  for(int i=0; i<actors()->size(); ++i)
-    list.push_back(actors()->at(i));
-  for(int i=0; i<childrenCount(); ++i)
-    if (child(i))
-      child(i)->extractActors(list);
+  for( int i = 0; i < actors()->size(); ++i ) {
+    list.push_back( actors()->at(i) );
+  }
+
+  for( int i = 0; i < childrenCount(); ++i ) {
+    if ( child(i) ) {
+      child(i)->extractActors( list );
+    }
+  }
 }
 //-----------------------------------------------------------------------------
 void ActorTreeAbstract::extractVisibleActors(ActorCollection& list, const Camera* camera, unsigned enable_mask)
 {
-  // try to cull the whole node
-  if ( !camera->frustum().cull(aabb()) )
+  // If enabled try and cull the whole node
+  if ( ! isEnabled() || ( camera && camera->frustum().cull( aabb() ) ) ) {
+    return;
+  }
+
+  // Cull / extract this node's Actors
+  for( int i = 0; i < actors()->size(); ++i )
   {
-    // cull Actor by Actor
-    for(int i=0; i<actors()->size(); ++i)
+    if ( actors()->at(i)->isEnabled() && ( enable_mask & actors()->at(i)->enableMask() ) )
     {
-      if (enable_mask & actors()->at(i)->enableMask())
-      {
-        VL_CHECK(actors()->at(i)->lod(0))
-        actors()->at(i)->computeBounds();
-        if ( !camera->frustum().cull( actors()->at(i)->boundingSphere() ) )
-          list.push_back(actors()->at(i));
+      actors()->at(i)->computeBounds();
+      if ( camera && camera->frustum().cull( actors()->at(i)->boundingSphere() ) ) {
+        continue;
+      } else {
+        list.push_back(actors()->at(i));
       }
     }
-    for(int i=0; i<childrenCount(); ++i)
-      if (child(i))
-        child(i)->extractVisibleActors(list, camera);
+  }
+
+  // Descend to child nodes
+  for( int i = 0; i < childrenCount(); ++i ) {
+    if ( child(i) ) {
+      child(i)->extractVisibleActors( list, camera );
+    }
   }
 }
 //-----------------------------------------------------------------------------
@@ -144,7 +156,7 @@ void ActorTreeAbstract::prepareActors(ActorCollection& actors)
     ++tra;
   }
 
-  // setup the Actor[s] bounding box and bounding sphere
+  // setup the Actors bounding box and bounding sphere
 
   for(int i=0; i<(int)actors.size(); ++i)
     actors[i]->computeBounds();

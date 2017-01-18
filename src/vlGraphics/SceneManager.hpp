@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -59,7 +59,7 @@ namespace vl
    *
    * In order to implement your own scene manager you will have to dirive from the SceneManager class and provide an appropriate
    * implementation for the following methods: extractVisibleActors(), extractActors().
-   * 
+   *
    * \sa
    * - ActorKdTree
    * - ActorTree
@@ -77,14 +77,14 @@ namespace vl
     //! Constructor.
     SceneManager();
 
-    //! Performs frustum culling and appends the enabled and visible Actor[s] to the given ActorCollection.
-    //! See also enableMask(), Actor::enableMask()
-    virtual void extractVisibleActors(ActorCollection& list, const Camera* camera)= 0;
-
-    //! Appends all the Actor[s] contained in the scene manager without performing frustum culling or checking enable masks.
+    //! Appends all the Actors contained in the scene manager without performing frustum culling or checking enable masks.
     virtual void extractActors(ActorCollection& list) = 0;
 
-    //! Computes the bounding box and bounding sphere of the scene manager and of all the Actor[s] contained in the SceneManager.
+    //! Extracts all the enabled and visible Actors contained in the ActorTree hierarchy and appends them to the given ActorCollection.
+    //! \see SceneManager::enableMask(), Actor::enableMask(), Actor::isEnabled(), ActorTreeAbstract::isEnabled()
+    virtual void extractVisibleActors(ActorCollection& list, const Camera* camera) = 0;
+
+    //! Computes the bounding box and bounding sphere of the scene manager and of all the Actors contained in the SceneManager.
     virtual void computeBounds();
 
     //! Explicitly set the scene manager's bounding sphere. See also computeBounds().
@@ -107,8 +107,13 @@ namespace vl
     //! Used to enable or disable frustum culling or whichever culling system the scene manager implements.
     bool cullingEnabled() const { return mCullingEnabled; }
 
+    //! The enable mask to be used by extractVisibleActors()
+    //! \see \see Actor::enableMask(), Actor::isEnabled(), ActorTreeAbstract::isEnabled(), SceneManager::enableMask(), Rendering::enableMask(), Rendering::effectOverrideMask(), Renderer::enableMask(), Renderer::shaderOverrideMask().
     void setEnableMask(unsigned int enabled) { mEnableMask = enabled; }
+    //! The enable mask to be used by extractVisibleActors()
+    //! \see \see Actor::enableMask(), Actor::isEnabled(), ActorTreeAbstract::isEnabled(), SceneManager::enableMask(), Rendering::enableMask(), Rendering::effectOverrideMask(), Renderer::enableMask(), Renderer::shaderOverrideMask().
     unsigned int enableMask() const { return mEnableMask; }
+
     //! Returns \p true if \p "a->enableMask() & enableMask()) != 0"
     bool isEnabled(Actor*a) const;
 

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -38,13 +38,13 @@
 
 namespace vl
 {
-  /** The ActorTreeAbstract class implements the interface of a generic tree containing Actor[s] in its nodes.
-   * 
+  /** The ActorTreeAbstract class implements the interface of a generic tree containing Actors in its nodes.
+   *
    * The interface of ActorTreeAbstract allows you to:
-   * - Modify the Actor[s] contained in each node
+   * - Modify the Actors contained in each node
    * - Traverse the tree and visit its nodes
    * - Compute the AABB of a single node or of the whole tree
-   * 
+   *
    * Does \b not allow you to:
    * - Add new nodes to the tree
    *
@@ -76,22 +76,25 @@ namespace vl
     //! Returns the actors contained in a ActorTree node
     ActorCollection* actors() { return &mActors; }
 
-    //! Returns the bounding box of a node. Such bounding box contains both the bounding boxes of the node's Actor[s] and of the child nodes.
+    //! Returns the bounding box of a node. Such bounding box contains both the bounding boxes of the node's Actors and of the child nodes.
     const AABB& aabb() const { return mAABB; }
 
-    //! Recursively computes the bounding box of a node so that it includes the bounding boxes of the node's Actor[s] and of the child nodes.
+    //! Recursively computes the bounding box of a node so that it includes the bounding boxes of the node's Actors and of the child nodes.
     void computeAABB();
 
     /**
-     * Extracts all the Actor[s] contained in th ActorTree hierarchy and appends them to the given ActorCollection.
+     * Extracts all the Actors contained in th ActorTree hierarchy and appends them to the given ActorCollection.
+     * This ignores the Actors isEnabled() and enableMask() and the ActorTreeAbstract::isEnabled() flag as well.
      */
     void extractActors(ActorCollection& list);
 
     /**
-     * Extracts the enabled and visible Actor[s] contained in th ActorTree hierarchy and appends them to the given ActorCollection.
+     * Extracts the enabled and visible Actors contained in th ActorTree hierarchy and appends them to the given ActorCollection.
      * This function implements a hierarchycal frustum culling algorithm that culls the nodes of the bounding box tree first and then
-     * the single Actor[s] contained in the nodes that could not be culled.
-     * See also Actor::enableMask()
+     * the single Actors contained in the nodes that could not be culled.
+     * If `camera` is NULL no frustum culling is performed.
+     * This function alwasy take into consideration the Actors isEnabled() and enableMask() and the ActorTreeAbstract::isEnabled() flag as well.
+     * \see SceneManager::enableMask(), Actor::enableMask(), Actor::isEnabled(), ActorTreeAbstract::isEnabled()
      */
     void extractVisibleActors(ActorCollection& list, const Camera* camera, unsigned enable_mask=0xFFFFFFFF);
 
@@ -107,8 +110,8 @@ namespace vl
     Actor* addActor(Actor* actor);
 
     /**
-     * Updates the Transform and the bounds of the given Actor[s].
-     * Before you create a bounding box tree or a kd-tree of Actor[s] you have to
+     * Updates the Transform and the bounds of the given Actors.
+     * Before you create a bounding box tree or a kd-tree of Actors you have to
      * make sure that their Transform and bounding volumes are up-to-date. This
      * is an utility function that lets you do that in a simple an quick way.
      */
@@ -117,10 +120,19 @@ namespace vl
     //! For internal use only.
     void setParent(ActorTreeAbstract* p) { mParent = p; }
 
+    //! If `false` then extractVisibleActors() will ignore this node and all its children.
+    //! \see Actor::enableMask(), Actor::isEnabled(), ActorTreeAbstract::isEnabled(), SceneManager::enableMask(), Rendering::enableMask(), Rendering::effectOverrideMask(), Renderer::enableMask(), Renderer::shaderOverrideMask().
+    void setEnabled( bool enabled ) { mEnabled = enabled; }
+
+    //! If `false` then extractVisibleActors() will ignore this node and all its children.
+    //! \see Actor::enableMask(), Actor::isEnabled(), ActorTreeAbstract::isEnabled(), SceneManager::enableMask(), Rendering::enableMask(), Rendering::effectOverrideMask(), Renderer::enableMask(), Renderer::shaderOverrideMask().
+    bool isEnabled() const { return mEnabled; }
+
   protected:
     ActorTreeAbstract* mParent;
     ActorCollection mActors;
     AABB mAABB;
+    bool mEnabled;
   };
 }
 

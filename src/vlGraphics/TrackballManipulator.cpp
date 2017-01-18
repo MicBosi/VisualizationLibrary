@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -207,7 +207,7 @@ vec3 TrackballManipulator::computeVector(int x, int y)
   //  v.normalize();
 
   real z2 = 1.0f - v.x()*v.x() - v.y()*v.y();
-  if (z2 < 0) 
+  if (z2 < 0)
     z2 = 0;
   v.z() = sqrt( z2 );
   v.normalize();
@@ -233,6 +233,7 @@ void TrackballManipulator::adjustView(ActorCollection& actors, const vec3& dir, 
       {
         actors.at(i)->transform()->computeWorldMatrix();
       }
+      actors.at(i)->lod(0)->setBoundsDirty(true);
       actors.at(i)->computeBounds();
       aabb += actors.at(i)->boundingBox();
     }
@@ -243,20 +244,21 @@ void TrackballManipulator::adjustView(ActorCollection& actors, const vec3& dir, 
 void TrackballManipulator::adjustView(SceneManager* scene, const vec3& dir, const vec3& up, real bias)
 {
   ActorCollection actors;
-  scene->extractActors(actors);
+  scene->extractVisibleActors( actors, NULL );
   adjustView(actors, dir, up, bias);
 }
 //-----------------------------------------------------------------------------
 void TrackballManipulator::adjustView(Rendering* rendering, const vec3& dir, const vec3& up, real bias)
 {
   ActorCollection actors;
-  for(int i=0; i<rendering->sceneManagers()->size(); ++i)
-    rendering->sceneManagers()->at(i)->extractActors(actors);
+  for(int i = 0; i < rendering->sceneManagers()->size(); ++i ) {
+    rendering->sceneManagers()->at( i )->extractVisibleActors( actors, NULL );
+  }
   adjustView(actors, dir, up, bias);
 }
 //-----------------------------------------------------------------------------
 void TrackballManipulator::enableEvent(bool enabled)
-{ 
+{
   if (enabled)
   {
     mMode = NoMode;

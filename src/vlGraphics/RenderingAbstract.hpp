@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -34,6 +34,7 @@
 
 #include <vlGraphics/link_config.hpp>
 #include <vlCore/Collection.hpp>
+#include <vlGraphics/Actor.hpp>
 #include <vlCore/vlnamespace.hpp>
 
 namespace vl
@@ -76,12 +77,12 @@ namespace vl
     //! @sa
     //! vl::Actor::setEnableMask()
     void setEnableMask(unsigned int mask) { mEnableMask = mask; }
-    
+
     //! The enable mask of the Rendering, used to define wheter the rendering is enabled or not, and which objects should be rendered.
     unsigned int enableMask() const { return mEnableMask; }
-    
-    //! Utility function equivalent to \p "(mask & mEnableMask) != 0".
+
     bool isEnabled(unsigned int mask) { return (mask & mEnableMask) != 0; }
+    bool isEnabled(const Actor* actor) { return actor->isEnabled() && (actor->enableMask() & mEnableMask) != 0; }
 
     //! The update time of the current rendering frame.
     void setFrameClock(real cur_time) { mFrameClock = cur_time; }

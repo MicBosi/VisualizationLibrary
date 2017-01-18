@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vlCore/GlobalSettings.hpp>
+#include <vlCore/Say.hpp>
 #include <vlGraphics/Renderer.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 #include <vlGraphics/GLSL.hpp>
@@ -112,8 +113,9 @@ const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* 
     const RenderToken* tok = render_queue->at(itok); VL_CHECK(tok);
     Actor* actor = tok->mActor; VL_CHECK(actor);
 
-    if ( !isEnabled(actor->enableMask()) )
+    if ( ! isEnabled( actor ) ) {
       continue;
+    }
 
     // --------------- Actor's scissor ---------------
 
@@ -195,8 +197,6 @@ const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* 
 
       // --------------- GLSLProgram setup ---------------
 
-      VL_CHECK( !shader->glslProgram() || shader->glslProgram()->linked() );
-
       VL_CHECK_OGL()
 
       // current transform
@@ -207,7 +207,7 @@ const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* 
       const UniformSet*  cur_actor_uniform_set     = NULL;
 
       // make sure we update these things only if there is a valid GLSLProgram
-      if (shader->glslProgram() && shader->glslProgram()->handle())
+      if ( shader->glslProgram() && shader->glslProgram()->handle() && shader->glslProgram()->linked() )
       {
         cur_glsl_program = shader->glslProgram();
 
@@ -272,8 +272,9 @@ const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* 
 
       VL_CHECK_OGL()
 
-      if (update_cm || update_tr)
+      if (update_cm || update_tr) {
         projViewTransfCallback()->updateMatrices( update_cm, update_tr, cur_glsl_program, camera, cur_transform );
+      }
 
       VL_CHECK_OGL()
 
@@ -316,6 +317,14 @@ const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* 
 
       VL_CHECK_OGL()
 
+      #ifndef NDEBUG
+        if ( cur_glsl_program && ! cur_glsl_program->validateProgram() ) {
+          Log::bug( "GLSLProgram::useProgram() failed validation (" + String(objectName()) + ")\n");
+          Log::bug( Say("Info log:\n%s\n") << cur_glsl_program->infoLog() );
+          VL_TRAP();
+        }
+      #endif
+
       // --------------- Actor rendering ---------------
 
       // also compiles display lists and updates BufferObjects if necessary
@@ -337,17 +346,19 @@ const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* 
 
   // enabled texture unit #0
   VL_glActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
-  if (Has_Fixed_Function_Pipeline)
+  if ( Has_Fixed_Function_Pipeline ) {
     VL_glClientActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
+  }
 
   // disable scissor test
-  glDisable(GL_SCISSOR_TEST); VL_CHECK_OGL();
+  glDisable( GL_SCISSOR_TEST ); VL_CHECK_OGL();
 
   // disable all vertex arrays, note this also calls "glBindBuffer(GL_ARRAY_BUFFER, 0)"
-  opengl_context->bindVAS(NULL, false, false); VL_CHECK_OGL();
+  opengl_context->bindVAS( NULL, false, false ); VL_CHECK_OGL();
 
   return render_queue;
 }
+//------------------------------------------------------------------------------
 const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* camera, real frame_clock)
 {
   VL_CHECK_OGL()
