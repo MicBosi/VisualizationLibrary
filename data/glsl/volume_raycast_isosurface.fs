@@ -1,6 +1,6 @@
 /**************************************************************************************/
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi.                                            */
+/*  Copyright (c) 2005-2017, Michele Bosi.                                            */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  This file is part of Visualization Library                                        */
@@ -13,125 +13,130 @@
 
 /* raycast isosurface */
 
-varying vec3 frag_position;     // in object space
+#version 150 compatibility
+
+in vec3 frag_position;		  // in object space
+
 uniform sampler3D volume_texunit;
 uniform sampler3D gradient_texunit;
 uniform sampler1D trfunc_texunit;
-uniform vec3 light_position[4]; // light positions in object space
-uniform bool light_enable[4];   // light enable flags
-uniform vec3 eye_position;      // camera position in object space
-// uniform vec3 eye_look;          // camera look direction in object space
-uniform float sample_step;      // step used to advance the sampling ray
+uniform vec3 light_position[4];     // light positions in object space
+uniform bool light_enable[4];       // light enable flags
+uniform vec3 eye_position;	        // camera position in object space
+// uniform vec3 eye_look;	        // camera look direction in object space
+uniform float sample_step;	        // step used to advance the sampling ray: a good value is: `1/4 / <tex-dim>` or `1/8 / <tex-dim>`.
 uniform float val_threshold;
-uniform vec3 gradient_delta;    // for on-the-fly gradient computation
-uniform bool precomputed_gradient; // whether the gradient has been precomputed or not
+uniform bool precomputed_gradient;  // whether the gradient has been precomputed or not
+uniform vec3 gradient_delta;	    // for on-the-fly gradient computation: a good value is `1/4 / <tex-dim>`.
+uniform vec3 texel_centering;       // normalized x/y/z offeset required to center on a texel
 
-// computes a simplified lighting equation
-vec3 blinn(vec3 N, vec3 V, vec3 L, int light)
+// Computes a simplified lighting equation
+vec3 blinn( vec3 N, vec3 V, vec3 L, int light, vec3 diffuse )
 {
 	// material properties
 	// you might want to put this into a bunch or uniforms
-	vec3 Ka = vec3(1.0, 1.0, 1.0);
-	vec3 Kd = vec3(1.0, 1.0, 1.0);
-	vec3 Ks = vec3(1.0, 1.0, 1.0);
-	float shininess = 50.0;
+	vec3 Ka = vec3( 1.0, 1.0, 1.0 );
+	vec3 Kd = diffuse; // vec3( 1.0, 1.0, 1.0 );
+	vec3 Ks = vec3( 0.5, 0.5, 0.5 );
+	float shininess = 100.0;
 
 	// diffuse coefficient
-	float diff_coeff = max(dot(L,N),0.0);
-	
+	float diff_coeff = max( dot( L, N ), 0.0 );
+
 	// specular coefficient
-	vec3 H = normalize(L+V);
-	float spec_coeff = pow(max(dot(H,N), 0.0), shininess);
-	if (diff_coeff <= 0.0) 
-		spec_coeff = 0.0;
+	vec3 H = normalize( L + V );
+	float spec_coeff = diff_coeff > 0.0 ? pow( max( dot( H, N ), 0.0 ), shininess ) : 0.0;
 
 	// final lighting model
-	return  Ka * gl_LightSource[light].ambient.rgb + 
-			Kd * gl_LightSource[light].diffuse.rgb  * diff_coeff + 
+	return  Ka * gl_LightSource[light].ambient.rgb +
+			Kd * gl_LightSource[light].diffuse.rgb  * diff_coeff +
 			Ks * gl_LightSource[light].specular.rgb * spec_coeff ;
 }
 
-vec4 computeFragColor(vec3 iso_pos)
+vec4 computeFragColor( vec3 iso_pos )
 {
 	// compute lighting at isosurface point
-	float val = texture3D(volume_texunit, iso_pos).r;
+	float val = texture3D( volume_texunit, iso_pos ).r;
 
 	// compute the gradient and lighting only if the pixel is visible "enough"
 	vec3 N;
-	if (precomputed_gradient)
+	if ( precomputed_gradient )
 	{
 		// retrieve pre-computed gradient
-		N  = normalize( (texture3D(gradient_texunit, iso_pos).xyz - vec3(0.5,0.5,0.5))*2.0 );
+		N  = normalize( ( texture3D( gradient_texunit, iso_pos ).xyz - vec3( 0.5, 0.5, 0.5 ) ) * 2.0 );
 	}
 	else
 	{
 		// on-the-fly gradient computation: slower but requires less memory (no gradient texture required).
-		vec3 sample1, sample2;
-		sample1.x = texture3D(volume_texunit, iso_pos-vec3(gradient_delta.x,0.0,0.0) ).r;
-		sample2.x = texture3D(volume_texunit, iso_pos+vec3(gradient_delta.x,0.0,0.0) ).r;
-		sample1.y = texture3D(volume_texunit, iso_pos-vec3(0.0,gradient_delta.y,0.0) ).r;
-		sample2.y = texture3D(volume_texunit, iso_pos+vec3(0.0,gradient_delta.y,0.0) ).r;
-		sample1.z = texture3D(volume_texunit, iso_pos-vec3(0.0,0.0,gradient_delta.z) ).r;
-		sample2.z = texture3D(volume_texunit, iso_pos+vec3(0.0,0.0,gradient_delta.z) ).r;
-		N  = normalize( sample1 - sample2 );
+		vec3 a, b;
+		a.x = texture3D( volume_texunit, iso_pos - vec3( gradient_delta.x, 0.0, 0.0 ) ).r;
+		b.x = texture3D( volume_texunit, iso_pos + vec3( gradient_delta.x, 0.0, 0.0 ) ).r;
+		a.y = texture3D( volume_texunit, iso_pos - vec3( 0.0, gradient_delta.y, 0.0 ) ).r;
+		b.y = texture3D( volume_texunit, iso_pos + vec3( 0.0, gradient_delta.y, 0.0 ) ).r;
+		a.z = texture3D( volume_texunit, iso_pos - vec3( 0.0, 0.0, gradient_delta.z ) ).r;
+		b.z = texture3D( volume_texunit, iso_pos + vec3( 0.0, 0.0, gradient_delta.z ) ).r;
+		N  = normalize( a - b );
 	}
 
-	vec3 V  = normalize(eye_position - frag_position);
-	vec4 color = texture1D(trfunc_texunit, val);
-	vec3 final_color /*= vec3(0.0, 0.0, 0.0)*/; // mic fixme: if I initialize this to vec3(0,0,0) the whole volume disappears!
-	for( int i=0; i<4; i++ )
+	vec3 V  = normalize( eye_position - frag_position );
+	vec4 diffuse = texture1D( trfunc_texunit, val );
+	vec3 final_color = vec3( 0, 0, 0 );
+	for( int i = 0; i < 4; i++ )
 	{
-		if (light_enable[i])
+		if ( light_enable[i] )
 		{
-			vec3 L = normalize(light_position[i] - frag_position);
+			vec3 L = normalize( light_position[i] - frag_position );
 			// double sided lighting
-			if (dot(L,N) < 0.0)
-				L = -L;
-			final_color = final_color + color.rgb * blinn(N, V, L, i);
-		}
-	}	
+			if ( dot( L, N ) < 0.0 ) {
+				N = -N;
+            }
 
-	return vec4(final_color, color.a);
+			final_color = final_color + blinn( N, V, L, i, diffuse.rgb );
+		}
+	}
+
+	return vec4( final_color, diffuse.a );
 }
 
-void main(void)
+void main()
 {
-	// NOTE: ray direction goes from eye_position to frag_position, i.e. front to back
-	vec3 ray_dir = normalize(frag_position - eye_position);
+	// NOTE:
+	// 1) Ray direction goes from eye_position to frag_position, i.e. front to back
+	// 2) We assume the volume has a cube-like shape. To support non cubic volumes `sample_step` should be a vec3.
+	vec3 ray_dir = normalize( frag_position - eye_position );
+	vec3 ray_step = ray_dir * sample_step;
 	vec3 ray_pos = gl_TexCoord[0].xyz; // the current ray position
-	vec3 pos111 = vec3(1.0, 1.0, 1.0);
-	vec3 pos000 = vec3(0.0, 0.0, 0.0);
-	
-	float val = texture3D(volume_texunit, gl_TexCoord[0].xyz ).r;
-	bool sign_prev = val > val_threshold;
-	vec3 prev_pos = ray_pos;
+
+	// NOTE:
+	// These are not adjusted tex coords, for better precision we should use
+	// the same values generated by RaycastVolume::generateTextureCoordinates
+	vec3 pos111 = vec3( 1.0, 1.0, 1.0 ) - texel_centering;
+	vec3 pos000 = vec3( 0.0, 0.0, 0.0 ) + texel_centering;
+
+	float val = texture3D( volume_texunit, gl_TexCoord[0].xyz ).r;
+	bool prev_sign = val > val_threshold;
 	do
 	{
-		// note: 
-		// - ray_dir * sample_step can be precomputed
-		// - we assume the volume has a cube-like shape
+		ray_pos += ray_step;
 
-		prev_pos = ray_pos;
-		ray_pos += ray_dir * sample_step;
+		// Leave if end of cube
+		if ( any( greaterThan( ray_pos, pos111 ) ) || any( lessThan( ray_pos, pos000 ) ) ) {
+			discard;
+		}
 
-		// break out if ray reached the end of the cube.
-		if (any(greaterThan(ray_pos,pos111)))
-			break;
-
-		if (any(lessThan(ray_pos,pos000)))
-			break;
-
-		val = texture3D(volume_texunit, ray_pos).r;
+		val = texture3D( volume_texunit, ray_pos ).r;
 		bool sign_cur = val > val_threshold;
-		if (sign_cur != sign_prev)
+		if (sign_cur != prev_sign)
 		{
-			vec3 iso_pos = (prev_pos+ray_pos)*0.5;
-			gl_FragColor = computeFragColor(iso_pos);
+			// NOTE:
+			// We could make a more precise guess by interpolating the position based on the old and new value compared to the iso-value.
+
+			// Approximate iso_pos as half-way between the two steps.
+			vec3 iso_pos = ray_pos - ray_step * 0.5;
+			gl_FragColor = computeFragColor( iso_pos );
 			return;
 		}
 	}
 	while(true);
-	
-	discard;
 }
 // Have fun!

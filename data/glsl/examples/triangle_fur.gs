@@ -11,9 +11,13 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#version 120
+#version 150 compatibility
 
 #extension GL_ARB_geometry_shader4 : enable
+
+layout(triangles) in;
+layout(triangle_strip, max_vertices = 18) out;
+
 
 void main(void)
 {

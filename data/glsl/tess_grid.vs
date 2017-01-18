@@ -13,10 +13,10 @@
 
 #version 400
 
-in vec4 vl_Position;
+in vec4 vl_VertexPosition;
 out vec4 vPosition;
 
 void main(void)
 {
-	vPosition = vl_Position;
+	vPosition = vl_VertexPosition;
 }

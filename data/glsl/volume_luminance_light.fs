@@ -11,13 +11,16 @@
 /*                                                                                    */
 /**************************************************************************************/
 
+#version 150 compatibility
+
 // This shader maps the volume value to the transfer function plus computes the
 // gradient and lighting on the fly. This shader is to be used with IF_LUMINANCE
 // image volumes.
 
 #define LIGHTING_ALPHA_THRESHOLD 0.02
 
-varying vec3 frag_position;     // in object space
+in vec3 frag_position;     // in object space
+
 uniform sampler3D volume_texunit;
 uniform sampler3D gradient_texunit;
 uniform sampler1D trfunc_texunit;
@@ -26,11 +29,11 @@ uniform vec3 light_position[4]; // light positions in object space
 uniform bool light_enable[4];   // light enable flags
 uniform vec3 eye_position;      // camera position in object space
 uniform float val_threshold;
-uniform vec3 gradient_delta; // for on-the-fly gradient computation
+uniform vec3 gradient_delta;    // for on-the-fly gradient computation
 uniform bool precomputed_gradient; // whether the gradient has been precomputed or not
 
 // computes a simplified lighting equation
-vec3 blinn_phong(vec3 N, vec3 V, vec3 L, int light)
+vec3 blinn_phong( vec3 N, vec3 V, vec3 L, int light )
 {
 	// material properties
 	// you might want to put this into a bunch or uniforms
@@ -45,29 +48,29 @@ vec3 blinn_phong(vec3 N, vec3 V, vec3 L, int light)
 	// specular coefficient
 	vec3 H = normalize(L+V);
 	float spec_coeff = pow(max(dot(H,N), 0.0), shininess);
-	if (diff_coeff <= 0.0) 
+	if (diff_coeff <= 0.0)
 		spec_coeff = 0.0;
 
 	// final lighting model
-	return  Ka * gl_LightSource[light].ambient.rgb + 
-			Kd * gl_LightSource[light].diffuse.rgb  * diff_coeff + 
+	return  Ka * gl_LightSource[light].ambient.rgb +
+			Kd * gl_LightSource[light].diffuse.rgb  * diff_coeff +
 			Ks * gl_LightSource[light].specular.rgb * spec_coeff ;
 }
 
 void main(void)
 {
 	// sample the LUMINANCE value
-	float val = texture3D(volume_texunit, gl_TexCoord[0].xyz ).r;
-	
+	float val = texture3D( volume_texunit, gl_TexCoord[0].xyz ).r;
+
 	// all the pixels whose val is less than val_threshold are discarded
 	if (val < val_threshold)
 		discard;
-	
+
 	// sample the transfer function
-	
+
 	// to properly sample the texture clamp bewteen trfunc_delta...1.0-trfunc_delta
-	float clamped_val = trfunc_delta+(1.0-2.0*trfunc_delta)*val;
-	vec4 color = texture1D(trfunc_texunit, clamped_val);
+	float clamped_val = trfunc_delta + ( 1.0 - 2.0 * trfunc_delta ) * val;
+	vec4 color = texture1D( trfunc_texunit, clamped_val );
 	vec3 color_tmp = vec3(0.0, 0.0, 0.0);
 
 	// compute the gradient and lighting only if the pixel is visible "enough"
@@ -102,8 +105,9 @@ void main(void)
 			}
 		}
 	}
-	else
+	else {
 		color_tmp = color.rgb;
+    }
 
 	gl_FragColor = vec4(color_tmp,color.a);
 }
