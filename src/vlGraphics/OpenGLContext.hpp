@@ -395,7 +395,7 @@ namespace vl
     }
 
     //! Dispatches the UIEventListener::updateEvent() notification to the subscribed UIEventListener objects.
-    void dispatchRunEvent()
+    void dispatchUpdateEvent()
     {
       makeCurrent();
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
