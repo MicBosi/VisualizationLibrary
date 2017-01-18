@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -60,9 +60,9 @@ namespace vlGLUT
   {
   public:
     GLUTWindow();
-    
+
     GLUTWindow(const vl::String& title, const vl::OpenGLContextFormat& info, int x, int y, int width, int height);
-    
+
     //! Initializes and shows a GLUT window.
     bool initGLUTWindow(const vl::String& title, const vl::OpenGLContextFormat& info, int x, int y, int width, int height);
 

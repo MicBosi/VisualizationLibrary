@@ -43,14 +43,14 @@ namespace
 {
   #if 0
     // used for debugging purposes
-    void win32PrintError(LPTSTR lpszFunction) 
-    { 
-        TCHAR szBuf[80]; 
+    void win32PrintError(LPTSTR lpszFunction)
+    {
+        TCHAR szBuf[80];
         LPVOID lpMsgBuf;
-        DWORD dw = GetLastError(); 
+        DWORD dw = GetLastError();
 
         FormatMessage(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
             FORMAT_MESSAGE_FROM_SYSTEM,
             NULL,
             dw,
@@ -58,11 +58,11 @@ namespace
             (LPTSTR) &lpMsgBuf,
             0, NULL );
 
-        wsprintf(szBuf, 
-            L"%s failed with error %d: %s", 
-            lpszFunction, dw, lpMsgBuf); 
-     
-        MessageBox(NULL, szBuf, L"Visualization Library Error", MB_OK); 
+        wsprintf(szBuf,
+            L"%s failed with error %d: %s",
+            lpszFunction, dw, lpMsgBuf);
+
+        MessageBox(NULL, szBuf, L"Visualization Library Error", MB_OK);
 
         LocalFree(lpMsgBuf);
     }
@@ -101,19 +101,19 @@ const wchar_t* EGLWindow::EGLWindowClassName = L"VisualizationLibraryWindowClass
 std::map< HWND, EGLWindow* > EGLWindow::mWinMap;
 //-----------------------------------------------------------------------------
 LONG WINAPI EGLWindow::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{ 
+{
   EGLWindow* win = EGLWindow::getWindow(hWnd);
   if (!win)
-    return (LONG)DefWindowProc(hWnd, uMsg, wParam, lParam); 
+    return (LONG)DefWindowProc(hWnd, uMsg, wParam, lParam);
 
-  switch(uMsg) 
+  switch(uMsg)
   {
     case WM_PAINT:
     {
       // handle event and then dispatch: solves MessageBox dialog problem.
-      LONG val = (LONG)DefWindowProc(hWnd, uMsg, wParam, lParam); 
+      LONG val = (LONG)DefWindowProc(hWnd, uMsg, wParam, lParam);
       if (win->eglContext() && win->eglSurface() && win->hwnd())
-        win->dispatchRunEvent();
+        win->dispatchUpdateEvent();
       return val;
     }
 
@@ -241,10 +241,10 @@ LONG WINAPI EGLWindow::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
     // WM_SETCURSOR
     // WM_SETICON
     // WM_CAPTURECHANGED
-    // WM_MOUSEFIRST 
+    // WM_MOUSEFIRST
   }
 
-  return (LONG)DefWindowProc(hWnd, uMsg, wParam, lParam); 
+  return (LONG)DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 //-----------------------------------------------------------------------------
 // EGLWindow
@@ -283,7 +283,7 @@ bool EGLWindow::initEGLWindow(HWND parent, const vl::String& title, const vl::Op
     mWindowClassName,
     L"Visualization Library's EGLWindow",
     style,
-    x, y, width, height, 
+    x, y, width, height,
     parent, NULL, GetModuleHandle(NULL), NULL);
 
   setWindowTitle(title);
@@ -362,7 +362,7 @@ bool EGLWindow::initEGLWindow(HWND parent, const vl::String& title, const vl::Op
   if ( mEGL_Context == EGL_NO_CONTEXT )
   {
     return false;
-  }   
+  }
 
   // Make the context current
   if ( !eglMakeCurrent(mEGL_Display, mEGL_Surface, mEGL_Surface, mEGL_Context) )
@@ -516,7 +516,7 @@ EGLWindow* EGLWindow::getWindow(HWND hWnd)
   std::map< HWND, EGLWindow* >::const_iterator it = mWinMap.find(hWnd);
   if (it != mWinMap.end())
     return it->second;
-  else 
+  else
     return NULL;
 }
 //-----------------------------------------------------------------------------
@@ -544,7 +544,7 @@ void vlEGL::dispatchUpdate()
   // iterate over all opengl contexts
   std::map< HWND, EGLWindow* > wins = EGLWindow::winMap();
   for( std::map< HWND, EGLWindow* >::iterator it = wins.begin();
-       it != wins.end(); 
+       it != wins.end();
        ++it )
   {
     EGLWindow* win = it->second;

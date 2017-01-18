@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -738,7 +738,7 @@ void GLUTWindow::glut_display_func()
   VL_CHECK(win);
   // win->updateModifiers(); // cannot be called from here;
 
-  win->dispatchRunEvent();
+  win->dispatchUpdateEvent();
 
   //if (win->continuousUpdate())
   //  win->update();

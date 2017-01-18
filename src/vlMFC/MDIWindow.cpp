@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -72,7 +72,7 @@ END_MESSAGE_MAP()
   WM_SETCURSOR
   WM_SETICON
   WM_CAPTURECHANGED
-  WM_MOUSEFIRST 
+  WM_MOUSEFIRST
 */
 BOOL MDIWindow::PreCreateWindow(CREATESTRUCT & cs)
 {
@@ -88,7 +88,7 @@ MDIWindow::~MDIWindow()
 //-----------------------------------------------------------------------------
 void MDIWindow::destroyGLContext()
 {
-  // wglMakeCurrent(NULL, NULL) not needed 
+  // wglMakeCurrent(NULL, NULL) not needed
   if (hwnd())
   {
     if (mHGLRC)
@@ -118,7 +118,7 @@ void MDIWindow::OnDestroy()
 void MDIWindow::OnPaint()
 {
   if (hwnd() && hdc() && hglrc())
-    dispatchRunEvent();
+    dispatchUpdateEvent();
   ValidateRect(NULL);
 }
 //-----------------------------------------------------------------------------

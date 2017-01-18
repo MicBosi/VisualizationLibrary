@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -317,7 +317,7 @@ void SDLWindow::translateEvent( SDL_Event * ev )
   //mUpdateFlag = continuousUpdate();
 
   //if (update)
-  //  dispatchRunEvent();
+  //  dispatchUpdateEvent();
 
   if (ev->type == SDL_KEYDOWN)
   {
@@ -453,7 +453,7 @@ void vlSDL::messageLoop()
     {
       if ( mUpdateFlag || mSDLWindow->continuousUpdate() )
       {
-        mSDLWindow->dispatchRunEvent();
+        mSDLWindow->dispatchUpdateEvent();
         mUpdateFlag = false;
       }
       else

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -76,7 +76,7 @@ END_MESSAGE_MAP()
   WM_SETCURSOR
   WM_SETICON
   WM_CAPTURECHANGED
-  WM_MOUSEFIRST 
+  WM_MOUSEFIRST
 */
 //-----------------------------------------------------------------------------
 MFCWindow::~MFCWindow()
@@ -99,10 +99,10 @@ bool MFCWindow::initMFCWindow(CWnd* parent, MFCWindow* share_context, const vl::
   if (mClassName.IsEmpty())
  	  mClassName = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, LoadIcon(NULL, IDI_WINLOGO));
 
-  CreateEx(WS_EX_APPWINDOW|WS_EX_ACCEPTFILES, 
-           mClassName, L"MFCWindow", 
-           (parent?WS_CHILD:WS_OVERLAPPEDWINDOW) | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 
-           x, y, width, height, 
+  CreateEx(WS_EX_APPWINDOW|WS_EX_ACCEPTFILES,
+           mClassName, L"MFCWindow",
+           (parent?WS_CHILD:WS_OVERLAPPEDWINDOW) | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+           x, y, width, height,
            parent?parent->m_hWnd:NULL, NULL, NULL);
 
   return initWin32GLContext(share_context?share_context->hglrc():NULL, title, fmt, x, y, width, height);
@@ -110,7 +110,7 @@ bool MFCWindow::initMFCWindow(CWnd* parent, MFCWindow* share_context, const vl::
 //-----------------------------------------------------------------------------
 void MFCWindow::destroyGLContext()
 {
-  // wglMakeCurrent(NULL, NULL) not needed 
+  // wglMakeCurrent(NULL, NULL) not needed
   if (hwnd())
   {
     if (mHGLRC)
@@ -140,7 +140,7 @@ void MFCWindow::OnDestroy()
 void MFCWindow::OnPaint()
 {
   if (hwnd() && hdc() && hglrc())
-    dispatchRunEvent();
+    dispatchUpdateEvent();
   ValidateRect(NULL);
 }
 //-----------------------------------------------------------------------------
