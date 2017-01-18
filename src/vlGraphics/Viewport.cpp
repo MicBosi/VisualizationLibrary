@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -51,7 +51,7 @@ Viewport::Viewport()
   mClearStencil = 0;
   mClearFlags = CF_CLEAR_COLOR_DEPTH;
   mClearColorMode = CCM_Float;
-  mSetupScissor = true;
+  mScissorEnabled = true;
 }
 //-----------------------------------------------------------------------------
 Viewport::Viewport(int x, int y, int w, int h)
@@ -61,12 +61,12 @@ Viewport::Viewport(int x, int y, int w, int h)
   mY = y;
   mWidth  = w;
   mHeight = h;
-  mClearColor = fvec4(0.8f,0,0.1f,1);
+  mClearColor = fvec4(0,0,0,1);
   mClearDepth = 1.0f;
   mClearStencil = 0;
   mClearFlags = CF_CLEAR_COLOR_DEPTH;
   mClearColorMode = CCM_Float;
-  mSetupScissor = true;
+  mScissorEnabled = true;
 }
 //-----------------------------------------------------------------------------
 void Viewport::activate() const
@@ -82,10 +82,10 @@ void Viewport::activate() const
   if (w < 1) w = 1;
   if (h < 1) h = 1;
 
-  glViewport(x, y, w, h);
+  glViewport( x, y, w, h );
 
   // clear viewport
-  if (mClearFlags)
+  if ( mClearFlags )
   {
     #ifndef NDEBUG
       if (!Has_GL_EXT_texture_integer)
@@ -104,27 +104,27 @@ void Viewport::activate() const
 
     // save writemask status to be restored later
     GLboolean color_write_mask[4] = {0,0,0,0};
-    glGetBooleanv(GL_COLOR_WRITEMASK, color_write_mask);
+    glGetBooleanv( GL_COLOR_WRITEMASK, color_write_mask);
 
     GLboolean depth_write_mask = 0;
-    glGetBooleanv(GL_DEPTH_WRITEMASK, &depth_write_mask );
+    glGetBooleanv( GL_DEPTH_WRITEMASK, &depth_write_mask );
 
     GLboolean stencil_write_mask = 0;
-    glGetBooleanv(GL_STENCIL_WRITEMASK, &stencil_write_mask );
+    glGetBooleanv( GL_STENCIL_WRITEMASK, &stencil_write_mask );
 
     // make sure we clear everything
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glDepthMask(GL_TRUE);
-    glStencilMask(GL_TRUE);
+    glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );
+    glDepthMask( GL_TRUE );
+    glStencilMask( GL_TRUE );
 
-    // setup scissor
-    if (mSetupScissor)
+    // enable scissor
+    if ( mScissorEnabled )
     {
-      glEnable(GL_SCISSOR_TEST);
-      glScissor(x, y, w, h);
+      glEnable( GL_SCISSOR_TEST );
+      glScissor( x, y, w, h );
     }
     else {
-      glDisable(GL_SCISSOR_TEST);
+      glDisable( GL_SCISSOR_TEST );
     }
 
     switch( clearColorMode() )
@@ -138,12 +138,12 @@ void Viewport::activate() const
 
     glClearStencil( mClearStencil );
 
-    glClear(mClearFlags);
+    glClear( mClearFlags );
 
     // restore writemasks
-    glColorMask(color_write_mask[0], color_write_mask[1], color_write_mask[2], color_write_mask[3]);
-    glDepthMask(depth_write_mask);
-    glStencilMask(stencil_write_mask);
+    glColorMask( color_write_mask[0], color_write_mask[1], color_write_mask[2], color_write_mask[3] );
+    glDepthMask( depth_write_mask );
+    glStencilMask( stencil_write_mask );
 
     VL_CHECK_OGL()
   }
@@ -161,11 +161,6 @@ bool Viewport::isPointInside(int x, int y, int framebuffer_height) const
     return false;
   else
     return true;
-}
-//-----------------------------------------------------------------------------
-void Viewport::enableScissorSetup(bool enable)
-{
-  mSetupScissor = enable;
 }
 //-----------------------------------------------------------------------------
 

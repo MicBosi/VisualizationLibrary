@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -110,7 +110,8 @@ namespace vl
      * If scissor setup is enabled (by default it is), then glScissor is called
      * during activate().
      */
-    void enableScissorSetup(bool enable);
+    void setScissorEnabled(bool enable) { mScissorEnabled = enable; }
+    bool isScissorEnabled() const { return mScissorEnabled; }
 
   protected:
     fvec4 mClearColor;
@@ -126,7 +127,7 @@ namespace vl
     int mWidth;
     int mHeight;
 
-    bool mSetupScissor;
+    bool mScissorEnabled;
   };
 }
 
