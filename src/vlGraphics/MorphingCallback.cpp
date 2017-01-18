@@ -129,10 +129,10 @@ void MorphingCallback::onActorRenderStarted(Actor*, real frame_clock, const Came
 
       // vertex attrib and uniform animation
       if (mVertex2_Binding == -1)
-        mVertex2_Binding = glslprogram->getAttribLocation("vertex2");
+        mVertex2_Binding = glslprogram->getAttribLocation("vl_VertexNextPosition");
 
       if (mNormal2_Binding == -1)
-        mNormal2_Binding = glslprogram->getAttribLocation("normal2");
+        mNormal2_Binding = glslprogram->getAttribLocation("vl_VertexNextNormal");
 
       if (mAnim_t_Binding  == -1)
         mAnim_t_Binding = glslprogram->getUniformLocation("anim_t");
@@ -146,8 +146,8 @@ void MorphingCallback::onActorRenderStarted(Actor*, real frame_clock, const Came
     #else // slower but simpler method:
 
       // vertex/normals frame 2
-      mGeometry->setVertexAttribArray( glslprogram->getAttribLocation("vertex2"), false, false, mVertexFrames[mFrame2].get() );
-      mGeometry->setVertexAttribArray( glslprogram->getAttribLocation("normal2"), false, false, mNormalFrames[mFrame2].get() );
+      mGeometry->setVertexAttribArray( glslprogram->getAttribLocation("vl_VertexNextPosition"), false, false, mVertexFrames[mFrame2].get() );
+      mGeometry->setVertexAttribArray( glslprogram->getAttribLocation("vl_VertexNextNormal"), false, false, mNormalFrames[mFrame2].get() );
       // frame interpolation ratio
       glUniform1fv(glslprogram->getUniformLocation("anim_t"), 1, &mAnim_t);
     #endif
