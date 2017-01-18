@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -60,15 +60,23 @@ Image::Image()
   reset();
 }
 //-----------------------------------------------------------------------------
-Image::Image(const Image& other): Object(other) 
+Image::Image( void* buffer_ptr, int buffer_bytes )
 {
   VL_DEBUG_SET_OBJECT_NAME()
   mPixels = new Buffer;
   reset();
-  *this = other; 
+  mPixels->setUserAllocatedBuffer( buffer_ptr, buffer_bytes );
 }
 //-----------------------------------------------------------------------------
-Image::Image(const String& path)
+Image::Image( const Image& other ): Object( other )
+{
+  VL_DEBUG_SET_OBJECT_NAME()
+  mPixels = new Buffer;
+  reset();
+  *this = other;
+}
+//-----------------------------------------------------------------------------
+Image::Image( const String& path )
 {
   VL_DEBUG_SET_OBJECT_NAME()
   mPixels = new Buffer;
@@ -98,7 +106,7 @@ Image::Image(const String& path)
 }
 //-----------------------------------------------------------------------------
 //! Note that the image is not allocated
-Image::Image(int x, int y, int z, int bytealign, EImageFormat format, EImageType type):
+Image::Image( int x, int y, int z, int bytealign, EImageFormat format, EImageType type ):
   mWidth(x), mHeight(y), mDepth(z), mPitch(0), mByteAlign(1), mFormat(format), mType(type), mIsCubemap(false), mIsNormalMap(false), mHasAlpha(false)
 {
   VL_DEBUG_SET_OBJECT_NAME()
@@ -417,6 +425,7 @@ int Image::bitsPerPixel(EImageType type, EImageFormat format)
     case IF_LUMINANCE:       return comp_size * 1;
     case IF_LUMINANCE_ALPHA: return comp_size * 2;
     case IF_DEPTH_STENCIL:   return comp_size * 0;
+    case IF_RG:              return comp_size * 2;
     case IF_RGB:             return comp_size * 3;
     case IF_BGR:             return comp_size * 3;
     case IF_RGBA:            return comp_size * 4;
@@ -540,10 +549,6 @@ int Image::byteAlignment() const
 //! case on a non allocated image otherwise it won't have any effect.
 void Image::setByteAlignment(int bytealign)
 {
-  // cannot change the alignment when an image is already allocated
-
-  VL_CHECK(mPixels->empty());
-
   if (!mPixels->empty())
     return;
 
@@ -572,22 +577,6 @@ void Image::updatePitch()
   mPitch     = xbytes/mByteAlign*mByteAlign + ( (xbytes % mByteAlign) ? mByteAlign : 0 );
 }
 //-----------------------------------------------------------------------------
-void Image::allocateCubemap(int x, int y, int bytealign, EImageFormat format, EImageType type)
-{
-  reset();
-
-  setWidth(x);
-  setHeight(y);
-  setDepth(0);
-  setFormat(format);
-  setType(type);
-  setByteAlignment(bytealign);
-  mIsCubemap = true;
-
-  // mPixels.clear();
-  mPixels->resize(requiredMemory());
-}
-//-----------------------------------------------------------------------------
 void Image::allocate()
 {
   mMipmaps.clear();
@@ -607,7 +596,13 @@ void Image::allocate1D(int x, EImageFormat format, EImageType type)
   setByteAlignment(1);
   mIsCubemap = false;
 
-  mPixels->resize(requiredMemory());
+  if ( ! requiredMemory() ) {
+    Log::bug("Image::allocate1D() failed, probably your image settings are invalid.\n");
+  } else {
+    if ( mPixels->allocationMode() == vl::Buffer::AutoAllocatedBuffer ) {
+      mPixels->resize( requiredMemory() );
+    }
+  }
 }
 //-----------------------------------------------------------------------------
 void Image::allocate2D(int x, int y, int bytealign, EImageFormat format, EImageType type)
@@ -624,10 +619,13 @@ void Image::allocate2D(int x, int y, int bytealign, EImageFormat format, EImageT
   setByteAlignment(bytealign);
   mIsCubemap = false;
 
-  int req_mem = requiredMemory();
-  if (req_mem == 0)
-    Log::bug("Image::allocate2D could not allocate memory, probably your image settings are invalid.\n");
-  mPixels->resize(req_mem);
+  if ( ! requiredMemory() ) {
+    Log::bug("Image::allocate2D() failed, probably your image settings are invalid.\n");
+  } else {
+    if ( mPixels->allocationMode() == vl::Buffer::AutoAllocatedBuffer ) {
+      mPixels->resize( requiredMemory() );
+    }
+  }
 }
 //-----------------------------------------------------------------------------
 void Image::allocate3D(int x, int y, int z, int bytealign, EImageFormat format, EImageType type)
@@ -645,7 +643,34 @@ void Image::allocate3D(int x, int y, int z, int bytealign, EImageFormat format, 
   setByteAlignment(bytealign);
   mIsCubemap = false;
 
-  mPixels->resize(requiredMemory());
+  if ( ! requiredMemory() ) {
+    Log::bug("Image::allocate3D() failed, probably your image settings are invalid.\n");
+  } else {
+    if ( mPixels->allocationMode() == vl::Buffer::AutoAllocatedBuffer ) {
+      mPixels->resize( requiredMemory() );
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+void Image::allocateCubemap(int x, int y, int bytealign, EImageFormat format, EImageType type)
+{
+  reset();
+
+  setWidth(x);
+  setHeight(y);
+  setDepth(0);
+  setFormat(format);
+  setType(type);
+  setByteAlignment(bytealign);
+  mIsCubemap = true;
+
+  if ( ! requiredMemory() ) {
+    Log::bug("Image::allocateCubemap() failed, probably your image settings are invalid.\n");
+  } else {
+    if ( mPixels->allocationMode() == vl::Buffer::AutoAllocatedBuffer ) {
+      mPixels->resize( requiredMemory() );
+    }
+  }
 }
 //-----------------------------------------------------------------------------
 void Image::reset(int x, int y, int z, int bytealign, EImageFormat format, EImageType type, bool is_cubemap)
@@ -663,7 +688,9 @@ void Image::reset(int x, int y, int z, int bytealign, EImageFormat format, EImag
 //-----------------------------------------------------------------------------
 void Image::reset()
 {
-  mPixels->clear();
+  if ( mPixels->allocationMode() == vl::Buffer::AutoAllocatedBuffer ) {
+    mPixels->clear();
+  }
   mMipmaps.clear();
   mObjectName.clear();
   mWidth = 0;
@@ -1052,6 +1079,13 @@ ref<Image> vl::makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1,
   return makeColorSpectrum(width, colors);
 }
 //-----------------------------------------------------------------------------
+ref<Image> vl::makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3, const fvec4& c4, const fvec4& c5)
+{
+  std::vector<fvec4> colors;
+  colors.push_back(c0); colors.push_back(c1); colors.push_back(c2); colors.push_back(c3); colors.push_back(c4); colors.push_back(c5);
+  return makeColorSpectrum(width, colors);
+}
+//-----------------------------------------------------------------------------
 ref<Image> vl::makeNonUniformColorSpectrum(size_t width, size_t col_count, const fvec4* colors, const float* col_pos)
 {
   //     c0    c1    c2    c4
@@ -1238,7 +1272,7 @@ ref<Image> vl::loadCubemap(const String& xp_file, const String& xn_file, const S
     return NULL;
   }
 
-  ref<Image> img = vl::createCubemap(xp.get(), xn.get(), yp.get(), yn.get(), zp.get(), zn.get());  
+  ref<Image> img = vl::createCubemap(xp.get(), xn.get(), yp.get(), yn.get(), zp.get(), zn.get());
 
   return img;
 }
@@ -1271,11 +1305,11 @@ ref<Image> vl::Image::convertType(EImageType new_type) const
   switch(type())
   {
     case IT_UNSIGNED_BYTE:
-    case IT_BYTE:         
+    case IT_BYTE:
     case IT_UNSIGNED_SHORT:
-    case IT_SHORT:         
-    case IT_UNSIGNED_INT:  
-    case IT_INT:           
+    case IT_SHORT:
+    case IT_UNSIGNED_INT:
+    case IT_INT:
     case IT_FLOAT:
       break;
     default:
@@ -1286,11 +1320,11 @@ ref<Image> vl::Image::convertType(EImageType new_type) const
   switch(new_type)
   {
     case IT_UNSIGNED_BYTE:
-    case IT_BYTE:         
+    case IT_BYTE:
     case IT_UNSIGNED_SHORT:
-    case IT_SHORT:         
-    case IT_UNSIGNED_INT:  
-    case IT_INT:           
+    case IT_SHORT:
+    case IT_UNSIGNED_INT:
+    case IT_INT:
     case IT_FLOAT:
       break;
     default:
@@ -1501,7 +1535,7 @@ bool Image::equalize()
 }
 //-----------------------------------------------------------------------------
 /** The \p center and \p width parameters are in Hounsfield units.
-Calls contrastHounsfield(float center, float width, float intercept, float range) with \p center, \p with, \p range and 
+Calls contrastHounsfield(float center, float width, float intercept, float range) with \p center, \p with, \p range and
 \p intercept parameters extracted from the image tags() \p "WindowCenter", \p "WindowWidth", \p "BitsStored" and \p "RescaleIntercept".
 This function is equivalent to the code below.
 \code
@@ -1687,11 +1721,11 @@ ref<Image> vl::Image::convertFormat(EImageFormat new_format) const
   switch(type())
   {
     case IT_UNSIGNED_BYTE:
-    case IT_BYTE:         
+    case IT_BYTE:
     case IT_UNSIGNED_SHORT:
-    case IT_SHORT:         
-    case IT_UNSIGNED_INT:  
-    case IT_INT:           
+    case IT_SHORT:
+    case IT_UNSIGNED_INT:
+    case IT_INT:
     case IT_FLOAT:
       break;
     default:
@@ -1748,7 +1782,7 @@ ref<Image> vl::Image::convertFormat(EImageFormat new_format) const
   img->mHasAlpha    = mHasAlpha;
   img->allocate();
 
-  rgbal srco; // = {-1,-1,-1,-1,-1}, 
+  rgbal srco; // = {-1,-1,-1,-1,-1},
   rgbal dsto; // = {-1,-1,-1,-1,-1};
 
   // compute src and dst color component offsets
@@ -1935,11 +1969,11 @@ fvec4 Image::sampleLinear(double x, double y, double z) const
   if (x<0) x=0;
   if (y<0) y=0;
   if (z<0) z=0;
-  int ix = int(x); 
+  int ix = int(x);
   float xt = float(x - ix);
-  int iy = int(y); 
+  int iy = int(y);
   float yt = float(y - iy);
-  int iz = int(z); 
+  int iz = int(z);
   float zt = float(z - iz);
   fvec4 val0 = sample(ix  , iy,   iz);
   fvec4 val1 = sample(ix+1, iy,   iz);

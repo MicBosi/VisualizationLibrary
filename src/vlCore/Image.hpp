@@ -61,8 +61,14 @@ namespace vl
     //! Constructor.
     Image();
 
-    Image(const String& path);
+    //! Initializes the image to use vl::Buffer::UserAllocatedBuffer mode and the given buffer instead of allocating its own buffer.
+    //! Call allocate1D/2D/3D/Cubemap() to further initialize the image. See also: Image::imageBuffer() and Buffer::setUserAllocatedBuffer().
+    Image(void* buffer_ptr, int buffer_bytes);
 
+    //! Initializes the image reading from the give file path.
+    Image(const String& file_path);
+
+    //! Initializes a 1D, 2D or 3D image. For 2D images `y` and `z` must be set to 0. For 3D images `z` must be set to 0.
     Image(int x, int y, int z, int bytealign, EImageFormat format, EImageType type);
 
     Image(const Image& other);
@@ -438,6 +444,9 @@ namespace vl
 
   //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
   VLCORE_EXPORT ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3, const fvec4& c4);
+
+  //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
+  VLCORE_EXPORT ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3, const fvec4& c4, const fvec4& c5);
 }
 
 #endif
