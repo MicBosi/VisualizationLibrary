@@ -847,39 +847,6 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* ) const
 
   VL_CHECK_OGL()
 }
-namespace
-{
-  bool checkTextureSampler(const char* str, int unit)
-  {
-    int max_texture = 1, max_tmp = 0;
-
-    if (Has_GL_Version_1_3||Has_GL_ARB_multitexture||Has_GLES_Version_1_1)
-    {
-      glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
-      max_texture = max_tmp > max_texture ? max_tmp : max_texture;
-    }
-
-    if (Has_GL_Version_2_0)
-    {
-      glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL(); // also deprecated enum
-      max_texture = max_tmp > max_texture ? max_tmp : max_texture;
-    }
-
-    if (Has_GLSL)
-    {
-      glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
-      max_texture = max_tmp > max_texture ? max_tmp : max_texture;
-    }
-
-    if (unit > max_texture-1)
-    {
-      Log::bug( Say("%s error: texture unit index #%n not supported by this OpenGL implementation. Max texture unit index is %n.\n") << str << unit << max_texture-1 );
-      return false;
-    }
-
-    return true;
-  }
-}
 //------------------------------------------------------------------------------
 // TexEnv
 //------------------------------------------------------------------------------
@@ -913,11 +880,11 @@ TexEnv::TexEnv()
   mPointSpriteCoordReplace = false;
 }
 //------------------------------------------------------------------------------
-void TexEnv::apply(int index, const Camera*, OpenGLContext*) const
+void TexEnv::apply(int index, const Camera*, OpenGLContext* ctx) const
 {
   VL_CHECK_OGL()
-  VL_CHECK(index < VL_MAX_TEXTURE_UNITS)
-  VL_CHECK(checkTextureSampler("TexEnv::apply", index));
+  VL_CHECK(index < VL_MAX_LEGACY_TEXTURE_UNITS)
+  VL_CHECK(index < ctx->textureCoordCount())
 
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
   VL_glActiveTexture( GL_TEXTURE0 + index ); VL_CHECK_OGL();
@@ -993,12 +960,12 @@ TexGen::TexGen()
   mGenModeQ = TGM_DISABLED;
 }
 //-----------------------------------------------------------------------------
-void TexGen::apply(int index, const Camera*, OpenGLContext*) const
+void TexGen::apply(int index, const Camera*, OpenGLContext* ctx) const
 {
   VL_CHECK_OGL();
 
-  VL_CHECK(index < VL_MAX_TEXTURE_UNITS)
-  VL_CHECK(checkTextureSampler("TexGen::apply", index));
+  VL_CHECK(index < VL_MAX_LEGACY_TEXTURE_UNITS)
+  VL_CHECK(index < ctx->textureCoordCount())
 
   VL_glActiveTexture( GL_TEXTURE0 + index );
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
@@ -1064,13 +1031,13 @@ void TexGen::apply(int index, const Camera*, OpenGLContext*) const
 
   if (!genModeS())
     glDisable(GL_TEXTURE_GEN_S);
-  
+
   if (!genModeT())
     glDisable(GL_TEXTURE_GEN_T);
-  
+
   if (!genModeR())
     glDisable(GL_TEXTURE_GEN_R);
-  
+
   if (!genModeQ())
     glDisable(GL_TEXTURE_GEN_Q);
 
@@ -1098,14 +1065,14 @@ void TexGen::apply(int index, const Camera*, OpenGLContext*) const
   {
     glMatrixMode(GL_MODELVIEW); VL_CHECK_OGL();
     glPushMatrix(); VL_CHECK_OGL();
-    glLoadIdentity(); VL_CHECK_OGL(); 
+    glLoadIdentity(); VL_CHECK_OGL();
 
     glEnable(GL_TEXTURE_GEN_STR_OES); VL_CHECK_OGL();
     glTexGeni( GL_TEXTURE_GEN_STR_OES, GL_TEXTURE_GEN_MODE, genModeS() ); VL_CHECK_OGL();
 
     glPopMatrix(); VL_CHECK_OGL();
   }
-  else    
+  else
   {
     glTexGeni( GL_TEXTURE_GEN_STR_OES, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP_OES ); VL_CHECK_OGL();
     glEnable(GL_TEXTURE_GEN_STR_OES); VL_CHECK_OGL();
@@ -1117,34 +1084,35 @@ void TexGen::apply(int index, const Camera*, OpenGLContext*) const
 //-----------------------------------------------------------------------------
 // TextureMatrix
 //-----------------------------------------------------------------------------
-void TextureMatrix::apply(int index, const Camera* camera, OpenGLContext*) const
+void TextureMatrix::apply(int index, const Camera* camera, OpenGLContext* ctx) const
 {
   VL_CHECK_OGL();
-  VL_CHECK(index < VL_MAX_TEXTURE_UNITS);
-  VL_CHECK(checkTextureSampler("TextureMatrix::apply",index));
+  VL_CHECK(index < VL_MAX_LEGACY_TEXTURE_UNITS)
+  VL_CHECK(index < ctx->textureCoordCount())
 
-  VL_glActiveTexture( GL_TEXTURE0 + index );
-  // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
-  VL_CHECK_OGL();
-  glMatrixMode(GL_TEXTURE);
-  if (useCameraRotationInverse())
-    VL_glLoadMatrix( ((mat4)matrix()*camera->modelingMatrix().as3x3()).ptr() );
-  else
-    VL_glLoadMatrix( ((mat4)matrix()).ptr() );
+  VL_glActiveTexture( GL_TEXTURE0 + index ); VL_CHECK_OGL();
+
+  glMatrixMode(GL_TEXTURE); VL_CHECK_OGL();
+  if (useCameraRotationInverse()) {
+    VL_glLoadMatrix( ((mat4)matrix()*camera->modelingMatrix().as3x3()).ptr() ); VL_CHECK_OGL();
+  }
+  else {
+    VL_glLoadMatrix( ((mat4)matrix()).ptr() ); VL_CHECK_OGL();
+  }
 }
 //-----------------------------------------------------------------------------
 // TextureSampler
 //-----------------------------------------------------------------------------
-bool TextureSampler::hasTexture() const 
-{ 
-  return mTexture && mTexture->handle(); 
+bool TextureSampler::hasTexture() const
+{
+  return mTexture && mTexture->handle();
 }
 //------------------------------------------------------------------------------
 void TextureSampler::apply(int index, const Camera*, OpenGLContext* ctx) const
 {
   VL_CHECK_OGL();
-  VL_CHECK(index < VL_MAX_TEXTURE_UNITS)
-  VL_CHECK(checkTextureSampler("TextureSampler::apply",index));
+  VL_CHECK(index < VL_MAX_TEXTURE_IMAGE_UNITS)
+  VL_CHECK(index < ctx->textureImageUnitCount())
 
   // activate the appropriate texture unit
   VL_glActiveTexture( GL_TEXTURE0 + index ); VL_CHECK_OGL()
