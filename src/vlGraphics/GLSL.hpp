@@ -357,43 +357,6 @@ namespace vl
 
     // --------------- geometry shader ---------------
 
-    //! See GL_ARB_geometry_shader4's GL_GEOMETRY_VERTICES_OUT_EXT
-    void setGeometryVerticesOut(int vertex_count) 
-    { 
-      if (mGeometryVerticesOut != vertex_count)
-      {
-        scheduleRelinking(); 
-        mGeometryVerticesOut = vertex_count; 
-      }
-    }
-
-    //! See GL_ARB_geometry_shader4's GL_GEOMETRY_VERTICES_OUT_EXT
-    int geometryVerticesOut() const { return mGeometryVerticesOut; }
-
-    //! See GL_ARB_geometry_shader4's GL_GEOMETRY_INPUT_TYPE_EXT
-    void setGeometryInputType(EGeometryInputType type) 
-    { 
-      if (mGeometryInputType != type)
-      {
-        scheduleRelinking(); 
-        mGeometryInputType = type; 
-      }
-    }
-    //! See GL_ARB_geometry_shader4's GL_GEOMETRY_INPUT_TYPE_EXT
-    EGeometryInputType geometryInputType() const { return mGeometryInputType; }
-
-    //! See GL_ARB_geometry_shader4's GL_GEOMETRY_OUTPUT_TYPE_EXT
-    void setGeometryOutputType(EGeometryOutputType type) 
-    { 
-      if (mGeometryOutputType != type)
-      {
-        scheduleRelinking(); 
-        mGeometryOutputType = type; 
-      }
-    }
-    
-    //! See GL_ARB_geometry_shader4's GL_GEOMETRY_OUTPUT_TYPE_EXT
-    EGeometryOutputType geometryOutputType() const { return mGeometryOutputType; }
 
     // --------------- GLSL 4.x ---------------
 
@@ -549,9 +512,6 @@ namespace vl
     bool mScheduleLink;
 
     // glProgramParameter
-    int mGeometryVerticesOut;
-    EGeometryInputType mGeometryInputType;
-    EGeometryOutputType mGeometryOutputType;
     bool mProgramBinaryRetrievableHint;
     bool mProgramSeparable;
 

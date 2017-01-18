@@ -271,9 +271,6 @@ GLSLProgram::GLSLProgram()
   VL_DEBUG_SET_OBJECT_NAME()
   mScheduleLink = true;
   mHandle = 0;
-  mGeometryVerticesOut = 0;
-  mGeometryInputType   = GIT_TRIANGLES;
-  mGeometryOutputType  = GOT_TRIANGLE_STRIP;
   mProgramBinaryRetrievableHint = false;
   mProgramSeparable = false;
   m_vl_ModelViewMatrix = -1;
@@ -304,7 +301,6 @@ GLSLProgram& GLSLProgram::operator=(const GLSLProgram& other)
   mFragDataLocation = other.mFragDataLocation;
   mActiveUniforms.clear();
   mActiveAttribs.clear();
-  mAutoAttribLocation = other.mAutoAttribLocation;
   if (other.mUniformSet)
   {
     if (mUniformSet.get() == NULL)
@@ -315,9 +311,6 @@ GLSLProgram& GLSLProgram::operator=(const GLSLProgram& other)
     mUniformSet = NULL;
 
   // glProgramParameter
-  mGeometryVerticesOut = other.mGeometryVerticesOut;
-  mGeometryInputType = other.mGeometryInputType;
-  mGeometryOutputType = other.mGeometryOutputType;
   mProgramBinaryRetrievableHint = other.mProgramBinaryRetrievableHint;
   mProgramSeparable = other.mProgramSeparable;
 
@@ -509,27 +502,6 @@ void GLSLProgram::preLink()
     {
       VL_glBindFragDataLocation( handle(), it->second, it->first.c_str() ); VL_CHECK_OGL();
       ++it;
-    }
-  }
-
-  // Note that OpenGL 3.2 and 4 do not use glProgramParameter to define the layout of the
-  // input/output geometry but something like this in the geometry shader:
-  //
-  // layout(triangles) in;
-  // layout(triangle_strip, max_vertices = 3) out;
-
-  if (Has_Geometry_Shader && geometryVerticesOut() )
-  {
-    // if there is at least one geometry shader applies the geometry shader parameters
-    for(unsigned i=0; i<mShaders.size(); ++i)
-    {
-      if (mShaders[i]->type() == ST_GEOMETRY_SHADER)
-      {
-        VL_glProgramParameteri(handle(), GL_GEOMETRY_INPUT_TYPE_EXT,   geometryInputType()); VL_CHECK_OGL();
-        VL_glProgramParameteri(handle(), GL_GEOMETRY_OUTPUT_TYPE_EXT,  geometryOutputType()); VL_CHECK_OGL();
-        VL_glProgramParameteri(handle(), GL_GEOMETRY_VERTICES_OUT_EXT, geometryVerticesOut()); VL_CHECK_OGL();
-        break;
-      }
     }
   }
 
