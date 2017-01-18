@@ -83,78 +83,10 @@ namespace
   };
 }
 //------------------------------------------------------------------------------
-const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* camera, real frame_clock)
-{
-  VL_CHECK_OGL()
+const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* camera, real frame_clock) {
 
-  // skip if renderer is disabled
-
-  if (enableMask() == 0)
-    return render_queue;
-
-  // enter/exit behavior contract
-
-  class InOutContract 
-  {
-    Renderer* mRenderer;
-    std::vector<RenderStateSlot> mOriginalDefaultRS;
-  public:
-    InOutContract(Renderer* renderer, Camera* camera): mRenderer(renderer)
-    {
-      // increment the render tick.
-      mRenderer->mRenderTick++;
-
-      // render-target activation.
-      // note: an OpenGL context can have multiple rendering targets!
-      mRenderer->framebuffer()->activate();
-
-      // viewport setup.
-      camera->viewport()->setClearFlags( mRenderer->clearFlags() );
-      camera->viewport()->activate();
-
-      OpenGLContext* gl_context = renderer->framebuffer()->openglContext();
-
-      // default render states override
-      for(size_t i=0; i<renderer->overriddenDefaultRenderStates().size(); ++i)
-      {
-        // save overridden default render state to be restored later
-        ERenderState type = renderer->overriddenDefaultRenderStates()[i].type();
-        mOriginalDefaultRS.push_back(gl_context->defaultRenderState(type));
-        // set new default render state
-        gl_context->setDefaultRenderState(renderer->overriddenDefaultRenderStates()[i]);
-      }
-
-      // dispatch the renderer-started event.
-      mRenderer->dispatchOnRendererStarted();
-
-      // check user-generated errors.
-      VL_CHECK_OGL()
-    }
-
-    ~InOutContract()
-    {
-      // dispatch the renderer-finished event
-      mRenderer->dispatchOnRendererFinished();
-
-      OpenGLContext* gl_context = mRenderer->framebuffer()->openglContext();
-
-      // restore default render states
-      for(size_t i=0; i<mOriginalDefaultRS.size(); ++i)
-      {
-        gl_context->setDefaultRenderState(mOriginalDefaultRS[i]);
-      }
-
-      VL_CHECK( !globalSettings()->checkOpenGLStates() || mRenderer->framebuffer()->openglContext()->isCleanState(true) );
-
-      // check user-generated errors.
-      VL_CHECK_OGL()
-
-      // note: we don't reset the render target here
-    }
-  } contract(this, camera);
-
-  // --------------- rendering --------------- 
-
+  // FIXME: use a small & simple hash-map<int, GLSLProgState> allocated on the stack
+  // mapping the GLSL program ID to the corresponding GLSLProgState.
   std::map<const GLSLProgram*, GLSLProgState> glslprogram_map;
 
   OpenGLContext* opengl_context = framebuffer()->openglContext();
@@ -415,5 +347,78 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   opengl_context->bindVAS(NULL, false, false); VL_CHECK_OGL();
 
   return render_queue;
+}
+const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* camera, real frame_clock)
+{
+  VL_CHECK_OGL()
+
+  // skip if renderer is disabled
+
+  if ( enableMask() == 0 ) {
+    return render_queue;
+  }
+
+  // enter/exit behavior contract
+
+  class InOutContract 
+  {
+    Renderer* mRenderer;
+    std::vector<RenderStateSlot> mOriginalDefaultRS;
+  public:
+    InOutContract(Renderer* renderer, Camera* camera): mRenderer(renderer)
+    {
+      // increment the render tick.
+      mRenderer->mRenderTick++;
+
+      // render-target activation.
+      // note: an OpenGL context can have multiple rendering targets!
+      mRenderer->framebuffer()->activate();
+
+      // viewport setup.
+      camera->viewport()->setClearFlags( mRenderer->clearFlags() );
+      camera->viewport()->activate();
+
+      OpenGLContext* gl_context = renderer->framebuffer()->openglContext();
+
+      // default render states override
+      for(size_t i=0; i<renderer->overriddenDefaultRenderStates().size(); ++i)
+      {
+        // save overridden default render state to be restored later
+        ERenderState type = renderer->overriddenDefaultRenderStates()[i].type();
+        mOriginalDefaultRS.push_back(gl_context->defaultRenderState(type));
+        // set new default render state
+        gl_context->setDefaultRenderState(renderer->overriddenDefaultRenderStates()[i]);
+      }
+
+      // dispatch the renderer-started event.
+      mRenderer->dispatchOnRendererStarted();
+
+      // check user-generated errors.
+      VL_CHECK_OGL()
+    }
+
+    ~InOutContract()
+    {
+      // dispatch the renderer-finished event
+      mRenderer->dispatchOnRendererFinished();
+
+      OpenGLContext* gl_context = mRenderer->framebuffer()->openglContext();
+
+      // restore default render states
+      for(size_t i=0; i<mOriginalDefaultRS.size(); ++i)
+      {
+        gl_context->setDefaultRenderState(mOriginalDefaultRS[i]);
+      }
+
+      VL_CHECK( !globalSettings()->checkOpenGLStates() || mRenderer->framebuffer()->openglContext()->isCleanState(true) );
+
+      // check user-generated errors.
+      VL_CHECK_OGL()
+
+      // note: we don't reset the render target here
+    }
+  } contract(this, camera);
+
+  return renderRaw( render_queue, camera, frame_clock );
 }
 //-----------------------------------------------------------------------------

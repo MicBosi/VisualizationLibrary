@@ -50,13 +50,17 @@ namespace vl
 
   public:
     Renderer();
-    
+
     virtual ~Renderer() {}
-    
-    /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing. 
+
+    /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing.
       * Renderer's implementation of this function always returns \p in_render_queue. */
     virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, real frame_clock);
 
+    /** Used by render() to loop through the render queue.
+      * Does not activate the framebuffer, does not activate the viewport, does not clear the viewport, does not
+      * setup the override states, does not issue the OnRendererStarted/Finished callbacks. */
+    const RenderQueue* renderRaw(const RenderQueue* in_render_queue, Camera* camera, real frame_clock);
     void setProjViewTransfCallback(ProjViewTransfCallback* callback) { mProjViewTransfCallback = callback; }
     
     const ProjViewTransfCallback* projViewTransfCallback() const { return mProjViewTransfCallback.get(); }
