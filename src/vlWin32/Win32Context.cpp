@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -196,7 +196,7 @@ bool Win32Context::setFullscreen(bool fullscreen_on)
     // devmode.dmPelsWidth  = ... leave current width
     // devmode.dmPelsHeight = ... leave current height
     // change color depth
-    devmode.dmBitsPerPel = openglContextInfo().bitsPerPixel();					  
+    devmode.dmBitsPerPel = openglContextInfo().bitsPerPixel();
 	  devmode.dmFields		 |= DM_BITSPERPEL;
 
     mNormFlags = (unsigned int)GetWindowLongPtr(hwnd(), GWL_STYLE);
@@ -259,7 +259,7 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
     {
       cleanup();
     }
-    
+
     ~InOutContract()
     {
       if (!mOK)
@@ -281,7 +281,7 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
         if ( wglDeleteContext(mContext->mHGLRC) == FALSE )
         {
           MessageBox(NULL, L"OpenGL context cleanup failed.\n"
-           L"The handle either doesn't specify a valid context or the context is being used by another thread.", 
+           L"The handle either doesn't specify a valid context or the context is being used by another thread.",
            L"Win32Context::init() error!", MB_OK);
           mOK = false;
         }
@@ -308,14 +308,14 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
   mHDC = ::GetDC(hwnd());
   if (!mHDC)
   {
-    MessageBox(NULL, L"Device context acquisition failed.", L"Win32Context::init() error!", MB_OK); 
+    MessageBox(NULL, L"Device context acquisition failed.", L"Win32Context::init() error!", MB_OK);
     return contract.mOK = false;
   }
 
   int pixel_format_index = vlWin32::choosePixelFormat(fmt);
   if (pixel_format_index == -1)
   {
-    MessageBox(NULL, L"No suitable pixel fmt found.", L"Win32Context::init() error!", MB_OK); 
+    MessageBox(NULL, L"No suitable pixel fmt found.", L"Win32Context::init() error!", MB_OK);
     return contract.mOK = false;
   }
 
@@ -368,7 +368,7 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
 
   if (fmt.fullscreen())
     setFullscreen(true);
-  
+
   return contract.mOK = true;
 }
 //-----------------------------------------------------------------------------
@@ -380,8 +380,8 @@ void Win32Context::setContextAttribs(const int* attribs, int size)
 }
 //-----------------------------------------------------------------------------
 namespace vlWin32
-{ 
-  extern bool registerClass(); 
+{
+  extern bool registerClass();
   extern const wchar_t* gWin32WindowClassName;
 }
 //-----------------------------------------------------------------------------
@@ -398,7 +398,7 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
     gWin32WindowClassName,
     L"Temp GL Window",
     WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
+    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
     NULL, NULL, GetModuleHandle(NULL), NULL);
 
   if (!hWnd)

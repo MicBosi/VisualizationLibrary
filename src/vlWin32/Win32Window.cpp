@@ -70,14 +70,14 @@ namespace vlWin32
 
   #if 0
     // used for debugging purposes
-    void win32PrintError(LPTSTR lpszFunction) 
-    { 
-        TCHAR szBuf[80]; 
+    void win32PrintError(LPTSTR lpszFunction)
+    {
+        TCHAR szBuf[80];
         LPVOID lpMsgBuf;
-        DWORD dw = GetLastError(); 
+        DWORD dw = GetLastError();
 
         FormatMessage(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
             FORMAT_MESSAGE_FROM_SYSTEM,
             NULL,
             dw,
@@ -85,11 +85,11 @@ namespace vlWin32
             (LPTSTR) &lpMsgBuf,
             0, NULL );
 
-        wsprintf(szBuf, 
-            L"%s failed with error %d: %s", 
-            lpszFunction, dw, lpMsgBuf); 
-     
-        MessageBox(NULL, szBuf, L"Visualization Library Error", MB_OK); 
+        wsprintf(szBuf,
+            L"%s failed with error %d: %s",
+            lpszFunction, dw, lpMsgBuf);
+
+        MessageBox(NULL, szBuf, L"Visualization Library Error", MB_OK);
 
         LocalFree(lpMsgBuf);
     }
@@ -99,19 +99,19 @@ namespace vlWin32
 std::map< HWND, Win32Window* > Win32Window::mWinMap;
 //-----------------------------------------------------------------------------
 LONG WINAPI Win32Window::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{ 
+{
   Win32Window* win = Win32Window::getWindow(hWnd);
   if (!win)
-    return (LONG)DefWindowProc(hWnd, uMsg, wParam, lParam); 
+    return (LONG)DefWindowProc(hWnd, uMsg, wParam, lParam);
 
-  switch(uMsg) 
+  switch(uMsg)
   {
     case WM_PAINT:
     {
       // handle event and then dispatch: solves MessageBox dialog problem.
-      LONG val = (LONG)DefWindowProc(hWnd, uMsg, wParam, lParam); 
+      LONG val = (LONG)DefWindowProc(hWnd, uMsg, wParam, lParam);
       if (win->hglrc() && win->hdc() && win->hwnd())
-        win->dispatchRunEvent();
+        win->dispatchUpdateEvent();
       return val;
     }
 
@@ -239,10 +239,10 @@ LONG WINAPI Win32Window::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
     // WM_SETCURSOR
     // WM_SETICON
     // WM_CAPTURECHANGED
-    // WM_MOUSEFIRST 
+    // WM_MOUSEFIRST
   }
 
-  return (LONG)DefWindowProc(hWnd, uMsg, wParam, lParam); 
+  return (LONG)DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 //-----------------------------------------------------------------------------
 // Win32Window
@@ -279,7 +279,7 @@ bool Win32Window::initWin32GLWindow(HWND parent, HGLRC share_context, const vl::
     mWindowClassName,
     L"Visualization Library Win32",
     style,
-    x, y, width, height, 
+    x, y, width, height,
     parent, NULL, GetModuleHandle(NULL), NULL);
 
   if (initWin32GLContext(share_context, title, fmt, x, y, width, height))
@@ -296,13 +296,13 @@ Win32Window* Win32Window::getWindow(HWND hWnd)
   std::map< HWND, Win32Window* >::const_iterator it = mWinMap.find(hWnd);
   if (it != mWinMap.end())
     return it->second;
-  else 
+  else
     return NULL;
 }
 //-----------------------------------------------------------------------------
 void Win32Window::destroyWin32GLWindow()
 {
-  // wglMakeCurrent(NULL, NULL) not needed 
+  // wglMakeCurrent(NULL, NULL) not needed
 
   if (hwnd())
   {
@@ -336,7 +336,7 @@ void vlWin32::dispatchUpdate()
   // iterate over all opengl contexts
   std::map< HWND, Win32Window* > wins = Win32Window::winMap();
   for( std::map< HWND, Win32Window* >::iterator it = wins.begin();
-       it != wins.end(); 
+       it != wins.end();
        ++it )
   {
     Win32Window* win = it->second;

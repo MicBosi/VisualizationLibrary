@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -51,17 +51,17 @@ namespace vlWin32
     Win32Context(int w, int h): OpenGLContext(w,h), mHDC(NULL), mHGLRC(NULL) {}
 
     ~Win32Context();
-  
+
     virtual HWND hwnd() const = 0;
 
     HDC   hdc()   const { return mHDC;   }
-    
+
     HGLRC hglrc() const { return mHGLRC; }
 
     //! Use this function when you want two OpenGL contexts to share their resources (display lists, textures, shader objects, buffer objects etc.)
     //! Equivalent to wglShareLists(this->hglrc(), hGLRC)
-    //! \remarks 
-    //! If you want to share resources among two or more OpenGL contexts, you must call this function 
+    //! \remarks
+    //! If you want to share resources among two or more OpenGL contexts, you must call this function
     //! before you start creating any resources.
     void shareOpenGLResources(HGLRC hGLRC);
 
@@ -106,15 +106,15 @@ namespace vlWin32
     //! Calls the PostQuitMessage(0) function (Win32 API).
     void quitApplication();
 
-    //! Context attributes used when creating an OpenGL 3.x / 4.x context. 
+    //! Context attributes used when creating an OpenGL 3.x / 4.x context.
     //! The flags must be the ones specified by http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt
     const std::vector<int>& contextAttribs() const { return mContextAttribs; }
 
-    //! Context attributes used when creating an OpenGL 3.x / 4.x context. 
+    //! Context attributes used when creating an OpenGL 3.x / 4.x context.
     //! The flags must be the ones specified by http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt
     std::vector<int>& contextAttribs() { return mContextAttribs; }
-    
-    //! Context attributes used when creating an OpenGL 3.x / 4.x context. 
+
+    //! Context attributes used when creating an OpenGL 3.x / 4.x context.
     //! The flags must be the ones specified by http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt
     void setContextAttribs(const int* attribs, int size);
 
