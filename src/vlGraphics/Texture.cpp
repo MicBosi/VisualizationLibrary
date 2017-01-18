@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -288,7 +288,7 @@ namespace
       case TF_RGBA16:
       case TF_RGBA16UI:
       case TF_DEPTH_COMPONENT16:
-        return GL_UNSIGNED_SHORT; 
+        return GL_UNSIGNED_SHORT;
 
       case TF_ALPHA16I_EXT:
       case TF_INTENSITY16I_EXT:
@@ -1116,7 +1116,7 @@ bool Texture::createTexture()
   ETextureDimension tex_dimension = setupParams()->dimension();
   bool gen_mipmaps = setupParams()->genMipmaps();
   bool border = setupParams()->border();
-  if ( !setupParams()->image() && !setupParams()->imagePath().empty() ) 
+  if ( !setupParams()->image() && !setupParams()->imagePath().empty() )
   {
     setupParams()->setImage( loadImage( setupParams()->imagePath() ).get() );
     if (!setupParams()->image())
@@ -1138,15 +1138,20 @@ bool Texture::createTexture()
     h = img->height();
     d = img->depth();
     // guess from image format
-    if (tex_format == TF_UNKNOWN)
+    if (tex_format == TF_UNKNOWN) {
       tex_format = (ETextureFormat)img->format();
+    }
   }
-  //w = w > 0 ? w : 1;
-  //h = h > 0 ? h : 1;
-  //d = d > 0 ? d : 1;
 
-  if ( !createTexture( tex_dimension, tex_format, w, h, d, border, setupParams()->bufferObject(), setupParams()->samples(), setupParams()->fixedSamplesLocations() ) )
+  if ( ! createTexture( tex_dimension,
+                        tex_format,
+                        w, h, d,
+                        border,
+                        setupParams()->bufferObject(),
+                        setupParams()->samples(),
+                        setupParams()->fixedSamplesLocations() ) ) {
     return false;
+  }
 
   VL_CHECK_OGL()
 

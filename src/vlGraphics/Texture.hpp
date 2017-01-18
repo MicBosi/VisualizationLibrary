@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -47,7 +47,7 @@ namespace vl
   /** Wraps the OpenGL function glTexParameter(), see also http://www.opengl.org/sdk/docs/man/xhtml/glTexParameter.xml for more information.
    *
    * \note
-   * A TexParameter defines a set of variables associated to a Texture while 
+   * A TexParameter defines a set of variables associated to a Texture while
    * TexGen and TexEnv define a set of variables associated to a TextureSampler.
    *
    * \sa
@@ -82,7 +82,8 @@ namespace vl
     EDepthTextureMode depthTextureMode() const { return mDepthTextureMode; }
 
     void setMinFilter(ETexParamFilter minfilter) { mDirty = true; mMinFilter = minfilter; }
-	  void setMagFilter(ETexParamFilter magfilter);
+    void setMagFilter(ETexParamFilter magfilter);
+    void setWrap(ETexParamWrap wrap)             { setWrapS(wrap); setWrapT(wrap); setWrapR(wrap); }
     void setWrapS(ETexParamWrap texturewrap)     { mDirty = true; mWrapS = texturewrap; }
     void setWrapT(ETexParamWrap texturewrap)     { mDirty = true; mWrapT = texturewrap; }
     void setWrapR(ETexParamWrap texturewrap)     { mDirty = true; mWrapR = texturewrap; }
@@ -126,7 +127,7 @@ namespace vl
    * - http://www.opengl.org/sdk/docs/man/xhtml/glTexImage3D.xml
    *
    * \note
-   * A TexParameter defines a set of variables associated to a Texture while 
+   * A TexParameter defines a set of variables associated to a Texture while
    * TexGen and TexEnv define a set of variables associated to a TextureSampler.
    *
    * \sa
@@ -147,7 +148,7 @@ namespace vl
   public:
     /** SetupParams wraps all the parameters needed to crate a Texture.
      * A SetupParams object is automatically setup and bound to a Texture after calling prepareTexture2D() and similar functions.
-     * Once the SetupParams are bound to a Texture calling Texture::createTexture() will create a new Texture according 
+     * Once the SetupParams are bound to a Texture calling Texture::createTexture() will create a new Texture according
      * to what specified in the SetupParams objects. After Texture::createTexture() the SetupParams object is kept but eventual
      * Image and BufferObjects will be released. If an Image was used it's filePath() is assigned to SetupParam::imagePath(). */
     class SetupParams: public Object
@@ -215,26 +216,26 @@ namespace vl
     };
 
   public:
-    /** Constructs a 1D, 2D, 3D or Cubemap texture from the specified file. 
+    /** Constructs a 1D, 2D, 3D or Cubemap texture from the specified file.
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this constructor. */
     Texture(const String& image_path, ETextureFormat format = TF_RGBA, bool mipmaps = true, bool border=false);
-    
-    /** Constructs a 1D, 2D, 3D or Cubemap texture from the specified image. 
+
+    /** Constructs a 1D, 2D, 3D or Cubemap texture from the specified image.
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this constructor. */
     Texture(const Image* image, ETextureFormat format = TF_RGBA, bool mipmaps = true, bool border=false);
-    
-    /** Constructs an empty 1D texture. 
+
+    /** Constructs an empty 1D texture.
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this constructor. */
     Texture(int width, ETextureFormat format = TF_RGBA, bool border=false);
-    
-    /** Constructs an empty 2D texture. 
+
+    /** Constructs an empty 2D texture.
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this constructor. */
     Texture(int width, int height, ETextureFormat format = TF_RGBA, bool border=false);
-    
-    /** Constructs an empty 3D texture. 
+
+    /** Constructs an empty 3D texture.
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this constructor. */
     Texture(int width, int height, int depth, ETextureFormat format = TF_RGBA, bool border=false);
-    
+
     /** Constructs an null texture that can be initialized later using one of the \p prepareTexture*() functions or calling createTexture(). */
     Texture();
 
@@ -252,15 +253,16 @@ namespace vl
 
     /** The buffer object bound to a buffer object texture. */
     BufferObject* bufferObject() { return mBufferObject.get(); }
-    
+
     /** The buffer object bound to a buffer object texture. */
     const BufferObject* bufferObject() const { return mBufferObject.get(); }
 
-    /** Destroys the texture. */
+    /** Destroys the GL texture object if managed() is `true` (default). TexParameter is not reset but is marked dirty.
+    After calling this function the vl::Texture values are reset() including managed() which is set to `true`. */
     void destroyTexture();
 
-    /** Creates a texture using the parameters specified by the last \p prepareTexture*() called. 
-    \remarks You can retrieve the currently active texture creation settings using the setupParams() function. 
+    /** Creates a texture using the parameters specified by the last \p prepareTexture*() called.
+    \remarks You can retrieve the currently active texture creation settings using the setupParams() function.
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this function. */
     bool createTexture();
 
@@ -268,11 +270,11 @@ namespace vl
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this function. */
     bool createTexture(ETextureDimension tex_dimension, ETextureFormat tex_format, int w, int h, int d, bool border, BufferObject* bo, int samples, bool fixedsamplelocations);
 
-    /** Copies the texture image to the specified mip-maping level. This function can be useful to 
+    /** Copies the texture image to the specified mip-maping level. This function can be useful to
     specify one by one the mipmapping images or to create texture animation effects.
     \param mip_level The mip-mapping level to be modified.
     \param img The Image containing the pixels to be copied into the specified mip-mapping level.
-    \param gen_mipmaps If \p true automatically generates the mip-mapping images for the levels below \p mip_level. 
+    \param gen_mipmaps If \p true automatically generates the mip-mapping images for the levels below \p mip_level.
     \remarks Before calling this function one of the two createTexture() methods must have been called.
     \note The mip-map level is updated immediately therefore an OpenGL context must be active when calling this function. */
     bool setMipLevel(int mip_level, const Image* img, bool gen_mipmaps);
@@ -330,28 +332,28 @@ namespace vl
       mSetupParams->setWidth(width);
       mSetupParams->setHeight(height);
     }
-    
+
     /** Creates an empty 2D texture. */
     bool createTexture2D(int width, int height, ETextureFormat format, bool border=false)
     {
       prepareTexture2D(width, height, format, border);
       return createTexture();
     }
-    
+
     /** Prepares for creation a 2D texture from the specified file. */
     void prepareTexture2D(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTexture2D(NULL, format, mipmaps, border);
       mSetupParams->setImagePath(image_path);
     }
-    
+
     /** Creates a 2D texture from the specified file. */
     bool createTexture2D(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTexture2D(image_path, format, mipmaps, border);
       return createTexture();
     }
-    
+
     /** Prepares for creation a 2D texture from the specified image. */
     void prepareTexture2D(const Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
@@ -362,14 +364,14 @@ namespace vl
       mSetupParams->setGenMipmaps(mipmaps);
       mSetupParams->setBorder(border);
     }
-    
+
     /** Creates a 2D texture from the specified image. */
     bool createTexture2D(const Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTexture2D(image, format, mipmaps, border);
       return createTexture();
     }
-    
+
     /** Prepares for creation an empty 3D texture. */
     void prepareTexture3D(int width, int height, int depth, ETextureFormat format, bool border=false)
     {
@@ -378,28 +380,28 @@ namespace vl
       mSetupParams->setHeight(height);
       mSetupParams->setDepth(depth);
     }
-    
+
     /** Creates an empty 3D texture. */
     bool createTexture3D(int width, int height, int depth, ETextureFormat format, bool border=false)
     {
       prepareTexture3D(width, height, depth, format, border);
       return createTexture();
     }
-    
+
     /** Prepares for creation a 3D texture from the specified file. */
     void prepareTexture3D(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTexture3D(NULL, format, mipmaps, border);
       mSetupParams->setImagePath(image_path);
     }
-    
+
     /** Creates a 3D texture from the specified file. */
     bool createTexture3D(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTexture3D(image_path, format, mipmaps, border);
       return createTexture();
     }
-    
+
     /** Prepares for creation a 3D texture from the specified image. */
     void prepareTexture3D(const Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
@@ -410,14 +412,14 @@ namespace vl
       mSetupParams->setGenMipmaps(mipmaps);
       mSetupParams->setBorder(border);
     }
-   
+
     /** Creates a 3D texture from the specified image. */
     bool createTexture3D(const Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTexture3D(image, format, mipmaps, border);
       return createTexture();
     }
-   
+
     /** Prepares for creation an empty cubemap texture. */
     void prepareTextureCubemap(int width, int height, ETextureFormat format, bool border=false)
     {
@@ -425,28 +427,28 @@ namespace vl
       mSetupParams->setWidth(width);
       mSetupParams->setHeight(height);
     }
-    
+
     /** Creates an empty cubemap texture. */
     bool createTextureCubemap(int width, int height, ETextureFormat format, bool border=false)
     {
       prepareTextureCubemap(width, height, format, border);
       return createTexture();
     }
-    
+
     /** Prepares for creation a cubemap texture from the specified file. */
     void prepareTextureCubemap(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTextureCubemap(NULL, format, mipmaps, border);
       mSetupParams->setImagePath(image_path);
     }
-    
+
     /** Creates creation a cubemap texture from the specified file. */
     bool createTextureCubemap(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTextureCubemap(image_path, format, mipmaps, border);
       return createTexture();
     }
-    
+
     /** Prepares for creation a cubemap texture from the specified image. */
     void prepareTextureCubemap(const Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
@@ -457,7 +459,7 @@ namespace vl
       mSetupParams->setGenMipmaps(mipmaps);
       mSetupParams->setBorder(border);
     }
-    
+
     /** Creates a cubemap texture from the specified image. */
     bool createTextureCubemap(const Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
@@ -472,28 +474,28 @@ namespace vl
       mSetupParams->setWidth(width);
       mSetupParams->setHeight(count);
     }
-    
+
     /** Creates an empty 1D array texture. */
     bool createTexture1DArray(int width, int count, ETextureFormat format)
     {
       prepareTexture1DArray(width, count, format);
       return createTexture();
     }
-    
+
     /** Prepares for creation a 1d texture array from the specified file. */
     void prepareTexture1DArray(const String& image_path, ETextureFormat format, bool mipmaps=true)
     {
       prepareTexture1DArray(NULL, format, mipmaps);
       mSetupParams->setImagePath(image_path);
     }
-    
+
     /** Creates a 1d texture array from the specified file. */
     bool createTexture1DArray(const String& image_path, ETextureFormat format, bool mipmaps=true)
     {
       prepareTexture1DArray(image_path, format, mipmaps);
       return createTexture();
     }
-    
+
     /** Prepares for creation a 1d texture array from the specified image. */
     void prepareTexture1DArray(const Image* image, ETextureFormat format, bool mipmaps=true)
     {
@@ -504,14 +506,14 @@ namespace vl
       mSetupParams->setGenMipmaps(mipmaps);
       mSetupParams->setBorder(false);
     }
-    
+
     /** Creates a 1d texture array from the specified image. */
     bool createTexture1DArray(const Image* image, ETextureFormat format, bool mipmaps=true)
     {
       prepareTexture1DArray(image, format, mipmaps);
       return createTexture();
     }
-    
+
     /** Prepares for creation an empty 2D array texture. */
     void prepareTexture2DArray(int width, int height, int count, ETextureFormat format)
     {
@@ -520,28 +522,28 @@ namespace vl
       mSetupParams->setHeight(height);
       mSetupParams->setDepth(count);
     }
-    
+
     /** Creates an empty 2D array texture. */
     bool createTexture2DArray(int width, int height, int count, ETextureFormat format)
     {
       prepareTexture2DArray(width, height, count, format);
       return createTexture();
     }
-    
+
     /** Prepares for creation a 2d texture array from the specified file. */
     void prepareTexture2DArray(const String& image_path, ETextureFormat format, bool mipmaps=true)
     {
       prepareTexture2DArray(NULL, format, mipmaps);
       mSetupParams->setImagePath(image_path);
     }
-    
+
     /** Creates a 2d texture array from the specified file. */
     bool createTexture2DArray(const String& image_path, ETextureFormat format, bool mipmaps=true)
     {
       prepareTexture2DArray(image_path, format, mipmaps);
       return createTexture();
     }
-    
+
     /** Prepares for creation a 2d texture array from the specified image. */
     void prepareTexture2DArray(const Image* image, ETextureFormat format, bool mipmaps=true)
     {
@@ -552,14 +554,14 @@ namespace vl
       mSetupParams->setGenMipmaps(mipmaps);
       mSetupParams->setBorder(false);
     }
-    
+
     /** Creates a 2d texture array from the specified image. */
     bool createTexture2DArray(const Image* image, ETextureFormat format, bool mipmaps=true)
     {
       prepareTexture2DArray(image, format, mipmaps);
       return createTexture();
     }
-    
+
     /** Prepares for creation an empty texture rectangle. */
     void prepareTextureRectangle(int width, int height, ETextureFormat format)
     {
@@ -567,28 +569,28 @@ namespace vl
       mSetupParams->setWidth(width);
       mSetupParams->setHeight(height);
     }
-    
+
     /** Creates an empty texture rectangle. */
     bool createTextureRectangle(int width, int height, ETextureFormat format)
     {
       prepareTextureRectangle(width, height, format);
       return createTexture();
     }
-    
+
     /** Prepares for creation a texture rectangle from the specified file. */
     void prepareTextureRectangle(const String& image_path, ETextureFormat format)
     {
       prepareTextureRectangle(NULL, format);
       mSetupParams->setImagePath(image_path);
     }
-    
+
     /** Creates a texture rectangle from the specified file. */
     bool createTextureRectangle(const String& image_path, ETextureFormat format)
     {
       prepareTextureRectangle(image_path, format);
       return createTexture();
     }
-    
+
     /** Prepares for creation a texture rectangle from the specified image. */
     void prepareTextureRectangle(const Image* image, ETextureFormat format)
     {
