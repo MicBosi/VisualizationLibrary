@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,36 +40,6 @@
 namespace vl
 {
   class Uniform;
-
-  //------------------------------------------------------------------------------
-  // UniformInfo
-  //------------------------------------------------------------------------------
-  //! Structure containing all the info regarding an active Uniform, see also GLSLProgram::activeUniforms()
-  struct UniformInfo: public Object
-  {
-    UniformInfo(const char* name, EUniformType type, int size, int location)
-    :Name(name), Type(type), Size(size), Location(location) {}
-
-    std::string Name;  //!< The name of the uniform.
-    EUniformType Type; //!< The type of the uniform (float, vec4, mat2x3, sampler2D etc.)
-    int Size;          //!< The size of the uniform: 1 for non-arrays, >= 1 for arrays.
-    int Location;      //!< Location of the uniform as retuned by glGetUniformLocation().
-  };
-
-  //------------------------------------------------------------------------------
-  // AttribInfo
-  //------------------------------------------------------------------------------
-  //! Structure containing all the info regarding an active vertex attribute, see also GLSLProgram::activeAttribs()
-  struct AttribInfo: public Object
-  {
-    AttribInfo(const char* name, EAttributeType type, int size, int location)
-    :Name(name), Type(type), Size(size), Location(location) {}
-
-    std::string Name;    //!< Name of the active attribute.
-    EAttributeType Type; //!< Type as returned by http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml
-    int Size;            //!< The size of the attribute, in units of the type returned in Type.
-    int Location;        //!< Location of the active attribute
-  };
 
   //------------------------------------------------------------------------------
   // GLSLShader
@@ -244,11 +214,7 @@ namespace vl
    * A Uniform must be setup using <i>one and only one</i> of the 5 previously mentioned methods.
    *
    * \par Attribute Location Bindings
-   * In order to explicity specify which attribute index should be bound to which attribute name you can do one of the following.
-   * -# call glBindAttribLocation() with the appropriate GLSLProgram::handle(). This is the most low level way of doing it.
-   * -# call bindAttribLocation() as you would do normally with glBindAttribLocation() but with the difference the you don't need to specify the GLSL program handle.
-   * -# create a list of attribute name/indices that will be automatically bound whenever the GLSLProgram is linked. In order to do so you can use the following functions 
-   *    setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), addAutoAttribLocation(), removeAutoAttribLocation().
+   * MIC FIXME: WRITE THIS SECTION
    *
    * Note that for option #1 and #2 you need to relink the GLSLProgram in order for the changes to take effect (linkProgram(force_relink=true)). 
    * Option #2 and #3 automatically schedule a re-link of the GLSL program. See also http://www.opengl.org/sdk/docs/man/xhtml/glBindAttribLocation.xml
@@ -350,30 +316,6 @@ namespace vl
       *     removeAutoAttribLocation(), addAutoAttribLocation() */
     void bindAttribLocation(unsigned int index, const char* name);
 
-    /** Adds an attribute name / index pair to the automatic attribute location binding list. Calling this function will schedule a re-linking of the GLSL program.
-    * \sa setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), 
-    *     bindAttribLocation(), removeAutoAttribLocation() */
-    void addAutoAttribLocation(int attr_index, const char* attr_name) { mAutoAttribLocation[attr_name] = attr_index; mScheduleLink = true; }
-
-    /** Removes an attribute from the automatic attribute location binding list. Calling this function will schedule a re-linking of the GLSL program.
-    * \sa setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), 
-    *     bindAttribLocation(), addAutoAttribLocation() */
-    void removeAutoAttribLocation(const char* attr_name) { mAutoAttribLocation.erase(attr_name); mScheduleLink = true; }
-
-    /** Defines which \p attribute should be automatically bound to which \p attribute \p index at GLSL program linking time. Calling this function will schedule a re-linking of the GLSL program.
-    * \sa autoAttribLocations(), clearAutoAttribLocations(), 
-    *     bindAttribLocation(), removeAutoAttribLocation(), addAutoAttribLocation() */
-    void setAutoAttribLocations(const std::map<std::string, int>& attrib_bindings) { mAutoAttribLocation = attrib_bindings; mScheduleLink = true; }
-
-    /** Returns which \p attribute name should be automatically bound to which \p attribute \p index at GLSL program linking time.
-    * \sa setAutoAttribLocations(), clearAutoAttribLocations(), 
-    *     bindAttribLocation(), removeAutoAttribLocation(), addAutoAttribLocation() */
-    const std::map<std::string, int>& autoAttribLocations() const { return  mAutoAttribLocation; }
-
-    /** Clears the automatic attribute location binding list. See also setAutoAttribLocations() and autoAttribLocations().
-    * \sa setAutoAttribLocations(), autoAttribLocations(), 
-    *     bindAttribLocation(), removeAutoAttribLocation(), addAutoAttribLocation() */
-    void clearAutoAttribLocations() { mAutoAttribLocation.clear(); }
 
     //! Eqivalento to glGetAttribLocation(handle(), name).
     //! \note The program must be linked before calling this function.
@@ -579,35 +521,6 @@ namespace vl
     //! Utility function using getUniformSet(). Erases all the uniforms.
     void eraseAllUniforms() { if(getUniformSet()) getUniformSet()->eraseAllUniforms(); }
 
-    //! Returns a map containing name, type, size and location of all the uniforms that were active last time the GLSL program was linked.
-    //! - See also vl::GLSLProgram::activeUniformInfo(), vl::UniformInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml
-    const std::map<std::string, ref<UniformInfo> >& activeUniforms() const { return mActiveUniforms; }
-
-    //! Returns the info (name, type, size and location) regarding the specified uniform or NULL if such uniform is not currently active since last time the GLSL program was linked.
-    //! - See also vl::GLSLProgram::activeUniforms(), vl::UniformInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml
-    const UniformInfo* activeUniformInfo(const char* name) const 
-    { 
-      std::map<std::string, ref<UniformInfo> >::const_iterator it = mActiveUniforms.find(name);
-      if (it == mActiveUniforms.end())
-        return NULL;
-      else
-        return it->second.get();
-    }
-
-    //! Returns a map containing the info of all the attributes active since last time the GLSL program was linked.
-    //! - See also vl::GLSLProgram::activeAttribInfo(), vl::AttribInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml
-    const std::map<std::string, ref<AttribInfo> >& activeAttribs() const { return mActiveAttribs; }
-
-    //! Returns the info regarding the specified attribute or NULL if such attribute is not currently active since last time the GLSL program was linked.
-    //! - See also vl::GLSLProgram::activeAttribs(), vl::AttribInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml
-    const AttribInfo* activeAttribInfo(const char* name) const 
-    { 
-      std::map<std::string, ref<AttribInfo> >::const_iterator it = mActiveAttribs.find(name);
-      if (it == mActiveAttribs.end())
-        return NULL;
-      else
-        return it->second.get();
-    }
 
     //! Returns the binding location of the vl_ModelViewMatrix uniform variable or -1 if no such variable is used by the GLSLProgram
     int vl_ModelViewMatrix() const { return m_vl_ModelViewMatrix; }
@@ -628,9 +541,6 @@ namespace vl
   protected:
     std::vector< ref<GLSLShader> > mShaders;
     std::map<std::string, int> mFragDataLocation;
-    std::map<std::string, ref<UniformInfo> > mActiveUniforms;
-    std::map<std::string, ref<AttribInfo> > mActiveAttribs;
-    std::map<std::string, int> mAutoAttribLocation;
     ref<UniformSet> mUniformSet;
     unsigned int mHandle;
     bool mScheduleLink;

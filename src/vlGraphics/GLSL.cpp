@@ -522,86 +522,12 @@ void GLSLProgram::preLink()
     VL_glProgramParameteri(handle(), GL_PROGRAM_SEPARABLE, programSeparable()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
   }
 
-  // automatically binds the specified attributes to the desired values
-
-  for( std::map<std::string, int>::iterator it = mAutoAttribLocation.begin(); it != mAutoAttribLocation.end(); ++it)
-  {
-    glBindAttribLocation(handle(),it->second,it->first.c_str()); VL_CHECK_OGL();
-  }
 }
 //-----------------------------------------------------------------------------
 void GLSLProgram::postLink()
 {
   VL_CHECK_OGL();
 
-  // populate uniform binding map
-
-  mActiveUniforms.clear();
-
-  int uniform_len = 0;
-  glGetProgramiv(handle(), GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniform_len); VL_CHECK_OGL();
-  if (uniform_len)
-  {
-    std::vector<char> tmp_buf;
-    tmp_buf.resize(uniform_len+1); // +1: just for safety in case of buggy drivers.
-    char* name = &tmp_buf[0];
-
-    int uniform_count = 0;
-    glGetProgramiv(handle(), GL_ACTIVE_UNIFORMS, &uniform_count); VL_CHECK_OGL();
-    for(int i=0; i<uniform_count; ++i)
-    {
-      GLenum type;
-      int size;
-      std::fill(tmp_buf.begin(), tmp_buf.end(), 0); // reset string to all zeros: just for safety in case of buggy drivers.
-      int length = 0;
-      glGetActiveUniform(handle(), i, (GLsizei)tmp_buf.size(), &length, &size, &type, name); VL_CHECK_OGL();
-
-      // workaround for NVIDIA drivers bug: remove the trailing [] after the uniform name.
-      // See also: http://visualizationlibrary.org/forum/viewtopic.php?f=3&t=307
-      if (name[length-1] == ']')
-      {
-        char* bracket = strrchr(name, '[');
-        if (bracket)
-        {
-          Log::warning( Say("Driver bug: glGetActiveUniform() returned a uniform name '%s' containing square brackets!\n"
-                          "VL will continue trimming them from the uniform's name.\n"
-                          "Please update your drivers and report the issue to your driver vendor.\n"
-                          "Driver info: vendor: %s, renderer: %s, OpenGL version: %s\n"
-                          ) << name << glGetString(GL_VENDOR) << glGetString(GL_RENDERER) << glGetString(GL_VERSION) );
-          *bracket = 0;
-        }
-      }
-
-      ref<UniformInfo> uinfo = new UniformInfo(name, (EUniformType)type, size, glGetUniformLocation(handle(), name));
-      mActiveUniforms[name] = uinfo;
-    }
-  }
-
-  // populate attribute binding map
-
-  mActiveAttribs.clear();
-
-  int attrib_len = 0;
-  glGetProgramiv(handle(), GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &attrib_len); VL_CHECK_OGL();
-  if (attrib_len)
-  {
-    std::vector<char> tmp_buf;
-    tmp_buf.resize(attrib_len);
-    char* name = &tmp_buf[0];
-
-    int attrib_count = 0;
-    glGetProgramiv(handle(), GL_ACTIVE_ATTRIBUTES, &attrib_count); VL_CHECK_OGL();
-    for(int i=0; i<attrib_count; ++i)
-    {
-      GLenum type;
-      int size;
-      glGetActiveAttrib(handle(), i, attrib_len, NULL, &size, &type, name); VL_CHECK_OGL();
-      ref<AttribInfo> uinfo = new AttribInfo(name, (EAttributeType)type, size, glGetAttribLocation(handle(), name));
-      mActiveAttribs[name] = uinfo;
-    }
-  }
-
-  // check for the predefined glsl uniform variables
 
   m_vl_ModelViewMatrix           = glGetUniformLocation(handle(), "vl_ModelViewMatrix");
   m_vl_ProjectionMatrix          = glGetUniformLocation(handle(), "vl_ProjectionMatrix");
