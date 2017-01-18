@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -59,7 +59,7 @@ public:
     rendering()->as<vl::Rendering>()->transform()->addChild(mStar2->transform());
   }
 
-  void updateScene() 
+  void updateScene()
   {
     // Animation: compute rotation matrix to rotate the small star, 45°/sec rotation.
     vl::dmat4 m = vl::dmat4::getRotation( vl::Time::currentTime()*45, 0,0,1 );
@@ -71,7 +71,7 @@ public:
     // reason in order to render them we have to tessellate them first, i.e. we have to decompose
     // them into a set of triangles using the Tessellator class.
 
-    // The Tessellator class takes as input a set of contours defining a complex polygon and 
+    // The Tessellator class takes as input a set of contours defining a complex polygon and
     // outputs a series of triangles that can be rendered by OpenGL and Visualization Library
     vl::Tessellator tess;
 
@@ -107,7 +107,7 @@ public:
 
     /*
     You can also tessellate each contour separately selecting setTessellateIntoSinglePolygon(false).
-    This way each contour will be processed separately and will generate its own set of triangles, this 
+    This way each contour will be processed separately and will generate its own set of triangles, this
     is useful when you want to tessellate a large number of polygons with a single tessellate() call.
     */
 

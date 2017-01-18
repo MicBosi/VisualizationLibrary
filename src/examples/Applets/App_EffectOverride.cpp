@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -140,7 +140,7 @@ class App_EffectOverride: public BaseDemo
   {
     real degrees = Time::currentTime() * 45.0f;
     mat4 matrix;
-    
+
     matrix.rotate( degrees, 0,1,0 );
     matrix.translate(-10,0,0);
     mCubeTransform1->setLocalMatrix( matrix );

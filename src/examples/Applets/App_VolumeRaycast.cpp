@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,14 +40,14 @@
 
 using namespace vl;
 
-/* 
+/*
   This example demonstrates how to implement raycasting using the vl::RaycastVolume class and a few ad-hoc fragment shaders.
-   
+
   The user has several controls as well:
-   
+
   Left/Right arrow keys changes the raycasting mode:
   - Isosurface_Mode
-  - Isosurface_Transp_Mode, 
+  - Isosurface_Transp_Mode,
   - MIP_Mode
   - RaycastBrightnessControl_Mode
   - RaycastDensityControl_Mode
@@ -69,15 +69,15 @@ class App_VolumeRaycast: public BaseDemo
 {
   /* ----- raycast volume rendering options ----- */
 
-  /* The sample step used to render the volume, the smaller the number 
+  /* The sample step used to render the volume, the smaller the number
      the  better ( and slower ) the rendering will be. */
   float SAMPLE_STEP;
 
   /* volume visualization mode */
-  enum RaycastMode { 
-    Isosurface_Mode, 
-    Isosurface_Transp_Mode, 
-    MIP_Mode, 
+  enum RaycastMode {
+    Isosurface_Mode,
+    Isosurface_Transp_Mode,
+    MIP_Mode,
     RaycastBrightnessControl_Mode,
     RaycastDensityControl_Mode,
     RaycastColorControl_Mode
@@ -96,7 +96,7 @@ class App_VolumeRaycast: public BaseDemo
 public:
   virtual String appletInfo()
   {
-    return BaseDemo::appletInfo() + 
+    return BaseDemo::appletInfo() +
     "- Left/Right Arrow: change raycast technique.\n" +
     "- Up/Down Arrow: changes SAMPLE_STEP.\n" +
     "- L: toggles lights (useful only for isosurface).\n" +
@@ -108,8 +108,8 @@ public:
 
   App_VolumeRaycast()
   {
-    SAMPLE_STEP         = 1.0f / 512.0f;
-    MODE                = RaycastBrightnessControl_Mode;
+    SAMPLE_STEP         = 512.0f;
+    MODE                = Isosurface_Transp_Mode;
     DYNAMIC_LIGHTS      = false;
     COLORED_LIGHTS      = false;
     PRECOMPUTE_GRADIENT = false;
@@ -165,10 +165,10 @@ public:
     mLight0->bindTransform( NULL );
     mLight1->bindTransform( NULL );
     mLight2->bindTransform( NULL );
-  
+
     ref<Effect> volume_fx = new Effect;
     // we don't necessarily need this:
-    // volume_fx->shader()->enable( EN_BLEND ); 
+    // volume_fx->shader()->enable( EN_BLEND );
     volume_fx->shader()->enable( EN_CULL_FACE );
     volume_fx->shader()->enable( EN_DEPTH_TEST );
 
@@ -217,11 +217,11 @@ public:
 
     // the GLSL program that performs the actual raycasting
     mGLSL = volume_fx->shader()->gocGLSLProgram();
-    mGLSL->gocUniform( "sample_step" )->setUniformF( SAMPLE_STEP );
-    
+    mGLSL->gocUniform( "sample_step" )->setUniformF( 1.0f / SAMPLE_STEP );
+
     // attach vertex shader (common to all the raycasting techniques)
     mGLSL->attachShader( new GLSLVertexShader( "/glsl/volume_luminance_light.vs" ) );
-    
+
     // attach fragment shader implementing the specific raycasting tecnique
     if ( MODE == Isosurface_Mode )
       mGLSL->attachShader( new GLSLFragmentShader( "/glsl/volume_raycast_isosurface.fs" ) );
@@ -283,6 +283,8 @@ public:
   {
     Effect* volume_fx = mVolumeAct->effect();
 
+    volume_fx->shader()->enable( EN_BLEND );
+
     // for semplicity we don't distinguish between different image formats, i.e. IF_LUMINANCE, IF_RGBA etc.
 
     ref<Image> gradient;
@@ -292,36 +294,46 @@ public:
       gradient = vl::genGradientNormals( mVolumeImage.get() );
     }
 
-    // install volume image as textue #0
-    volume_fx->shader()->gocTextureSampler( 0 )->setTexture( new vl::Texture( mVolumeImage.get(), TF_LUMINANCE8, false, false ) );
+    Log::debug( Say("Volume: %n %n %n\n") << mVolumeImage->width() << mVolumeImage->height() << mVolumeImage->depth() );
+
+    // volume image textue must be on sampler #0
+    vl::ref< vl::Texture > vol_tex = new vl::Texture( mVolumeImage.get(), TF_LUMINANCE8, false, false );
+    volume_fx->shader()->gocTextureSampler( 0 )->setTexture( vol_tex.get() );
+    vol_tex->getTexParameter()->setMagFilter( vl::TPF_LINEAR );
+    vol_tex->getTexParameter()->setMinFilter( vl::TPF_LINEAR );
+    vol_tex->getTexParameter()->setWrap( vl::TPW_CLAMP_TO_EDGE );
     volume_fx->shader()->gocUniform( "volume_texunit" )->setUniformI( 0 );
-    mRaycastVolume->generateTextureCoordinates( ivec3(mVolumeImage->width(), mVolumeImage->height(), mVolumeImage->depth()) );
+    mRaycastVolume->generateTextureCoordinates( ivec3( mVolumeImage->width(), mVolumeImage->height(), mVolumeImage->depth() ) );
 
     // generate a simple colored transfer function
     ref<Image> trfunc;
-    if ( COLORED_LIGHTS && DYNAMIC_LIGHTS )
+    if ( COLORED_LIGHTS && DYNAMIC_LIGHTS ) {
       trfunc = vl::makeColorSpectrum( 128, vl::white, vl::white ); // let the lights color the volume
-    else
+    }
+    else {
       trfunc = vl::makeColorSpectrum( 128, vl::blue, vl::royalblue, vl::green, vl::yellow, vl::crimson );
+    }
 
     // installs the transfer function as texture #1
-    volume_fx->shader()->gocTextureSampler( 1 )->setTexture( new Texture( trfunc.get() ) );
+    vl::ref< vl::Texture > trf_tex = new Texture( trfunc.get(), vl::TF_RGBA, false, false );
+    trf_tex->getTexParameter()->setMagFilter( vl::TPF_LINEAR );
+    trf_tex->getTexParameter()->setMinFilter( vl::TPF_LINEAR );
+    trf_tex->getTexParameter()->setWrap( vl::TPW_CLAMP_TO_EDGE );
+    volume_fx->shader()->gocTextureSampler( 1 )->setTexture( trf_tex.get() );
     volume_fx->shader()->gocUniform( "trfunc_texunit" )->setUniformI( 1 );
-    
+
     // gradient computation, only use for isosurface methods
     if ( MODE == Isosurface_Mode || MODE == Isosurface_Transp_Mode )
     {
+      volume_fx->shader()->gocUniform( "precomputed_gradient" )->setUniformI( PRECOMPUTE_GRADIENT ? 1 : 0 );
       if ( PRECOMPUTE_GRADIENT )
       {
-        volume_fx->shader()->gocUniform( "precomputed_gradient" )->setUniformI( 1 /*true*/ );
-        volume_fx->shader()->gocTextureSampler( 2 )->setTexture( new Texture( gradient.get(), TF_RGBA, false, false ) );
         volume_fx->shader()->gocUniform( "gradient_texunit" )->setUniformI( 2 );
-      }
-      else
-      {
-        volume_fx->shader()->gocUniform( "precomputed_gradient" )->setUniformI( 0 /*false*/ );
-        // used to compute on the fly the normals based on the volume's gradient
-        volume_fx->shader()->gocUniform( "gradient_delta" )->setUniform( fvec3( 0.5f/mVolumeImage->width(), 0.5f/mVolumeImage->height(), 0.5f/mVolumeImage->depth() ) );
+        vl::ref< vl::Texture > tex = new Texture( gradient.get(), TF_RGBA, false, false );
+        tex->getTexParameter()->setMagFilter( vl::TPF_LINEAR );
+        tex->getTexParameter()->setMinFilter( vl::TPF_LINEAR );
+        tex->getTexParameter()->setWrap( vl::TPW_CLAMP_TO_EDGE );
+        volume_fx->shader()->gocTextureSampler( 2 )->setTexture( tex.get() );
       }
     }
 
@@ -338,16 +350,17 @@ public:
     mVolumeImage = NULL;
 
     if( files.size() == 1 ) // if there is one file load it directly
-    {      
+    {
       if ( files[0].endsWith( ".dat" ) || files[0].endsWith( ".dds" ) )
       {
         mVolumeImage = loadImage( files[0] );
-        if ( mVolumeImage )
+        if ( mVolumeImage ) {
           setupVolume();
+        }
       }
     }
     else // if there is more than one file load and sort them and assemble a 3D image
-    {      
+    {
       // sort files by their name
       std::vector<String> files_sorted = files;
       std::sort( files_sorted.begin(), files_sorted.end() );
@@ -386,7 +399,7 @@ public:
 
     float val_threshold = 0;
     mValThreshold->getUniform( &val_threshold );
-    mValThresholdText->setText( Say( "val_threshold = %n\n" "sample_step = 1.0 / %.0n\n" "%s" ) << val_threshold << 1.0f / SAMPLE_STEP << technique_name);
+    mValThresholdText->setText( Say( "val_threshold = %n\n" "sample_step = 1.0 / %.0n\n" "%s" ) << val_threshold << SAMPLE_STEP << technique_name );
   }
 
   void updateValThreshold( int val )
@@ -439,12 +452,12 @@ public:
     // up/down changes SAMPLE_STEP
     if (key == vl::Key_Up)
     {
-      SAMPLE_STEP = 1.0f / ( (1.0f / SAMPLE_STEP) * 1.3f ); // more precision
+      SAMPLE_STEP += 64; // more precision
     }
     else
     if (key == vl::Key_Down)
     {
-      SAMPLE_STEP = 1.0f / ( (1.0f / SAMPLE_STEP) / 1.3f ); // less precision
+      SAMPLE_STEP -= 64; // less precision
     }
 
     // L key toggles lights (useful only for isosurface)

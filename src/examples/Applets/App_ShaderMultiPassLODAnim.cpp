@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -44,7 +44,7 @@ public:
   {
     int c = (int)( cur_time * 15.0 ) % 2;
     vl::fvec4 color;
-    if (c == 0) 
+    if (c == 0)
       color = vl::gold;
     else
       color = vl::red;

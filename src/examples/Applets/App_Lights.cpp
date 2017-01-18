@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -88,7 +88,7 @@ public:
     mLightFx->shader()->setRenderState( mLight2.get(), 2 );
     mLightFx->shader()->setRenderState( mLight3.get(), 3 );
 
-    // Define the light diffuse color. 
+    // Define the light diffuse color.
     // See the OpenGL Programmer's Guide for more details about the OpenGL lighting model and equations.
     mLight0->setDiffuse(vl::red);
     mLight1->setDiffuse(vl::green);

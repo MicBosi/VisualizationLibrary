@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -59,8 +59,6 @@ public:
 
     vl::ref< vl::Geometry > geom_patch = makeGrid( vl::vec3(), world_size, world_size, patch_count, patch_count, false );
 
-    geom_patch->convertToVertexAttribs();
-
     // patch parameter associated to the draw call
     vl::ref<vl::PatchParameter> patch_param = new vl::PatchParameter;
     patch_param->setPatchVertices(4);
@@ -93,8 +91,6 @@ public:
     mGLSL->gocUniform("tex_heghtmap")->setUniformI(0);
     mGLSL->gocUniform("tex_diffuse")->setUniformI(1);
 
-    mGLSL->addAutoAttribLocation( 0, "vl_Position" );
-
     // tessellated patches fx_wire
     vl::ref<vl::Effect> fx_wire = new vl::Effect;
     fx_wire->shader()->enable(vl::EN_DEPTH_TEST);
@@ -117,10 +113,8 @@ public:
     mGLSLWire->gocUniform("tex_heghtmap")->setUniformI(0);
     mGLSLWire->gocUniform("wire_color")->setUniform(vl::lightgreen);
 
-    mGLSLWire->addAutoAttribLocation( 0, "vl_Position" );
-
     sceneManager()->tree()->addActor( geom_patch.get(), fx.get(), NULL )->setRenderRank(0);
-    
+
     mWireActor = sceneManager()->tree()->addActor( geom_patch.get(), fx_wire.get(), NULL );
     mWireActor->setRenderRank(1);
 
@@ -178,19 +172,19 @@ public:
     verts->at(0)  = vl::fvec3(1,0,0);
     verts->at(1)  = vl::fvec3(0,1,0);
     verts->at(2)  = vl::fvec3(0,0,1);
-    
+
     verts->at(3)  = vl::fvec3(1,0,0);
     verts->at(4)  = vl::fvec3(0,0,-1);
     verts->at(5)  = vl::fvec3(0,1,0);
-    
+
     verts->at(6)  = vl::fvec3(0,0,-1);
     verts->at(7)  = vl::fvec3(-1,0,0);
     verts->at(8)  = vl::fvec3(0,1,0);
-    
+
     verts->at(9)  = vl::fvec3(-1,0,0);
     verts->at(10) = vl::fvec3(0,0,1);
     verts->at(11) = vl::fvec3(0,1,0);
-    
+
     // hemisphere base geometry vertex colors
     vl::ref<vl::ArrayFloat3 > cols = new vl::ArrayFloat3;
     cols->resize(12);
@@ -198,29 +192,29 @@ public:
     cols->at(0)  = vl::fvec3(1,0,0);
     cols->at(1)  = vl::fvec3(1,0,0);
     cols->at(2)  = vl::fvec3(1,0,0);
-    
+
     cols->at(3)  = vl::fvec3(0,1,0);
     cols->at(4)  = vl::fvec3(0,1,0);
     cols->at(5)  = vl::fvec3(0,1,0);
-    
+
     cols->at(6)  = vl::fvec3(1,1,0);
     cols->at(7)  = vl::fvec3(1,1,0);
     cols->at(8)  = vl::fvec3(1,1,0);
-    
+
     cols->at(9)  = vl::fvec3(0,0,1);
     cols->at(10) = vl::fvec3(0,0,1);
     cols->at(11) = vl::fvec3(0,0,1);
-    
+
     // vertex array
     geom_patch->setVertexArray( verts.get() );
 
     // color array
     geom_patch->setColorArray( cols.get() );
-    
+
     // draw call
     vl::ref< vl::DrawArrays> da = new vl::DrawArrays(vl::PT_PATCHES, 0, verts->size());
     geom_patch->drawCalls().push_back(da.get());
-    
+
     // patch parameter associated to the draw call
     vl::ref<vl::PatchParameter> patch_param = new vl::PatchParameter;
     patch_param->setPatchVertices(3);

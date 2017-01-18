@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -68,6 +68,7 @@ public:
     // setup texture
     vl::ref<vl::Texture> texture0 = new vl::Texture;
     texture0->prepareTexture2D("images/normalmap.jpg", vl::TF_RGBA);
+    texture0->setObjectName("images/normalmap.jpg");
     effect->shader()->gocTextureSampler(0)->setTexture(texture0.get());
     texture0->getTexParameter()->setAnisotropy(16.0);
     texture0->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
@@ -91,19 +92,27 @@ public:
     tangent->resize( model->vertexArray()->size() );
 
     vl::Geometry::computeTangentSpace(
-      model->vertexArray()->size(), 
-      (vl::fvec3*)model->vertexArray()->ptr(), 
-      (vl::fvec3*)model->normalArray()->ptr(), 
+      model->vertexArray()->size(),
+      (vl::fvec3*)model->vertexArray()->ptr(),
+      (vl::fvec3*)model->normalArray()->ptr(),
       (vl::fvec2*)model->texCoordArray(0)->ptr(),
       model->drawCalls().at(0),
-      tangent->begin(), 
+      tangent->begin(),
       NULL );
 
-    // bind the tangent vertex attribute
+    // bind the tangent vertex attribute - can be done in 3 ways
+#if 1
+    // user defines his custom vertex attribute
     mGLSL->linkProgram();
-    // note that you need to link the GLSL program before calling this
-    int tangent_idx = mGLSL->getAttribLocation("tangent"); VL_CHECK( tangent_idx != -1 );
-    model->setVertexAttribArray(tangent_idx, tangent.get() );
+    int tangent_idx = mGLSL->getAttribLocation("VertexTangent"); VL_CHECK( tangent_idx != -1 );
+    model->setVertexAttribArray(tangent_idx, tangent.get() ); // GLSL: in vec3 VertexTangent (user declared)
+#elif 0
+    // user uses pre-defined aliased utility vertex attribute
+    model->setVertexAttribArray(vl::VA_Tangent, tangent.get() ); // GLSL: vl_VertexTangent (decl. /glsl/std/vertex_attribs.glsl)
+#else
+    // user uses pre-defined basic vertex attribute
+    model->setVertexAttribArray(vl::VA_TexCoord1, tangent.get() ); // GLSL: vl_VertexTexCoord1 (decl. /glsl/std/vertex_attribs.glsl)
+#endif
 
     // visualize the TBN vectors
     visualizeTangentSpace( model.get(), tangent.get() );
@@ -151,7 +160,7 @@ public:
     sceneManager()->tree()->addActor( NTBGeom.get(), effect.get(), mTransform.get() );
   }
 
-  void updateScene() 
+  void updateScene()
   {
     // update the torus tranform
     mTransform->setLocalMatrix( vl::mat4::getRotation( vl::Time::currentTime() * 5.0f, 0, -1, 1 ) );

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -45,10 +45,10 @@ class App_Interpolators: public BaseDemo
 public:
   // Constructor.
   App_Interpolators()
-  { 
-    mTest = 0; 
+  {
+    mTest = 0;
     mLinearInterpolator     = new vl::LinearInterpolatorFVec3;
-    mCatmullRomInterpolator = new vl::CatmullRomInterpolatorFVec3; 
+    mCatmullRomInterpolator = new vl::CatmullRomInterpolatorFVec3;
     mTransform1 = new vl::Transform; // will follow linear interpolation
     mTransform2 = new vl::Transform; // will follow Catmull-Rom interpolation
   }
@@ -114,7 +114,7 @@ public:
     for(int i=0; i<segments; ++i)
     {
       // interpolate from 0 to 0.9x, never reach 1.0 otherwise the last point would be the same as the first one
-      float t = (float)i/segments; 
+      float t = (float)i/segments;
       pentagon_loop.push_back( catmull.computePoint(t) );
     }
     showPath(pentagon_loop, vl::yellow, true/*show points*/, true/*close line loop*/);
@@ -140,7 +140,7 @@ public:
     for(int i=0; i<segments; ++i)
     {
       // interpolate from 0 to 1.0
-      float t = (float)i/(segments-1); 
+      float t = (float)i/(segments-1);
       pentagon_linear.push_back( linear.computePoint(t) );
     }
     vl::Actor* line = showPath(pentagon_linear, vl::blue, true/*show points*/);
@@ -170,7 +170,7 @@ public:
     for(int i=0; i<segments; ++i)
     {
       // interpolate from 0 to 0.9x, never reach 1.0 otherwise the last point would be the same as the first one
-      float t = (float)i/segments; 
+      float t = (float)i/segments;
       pentagon_loop.push_back( mCatmullRomInterpolator->computePoint(t)*1.2f /*1.2f -> makes it a bit larger*/ );
     }
     showPath(pentagon_loop, vl::yellow, true/*show points*/, true/*close line loop*/);
@@ -185,7 +185,7 @@ public:
     for(int i=0; i<segments; ++i)
     {
       // interpolate from 0 to 0.9x, never reach 1.0 otherwise the last point would be the same as the first one
-      float t = (float)i/segments; 
+      float t = (float)i/segments;
       pentagon_linear.push_back( mLinearInterpolator->computePoint(t) );
     }
     showPath(pentagon_linear, vl::blue, true/*show points*/, true/*close line loop*/);
@@ -217,7 +217,7 @@ public:
     geom->setVertexArray( vert_array.get() );
     vert_array->initFrom(ctrl_points);
     geom->drawCalls().push_back(new vl::DrawArrays(loop ? vl::PT_LINE_LOOP : vl::PT_LINE_STRIP, 0, (int)vert_array->size()));
-    if (points) 
+    if (points)
       geom->drawCalls().push_back(new vl::DrawArrays(vl::PT_POINTS, 0, (int)vert_array->size()));
 
     // adds the geometry to the scene

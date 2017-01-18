@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -43,7 +43,7 @@ public:
 
   virtual String appletInfo()
   {
-    return BaseDemo::appletInfo() + 
+    return BaseDemo::appletInfo() +
     "- Up/Down Arrow = increase/decrease the Bezier surface tessellation detail.\n" +
     "- Space         = toggle control points visibility.\n" +
     "\n";
@@ -156,13 +156,13 @@ public:
 
     // Define the subdivision detail
     mBezier->setDetail(mDetail);
-    
+
     // Generate the actual geometry using the current patches and detail
     mBezier->updateBezierSurface(false);
-    
+
     // Compute the normals as we have lighting activated
     mBezier->computeNormals();
-    
+
     // Add the Bézier surface to our scene
     sceneManager()->tree()->addActor(mBezier.get(), fx.get(), NULL);
 
@@ -175,7 +175,7 @@ public:
     trackball()->adjustView( sceneManager(), vec3(0,0,1)/*direction*/, vec3(0,1,0)/*up*/, 1.0f/*bias*/ );
   }
 
-  /* 
+  /*
     up/down arrow = increase/decrease the Bézier surface tessellation detail
     space         = toggle control points visibility
   */

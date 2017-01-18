@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -186,7 +186,7 @@ public:
   {
     /* regenerate scene manager containing the text and the boxes representing the ActorKdTree nodes */
     sceneManager()->tree()->actors()->clear();
-    
+
     sceneManager()->tree()->addActor( mTextActor.get() );
     mText->setText( vl::Say("Test #%n, Level #%n") << mTestNumber << mViewDepth );
 
@@ -213,7 +213,7 @@ public:
       for(int i=0; i<tree->childrenCount(); ++i)
         viewTreeNodes(tree->child(i), level+1);
     }
-  }  
+  }
 
   void keyPressEvent(unsigned short ch, vl::EKey key)
   {

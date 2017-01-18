@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -79,7 +79,7 @@ public:
     /* let the left and right scene managers share the same scene */
     mLeftRendering->sceneManagers()->push_back(sceneManager());
     mRightRendering->sceneManagers()->push_back(sceneManager());
-    
+
     /* let the left and right rendering write on the same framebuffer */
     mLeftRendering->renderer()->setFramebuffer(gl_context->framebuffer());
     mRightRendering->renderer()->setFramebuffer(gl_context->framebuffer());
@@ -101,7 +101,7 @@ public:
 
     /* let the trackball rotate the mono camera */
     trackball()->setCamera(mMonoCamera.get());
-    trackball()->setTransform(NULL); 
+    trackball()->setTransform(NULL);
 
     /* populate the scene */
     setupScene();
@@ -132,7 +132,7 @@ public:
     ref<Geometry> sphere = makeUVSphere(vec3(0,0,0), 4);
     sphere->computeNormals();
     sceneManager()->tree()->addActor( sphere.get(), sphere_fx.get(), mRootTransform.get());
-    
+
     // rotating spheres
     float count = 10;
     for(size_t i=0; i<count; ++i)

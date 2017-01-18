@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -326,13 +326,13 @@ namespace blind_tests
       }
     }
 
-    fvec3 faxes[] = { 
-      fvec3(+1,+1, 0).normalize(), 
-      fvec3( 0,+1,+1).normalize(), 
-      fvec3(+1, 0,+1).normalize(), 
-      fvec3(-1,-1, 0).normalize(), 
-      fvec3( 0,-1,-1).normalize(), 
-      fvec3(-1, 0,-1).normalize(), 
+    fvec3 faxes[] = {
+      fvec3(+1,+1, 0).normalize(),
+      fvec3( 0,+1,+1).normalize(),
+      fvec3(+1, 0,+1).normalize(),
+      fvec3(-1,-1, 0).normalize(),
+      fvec3( 0,-1,-1).normalize(),
+      fvec3(-1, 0,-1).normalize(),
       fvec3(1,0,0).normalize(),
       fvec3(0,1,0).normalize(),
       fvec3(0,0,1).normalize(),
@@ -396,13 +396,13 @@ namespace blind_tests
       }
     }
 
-    dvec3 daxes[] = { 
-      dvec3(+1,+1, 0).normalize(), 
-      dvec3( 0,+1,+1).normalize(), 
-      dvec3(+1, 0,+1).normalize(), 
-      dvec3(-1,-1, 0).normalize(), 
-      dvec3( 0,-1,-1).normalize(), 
-      dvec3(-1, 0,-1).normalize(), 
+    dvec3 daxes[] = {
+      dvec3(+1,+1, 0).normalize(),
+      dvec3( 0,+1,+1).normalize(),
+      dvec3(+1, 0,+1).normalize(),
+      dvec3(-1,-1, 0).normalize(),
+      dvec3( 0,-1,-1).normalize(),
+      dvec3(-1, 0,-1).normalize(),
       dvec3(1,0,0).normalize(),
       dvec3(0,1,0).normalize(),
       dvec3(0,0,1).normalize(),

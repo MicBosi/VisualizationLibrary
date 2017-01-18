@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -203,7 +203,7 @@ public:
     ring_fx->setLOD( 0, fill_sh.get(), wire_sh.get() ); // LOD 0: pass #1 = fill_sh + pass #2 = wire_sh
     ring_fx->setLOD( 1, fill_sh.get() ); // LOD 1: pass #1 = fill_sh
     ring_fx->setLOD( 2, wire_sh.get() ); // LOD 2: pass #1 = wire_sh
-    
+
     /* install the LOD evaluator to be used with the ring objects */
     ring_fx->setLODEvaluator(lod_eval.get());
 
@@ -229,7 +229,7 @@ public:
       tr->setLocalMatrix( vl::mat4::getTranslation(v) );
 
       rendering()->as<vl::Rendering>()->transform()->addChild(tr.get());
-      
+
       vl::ref<vl::Actor> act = sceneManager()->tree()->addActor( NULL, ring_fx.get(), tr.get() );
 
       /* define which geometry to use for each LOD */

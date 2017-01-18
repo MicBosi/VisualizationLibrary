@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -45,9 +45,9 @@ using namespace vl;
 static bool USE_GLSL = true;
 
 /* If enabled, renders the volume using 3 animated lights. Requires USE_GLSL. */
-static bool DYNAMIC_LIGHTS = true; 
+static bool DYNAMIC_LIGHTS = true;
 
-/* If enabled, a white transfer function is used and 3 colored lights 
+/* If enabled, a white transfer function is used and 3 colored lights
    are used to render the volume. Used only if DYNAMIC_LIGHTS is true. */
 static bool COLORED_LIGHTS = true;
 
@@ -55,7 +55,7 @@ static bool COLORED_LIGHTS = true;
    Requires more memory (for the gradient texture) but can speedup the rendering. */
 static bool PRECOMPUTE_GRADIENT = false; // only if USE_GLSL is true.
 
-/* The number of slices used to render the volume, the higher the number the better 
+/* The number of slices used to render the volume, the higher the number the better
   (and slower) the rendering will be. */
 static const int  SLICE_COUNT = 1000;
 
@@ -66,7 +66,7 @@ public:
 
   virtual String appletInfo()
   {
-    return BaseDemo::appletInfo() + 
+    return BaseDemo::appletInfo() +
     "- Use the mouse wheel to change the bias used to render the volume.\n" +
     "- Drop inside the window a set of 2D files or a DDS or DAT volume to display it.\n" +
     "\n";
@@ -76,7 +76,7 @@ public:
   virtual void initEvent()
   {
     Log::notify(appletInfo());
-    
+
     if (!Has_Texture_3D && !Has_GLSL)
     {
       Log::error("This test requires 3D texture or GLSL support!\n");
@@ -107,7 +107,7 @@ public:
     }
 
     // light bulbs
-    if (DYNAMIC_LIGHTS)
+    if ( DYNAMIC_LIGHTS )
     {
       mLight0Tr = new Transform;
       mLight1Tr = new Transform;
@@ -132,15 +132,15 @@ public:
     vol_fx->shader()->enable(EN_BLEND);
     vol_fx->shader()->setRenderState( mLight0.get(), 0 );
     // add the other lights only if dynamic lights have to be displayed
-    if (DYNAMIC_LIGHTS)
+    if ( DYNAMIC_LIGHTS )
     {
       vol_fx->shader()->setRenderState( mLight1.get(), 1 );
       vol_fx->shader()->setRenderState( mLight2.get(), 2 );
     }
 
     // The GLSL program used to perform the actual rendering.
-    // The \a volume_luminance_light.fs fragment shader allows you to specify how many 
-    // lights to use (up to 4) and can optionally take advantage of a precomputed 
+    // The \a volume_luminance_light.fs fragment shader allows you to specify how many
+    // lights to use (up to 4) and can optionally take advantage of a precomputed
     // normals texture.
     if (USE_GLSL)
     {
@@ -156,15 +156,15 @@ public:
     // volume actor
     mVolumeAct = new Actor;
     mVolumeAct->setEffect( vol_fx.get() );
-    mVolumeAct->setTransform(mVolumeTr.get());
+    mVolumeAct->setTransform( mVolumeTr.get() );
     sceneManager()->tree()->addActor( mVolumeAct.get() );
 
     // sliced volume: will generate the actual actor's geometry on the fly.
     mSlicedVolume = new vl::SlicedVolume;
-    mSlicedVolume->bindActor(mVolumeAct.get());
-    mSlicedVolume->setSliceCount(SLICE_COUNT);
+    mSlicedVolume->bindActor( mVolumeAct.get() );
+    mSlicedVolume->setSliceCount( SLICE_COUNT );
     AABB volume_box( vec3(-10,-10,-10), vec3(+10,+10,+10) );
-    mSlicedVolume->setBox(volume_box);
+    mSlicedVolume->setBox( volume_box );
 
     // volume bounding box outline
     ref<Effect> fx_box = new Effect;
@@ -202,7 +202,7 @@ public:
   void fileDroppedEvent(const std::vector<String>& files)
   {
     if(files.size() == 1) // if there is one file load it directly
-    {      
+    {
       if (files[0].endsWith(".dat"))
       {
         ref<Image> vol_img = loadImage(files[0]);
@@ -211,7 +211,7 @@ public:
       }
     }
     else // if there is more than one file load all the files and assemble a 3D image
-    {      
+    {
       // sort files by their name
       std::vector<String> files_sorted = files;
       std::sort(files_sorted.begin(), files_sorted.end());
@@ -241,51 +241,52 @@ public:
     // remove GLSLProgram
     vol_fx->shader()->eraseRenderState(vl::RS_GLSLProgram);
     // keep texture unit #0
-    // vol_fx->shader()->eraseRenderState(RS_TextureSampler,0); 
+    // vol_fx->shader()->eraseRenderState(RS_TextureSampler,0);
     // remove texture unit #1 and #2
     vol_fx->shader()->eraseRenderState(RS_TextureSampler, 1);
     vol_fx->shader()->eraseRenderState(RS_TextureSampler, 2);
 
-    if(img->format() == IF_LUMINANCE)
+    if( img->format() == IF_LUMINANCE )
     {
-      ref<Image> gradient;
-      if (PRECOMPUTE_GRADIENT)
-      {
-        // note that this can take a while...
-        gradient = vl::genGradientNormals(img.get());
-      }
-
-      if (USE_GLSL)
+      if ( USE_GLSL )
       {
         Log::notify("IF_LUMINANCE image and GLSL supported: lighting and the transfer function will be computed in realtime.\n");
 
         ref<Image> trfunc;
-        if (COLORED_LIGHTS)
+        if (COLORED_LIGHTS) {
           trfunc = vl::makeColorSpectrum(128, vl::white, vl::white); // let the lights color the volume
-        else
+        }
+        else {
           trfunc = vl::makeColorSpectrum(128, vl::blue, vl::royalblue, vl::green, vl::yellow, vl::crimson);
+        }
         // installs GLSLProgram
-        vol_fx->shader()->setRenderState(mGLSL.get());
+        vol_fx->shader()->setRenderState( mGLSL.get() );
         // install volume image
         vol_fx->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( img.get() ) );
         vol_fx->shader()->gocUniform("volume_texunit")->setUniformI(0);
         mSlicedVolume->generateTextureCoordinates( ivec3(img->width(), img->height(), img->depth()) );
         // installs the transfer function as texture #1
-        vol_fx->shader()->gocTextureSampler(1)->setTexture( new Texture( trfunc.get() ) );  
+        vl::ref< vl::Texture > tex = new Texture( trfunc.get() );
+        tex->getTexParameter()->setMagFilter( vl::TPF_LINEAR );
+        tex->getTexParameter()->setMinFilter( vl::TPF_LINEAR );
+        tex->getTexParameter()->setWrap( vl::TPW_CLAMP_TO_EDGE );
+        vol_fx->shader()->gocTextureSampler(1)->setTexture( tex.get() );
         vol_fx->shader()->gocUniform("trfunc_texunit")->setUniformI(1);
-        vol_fx->shader()->gocUniform("trfunc_delta")->setUniformF( 0.5f / trfunc->width() );    
+        vol_fx->shader()->gocUniform("trfunc_delta")->setUniformF( 0.5f / trfunc->width() );
+
         // pre-computed gradient texture
-        if (PRECOMPUTE_GRADIENT)
+        vol_fx->shader()->gocUniform("precomputed_gradient")->setUniformI( PRECOMPUTE_GRADIENT ? 1 : 0 );
+        if ( PRECOMPUTE_GRADIENT )
         {
-          vol_fx->shader()->gocUniform("precomputed_gradient")->setUniformI(1);
-          vol_fx->shader()->gocTextureSampler(2)->setTexture( new Texture( gradient.get(), TF_RGBA8, false, false ) );
+          // This might take a while...
+          ref<Image> gradient = vl::genGradientNormals( img.get() );
           vol_fx->shader()->gocUniform("gradient_texunit")->setUniformI(2);
-        }
-        else
-        {
-          vol_fx->shader()->gocUniform("precomputed_gradient")->setUniformI(0);
-          // used to compute on the fly the normals based on the volume's gradient
-          vol_fx->shader()->gocUniform("gradient_delta")->setUniform(fvec3(0.5f/img->width(), 0.5f/img->height(), 0.5f/img->depth()));
+          vol_fx->shader()->gocTextureSampler(2)->setTexture( new Texture( gradient.get(), TF_RGBA8, false, false ) );
+          vl::ref< vl::Texture > tex = new Texture( gradient.get(), TF_RGBA8, false, false );
+          tex->getTexParameter()->setMagFilter( vl::TPF_LINEAR );
+          tex->getTexParameter()->setMinFilter( vl::TPF_LINEAR );
+          tex->getTexParameter()->setWrap( vl::TPW_CLAMP_TO_EDGE );
+          vol_fx->shader()->gocTextureSampler(2)->setTexture( tex.get() );
         }
 
         // no need for alpha testing, we discard fragments inside the fragment shader
@@ -315,7 +316,7 @@ public:
       vol_fx->shader()->enable(EN_ALPHA_TEST);
       vol_fx->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.3f);
     }
-    
+
     mAlphaBias->setUniformF(0.3f);
     updateText();
     openglContext()->update();
@@ -338,7 +339,7 @@ public:
 
     // used for non GLSL mode volumes
     mVolumeAct->effect()->shader()->gocAlphaFunc()->set(FU_GEQUAL, alpha);
-    
+
     updateText();
     openglContext()->update();
   }

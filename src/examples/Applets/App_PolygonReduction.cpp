@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -84,8 +84,8 @@ public:
 
     /* load model */
     ref<ResourceDatabase> res_db;
-    res_db = loadResource(mFileName); 
-    if ( res_db && res_db->count<Geometry>() ) 
+    res_db = loadResource(mFileName);
+    if ( res_db && res_db->count<Geometry>() )
       loadSimplifyGeometry( res_db->get<Geometry>(0) );
 
     /* triangle count label */
@@ -151,8 +151,8 @@ public:
   void fileDroppedEvent(const std::vector<vl::String>& files)
   {
     ref<ResourceDatabase> res_db;
-    res_db = loadResource(files[0]); 
-    if ( res_db && res_db->count<Geometry>() ) 
+    res_db = loadResource(files[0]);
+    if ( res_db && res_db->count<Geometry>() )
       loadSimplifyGeometry( res_db->get<Geometry>(0) );
   }
 
@@ -162,7 +162,7 @@ protected:
   ref<Effect> mEffect;
   ref<Actor> mActors[stages];
   int mActiveActor;
-  ref<Actor> mTextActor; 
+  ref<Actor> mTextActor;
   ref<Text> mText;
   ref<Geometry> mGeom[stages];
 };

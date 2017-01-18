@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -50,7 +50,7 @@ public:
   {
     vl::Applet::updateEvent();
 
-    if ( mFPSTimer.elapsed() > 2 )
+    if ( mFPSTimer.elapsed() > 1 )
     {
       mFPSTimer.start();
       openglContext()->setWindowTitle( vl::Say("[%.1n] %s") << fps() << appletName()  + " - " + vl::String("VL ") + vl::VisualizationLibrary::versionString() );
@@ -72,7 +72,7 @@ public:
     "\n";
   }
 
-private:
+protected:
   vl::Time mFPSTimer;
 };
 

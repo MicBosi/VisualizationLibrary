@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -138,7 +138,7 @@ namespace blind_tests
     vl::Log::print( vl::Say("obj materials  = %n\n") << res_db->count<vl::Material>() );
     vl::Log::print( vl::Say("obj effects    = %n\n") << res_db->count<vl::Effect>() );
 
-    CONDITION(res_db->count<vl::Geometry>() != 0)    
+    CONDITION(res_db->count<vl::Geometry>() != 0)
     CONDITION(res_db->count<vl::Material>() != 0)
     CONDITION(res_db->count<vl::Effect>()   != 0)
 

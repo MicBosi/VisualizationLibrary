@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -85,8 +85,8 @@ public:
       mMolecules[mCurrentMolecule]->setVanDerWaalsAtomRadii();
     }
 
-    /* 
-    
+    /*
+
     SETUP TO RENDER THE ATOM LABELS:
 
     ... choose the style: font, color, alignment etc.
@@ -123,7 +123,7 @@ public:
     mMolecules[mCurrentMolecule]->bond(6)->setVisible(false);
     */
 
-    /* generates the actual geometry to be rendered, the result of this function will be in 
+    /* generates the actual geometry to be rendered, the result of this function will be in
        mMolecules[mCurrentMolecule]->actorTree() and mMolecules[mCurrentMolecule]->transformTree() */
     mMolecules[mCurrentMolecule]->prepareForRendering();
 
@@ -173,7 +173,7 @@ public:
       vl::Log::print(msg);
     }
   }
- 
+
   /* loads a MOL2 file when it is dropped in the window */
   void fileDroppedEvent(const std::vector<vl::String>& files)
   {

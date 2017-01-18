@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -61,7 +61,7 @@ public:
     /*
     // specify the Actor[s] to be tested
     intersector.actors()->clear();
-    sceneManager()->extractActors( *intersector.actors() );
+    sceneManager()->extractVisibleActors( *intersector.actors(), NULL );
     // set the intersecting ray
     intersector.setRay(ray);
     // run intersection test

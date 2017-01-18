@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -211,8 +211,8 @@ public:
   // animate the lunapark
   void updateScene()
   {
-    mArm1Transform->setLocalMatrix( 
-      vl::mat4::getRotation(vl::Time::currentTime()*45,0,1,0) * 
+    mArm1Transform->setLocalMatrix(
+      vl::mat4::getRotation(vl::Time::currentTime()*45,0,1,0) *
       vl::mat4::getTranslation(0.0f,2.0f,0.0f)
     );
   }

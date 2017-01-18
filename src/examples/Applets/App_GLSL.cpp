@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -167,9 +167,6 @@ public:
       // a vertex shader is always needed when using geometry shaders
       glsl->attachShader( new GLSLVertexShader("/glsl/examples/diffuse.vs") );
       glsl->attachShader( new GLSLGeometryShader("/glsl/examples/triangle_fur.gs") );
-      glsl->setGeometryInputType(GIT_TRIANGLES);
-      glsl->setGeometryOutputType(GOT_TRIANGLE_STRIP);
-      glsl->setGeometryVerticesOut( 3*6 );
     }
     else
     {

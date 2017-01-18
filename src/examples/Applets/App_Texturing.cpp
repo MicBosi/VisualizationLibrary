@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -37,7 +37,7 @@
 
 using namespace vl;
 
-/* 
+/*
  * You can find the documentatio for this example in the offical documentation at:
  * Quick Start Guides -> Texturing
  */
@@ -74,9 +74,9 @@ public:
 
 	  // IMPORTANT: since we requested mipmapping we set the MinFilter to GL_LINEAR_MIPMAP_LINEAR, i.e. trilinear filtering.
     // Note also that using a mipmapped filter with a texture that has no mipmaps will typically show a black texture.
-	  
-    // You can set the MinFilter to any of GL_NEAREST, GL_LINEAR, GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST, 
-	  // GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR. However rembember that you can set the MagFilter only to 
+
+    // You can set the MinFilter to any of GL_NEAREST, GL_LINEAR, GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST,
+	  // GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR. However rembember that you can set the MagFilter only to
     // GL_NEAREST or GL_LINEAR as mipmapping does not make any sense for texture magnification.
 
     ref<Light> light = new Light;
@@ -145,7 +145,7 @@ public:
     // Setup a 3D texture with mipmapping
     ref<Texture> texture_3d = new Texture;
     // Load "/volume/VLTest.dat" which is a 3D image and prepare a 3D texture from it
-    texture_3d->prepareTexture3D( "/volume/VLTest.dat", TF_UNKNOWN, mMipmappingOn );
+    texture_3d->createTexture3D( "/volume/VLTest.dat", TF_UNKNOWN, mMipmappingOn );
     texture_3d->getTexParameter()->setMagFilter(TPF_LINEAR);
     texture_3d->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
     fx_3d->shader()->gocTextureSampler(0)->setTexture( texture_3d.get() );
@@ -153,7 +153,7 @@ public:
 
   void texture2DArray()
   {
-    if(!Has_Texture_Array)
+    if( ! Has_Texture_Array )
     {
       Log::error("Texture 2d array not supported.\n");
       return;
@@ -183,11 +183,11 @@ public:
 
     // Create the 2D texture array and bind it to unit #0
     ref<Texture> texture_2darray = new Texture;
-    texture_2darray->prepareTexture2DArray( img_volume.get(), TF_RGBA, mMipmappingOn );
+    texture_2darray->createTexture2DArray( img_volume.get(), TF_RGBA, mMipmappingOn );
     texture_2darray->getTexParameter()->setMagFilter(TPF_LINEAR);
     texture_2darray->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
     fx_2darray->shader()->gocTextureSampler(0)->setTexture( texture_2darray.get() );
-      
+
     // IMPORTANT
     // We need a GLSL program that uses 'sampler2DArray()' to access the 1D and 2D texture arrays!
     GLSLProgram* glsl = fx_2darray->shader()->gocGLSLProgram();
@@ -198,14 +198,14 @@ public:
 
   void texture1DArray()
   {
-    if(!Has_Texture_Array)
+    if( ! Has_Texture_Array )
     {
       Log::error("Texture 1d array not supported.\n");
       return;
     }
 
     // Load a 2D texture, VL considers 2D images equivalent to arrays of 1D images.
-    ref<Image> img_holebox = loadImage("/images/holebox.tif");    
+    ref<Image> img_holebox = loadImage("/images/holebox.tif");
     m1DArraySize = img_holebox->height();
 
     // Create a grid with img_holebox->height() slices
@@ -227,11 +227,11 @@ public:
 
     // Create the 1D texture array and bind it to unit #0
     ref<Texture> texture_1darray = new Texture;
-    texture_1darray->prepareTexture1DArray( img_holebox.get(), TF_RGBA, mMipmappingOn );
+    texture_1darray->createTexture1DArray( img_holebox.get(), TF_RGBA, mMipmappingOn );
     texture_1darray->getTexParameter()->setMagFilter(TPF_LINEAR);
     texture_1darray->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
     fx_1darray->shader()->gocTextureSampler(0)->setTexture( texture_1darray.get() );
-      
+
     // IMPORTANT
     // We need a GLSL program that uses 'sampler1DArray()' to access the 1D and 2D texture arrays!
     GLSLProgram* glsl = fx_1darray->shader()->gocGLSLProgram();
@@ -247,7 +247,7 @@ public:
       return;
     }
 
-    ref<Image> img_holebox = loadImage("/images/holebox.tif");    
+    ref<Image> img_holebox = loadImage("/images/holebox.tif");
 
     // Create a box that faces the camera
     // Generate non-normalized uv coordinates, i.e. from <0,0> to <img_holebox->width(), img_holebox->height()>
@@ -267,7 +267,7 @@ public:
     // Setup the texture rectangle
     ref<Texture> texture_rectangle = new Texture;
     // Note that mipmapping is not an option for texture rectangles since they do not support mipmaps
-    texture_rectangle->prepareTextureRectangle( img_holebox.get(), TF_RGBA );
+    texture_rectangle->createTextureRectangle( img_holebox.get(), TF_RGBA );
     // Set non-mipmapping filters for the texture
     texture_rectangle->getTexParameter()->setMagFilter(TPF_LINEAR);
     texture_rectangle->getTexParameter()->setMinFilter(TPF_LINEAR);
@@ -301,7 +301,7 @@ public:
 
     // Create a 2d texture sphere map
     ref<Texture> texture_sphere_map = new Texture;
-    texture_sphere_map->prepareTexture2D( "/images/spheremap_klimt.jpg", TF_UNKNOWN, mMipmappingOn );
+    texture_sphere_map->createTexture2D( "/images/spheremap_klimt.jpg", TF_UNKNOWN, mMipmappingOn );
     texture_sphere_map->getTexParameter()->setMagFilter(TPF_LINEAR);
     texture_sphere_map->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
     mFXSpheric->shader()->gocTextureSampler(0)->setTexture( texture_sphere_map.get() );
@@ -313,7 +313,7 @@ public:
 
   void cubeMapping()
   {
-    if (!Has_Cubemap_Textures)
+    if ( ! Has_Cubemap_Textures )
     {
       Log::error("Texture cubemap not supported.\n");
       return;
@@ -342,7 +342,7 @@ public:
 
     // Create the cube-map texture
     ref<Texture> texture_cubic = new Texture;
-    texture_cubic->prepareTextureCubemap( img_cubemap.get(), TF_RGBA, mMipmappingOn );
+    texture_cubic->createTextureCubemap( img_cubemap.get(), TF_RGBA, mMipmappingOn );
     // Texture filtering modes
     texture_cubic->getTexParameter()->setMagFilter(TPF_LINEAR);
     texture_cubic->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
@@ -357,7 +357,7 @@ public:
     mFXCubic->shader()->gocTexGen(0)->setGenModeS(TGM_REFLECTION_MAP);
     mFXCubic->shader()->gocTexGen(0)->setGenModeT(TGM_REFLECTION_MAP);
     mFXCubic->shader()->gocTexGen(0)->setGenModeR(TGM_REFLECTION_MAP);
-    
+
     // Align the cube-map to the world space axes rather than eye space axes.
     mFXCubic->shader()->gocTextureMatrix(0)->setUseCameraRotationInverse(true);
   }
@@ -436,7 +436,7 @@ public:
       {
         // Create some waving animation
         float x_offset = 0.1f * cos( t*3.14159265f + 10.0f*((float)i/m1DArraySize)*3.14159265f );
-        // Note: the y texture coordinate is an integer value between 0 and N where N 
+        // Note: the y texture coordinate is an integer value between 0 and N where N
         // is the number of texture 1D layers present in the texture array
         mTexCoords_1DArray->at(i*2+0) = fvec2(0+x_offset, (float)i);
         mTexCoords_1DArray->at(i*2+1) = fvec2(1+x_offset, (float)i);
@@ -464,7 +464,7 @@ public:
       mActCubic->transform()->setLocalMatrix( mat4::getTranslation(0,-6,0)*mat4::getRotation(45*Time::currentTime(),1,0,0) );
       mActCubic->transform()->computeWorldMatrix();
     }
-  } 
+  }
 
   void mouseWheelEvent(int w)
   {
@@ -480,7 +480,7 @@ public:
 protected:
   ref<Geometry> mQuad3DTex;
   ref<Geometry> mQuad2DArrayTex;
-  ref<Geometry> mQuad1DArrayTex; 
+  ref<Geometry> mQuad1DArrayTex;
   ref<Transform> mRightCubeTransform;
   ref<Transform> mLeftCubeTransform;
   ref<ArrayFloat3> mTexCoords_3D;

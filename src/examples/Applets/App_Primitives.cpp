@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -51,7 +51,7 @@ public:
     fx->shader()->enable(EN_LIGHTING);
     fx->shader()->setRenderState( new Light, 0 );
     fx->shader()->gocMaterial()->setDiffuse(vl::royalblue);
-    
+
 #if defined(VL_OPENGL)
     /* wireframe shader */
     fx->lod(0)->push_back( new Shader );
@@ -63,8 +63,8 @@ public:
     fx->shader(0,1)->gocPolygonMode()->set(PM_LINE, PM_LINE);
     fx->shader(0,1)->gocColor()->setValue(vl::lightgreen);
 
-    // speedup tricks: 
-    // we don't use lighting here so these won't be used, however including them in the second pass 
+    // speedup tricks:
+    // we don't use lighting here so these won't be used, however including them in the second pass
     // will allow VL to avoid restoring and resetting them back and forth all the time.
     fx->shader(0,1)->setRenderState( fx->shader()->getMaterial() );
     fx->shader(0,1)->setRenderState( fx->shader()->getLight(0), 0 );
@@ -90,7 +90,7 @@ public:
       ref<Transform> tr = new Transform;
       rendering()->as<Rendering>()->transform()->addChild( tr.get() );
 
-      mat4 m = mat4::getRotation( 360 * i / (real)mGeometries.size(), 0, 1, 0) * 
+      mat4 m = mat4::getRotation( 360 * i / (real)mGeometries.size(), 0, 1, 0) *
                mat4::getTranslation(0,0,-scene_radius);
       tr->setLocalMatrix( m );
 
@@ -110,7 +110,7 @@ public:
     /* settings for the current visible object */
     mRot0  = 0;
     mRot1  = 0;
-    mAngle = 360.0f / mGeometries.size(); 
+    mAngle = 360.0f / mGeometries.size();
   }
 
   /* press left/right arrow to rotate objects left/right */

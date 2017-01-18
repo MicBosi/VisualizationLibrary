@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -154,7 +154,6 @@ public:
     geom5->computeNormals();
     geom5->setColorArray( geom5->normalArray() );
     geom5->makeGLESFriendly();
-    geom5->convertToVertexAttribs();
     geom5->drawCalls().push_back( geom5->drawCalls().back() );
     res_db->resources().push_back( geom5.get() );
 
@@ -223,13 +222,14 @@ public:
 
       glsl->bindFragDataLocation(0, "frag_data_location_dummy1");
       glsl->bindFragDataLocation(1, "frag_data_location_dummy2");
-      glsl->addAutoAttribLocation(0, "attrib_position");
-      glsl->addAutoAttribLocation(1, "attrib_normal");
-      glsl->addAutoAttribLocation(3, "attrib_color");
+      // MIC FIXME
+      //glsl->addAutoAttribLocation(0, "attrib_position");
+      //glsl->addAutoAttribLocation(1, "attrib_normal");
+      //glsl->addAutoAttribLocation(3, "attrib_color");
     }
 
     // actor uniforms
-#if 1 
+#if 1
     act->gocUniform("mic_uniform1")->setUniformF(24.0f);
     act->gocUniform("mic_uniform2")->setUniformI(11);
     act->gocUniform("mic_uniform3")->setUniformD(100);

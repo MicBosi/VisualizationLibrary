@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -54,27 +54,27 @@ public:
 
   // ----- UIEventListener -----
 
-  virtual void initEvent() 
+  virtual void initEvent()
   {
     // --- scene setup ---
 
-    // bind the Transform with the transform tree of the rendring pipeline 
+    // bind the Transform with the transform tree of the rendring pipeline
     mCubeTransform = new vl::Transform;
     rendering()->transform()->addChild( mCubeTransform.get() );
 
-    // create the teapot's Geometry and compute its normals to support lighting 
+    // create the teapot's Geometry and compute its normals to support lighting
     vl::ref<vl::Geometry> teapot = vl::makeTeapot( vl::vec3(0,0,0), 15 );
     teapot->computeNormals();
 
-    // setup the effect to be used to render the teapot 
+    // setup the effect to be used to render the teapot
     vl::ref<vl::Effect> effect = new vl::Effect;
-    // enable depth test and lighting 
+    // enable depth test and lighting
     effect->shader()->enable(vl::EN_DEPTH_TEST);
-    // add a Light to the scene, since no Transform is associated to the Light it will follow the camera 
+    // add a Light to the scene, since no Transform is associated to the Light it will follow the camera
     effect->shader()->setRenderState( new vl::Light, 0 );
-    // enable the standard OpenGL lighting 
+    // enable the standard OpenGL lighting
     effect->shader()->enable(vl::EN_LIGHTING);
-    // set the front and back material color of the teapot 
+    // set the front and back material color of the teapot
     // "gocMaterial" stands for "get-or-create Material"
     effect->shader()->gocMaterial()->setDiffuse( vl::gold );
     effect->shader()->gocMaterial()->setSpecular( vl::white );
@@ -111,11 +111,11 @@ public:
     openglContext()->addEventListener(trackball.get());
   }
 
-  virtual void updateEvent() 
+  virtual void updateEvent()
   {
     // --- scene update ---
 
-    // rotates the teapot around the Y axis 15 degrees per second 
+    // rotates the teapot around the Y axis 15 degrees per second
     vl::real degrees = vl::Time::currentTime() * 15;
     vl::mat4 matrix = vl::mat4::getRotation( degrees, 0,1,0 );
     mCubeTransform->setLocalMatrix( matrix );
@@ -133,7 +133,7 @@ public:
       openglContext()->swapBuffers();
   }
 
-  virtual void resizeEvent(int w, int h) 
+  virtual void resizeEvent(int w, int h)
   {
     // update viewport dimensions
     rendering()->camera()->viewport()->set( 0, 0, w, h );
@@ -143,7 +143,7 @@ public:
     rendering()->camera()->setProjectionMatrix( proj_matr, vl::PMT_PerspectiveProjection );
 
     /* can also be done like this:
-    (the camera already knows the viewport dimensions and aspect ratio) 
+    (the camera already knows the viewport dimensions and aspect ratio)
     rendering()->camera()->setProjectionPerspective( 60, 5, 100 ); */
   }
 
@@ -223,6 +223,6 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   /* shutdown Visualization Library */
   vl::VisualizationLibrary::shutdown();
 
-  return res; 
+  return res;
 }
 // Have fun!

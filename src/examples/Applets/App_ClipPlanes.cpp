@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -57,7 +57,7 @@ public:
     // demonstrates multipassing clipping
 
     vl::ref<vl::Effect> clip_fx  = new vl::Effect;
-    vl::ref<vl::Shader> clip1_sh = new vl::Shader; 
+    vl::ref<vl::Shader> clip1_sh = new vl::Shader;
     vl::ref<vl::Shader> clip2_sh = new vl::Shader;
     // setup clipping pass 1
     clip1_sh->setRenderState( light.get(), 0 );

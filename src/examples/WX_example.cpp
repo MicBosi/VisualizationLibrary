@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -108,23 +108,23 @@ bool MyApp::OnInit()
 
   /* target the window so we can render on it */
   applet->rendering()->as<Rendering>()->renderer()->setFramebuffer( vl_gl_canvas->framebuffer() );
-  
+
   /* black background */
   applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
-  
+
   /* define the camera position and orientation */
   vec3 eye    = vec3(0,10,35); // camera position
   vec3 center = vec3(0,0,0);   // point the camera is looking at
   vec3 up     = vec3(0,1,0);   // up direction
   mat4 view_mat = mat4::getLookAt(eye, center, up);
   applet->rendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
-  
+
   /* show the window */
   frame->Show();
-  
+
   /* THE ORDER IS IMPORTANT IMPORTANT */
   vl_gl_canvas->initGLContext();
-  
+
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   vl_gl_canvas->addEventListener(applet.get());
 

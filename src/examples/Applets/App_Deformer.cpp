@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -37,7 +37,7 @@
 class App_Deformer: public BaseDemo
 {
 public:
-  virtual void updateScene() 
+  virtual void updateScene()
   {
     if (mMode == AnimateMode)
     {
@@ -103,7 +103,7 @@ public:
     cursor_fx->shader()->gocLogicOp()->set(vl::LO_INVERT);
     cursor_fx->shader()->enable(vl::EN_COLOR_LOGIC_OP);
     vl::ref<vl::Geometry> cursor = vl::makeCircle(vl::vec3(0,0,0), 1.0f);
-    
+
     cursor->transform(vl::mat4::getRotation(-90,1,0,0));
     mCursorActor = sceneManager()->tree()->addActor(cursor.get(), cursor_fx.get(), mCursorTransform.get());
     // ensure the cursor is rendered over the image (whose render rank is 0 by default)

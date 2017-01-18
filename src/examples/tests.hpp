@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -90,7 +90,6 @@ BaseDemo* Create_App_Primitives();
 BaseDemo* Create_App_DrawCalls();
 BaseDemo* Create_App_VLX();
 BaseDemo* Create_App_Stereo();
-BaseDemo* Create_App_Vivid();
 
 // win32 console for sdtout output
 #if defined(WIN32) && !defined(NDEBUG)
@@ -134,58 +133,58 @@ public:
 
   void run(int test, const std::string& test_name, const vl::OpenGLContextFormat& format, bool shut_down_after_run=true)
   {
-    TestEntry tests[] = 
+    TestEntry tests[] =
     {
-      { "blind_test", Create_App_BlindTests(), 10,10, 512, 512, vl::black, vl::vec3(0,0,1), vl::vec3(0,0,0) }, 
+      { "blind_test", Create_App_BlindTests(), 10,10, 512, 512, vl::black, vl::vec3(0,0,1), vl::vec3(0,0,0) },
       { "vlx_test", Create_App_VLX(), 10,10, 512, 512, vl::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
       { "primitives", Create_App_Primitives(), 10,10, 512, 512, vl::white, vl::vec3(0,0.75,-2.5), vl::vec3(0,0,-4) },
       { "drawcall", Create_App_DrawCalls(), 10,10, 512, 512, vl::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
-      { "near_far_optim", Create_App_NearFarOptimization(), 10, 10, 512, 512, vl::black, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
+      { "near_far_optim", Create_App_NearFarOptimization(), 10, 10, 512, 512, vl::black, vl::vec3(0,1,5), vl::vec3(0,0,0) },
       { "effect_override", Create_App_EffectOverride(), 10,10, 512, 512, vl::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
       { "shader_override", Create_App_ShaderOverride(), 10,10, 512, 512, vl::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
-      { "shader_lod_anim", Create_App_ShaderMultiPassLODAnim(), 10, 10, 512, 512, vl::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
-      { "shader_alpha_multipass", Create_App_ShaderMultiPassAlpha(), 10, 10, 512, 512, vl::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
-      { "geometry_lod_anim", Create_App_GeomLODAnim(), 10, 10, 512, 512, vl::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
-      { "render_order", Create_App_RenderOrder(), 10, 10, 512, 512, vl::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
-      { "robot_transform", Create_App_Transforms(), 10, 10, 512, 512, vl::white, vl::vec3(0,40,60), vl::vec3(0,15,0) }, 
-      { "billboard", Create_App_Billboards(), 10, 10, 512, 512, vl::royalblue, vl::vec3(0,50,100), vl::vec3(0,1,0) }, 
-      { "multi_camera", Create_App_MultipleCameras(), 10, 10, 512, 512, vl::black, vl::vec3(0,10,15), vl::vec3(0,0,0) }, 
-      { "light", Create_App_Lights(), 10,10, 512, 512, vl::black, vl::vec3(-10,10,10), vl::vec3(0,0,0) }, 
-      { "clippling_plane", Create_App_ClipPlanes(), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,5), vl::vec3(0,0,0) }, 
-      { "draw_pixels", Create_App_DrawPixels(), 10,10, 512, 512, vl::black, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
-      { "image_functions", Create_App_ImageFunctions(), 10,10, 512, 512, vl::darkturquoise, vl::vec3(0,0,20), vl::vec3(0,0,0) }, 
-      { "texturing", Create_App_Texturing(), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,20), vl::vec3(0,0,0) }, 
-      { "point_plot", Create_App_ScatterPlot3D(0), 10, 10, 512, 512, vl::black, vl::vec3(0,500,1200), vl::vec3(0,0,0) }, 
-      { "point_sprite_plot", Create_App_ScatterPlot3D(1), 10, 10, 512, 512, vl::black, vl::vec3(0,500,1200), vl::vec3(0,0,0) }, 
-      { "gpu_morph", Create_App_MorphAnimation(), 10, 10, 512, 512, vl::black, vl::vec3(0,1000,1500), vl::vec3(0,0,0) }, 
-      { "text_raven", Create_App_TextRendering(0), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
-      { "text_alignment", Create_App_TextRendering(1), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
-      { "text_rotation", Create_App_TextRendering(2), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
-      { "text_multilingual", Create_App_TextRendering(3), 10, 10, 512, 512, vl::gold, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
-      { "text_solar_system", Create_App_TextRendering(4), 10, 10, 512, 512, vl::black, vl::vec3(0,35,40), vl::vec3(0,0,0) }, 
-      { "glsl", Create_App_GLSL(), 10, 10, 512, 512, vl::black, vl::vec3(4.5,4.5,12), vl::vec3(4.5,4.5,0) }, 
-      { "glsl_normal_map", Create_App_GLSL_Bumpmapping(), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
-      { "glsl_image_proc", Create_App_GLSLImageProcessing(), 10,10, 512, 512, vl::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
-      { "glsl_mandelbrot", Create_App_Fractals(), 10,10, 512, 512, vl::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
-      { "render_to_texture", Create_App_Framebuffer_Object(5), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "fbo_render_to_texture", Create_App_Framebuffer_Object(0), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "fbo_render_to_texture_mrt", Create_App_Framebuffer_Object(1), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "fbo_copy_texture_to_color_buffer", Create_App_Framebuffer_Object(2), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "fbo_blit_multisample", Create_App_Framebuffer_Object(3), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "fbo_render_to_multisample_texture", Create_App_Framebuffer_Object(4), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "geometry_instancing", Create_App_GeometryInstancing(), 10,10, 512, 512, vl::black, vl::vec3(45/2,60,90), vl::vec3(45/2,45/2,45/2) }, 
-      { "poly_depth_sort", Create_App_PolyDepthSorting("/models/3ds/monkey.3ds"), 10,10, 512, 512, vl::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
-      { "poly_reduction", Create_App_PolygonReduction("/models/3ds/monkey.3ds"), 10,10, 512, 512, vl::black, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
-      { "simple_terrain", Create_App_Terrain(), 10,10, 512, 512, vl::black, vl::vec3(0,5,0), vl::vec3(0,2,-10) }, 
-      { "vector_graphics", Create_App_VectorGraphics(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
-      { "culling", Create_App_CullingBenchmark(), 10,10, 512, 512, vl::black, vl::vec3(0,500,-250), vl::vec3(0,500,-250-1) }, 
-      { "kdtree", Create_App_KdTreeView(), 10,10, 512, 512, vl::black, vl::vec3(10,10,-10), vl::vec3(0,0,0) }, 
-      { "model_profiler", Create_App_ModelProfiler(), 10,10, 512, 512, vl::black, vl::vec3(0,0,0), vl::vec3(0,0,-1) }, 
-      { "deformer", Create_App_Deformer(), 10,10, 512, 512, vl::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
-      { "volume_point_splat", Create_App_PointSplatting(), 10,10, 512, 512, vl::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
-      { "volume_sliced", Create_App_VolumeSliced(), 10,10, 512, 512, vl::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
-      { "volume_raycast", Create_App_VolumeRaycast(), 10,10, 512, 512, vl::black, vl::vec3(0,10,35), vl::vec3(0,0,0) },      
-      { "marching_cubes", Create_App_MarchingCubes(), 10,10, 512, 512, vl::black, vl::vec3(0,10,50), vl::vec3(0,0,0) }, 
+      { "shader_lod_anim", Create_App_ShaderMultiPassLODAnim(), 10, 10, 512, 512, vl::black, vl::vec3(0,40,40), vl::vec3(0,0,0) },
+      { "shader_alpha_multipass", Create_App_ShaderMultiPassAlpha(), 10, 10, 512, 512, vl::black, vl::vec3(0,40,40), vl::vec3(0,0,0) },
+      { "geometry_lod_anim", Create_App_GeomLODAnim(), 10, 10, 512, 512, vl::black, vl::vec3(0,40,40), vl::vec3(0,0,0) },
+      { "render_order", Create_App_RenderOrder(), 10, 10, 512, 512, vl::white, vl::vec3(0,1,5), vl::vec3(0,0,0) },
+      { "robot_transform", Create_App_Transforms(), 10, 10, 512, 512, vl::white, vl::vec3(0,40,60), vl::vec3(0,15,0) },
+      { "billboard", Create_App_Billboards(), 10, 10, 512, 512, vl::royalblue, vl::vec3(0,50,100), vl::vec3(0,1,0) },
+      { "multi_camera", Create_App_MultipleCameras(), 10, 10, 512, 512, vl::black, vl::vec3(0,10,15), vl::vec3(0,0,0) },
+      { "light", Create_App_Lights(), 10,10, 512, 512, vl::black, vl::vec3(-10,10,10), vl::vec3(0,0,0) },
+      { "clippling_plane", Create_App_ClipPlanes(), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,5), vl::vec3(0,0,0) },
+      { "draw_pixels", Create_App_DrawPixels(), 10,10, 512, 512, vl::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
+      { "image_functions", Create_App_ImageFunctions(), 10,10, 512, 512, vl::darkturquoise, vl::vec3(0,0,20), vl::vec3(0,0,0) },
+      { "texturing", Create_App_Texturing(), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,20), vl::vec3(0,0,0) },
+      { "point_plot", Create_App_ScatterPlot3D(0), 10, 10, 512, 512, vl::black, vl::vec3(0,500,1200), vl::vec3(0,0,0) },
+      { "point_sprite_plot", Create_App_ScatterPlot3D(1), 10, 10, 512, 512, vl::black, vl::vec3(0,500,1200), vl::vec3(0,0,0) },
+      { "gpu_morph", Create_App_MorphAnimation(), 10, 10, 512, 512, vl::black, vl::vec3(0,1000,1500), vl::vec3(0,0,0) },
+      { "text_raven", Create_App_TextRendering(0), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) },
+      { "text_alignment", Create_App_TextRendering(1), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) },
+      { "text_rotation", Create_App_TextRendering(2), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) },
+      { "text_multilingual", Create_App_TextRendering(3), 10, 10, 512, 512, vl::gold, vl::vec3(0,0,30), vl::vec3(0,0,0) },
+      { "text_solar_system", Create_App_TextRendering(4), 10, 10, 512, 512, vl::black, vl::vec3(0,35,40), vl::vec3(0,0,0) },
+      { "glsl", Create_App_GLSL(), 10, 10, 512, 512, vl::black, vl::vec3(4.5,4.5,12), vl::vec3(4.5,4.5,0) },
+      { "glsl_normal_map", Create_App_GLSL_Bumpmapping(), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,10), vl::vec3(0,0,0) },
+      { "glsl_image_proc", Create_App_GLSLImageProcessing(), 10,10, 512, 512, vl::black, vl::vec3(0,0,35), vl::vec3(0,0,0) },
+      { "glsl_mandelbrot", Create_App_Fractals(), 10,10, 512, 512, vl::black, vl::vec3(0,0,35), vl::vec3(0,0,0) },
+      { "render_to_texture", Create_App_Framebuffer_Object(5), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) },
+      { "fbo_render_to_texture", Create_App_Framebuffer_Object(0), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) },
+      { "fbo_render_to_texture_mrt", Create_App_Framebuffer_Object(1), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) },
+      { "fbo_copy_texture_to_color_buffer", Create_App_Framebuffer_Object(2), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) },
+      { "fbo_blit_multisample", Create_App_Framebuffer_Object(3), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) },
+      { "fbo_render_to_multisample_texture", Create_App_Framebuffer_Object(4), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) },
+      { "geometry_instancing", Create_App_GeometryInstancing(), 10,10, 512, 512, vl::black, vl::vec3(45/2,60,90), vl::vec3(45/2,45/2,45/2) },
+      { "poly_depth_sort", Create_App_PolyDepthSorting("/models/3ds/monkey.3ds"), 10,10, 512, 512, vl::black, vl::vec3(0,10,35), vl::vec3(0,0,0) },
+      { "poly_reduction", Create_App_PolygonReduction("/models/3ds/monkey.3ds"), 10,10, 512, 512, vl::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
+      { "simple_terrain", Create_App_Terrain(), 10,10, 512, 512, vl::black, vl::vec3(0,5,0), vl::vec3(0,2,-10) },
+      { "vector_graphics", Create_App_VectorGraphics(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,0,10), vl::vec3(0,0,0) },
+      { "culling", Create_App_CullingBenchmark(), 10,10, 512, 512, vl::black, vl::vec3(0,500,-250), vl::vec3(0,500,-250-1) },
+      { "kdtree", Create_App_KdTreeView(), 10,10, 512, 512, vl::black, vl::vec3(10,10,-10), vl::vec3(0,0,0) },
+      { "model_profiler", Create_App_ModelProfiler(), 10,10, 512, 512, vl::black, vl::vec3(0,0,0), vl::vec3(0,0,-1) },
+      { "deformer", Create_App_Deformer(), 10,10, 512, 512, vl::black, vl::vec3(0,0,35), vl::vec3(0,0,0) },
+      { "volume_point_splat", Create_App_PointSplatting(), 10,10, 512, 512, vl::black, vl::vec3(0,10,35), vl::vec3(0,0,0) },
+      { "volume_sliced", Create_App_VolumeSliced(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,10,35), vl::vec3(0,0,0) },
+      { "volume_raycast", Create_App_VolumeRaycast(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,10,35), vl::vec3(0,0,0) },
+      { "marching_cubes", Create_App_MarchingCubes(), 10,10, 512, 512, vl::black, vl::vec3(0,10,50), vl::vec3(0,0,0) },
 #if defined(VL_OPENGL)
       { "tessellator", Create_App_Tessellator(), 10,10, 512, 512, vl::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
       { "extrusion", Create_App_Extrusion(), 10,10, 512, 512, vl::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
@@ -199,7 +198,6 @@ public:
       { "picking", Create_App_Picking(), 10,10, 512, 512, vl::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
       { "tessellation_shader", Create_App_TessellationShader(), 10,10, 512, 512, vl::skyblue, vl::vec3(300,40,0), vl::vec3(1000,0,0) },
       { "stereo", Create_App_Stereo(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,2.5,15), vl::vec3(0,0,0) },
-      { "vivid", Create_App_Vivid(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,2.5,15), vl::vec3(0,0,0) },
       // { "mini_earth", Create_App_MiniEarth(), 10,10, 512, 512, vl::black, vl::vec3(0,0,4), vl::vec3(0,0,0) },
     };
 
@@ -232,7 +230,7 @@ public:
       glc->setMakeGLESFriendly(true);
 #endif
       vl::defLoadWriterManager()->loadCallbacks().push_back(glc.get());
-      
+
       int itest = test-1;
 
       /* run test */

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -43,7 +43,7 @@ namespace blind_tests
 {
   bool test_UID()
   {
-    FILE* fout = NULL; 
+    FILE* fout = NULL;
 #if 1 // set to 1 to write the uids to a text file.
     fout = fopen("uid.txt","wt");
 #endif

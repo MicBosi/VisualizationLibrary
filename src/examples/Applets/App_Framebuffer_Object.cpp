@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -82,7 +82,7 @@ public:
     vl::ref<vl::FBOTexture2DAttachment> fbo_tex_attachm = new vl::FBOTexture2DAttachment(texture.get(), 0, vl::T2DT_TEXTURE_2D);
     framebuffer_object->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm.get() );
     framebuffer_object->setDrawBuffer( vl::RDB_COLOR_ATTACHMENT0 );
-  
+
     // Main rendering
 
     /* setup camera */
@@ -197,7 +197,7 @@ public:
   }
 
   /*
-  This example shows how to perform off-screen rendering on a color buffer. 
+  This example shows how to perform off-screen rendering on a color buffer.
   The content of the colorbuffer is then copied to a texture using CopyTexSubImage2D.
   */
   void initTest_FBO_Render_To_Color_Buffer_And_Copy_To_Texture()
@@ -238,7 +238,7 @@ public:
     vl::ref<vl::Texture> texture = new vl::Texture(mFBO_Size, mFBO_Size, vl::TF_RGBA, false); // note that mipmapping is off
     vl::ref<vl::CopyTexSubImage2D> copytex = new vl::CopyTexSubImage2D(0, 0,0, 0,0, mFBO_Size,mFBO_Size, texture.get(), vl::T2DT_TEXTURE_2D, vl::RDB_COLOR_ATTACHMENT0);
     mRTT_Rendering->onFinishedCallbacks()->push_back(copytex.get());
-  
+
     // Main rendering
 
     /* setup camera */
@@ -256,7 +256,7 @@ public:
   }
 
   /*
-  This example shows how to perform off-screen rendering on a multisampled color buffer and then copy 
+  This example shows how to perform off-screen rendering on a multisampled color buffer and then copy
   the content of such buffer to a non-multisampled texture using the vl:BlitFramebuffer callback object.
   */
   void initTest_FBO_Framebuffer_Blit_Multisample()
@@ -338,7 +338,7 @@ public:
     /* populate the scene */
     addRings(NULL);
     addCube(texture.get(), NULL);
-  } 
+  }
 
   /*
   This example shows how to perform off-screen rendering directly on a multisample texture.
@@ -408,7 +408,7 @@ public:
 
   /*
   This example demonstrates how to perform render-to-texture without using framebuffer objects.
-  First the scene with the ring is rendered normally on the screen. The pixels on the screen are then copied to 
+  First the scene with the ring is rendered normally on the screen. The pixels on the screen are then copied to
   a texture using the vl::CopyTexSubImage2D callback object. Finally the scene with the cube can be rendered
   using the previously generated texture.
   */
@@ -442,7 +442,7 @@ public:
     vl::ref<vl::Texture> texture = new vl::Texture( 512, 512, vl::TF_RGBA, false );
     vl::ref<vl::CopyTexSubImage2D> copytex = new vl::CopyTexSubImage2D( 0, 0,0, 0,0, 512,512, texture.get() );
     mRTT_Rendering->onFinishedCallbacks()->push_back( copytex.get() );
-    
+
     // Main rendering
 
     /* setup main rendering */
@@ -576,13 +576,13 @@ public:
 
     switch(mTestNum)
     {
-    case 0: initTest_FBO_Render_To_Texture(); 
+    case 0: initTest_FBO_Render_To_Texture();
       break;
-    case 1: initTest_FBO_Render_To_Texture_MRT(); 
+    case 1: initTest_FBO_Render_To_Texture_MRT();
       break;
-    case 2: initTest_FBO_Render_To_Color_Buffer_And_Copy_To_Texture(); 
+    case 2: initTest_FBO_Render_To_Color_Buffer_And_Copy_To_Texture();
       break;
-    case 3: initTest_FBO_Framebuffer_Blit_Multisample(); 
+    case 3: initTest_FBO_Framebuffer_Blit_Multisample();
       break;
     case 4: initTest_FBO_Multisample_Texture();
       break;
@@ -616,7 +616,7 @@ public:
     mTransfRing4->setLocalMatrix( vl::mat4::getRotation(mY2, 0,1,0) );
     mTransfRing5->setLocalMatrix( vl::mat4::getRotation(mX3, 1,0,0) );
   }
-  
+
   virtual void destroyEvent()
   {
     BaseDemo::destroyEvent();

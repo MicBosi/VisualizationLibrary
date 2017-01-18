@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -61,7 +61,7 @@ public:
     }
 
     // Define the path along which the silhouette is extruded.
-    // Note: the first and last control points are not part of the actual extrusion 
+    // Note: the first and last control points are not part of the actual extrusion
     // but are used to define the orientation of the first and start segment.
     extrusion.positionPath().push_back(vl::fvec3(-5, 0, 0) + vl::fvec3(-1,0,0));
     extrusion.positionPath().push_back(vl::fvec3(-5, 0, 0));
@@ -106,7 +106,7 @@ public:
     }
 
     // Define the path along which the silhouette is extruded.
-    // Note: the first and last control points are not part of the actual extrusion 
+    // Note: the first and last control points are not part of the actual extrusion
     // but are used to define the orientation of the first and start segment.
     extrusion.positionPath().push_back(vl::fvec3(-5, 0, 0) + vl::fvec3(0,-1,0));
     extrusion.positionPath().push_back(vl::fvec3(-5, 0, 0));
@@ -121,7 +121,7 @@ public:
     // Defines a rotation key (in degrees) for each segment generated in order
     // to rotate the silhouette along the extrusion path.
     // Note that the segments generated are extrusion.positionPath().size()-2 as
-    // the first and last control points are not part of the actual extrusion 
+    // the first and last control points are not part of the actual extrusion
     // but are used to define the orientation of the first and start segment.
     for(unsigned i=0; i<extrusion.positionPath().size()-2; ++i)
     {
@@ -133,7 +133,7 @@ public:
     // Defines a scaling key (in degrees) for each segment generated in order
     // to rotate the silhouette along the extrusion path.
     // Note that the segments generated are extrusion.positionPath().size()-2 as
-    // the first and last control points are not part of the actual extrusion 
+    // the first and last control points are not part of the actual extrusion
     // but are used to define the orientation of the first and start segment.
     for(unsigned i=0; i<extrusion.positionPath().size()-2; ++i)
     {
@@ -190,7 +190,7 @@ public:
       float s = ::sin( t*vl::fPi/2.0f );
       s = 5.0f*s + 0.5f*(1.0f-s);
       extrusion.positionPath()[i].x() = ::sin(a)*s;
-      extrusion.positionPath()[i].z() = ::cos(a)*s;    
+      extrusion.positionPath()[i].z() = ::cos(a)*s;
     }
 
     // Generate color path: linearly interpolate from blue to yellow.

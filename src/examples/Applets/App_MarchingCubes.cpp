@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,7 +40,7 @@
 
 class App_MarchingCubes: public BaseDemo
 //
-// This applet demonstrates: how to use marching cubes to generate isosurfaces, how to visualize multiple intersecting volumes, 
+// This applet demonstrates: how to use marching cubes to generate isosurfaces, how to visualize multiple intersecting volumes,
 // how to manage transparencies, how to color the isosurface using texturing and vertex color, how to implement a simple metaballs demo
 // and how to simulate a metaballs/water fountain.
 //
@@ -272,7 +272,7 @@ public:
 
     vl::ref<vl::Volume> volume = new vl::Volume;
     volume->setup( (float*)mVolumeImage->pixels(), false, true, vl::fvec3(-5,-5,-5), vl::fvec3(+5,+5,+5), vl::ivec3(mVolumeImage->width(), mVolumeImage->height(), mVolumeImage->depth()) );
-    
+
     mMarchingCubes.reset();
     mMarchingCubes.volumeInfo()->push_back( new vl::VolumeInfo( volume.get(), 0.40f, /*yellow*/vl::fvec4(1, 1, 0, 0.5f)) );
     if (test1)
@@ -329,8 +329,8 @@ public:
       vl::AABB box = vol_act->lod(0)->boundingBox();
       // transforms object vertex coordinates to 0..1 cube, this might create a "bleeding color" effect at the very side of the cube.
       // note that to be really precise we should use 1/2N ... 1-1/2N in each direction instead of 0..1.
-      vl::mat4 tex_mat = vl::mat4::getTranslation( vl::vec3(0.5f,0.5f,0.5f) ) * 
-                         vl::mat4::getScaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) * 
+      vl::mat4 tex_mat = vl::mat4::getTranslation( vl::vec3(0.5f,0.5f,0.5f) ) *
+                         vl::mat4::getScaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) *
                          vl::mat4::getTranslation( -box.center() );
       fx->shader()->gocTextureMatrix(0)->setMatrix((vl::fmat4)tex_mat);
     #endif
@@ -340,8 +340,8 @@ public:
       // transforms object vertex coordinates to 0..1 cube.
       vol_act->lod(0)->computeBounds();
       vl::AABB box = vol_act->lod(0)->boundingBox();
-      vl::mat4 tex_mat = vl::mat4::getTranslation( vl::vec3(0.5f,0.5f,0.5f) ) * 
-                         vl::mat4::getScaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) * 
+      vl::mat4 tex_mat = vl::mat4::getTranslation( vl::vec3(0.5f,0.5f,0.5f) ) *
+                         vl::mat4::getScaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) *
                          vl::mat4::getTranslation( -box.center() );
 
       fx->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( mColorImage.get() ) );
@@ -353,8 +353,8 @@ public:
     #endif
   }
 
-  // Coloring a volume assigning a color to each vertex directly can save memory compared to using a 3D texture, 
-  // and no 3D texturing is needed so there aren't compatibility issues. 
+  // Coloring a volume assigning a color to each vertex directly can save memory compared to using a 3D texture,
+  // and no 3D texturing is needed so there aren't compatibility issues.
   // This technique is not particularly efficient if your isosurfaces are animated and you need to recompute the colors often.
   void vertexVolumeColor(vl::Actor* vol_act)
   {
@@ -366,8 +366,8 @@ public:
     // transforms object vertex coordinates to 0..1 cube.
     vol_act->lod(0)->computeBounds();
     vl::AABB box = vol_act->lod(0)->boundingBox();
-    vl::mat4 tex_mat = vl::mat4::getTranslation( vl::vec3(0.5f,0.5f,0.5f) ) * 
-                       vl::mat4::getScaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) * 
+    vl::mat4 tex_mat = vl::mat4::getTranslation( vl::vec3(0.5f,0.5f,0.5f) ) *
+                       vl::mat4::getScaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) *
                        vl::mat4::getTranslation( -box.center() );
 
     vl::ref<vl::ArrayFloat4> color_array = new vl::ArrayFloat4;
@@ -395,7 +395,7 @@ public:
     mMarchingCubes.reset();
     mMarchingCubes.volumeInfo()->push_back( new vl::VolumeInfo( volume.get(), 400.0f) );
     mMarchingCubes.volumeInfo()->at(0)->volume()->setup( NULL, false, false, vl::fvec3(-10,-10,-10), vl::fvec3(+10,+10,+10), vl::ivec3(mMetaballsResolution,mMetaballsResolution,mMetaballsResolution) );
-    
+
     vl::ref<vl::Geometry > geom = new vl::Geometry;
     geom->setVertexArray(mMarchingCubes.mVertsArray.get());
     geom->setNormalArray(mMarchingCubes.mNormsArray.get());
@@ -436,7 +436,7 @@ public:
     mMarchingCubes.reset();
     mMarchingCubes.volumeInfo()->push_back( new vl::VolumeInfo( volume.get(), 400.0f) );
     mMarchingCubes.volumeInfo()->at(0)->volume()->setup( NULL, false, false, vl::fvec3(-10,-10,-10), vl::fvec3(+10,+10,+10), vl::ivec3(mMetaballsResolution,mMetaballsResolution,mMetaballsResolution) );
-    
+
     vl::ref<vl::Geometry > geom = new vl::Geometry;
     geom->setBoundingBox( vl::AABB( vl::vec3(-10,-10,1-10), vl::vec3(10,10,10) ) );
     geom->setBoundingSphere( geom->boundingBox() );
@@ -522,8 +522,8 @@ public:
     volume->setup( (float*)mDropImage->pixels(), true, false, vl::fvec3(-5,-5,-5), vl::fvec3(+5,+5,+5), vl::ivec3(mDropImage->width(), mDropImage->height(), mDropImage->depth()) );
 
     // start timing
-    vl::Time time; 
-    
+    vl::Time time;
+
     #if 0
       // downsample volume data and perform timing.
       time.start();

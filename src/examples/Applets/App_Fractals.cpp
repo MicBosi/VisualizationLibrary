@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -108,7 +108,7 @@ public:
 
   virtual void updateScene()
   {
-    mGLSLProgram->useProgram();
+    openglContext()->useGLSLProgram( mGLSLProgram.get() );
     glUniform1f(mGLSLProgram->getUniformLocation("ColorOffset"), mColorOffset = (float)fract(Time::currentTime() * 0.5) );
     glUniform1f(mGLSLProgram->getUniformLocation("Zoom"),    mZoom);
     glUniform1f(mGLSLProgram->getUniformLocation("Xcenter"), mXcenter);
@@ -240,7 +240,7 @@ public:
     mGLSLProgram->attachShader( new GLSLVertexShader("/glsl/mandelbrot.vs") );
     mGLSLProgram->attachShader( new GLSLFragmentShader("/glsl/mandelbrot.fs") );
     mGLSLProgram->linkProgram();
-    mGLSLProgram->useProgram();
+    openglContext()->useGLSLProgram( mGLSLProgram.get() );
     glUniform1f(mGLSLProgram->getUniformLocation("ColorOffset"), mColorOffset = (float)fract(Time::currentTime() * 0.5) );
     glUniform3f(mGLSLProgram->getUniformLocation("InnerColor"),  0,0,0 );
     glUniform1f(mGLSLProgram->getUniformLocation("Zoom"),    mZoom);

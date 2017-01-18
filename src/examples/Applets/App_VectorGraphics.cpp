@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -55,7 +55,7 @@ public:
     rendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4() );
 
     // load images used later as textures
-    
+
     // load colorful pattern & substitute black with transparent blue
     vl::ref<vl::Image> pattern  = vl::loadImage("/images/pattern.bmp");
     pattern->substituteColorRGB_RGBA(0x000000,0x0000FFAA);
@@ -72,7 +72,7 @@ public:
     vl::ref<vl::Image> spectrum2 = vl::makeColorSpectrum(128, vl::black, vl::white, vl::gray,   vl::black);
 
     // add a new VectorGraphics to our SceneManagerVectorGraphics
-  
+
     vl::ref<vl::VectorGraphics> vg = new vl::VectorGraphics;
     vl::ref<vl::SceneManagerVectorGraphics> vgscene = new vl::SceneManagerVectorGraphics;
     vgscene->vectorGraphicObjects()->push_back(vg.get());
@@ -107,7 +107,7 @@ public:
         vg->fillQuad( 0,0 , pattern->width()*3.0f,pattern->height()*3.0f );
       vg->popMatrix();
 
-      // ###### line rendering ###### 
+      // ###### line rendering ######
 
       vg->setImage(NULL);
       vg->setLineWidth(1.0f);
@@ -149,7 +149,7 @@ public:
       for(int y=0; y<=100; y+=4)
         vg->drawLine(0,y,100,y);
 
-      // ###### textured point rendering + scissor ###### 
+      // ###### textured point rendering + scissor ######
 
       // with the Scissor we can clip the rendering against a specific rectangular area
       int scissor_w = 200;
@@ -188,7 +188,7 @@ public:
 
       vg->removeScissor();
 
-      // ###### rounded point rendering ###### 
+      // ###### rounded point rendering ######
 
       vg->setImage(NULL);
       vg->setPointSize(7);
@@ -206,7 +206,7 @@ public:
       }
       vg->drawPoints(points);
 
-      // ###### squared point rendering ###### 
+      // ###### squared point rendering ######
 
       vg->setImage(NULL);
       vg->setPointSize(5);
@@ -224,7 +224,7 @@ public:
       }
       vg->drawPoints(points);
 
-      // ###### stencil buffer rendering ###### 
+      // ###### stencil buffer rendering ######
 
       // reset states
       vg->resetMatrix();
@@ -239,7 +239,7 @@ public:
       vg->setStencilFunc(vl::FU_NOTEQUAL, 0x01, 0x01);
       vg->setStencilOp(vl::SO_REPLACE, vl::SO_REPLACE, vl::SO_REPLACE);
 
-      // ###### render the rose on the stencil buffer ###### 
+      // ###### render the rose on the stencil buffer ######
 
       // rose create and bind transform
       mRoseTransform = new vl::Transform;
@@ -255,7 +255,7 @@ public:
       vg->fillEllipse(0,0 , 150,25)->setTransform(mRoseTransform.get());
       vg->popMatrix();
 
-      // ###### fill the rose with color ###### 
+      // ###### fill the rose with color ######
 
       // setup stencil test: renders only where the stencil buffer is set to 0x01
       vg->setStencilFunc(vl::FU_EQUAL, 0x01, 0x01);
@@ -281,7 +281,7 @@ public:
       // note that the 2D text is not transformed by mRoseTransform but just follows an idea point transformed by mRoseTransform.
       vg->drawText("Stencil buffer in action here!", vl::AlignHCenter|vl::AlignVCenter)->setTransform(mRoseTransform.get());
 
-      // ###### draws a rotated text ###### 
+      // ###### draws a rotated text ######
 
       vg->setColor(vl::black);
       vg->setFont("/font/bitstream-vera/VeraMono.ttf", 14, true);
@@ -290,7 +290,7 @@ public:
       vg->drawText(256, 256, "Rotated Text", vl::AlignHCenter|vl::AlignVCenter);
       vg->popMatrix();
 
-      // ###### transparent star image ###### 
+      // ###### transparent star image ######
 
       vg->pushState();
         vg->setColor(vl::fvec4(1,1,1,0.75f)); // transparent white
@@ -302,7 +302,7 @@ public:
         rendering()->as<vl::Rendering>()->transform()->addChild( mStarTransform.get() );
       vg->popState();
 
-      // ###### how to instance multiple times the same object ###### 
+      // ###### how to instance multiple times the same object ######
 
       // generate 5 corner star: line loop primitive
       std::vector<vl::dvec2> star_line_loop;
@@ -314,7 +314,7 @@ public:
         star_line_loop.push_back(v.xy());
       }
 
-      // ###### generate 5 corner star: lines primitive ###### 
+      // ###### generate 5 corner star: lines primitive ######
       std::vector<vl::dvec2> star_lines;
       for(int i=0; i<5; ++i)
       {

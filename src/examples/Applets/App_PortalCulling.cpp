@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -39,14 +39,14 @@
 // X = room, for each room a sector is generated, each room is filled with a couple of spheres.
 // When an X is next to another X a passage (and relative Portal) is generated.
 const int map_size = 7;
-const char* map[map_size] = 
+const char* map[map_size] =
 {
-  "       ", 
-  " XXXXX ", 
-  " XXXXX ", 
-  " XXXXX ", 
-  " XXXXX ", 
-  " XXXXX ", 
+  "       ",
+  " XXXXX ",
+  " XXXXX ",
+  " XXXXX ",
+  " XXXXX ",
+  " XXXXX ",
   "       "
 };
 const float room_h        = 5.0f;
@@ -59,7 +59,7 @@ class App_PortalCulling: public BaseDemo
 public:
   virtual vl::String appletInfo()
   {
-    return BaseDemo::appletInfo() + 
+    return BaseDemo::appletInfo() +
     "- F6: toggles wireframe\n" +
     "- F7: toggles show portals\n" +
     "- F8: enable/disable portal-based culling\n" +
@@ -101,7 +101,7 @@ public:
   void updateScene()
   {
     vl::mat4 im = trackball()->camera()->modelingMatrix();
-    vl::vec3 t = im.getT(); t.y() = 1.5f; im.setT(t); 
+    vl::vec3 t = im.getT(); t.y() = 1.5f; im.setT(t);
     trackball()->camera()->setModelingMatrix(im);
   }
 
@@ -111,12 +111,12 @@ public:
     // Initialize the Sectors.
     vl::ref<vl::Sector> sectors[map_size][map_size] =
     {
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
       { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }
     };
 
@@ -126,9 +126,9 @@ public:
     mPortalSceneManager = new vl::SceneManagerPortals;
     mPortalSceneManager->setShowPortals(true);
     // remove all the other scene managers
-    rendering()->as<vl::Rendering>()->sceneManagers()->clear(); 
+    rendering()->as<vl::Rendering>()->sceneManagers()->clear();
     // install our SceneManagerPortals!
-    rendering()->as<vl::Rendering>()->sceneManagers()->push_back(mPortalSceneManager.get()); 
+    rendering()->as<vl::Rendering>()->sceneManagers()->push_back(mPortalSceneManager.get());
 
     // Skip the boring code below and just pay attention to how the Sector and Portal classes are used!
 
@@ -394,8 +394,8 @@ public:
             // #####################################################
             // portal1: sector1 -> sector2
             // portal2: sector2 -> sector1
-            // This is very important: in order to connect two sectors A and B you have to create a 
-            // portal in A whose target is B, and other portal in B whose target is A. 
+            // This is very important: in order to connect two sectors A and B you have to create a
+            // portal in A whose target is B, and other portal in B whose target is A.
             // This way each sector can see the other.
 
             // new portal
@@ -450,7 +450,7 @@ public:
             // #####################################################
             // portal1: sector1 -> sector2
             // portal2: sector2 -> sector1
-            // This is very important: in order to connect two sectors A and B you have to create a 
+            // This is very important: in order to connect two sectors A and B you have to create a
             // portal in A whose target is B, and other portal in B whose target is A.
             // This way each sector can see the other.
 
@@ -495,7 +495,7 @@ public:
           // # simple way to define the Sector's volume #
           // ############################################
           // Each Sector must have a set of volumes that are checked at the beginning of each rendering
-          // to decide in which one the camera is. In our case we just use the bounding box of the 
+          // to decide in which one the camera is. In our case we just use the bounding box of the
           // Sector itself. Note that the volumes of a Sector must not intersect the volumes of the other
           // Sectors, otherwise the algorithm won't be able to determine in which Sector the camera is in.
           // I.e, it will randomly pick the first found!

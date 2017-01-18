@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -132,7 +132,7 @@ public:
   {
     vl::real degrees = vl::Time::currentTime() * 45.0f;
     vl::mat4 matrix;
-    
+
     matrix.rotate( degrees, 0,1,0 );
     matrix.translate(-10,0,0);
     mCubeTransform1->setLocalMatrix( matrix );

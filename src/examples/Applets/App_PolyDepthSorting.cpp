@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -101,7 +101,7 @@ public:
     /* positions the two objects next to one another */
     updateTransforms();
 
-    /* Position the camera to nicely see the objects in the scene. 
+    /* Position the camera to nicely see the objects in the scene.
        You must call this function after having positioned your objects in the scene! */
     trackball()->adjustView( sceneManager(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
   }

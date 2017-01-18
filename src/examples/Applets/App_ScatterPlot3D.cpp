@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,7 +40,7 @@ class App_ScatterPlot3D: public BaseDemo
 
 public:
   App_ScatterPlot3D(int test): _test_number(test) {}
-  
+
   void updateScene()
   {
     _tr->setLocalMatrix(vl::mat4::getRotation( vl::Time::currentTime()*45, 0,1,0 ) );
@@ -71,7 +71,7 @@ public:
         vl::ref<vl::Image> img = vl::loadImage("/images/particle.tif");
         effect->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( img.get() ) );
         effect->shader()->gocTexEnv(0)->setPointSpriteCoordReplace(true);
-        effect->shader()->enable(vl::EN_POINT_SPRITE); 
+        effect->shader()->enable(vl::EN_POINT_SPRITE);
       }
       else
         vl::Log::error("Point sprites not supported.\n");

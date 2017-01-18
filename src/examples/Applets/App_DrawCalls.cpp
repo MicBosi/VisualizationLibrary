@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -177,10 +177,10 @@ class App_DrawCalls: public BaseDemo
     teapot_p_restart->computeNormals();
     TriangleStripGenerator::stripfy(teapot_p_restart.get(), 22, false, false, true);
     ref<Geometry> teapot_multi = teapot_p_restart->shallowCopy();
-    
+
     // teapot_p_restart will merge all triangle strip using primitive restart
     teapot_p_restart->mergeDrawCallsWithPrimitiveRestart(PT_TRIANGLE_STRIP);
-    
+
     // teapot_multi will merge all triangle strip using MultiDrawElements
     teapot_multi->mergeDrawCallsWithMultiDrawElements(PT_TRIANGLE_STRIP);
 

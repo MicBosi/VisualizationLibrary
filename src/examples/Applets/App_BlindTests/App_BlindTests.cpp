@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -58,7 +58,7 @@ struct s_Test
   const char* mTestName;
 };
 
-s_Test g_Tests[] = { 
+s_Test g_Tests[] = {
   { test_TypeInfo,    "TypeInfo"     },
   { test_math,        "Math"         },
   { test_filesystem,  "Filesystem"   },
