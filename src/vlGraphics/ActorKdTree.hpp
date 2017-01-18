@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -44,9 +44,9 @@ namespace vl
   /**
    * ActorKdTree class extends the ActorTreeAbstract class implementing a space partitioning scheme based on a Kd-Tree.
    *
-   * \note 
+   * \note
    * When building the Kd-Tree, Visualization Library considers the Actors' LOD level 0.
-   * 
+   *
    * \sa
    * - ActorTree
    * - SceneManager
@@ -68,7 +68,7 @@ namespace vl
     virtual const ActorTreeAbstract* child(int i) const;
 
   /**
-   * Builds a ActorKdTree with the given list of Actor[s].
+   * Builds a ActorKdTree with the given list of Actors.
    * The ActorKdTree generation routine will try to minimize the ActorKdTree depth. Note that this function
    * is relatively quick, but is not for free. Consider that using a Core 2 Duo @2.0GHz you can
    * process around 22.000 objects/sec.
@@ -76,7 +76,7 @@ namespace vl
    */
   void buildKdTree(ActorCollection& actors, int max_depth=100, float minimum_volume=0);
 
-  //! Builds a ActorKdTree with the Actor[s] contained in the tree.
+  //! Builds a ActorKdTree with the Actors contained in the tree.
   //! \note This method calls prepareActors() before computing the KdTree.
   void rebuildKdTree(int max_depth=100, float minimum_volume=0);
 
@@ -96,8 +96,8 @@ namespace vl
   /**
    * Inserts an Actor in the ActorKdTree node hierarchy.
    * Note that the Actor is likely to be inserted in a node whose bounding volume does not surround the Actor's bounding volume.
-   * For this reason after you inserted one or more Actor[s] in the ActorKdTree you should call computeAABB() on the root node of 
-   * the ActorKdTree. Inserting and removing Actor[s] is an expensive operation and produces an ActorKdTree that is 
+   * For this reason after you inserted one or more Actors in the ActorKdTree you should call computeAABB() on the root node of
+   * the ActorKdTree. Inserting and removing Actors is an expensive operation and produces an ActorKdTree that is
    * less balanced than the one you would get by recompiling the whole ActorKdTree from scratch.
    *
    * \return
@@ -109,38 +109,38 @@ namespace vl
   ActorKdTree* insertActor(Actor* actor);
 
   /**
-   * Removes the Actor[s] in the internal nodes of the ActorKdTree and uses them to create a new ActorKdTree.
+   * Removes the Actors in the internal nodes of the ActorKdTree and uses them to create a new ActorKdTree.
    */
   ref<ActorKdTree> kdtreeFromNonLeafyActors(int max_depth=100, float minimum_volume=0);
 
   /**
-   * Removes the Actor[s] in the internal nodes of the ActorKdTree and appends them in the given ActorCollection.
+   * Removes the Actors in the internal nodes of the ActorKdTree and appends them in the given ActorCollection.
    */
   void harvestNonLeafActors(ActorCollection& actors);
 
   private:
-    void setChildN(ActorKdTree* child) 
-    { 
-      VL_CHECK(child); 
+    void setChildN(ActorKdTree* child)
+    {
+      VL_CHECK(child);
       if (mChildN)
         mChildN->mParent = NULL;
       child->mParent = this;
-      mChildN=child; 
+      mChildN=child;
     }
-    void setChildP(ActorKdTree* child) 
-    { 
-      VL_CHECK(child); 
+    void setChildP(ActorKdTree* child)
+    {
+      VL_CHECK(child);
       if (mChildP)
         mChildP->mParent = NULL;
       child->mParent = this;
-      mChildP=child; 
+      mChildP=child;
     }
     //! Computes a score for the plane, the closer to zero the better.
     int scorePlane(const Plane& plane, const ActorCollection& actors);
     //! Finds the best plane among different x/y/z orientation in order to divide the given
     //! list of actors included in the given AABB.
     bool findBestPlane(Plane& plane, int& counter, ActorCollection& actors);
-    //! 
+    //!
     void compileTree_internal(ActorCollection& acts, int& counter, int max_depth=100, float minimum_volume=0);
     //!
     void computeLocalAABB(const ActorCollection& actors);

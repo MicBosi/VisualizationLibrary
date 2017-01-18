@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -37,21 +37,21 @@
 namespace vl
 {
   /**
-   * The ActorTree class implements a generic tree whose nodes contain Actor[s]. Each node of the tree can have any number of children.
+   * The ActorTree class implements a generic tree whose nodes contain Actors. Each node of the tree can have any number of children.
    *
-   * Use this class when you want to have direct control over how the Actor[s] are
+   * Use this class when you want to have direct control over how the Actors are
    * grouped together or to implement specific space partitioning schemes like
-   * BSP trees, Quadtrees, Octrees etc. For example you can use the ActorTree class 
+   * BSP trees, Quadtrees, Octrees etc. For example you can use the ActorTree class
    * to build a quadtree by assigning 4 children per node and filling them appropriately.
-   * Of course you can also use an ActorTree to group a set of Actor[s] based on any other
-   * principle. For example animated Actor[s] are usually kept in separate "flat" trees 
-   * (for example all in a single node) as the computational cost of rebuilding every frame 
+   * Of course you can also use an ActorTree to group a set of Actors based on any other
+   * principle. For example animated Actors are usually kept in separate "flat" trees
+   * (for example all in a single node) as the computational cost of rebuilding every frame
    * the BSP tree, Quadtree, Octree etc. might be to high.
-   * 
-   * Note that for performance reasons the ActorKdTree class derives from the ActorTreeAbstract 
-   * and implements a space partitioning scheme (based on a binary tree) where the splitting 
+   *
+   * Note that for performance reasons the ActorKdTree class derives from the ActorTreeAbstract
+   * and implements a space partitioning scheme (based on a binary tree) where the splitting
    * planes are in turn choosen so that they are aligned to the world space x, y and z axes.
-   * 
+   *
    * \sa
    * - ActorKdTree
    * - SceneManager

@@ -241,7 +241,7 @@ void Rendering::render()
   // --- RENDER THE QUEUE: loop through the renderers, feeding the output of one as input for the next ---
 
   const RenderQueue* render_queue = renderQueue();
-  for(size_t i=0; i<renderers().size(); ++i)
+  for(int i=0; i<renderers().size(); ++i)
   {
     if (renderers()[i])
     {
@@ -251,7 +251,7 @@ void Rendering::render()
         VL_TRAP();
         continue;
       }
-      
+
       if (renderers()[i]->framebuffer()->openglContext() == NULL)
       {
         vl::Log::error( Say("Rendering::render(): invalid Framebuffer for Renderer #%n, OpenGLContext is NULL!\n") << i );

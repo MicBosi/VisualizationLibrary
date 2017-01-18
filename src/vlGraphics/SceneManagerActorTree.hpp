@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -39,7 +39,7 @@ namespace vl
 {
   /**
    * A SceneManagerBVH that implements its spatial partitioning strategy using an ActorTree
-   * 
+   *
    * \sa
    * - Actor
    * - ActorKdTree
@@ -55,7 +55,7 @@ namespace vl
 
   public:
     SceneManagerActorTree()
-    { 
+    {
       VL_DEBUG_SET_OBJECT_NAME()
       mBoundingVolumeTree = new ActorTree;
     }

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -100,7 +100,7 @@ namespace vl
     bool mIsOpen;
   };
 //-----------------------------------------------------------------------------
-  /** Defines an area containg a set if Actor[s] that is connected to other Sector[s] through its Portal[s].
+  /** Defines an area containg a set if Actors that is connected to other Sector[s] through its Portal[s].
    *  See also:
    *  - SceneManagerPortals
    *  - Portal
@@ -113,7 +113,7 @@ namespace vl
   public:
     /** A callback object called each time a Sector becomes visible through a Portal.
      *  Note: a callback can be called multiple times with the same Sector argument if a Sector is discovered multiple times through different portals.
-     *  Using callbacks can be very useful to perform special actions upon sector discovery, like enabling/disabling animations, enabling/disabling 
+     *  Using callbacks can be very useful to perform special actions upon sector discovery, like enabling/disabling animations, enabling/disabling
      *  a ActorKdTree scene manager or a Terrain scene manager to render the external environment etc.
      */
     class VisibilityCallback: public Object
@@ -131,10 +131,10 @@ namespace vl
     };
   public:
     //! Constructor.
-    Sector() 
-    { 
+    Sector()
+    {
       VL_DEBUG_SET_OBJECT_NAME()
-      mActors = new ActorCollection; 
+      mActors = new ActorCollection;
     }
 
     //! The Actor object contained in a sector. An actor can be part of multiple sectors.
@@ -154,7 +154,7 @@ namespace vl
     //! The volumes of a sector must not intersecate with the volumes of another sector.
     const std::vector< AABB >& volumes() const { return mVolumes; }
 
-    //! Returns the bounding box of all the Actor[s] in the sector.
+    //! Returns the bounding box of all the Actors in the sector.
     AABB computeBoundingBox();
 
     std::vector< ref<VisibilityCallback> >& callbacks() { return mCallbacks; }
@@ -187,14 +187,14 @@ namespace vl
 
   public:
     //! Constructor.
-    SceneManagerPortals(): mExternalSector(new Sector), mVisitTick(1), mShowPortals(false) 
+    SceneManagerPortals(): mExternalSector(new Sector), mVisitTick(1), mShowPortals(false)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
-    //! Appends to the given list all the Actor[s] contained in the scene regardless of their visibility.
+    //! Appends to the given list all the Actors contained in the scene regardless of their visibility.
     void extractActors(ActorCollection& list);
-    //! Appends to the given list all the visible Actor[s] using the portal culling algorithm.
+    //! Appends to the given list all the visible Actors using the portal culling algorithm.
     void extractVisibleActors(ActorCollection& list, const Camera* camera);
 
     //! The Sectors that are part of the scene.
@@ -202,11 +202,11 @@ namespace vl
     //! The Sectors that are part of the scene.
     const std::vector< ref<Sector> >& sectors() const { return mSectors; }
 
-    //! Returns the external sector. 
+    //! Returns the external sector.
     //! The external sector is a special sector that is considered visible when the camera is not inside any other sector.
     //! The external sector can be used to contain objects that are outside the indoor environment defined by the other "normal" sectors.
     //! For example, you could use the SceneManagerPortals to model a house and put in the external sector all the objects that are outside
-    //! the house. The portals inside the house can point to the external sector so that the objects outside the house are 
+    //! the house. The portals inside the house can point to the external sector so that the objects outside the house are
     //! rendered only if they are visible through a door or a window for maximum performances. Of course you can also go from an external sector
     //! to an internal sector just as well using one or more portals.
     Sector* externalSector() { return mExternalSector.get(); }

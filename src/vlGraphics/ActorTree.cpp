@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -37,20 +37,21 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 void ActorTree::eraseAllChildren()
 {
-  for(unsigned i=0;i<mChildren.size(); ++i)
-    mChildren[i]->setParent(NULL);
+  for( size_t i = 0; i < mChildren.size(); ++i ) {
+    mChildren[i]->setParent( NULL );
+  }
   mChildren.clear();
 }
 //-----------------------------------------------------------------------------
 void ActorTree::addChild(ActorTreeAbstract* node)
-{ 
-  if (node->parent())
-  {
+{
+  if ( node->parent() ) {
     vl::Log::error("ActorTreeAbstract::addChild(node): 'node' already has a parent.\n");
     return;
   }
-  node->setParent(this);
-  mChildren.push_back(node);
+  node->setParent( this );
+  mChildren.push_back( node );
+}
 }
 //-----------------------------------------------------------------------------
 void ActorTree::setChild(int i, ActorTreeAbstract* node) 
