@@ -1039,7 +1039,7 @@ namespace vl
     RS_TextureSampler15 = RS_TextureSampler + 15,
     /* ... */
 
-    RS_TexGen   = RS_TextureSampler + VL_MAX_TEXTURE_UNITS,
+    RS_TexGen   = RS_TextureSampler + VL_MAX_TEXTURE_IMAGE_UNITS,
     RS_TexGen0  = RS_TexGen + 0,
     RS_TexGen1  = RS_TexGen + 1,
     RS_TexGen2  = RS_TexGen + 2,
@@ -1058,7 +1058,7 @@ namespace vl
     RS_TexGen15 = RS_TexGen + 15,
     /* ... */
 
-    RS_TexEnv   = RS_TexGen + VL_MAX_TEXTURE_UNITS,
+    RS_TexEnv   = RS_TexGen + VL_MAX_LEGACY_TEXTURE_UNITS,
     RS_TexEnv0  = RS_TexEnv + 0,
     RS_TexEnv1  = RS_TexEnv + 1,
     RS_TexEnv2  = RS_TexEnv + 2,
@@ -1077,7 +1077,7 @@ namespace vl
     RS_TexEnv15 = RS_TexEnv + 15,
     /* ... */
 
-    RS_TextureMatrix   = RS_TexEnv + VL_MAX_TEXTURE_UNITS,
+    RS_TextureMatrix   = RS_TexEnv + VL_MAX_LEGACY_TEXTURE_UNITS,
     RS_TextureMatrix0  = RS_TextureMatrix + 0,
     RS_TextureMatrix1  = RS_TextureMatrix + 1,
     RS_TextureMatrix2  = RS_TextureMatrix + 2,
@@ -1096,7 +1096,7 @@ namespace vl
     RS_TextureMatrix15 = RS_TextureMatrix + 15,
     /* ... */
 
-    RS_RenderStateCount = RS_TextureMatrix15 + 1,
+    RS_RenderStateCount = RS_TextureMatrix + VL_MAX_LEGACY_TEXTURE_UNITS,
 
     RS_NONE,
 
