@@ -181,13 +181,14 @@ void EdgeExtractor::extractEdges(ActorCollection* actors)
 void EdgeExtractor::extractEdges(SceneManager* scene_manager)
 {
   ref<ActorCollection> actors = new ActorCollection;
-  scene_manager->extractActors(*actors);
+  scene_manager->extractVisibleActors( *actors, NULL );
   extractEdges(actors.get());
 }
 //-----------------------------------------------------------------------------
 void EdgeExtractor::extractEdges(Rendering* rendering)
 {
-  for(int i=0; i<rendering->sceneManagers()->size(); ++i)
-    extractEdges(rendering->sceneManagers()->at(i));
+  for(int i=0; i<rendering->sceneManagers()->size(); ++i) {
+    extractEdges( rendering->sceneManagers()->at(i) );
+  }
 }
 //-----------------------------------------------------------------------------

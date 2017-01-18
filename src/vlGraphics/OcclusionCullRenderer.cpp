@@ -160,7 +160,7 @@ void OcclusionCullRenderer::render_pass1(const RenderQueue* in_render_queue )
   {
     const Actor* actor = in_render_queue->at(i)->mActor;
 
-    if ( !mWrappedRenderer->isEnabled(actor->enableMask()) )
+    if ( ! mWrappedRenderer->isEnabled(actor) )
       continue;
 
     bool occluded = false;
@@ -259,7 +259,7 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
     const RenderToken* tok = non_occluded_render_queue->at(i);
     Actor* actor = tok->mActor;
 
-    if ( !mWrappedRenderer->isEnabled(actor->enableMask()) )
+    if ( ! mWrappedRenderer->isEnabled(actor) )
       continue;
 
     // --------------- Actor's scissor ---------------

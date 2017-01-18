@@ -87,7 +87,7 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
   mVisibleActors.clear();
   for(int i=0; i<render_queue->size(); ++i)
   {
-    if ( !isEnabled(render_queue->at(i)->mActor->enableMask()) )
+    if ( ! isEnabled(render_queue->at(i)->mActor) )
       continue;
     // fails for non-Geometry renderables
     WFInfo* wfinfo = declareActor(render_queue->at(i)->mActor);

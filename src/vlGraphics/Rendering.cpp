@@ -203,14 +203,19 @@ void Rendering::render()
       {
         if ( sceneManagers()->at(i)->boundsDirty() ) {
           sceneManagers()->at(i)->computeBounds();
+        }
+
         // try to cull the scene with both bsphere and bbox
-        bool visible = !camera()->frustum().cull(sceneManagers()->at(i)->boundingSphere()) && 
-                       !camera()->frustum().cull(sceneManagers()->at(i)->boundingBox());
-        if ( visible )
+        if ( camera()->frustum().cull( sceneManagers()->at(i)->boundingSphere() ) ||
+             camera()->frustum().cull( sceneManagers()->at(i)->boundingBox() ) ) {
+          continue;
+        } else {
           sceneManagers()->at(i)->extractVisibleActors( *actorQueue(), camera() );
+        }
       }
-      else
-        sceneManagers()->at(i)->extractActors( *actorQueue() );
+      else {
+        sceneManagers()->at(i)->extractVisibleActors( *actorQueue(), NULL );
+      }
     }
   }
 

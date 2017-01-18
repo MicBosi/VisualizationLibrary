@@ -38,7 +38,7 @@ using namespace vl;
 void RayIntersector::intersect(const Ray& ray, SceneManager* scene_manager)
 {
   actors()->clear();
-  scene_manager->extractActors( *actors() );
+  scene_manager->extractVisibleActors( *actors(), NULL );
   setRay(ray);
   intersect();
 }
