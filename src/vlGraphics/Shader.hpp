@@ -1757,6 +1757,9 @@ namespace vl
     virtual ERenderState type() const { return RS_TextureSampler; }
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
+    /** Reset texture sampler to it's default disabled state. */
+    static void reset(int index, OpenGLContext* ctx) { TextureSampler().apply( index, NULL, ctx ); }
+
     //! The texture sampler by a texture unit.
     //! @note You can override the Texture's TexParameter on a per-TextureSampler basis using the setTexParameter() method.
     void setTexture(Texture* texture) { mTexture = texture; }
