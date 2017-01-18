@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -35,16 +35,16 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-Molecule::Molecule(): 
-  mActorTree(new ActorTree), 
-  mTransformTree(new Transform), 
-  mTags(new KeyValues), 
+Molecule::Molecule():
+  mActorTree(new ActorTree),
+  mTransformTree(new Transform),
+  mTags(new KeyValues),
   mAtomLabelTemplate(new Text),
   mAtomLabelEffect(new Effect)
-{ 
+{
   VL_DEBUG_SET_OBJECT_NAME()
   mAtomLabelEffect->shader()->enable(EN_BLEND);
-  reset(); 
+  reset();
 }
 //-----------------------------------------------------------------------------
 void Molecule::reset()
@@ -57,7 +57,7 @@ void Molecule::reset()
   mId = 0;
   mAtoms.clear();
   mBonds.clear();
-  mCycles.clear(); 
+  mCycles.clear();
   mMoleculeName.clear();
   tags()->clear();
   mActorTree->actors()->clear();
@@ -116,10 +116,10 @@ const Atom* Molecule::atom(int index) const { return mAtoms[index].get(); }
 //-----------------------------------------------------------------------------
 Atom* Molecule::atom(int index) { return mAtoms[index].get(); }
 //-----------------------------------------------------------------------------
-void Molecule::addAtom(Atom* atom) 
-{ 
+void Molecule::addAtom(Atom* atom)
+{
   prepareAtomInsert();
-  atoms().push_back(atom); 
+  atoms().push_back(atom);
 }
 //-----------------------------------------------------------------------------
 void Molecule::eraseAllAtoms()
@@ -184,10 +184,10 @@ Bond* Molecule::bond(Atom* a1, Atom* a2)
   return NULL;
 }
 //-----------------------------------------------------------------------------
-void Molecule::addBond(Bond* bond) 
-{ 
+void Molecule::addBond(Bond* bond)
+{
   prepareBondInsert();
-  bonds().push_back(bond); 
+  bonds().push_back(bond);
 }
 //-----------------------------------------------------------------------------
 void Molecule::eraseBond(Bond*b)

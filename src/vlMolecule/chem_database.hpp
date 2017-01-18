@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -169,7 +169,7 @@ namespace vl
   {
   public:
     //! Constructor.
-    AtomInfo(EAtomType type, const char* name, const char* symbol, int atomic_num, double atomic_mass, double melting_pt, double boiling_pt, 
+    AtomInfo(EAtomType type, const char* name, const char* symbol, int atomic_num, double atomic_mass, double melting_pt, double boiling_pt,
              double electroneg, double electron_aff, int valence, double calculated_r, double empirical_r, double covalent_r, double vdw_r,
              unsigned int cpk_color, unsigned int rasmol_color)
     {
@@ -220,24 +220,24 @@ namespace vl
     //! Returns the atom's van der Waals radius in Angstroms
     double vanDerWaalsRadius() const { return mVanDerWaalsRadius / 100.0; }
     //! Returns the atom's CPK color
-    fvec4 cpkColor() const 
+    fvec4 cpkColor() const
     {
       fvec4 c;
       c.r() = ((mCPKColor >> 16) & 0xFF) / 255.0f;
       c.g() = ((mCPKColor >> 8)  & 0xFF) / 255.0f;
       c.b() =  (mCPKColor        & 0xFF) / 255.0f;
       c.a() = 1.0f;
-      return c; 
+      return c;
     }
     //! Returns the atom's RasMol color
-    fvec4 rasmolColor() const 
+    fvec4 rasmolColor() const
     {
       fvec4 c;
       c.r() = ((mRasMolColor >> 16) & 0xFF) / 255.0f;
       c.g() = ((mRasMolColor >> 8)  & 0xFF) / 255.0f;
       c.b() =  (mRasMolColor        & 0xFF) / 255.0f;
       c.a() = 1.0f;
-      return c; 
+      return c;
     }
 
   protected:

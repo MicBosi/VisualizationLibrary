@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -253,7 +253,7 @@ namespace vl
     ref<Transform> mTransformTree;
     std::vector< ref<Atom> > mAtoms;
     std::vector< ref<Bond> > mBonds;
-    std::vector< std::vector< ref<Atom> > > mCycles; 
+    std::vector< std::vector< ref<Atom> > > mCycles;
     std::map< ref<Atom>, ref<Actor> > mAtomToActorMap;
     std::map< ref<Actor>, ref<Atom> > mActorToAtomMap;
     std::map< ref<Bond>, ref<Actor> > mBondToActorMap;

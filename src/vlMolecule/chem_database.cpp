@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -34,7 +34,7 @@
 namespace vl
 {
   //-----------------------------------------------------------------------------
-  static const AtomInfo elements_database[AT_Count] = 
+  static const AtomInfo elements_database[AT_Count] =
   {
     AtomInfo( AT_Hydrogen,      "Hydrogen",    "H",   1, 1.00794,      14.01, 20.28,2.20,   72.8,   1, 53,  25,  37,  120, 0xFFFFFF, 0xFFFFFF ),
     AtomInfo( AT_Helium,        "Helium",      "He",  2, 4.002602,     0.95,   4.22,  -1,      0,   0, 31, -1,   32,  140, 0xD9FFFF, 0xFFC0CB ),
@@ -155,7 +155,7 @@ namespace vl
     AtomInfo( AT_Ununseptium,   "Ununseptium", "Uus", 117, 293,          -1,   -1,      -1, -1,    -1,  -1,  -1,  -1,  -1, 0xF00024, 0xFA1691 ),
     AtomInfo( AT_Ununoctium,    "Ununoctium",  "Uuo", 118, 294,          -1,   -1,      -1, -1,     6,  -1,  -1,  -1,  -1, 0xF00024, 0xFA1691 ),
     AtomInfo( AT_Unknown,       "Unknown",       "-",  -1,  -1,          -1,   -1,      -1, -1,    -1,  -1,  -1,  -1,  -1, 0xFA1691, 0xFA1691 ),
-   };                        
+   };
   //-----------------------------------------------------------------------------
   const AtomInfo& atomInfo(EAtomType type) { return elements_database[type]; }
   //-----------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -200,7 +200,7 @@ void Molecule::prepareForRendering()
 //-----------------------------------------------------------------------------
 void Molecule::generateAtomLabel(const Atom* atom, Transform* tr)
 {
-  if (atomLabelTemplate()->font() && 
+  if (atomLabelTemplate()->font() &&
       showAtomNames()             &&
       atom->visible()             &&
       atom->showAtomName()        )
@@ -356,7 +356,7 @@ void Molecule::ballAndStickStyle()
       Effect* fx = fx_cache.acquireEffect(atom(iatom)->color());
       float r = atom(iatom)->radius();
       ref<Geometry> ball = atom_geom_cache.acquireAtomGeometry(r);
-      
+
       // mic fixme:
       // it would be nice to have a pool to accelerate Actor and Transform allocation
 
