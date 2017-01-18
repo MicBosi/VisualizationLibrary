@@ -73,12 +73,25 @@ namespace vl
     virtual ActorTreeAbstract* child(int i) { return mChildren[i].get(); }
     virtual const ActorTreeAbstract* child(int i) const { return mChildren[i].get(); }
 
+    //! Adds a child node to the current node
     void addChild(ActorTreeAbstract* node);
+    //! Adds a child node to the current node if not already present
+    void addChildOnce(ActorTreeAbstract* node);
+    //! Sets the i-th child node to be `node`
     void setChild(int i, ActorTreeAbstract* node);
-    void eraseChild(int i, int count=1);
+    //! Returns the index of the given node or -1 if not found
+    int findChild(ActorTreeAbstract* node);
+    //! Removes the given node
+    bool eraseChild(ActorTreeAbstract* node);
+    //! Removes `count` nodes starting from the i-th included
+    void eraseChild(int i, int count = 1);
+    //! Removes all the child nodes
     void eraseAllChildren();
 
-  public:
+    //! The list of child nodes.
+    const std::vector< ref<ActorTreeAbstract> >& children() const { return mChildren; }
+
+  protected:
     std::vector< ref<ActorTreeAbstract> > mChildren;
   };
 }

@@ -52,24 +52,51 @@ void ActorTree::addChild(ActorTreeAbstract* node)
   node->setParent( this );
   mChildren.push_back( node );
 }
+//-----------------------------------------------------------------------------
+void ActorTree::addChildOnce(ActorTreeAbstract* node)
+{
+  if ( findChild( node ) == -1 ) {
+    addChild( node );
+  }
 }
 //-----------------------------------------------------------------------------
-void ActorTree::setChild(int i, ActorTreeAbstract* node) 
-{ 
-  if (node->parent())
-  {
+int ActorTree::findChild(ActorTreeAbstract* node)
+{
+  std::vector< ref<ActorTreeAbstract> >::iterator it = std::find( mChildren.begin(), mChildren.end(), node );
+  if ( it != mChildren.end() ) {
+    return (int)( it - mChildren.begin() );
+  } else {
+    return -1;
+  }
+}
+//-----------------------------------------------------------------------------
+bool ActorTree::eraseChild(ActorTreeAbstract* node)
+{
+  int pos = findChild( node );
+  if ( pos != -1 ) {
+    eraseChild( pos );
+    return true;
+  } else {
+    return false;
+  }
+}
+//-----------------------------------------------------------------------------
+void ActorTree::setChild(int i, ActorTreeAbstract* node)
+{
+  if ( node->parent() ) {
     vl::Log::error("ActorTreeAbstract::setChild(int,node): 'node' already has a parent.\n");
     return;
   }
-  mChildren[i]->setParent(NULL);
+  mChildren[i]->setParent( NULL );
   mChildren[i] = node;
-  mChildren[i]->setParent(this);
+  node->setParent( this );
 }
 //-----------------------------------------------------------------------------
 void ActorTree::eraseChild(int i, int count)
 {
-  for(int j=i; j<i+count; ++j)
-    mChildren[j]->setParent(NULL);
-  mChildren.erase(mChildren.begin()+i,mChildren.begin()+i+count);
+  for( int j = i; j < i + count; ++j ) {
+    mChildren[j]->setParent( NULL );
+  }
+  mChildren.erase( mChildren.begin() + i, mChildren.begin() + i + count );
 }
 //-----------------------------------------------------------------------------
