@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -63,7 +63,7 @@ WXGLCanvas::~WXGLCanvas()
   dispatchDestroyEvent();
 }
 //-----------------------------------------------------------------------------
-WXGLCanvas::WXGLCanvas( 
+WXGLCanvas::WXGLCanvas(
   wxWindow *parent,
   const wxGLContext *shared,
   wxWindowID id,
@@ -72,7 +72,7 @@ WXGLCanvas::WXGLCanvas(
   long style,
   int *attribList,
   const wxString& name,
-  const wxPalette& palette): 
+  const wxPalette& palette):
 wxGLCanvas(parent, shared, id, pos, size, style, name, attribList)
 {
   // let wxWidgets manage the deletion of this object
@@ -319,7 +319,7 @@ void WXGLCanvas::OnPaint( wxPaintEvent& )
   // validate dirty client area
   wxPaintDC dc(this);
 
-  dispatchRunEvent();
+  dispatchUpdateEvent();
 
   // for debugging purposes only
   #if 0
@@ -414,25 +414,25 @@ void WXGLCanvas::show()
   Show(true);
 }
 //-----------------------------------------------------------------------------
-void WXGLCanvas::hide() 
+void WXGLCanvas::hide()
 {
   Show(false);
 }
 //-----------------------------------------------------------------------------
-void WXGLCanvas::setPosition(int x, int y) 
+void WXGLCanvas::setPosition(int x, int y)
 {
   SetPosition(wxPoint(x,y));
 }
 
-void WXGLCanvas::setSize(int w, int h) 
+void WXGLCanvas::setSize(int w, int h)
 {
   SetClientSize(w,h);
 }
 //-----------------------------------------------------------------------------
-ivec2 WXGLCanvas::position() const 
-{ 
+ivec2 WXGLCanvas::position() const
+{
   wxPoint pt = GetPosition();
-  return ivec2(pt.x, pt.y); 
+  return ivec2(pt.x, pt.y);
 }
 //-----------------------------------------------------------------------------
 void WXGLCanvas::setMouseVisible(bool visible)
