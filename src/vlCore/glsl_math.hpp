@@ -431,105 +431,105 @@ namespace vl
   // --------------- pow ---------------
 
   template<typename T>
-  T pow(T a, T b) { return ::pow(a, b); }
+  T pow(T a, T b) { return (T)::pow(a, b); }
 
   template<typename T>
   Vector2<T> pow(const Vector2<T>& a, const Vector2<T>& b) {
-    return Vector2<T>( ::pow(a.x(), b.x()),
-                       ::pow(a.y(), b.y()) );
+    return Vector2<T>( (T)::pow(a.x(), b.x()),
+                       (T)::pow(a.y(), b.y()) );
   }
 
   template<typename T>
   Vector3<T> pow(const Vector3<T>& a, const Vector3<T>& b) {
-    return Vector3<T>( ::pow(a.x(), b.x()),
-                       ::pow(a.y(), b.y()),
-                       ::pow(a.z(), b.z()) );
+    return Vector3<T>( (T)::pow(a.x(), b.x()),
+                       (T)::pow(a.y(), b.y()),
+                       (T)::pow(a.z(), b.z()) );
   }
 
   template<typename T>
   Vector4<T> pow(const Vector4<T>& a, const Vector4<T>& b) {
-    return Vector4<T>( ::pow(a.x(), b.x()),
-                       ::pow(a.y(), b.y()),
-                       ::pow(a.z(), b.z()),
-                       ::pow(a.w(), b.w()) );
+    return Vector4<T>( (T)::pow(a.x(), b.x()),
+                       (T)::pow(a.y(), b.y()),
+                       (T)::pow(a.z(), b.z()),
+                       (T)::pow(a.w(), b.w()) );
   }
 
   // --------------- exp ---------------
 
   template<typename T>
-  T exp(T a) { return ::exp(a); }
+  T exp(T a) { return (T)::exp(a); }
 
   template<typename T>
   Vector2<T> exp(const Vector2<T>& a) {
-    return Vector2<T>( ::exp(a.x()),
-                       ::exp(a.y()) );
+    return Vector2<T>( (T)::exp(a.x()),
+                       (T)::exp(a.y()) );
   }
 
   template<typename T>
   Vector3<T> exp(const Vector3<T>& a) {
-    return Vector3<T>( ::exp(a.x()),
-                       ::exp(a.y()),
-                       ::exp(a.z()) );
+    return Vector3<T>( (T)::exp(a.x()),
+                       (T)::exp(a.y()),
+                       (T)::exp(a.z()) );
   }
 
   template<typename T>
   Vector4<T> exp(const Vector4<T>& a) {
-    return Vector4<T>( ::exp(a.x()),
-                       ::exp(a.y()),
-                       ::exp(a.z()),
-                       ::exp(a.w()) );
+    return Vector4<T>( (T)::exp(a.x()),
+                       (T)::exp(a.y()),
+                       (T)::exp(a.z()),
+                       (T)::exp(a.w()) );
   }
 
   // --------------- log ---------------
 
   template<typename T>
-  T log(T a) { return ::log(a); }
+  T log(T a) { return (T)::log(a); }
 
   template<typename T>
   Vector2<T> log(const Vector2<T>& a) {
-    return Vector2<T>( ::log(a.x()),
-                       ::log(a.y()) );
+    return Vector2<T>( (T)::log(a.x()),
+                       (T)::log(a.y()) );
   }
 
   template<typename T>
   Vector3<T> log(const Vector3<T>& a) {
-    return Vector3<T>( ::log(a.x()),
-                       ::log(a.y()),
-                       ::log(a.z()) );
+    return Vector3<T>( (T)::log(a.x()),
+                       (T)::log(a.y()),
+                       (T)::log(a.z()) );
   }
 
   template<typename T>
   Vector4<T> log(const Vector4<T>& a) {
-    return Vector4<T>( ::log(a.x()),
-                       ::log(a.y()),
-                       ::log(a.z()),
-                       ::log(a.w()) );
+    return Vector4<T>( (T)::log(a.x()),
+                       (T)::log(a.y()),
+                       (T)::log(a.z()),
+                       (T)::log(a.w()) );
   }
 
   // --------------- exp2 ---------------
 
   template<typename T>
-  T exp2(T a) { return ::pow(2, a); }
+  T exp2(T a) { return (T)::pow(2, a); }
 
   template<typename T>
   Vector2<T> exp2(const Vector2<T>& a) {
-    return Vector2<T>( ::pow(2, a.x()),
-                       ::pow(2, a.y()) );
+    return Vector2<T>( (T)::pow(2, a.x()),
+                       (T)::pow(2, a.y()) );
   }
 
   template<typename T>
   Vector3<T> exp2(const Vector3<T>& a) {
-    return Vector3<T>( ::pow(2, a.x()),
-                       ::pow(2, a.y()),
-                       ::pow(2, a.z()) );
+    return Vector3<T>( (T)::pow(2, a.x()),
+                       (T)::pow(2, a.y()),
+                       (T)::pow(2, a.z()) );
   }
 
   template<typename T>
   Vector4<T> exp2(const Vector4<T>& a) {
-    return Vector4<T>( ::pow(2, a.x()),
-                       ::pow(2, a.y()),
-                       ::pow(2, a.z()),
-                       ::pow(2, a.w()) );
+    return Vector4<T>( (T)::pow(2, a.x()),
+                       (T)::pow(2, a.y()),
+                       (T)::pow(2, a.z()),
+                       (T)::pow(2, a.w()) );
   }
 
   // --------------- log2 ---------------
@@ -563,27 +563,27 @@ namespace vl
   // this is not present in the GLSL standard
 
   template<typename T>
-  T log10(T a) { return ::log10(a); }
+  T log10(T a) { return (T)::log10(a); }
 
   template<typename T>
   Vector2<T> log10(const Vector2<T>& a) {
-    return Vector2<T>( ::log10(a.x()),
-                       ::log10(a.y()) );
+    return Vector2<T>( (T)::log10(a.x()),
+                       (T)::log10(a.y()) );
   }
 
   template<typename T>
   Vector3<T> log10(const Vector3<T>& a) {
-    return Vector3<T>( ::log10(a.x()),
-                       ::log10(a.y()),
-                       ::log10(a.z()) );
+    return Vector3<T>( (T)::log10(a.x()),
+                       (T)::log10(a.y()),
+                       (T)::log10(a.z()) );
   }
 
   template<typename T>
   Vector4<T> log10(const Vector4<T>& a) {
-    return Vector4<T>( ::log10(a.x()),
-                       ::log10(a.y()),
-                       ::log10(a.z()),
-                       ::log10(a.w()) );
+    return Vector4<T>( (T)::log10(a.x()),
+                       (T)::log10(a.y()),
+                       (T)::log10(a.z()),
+                       (T)::log10(a.w()) );
   }
 
   // --------------- sqrt ---------------
