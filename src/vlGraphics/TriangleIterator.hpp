@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -117,11 +117,16 @@ namespace vl
         switch(mPrimType)
         {
         case PT_TRIANGLES:
-          // VL_CHECK( (end-start) % 3 == 0 ) /* primitive restart might screw up this */
           mCurrentIndex = start;
           mA = mArray->at(start+0);
           mB = mArray->at(start+1);
           mC = mArray->at(start+2);
+          break;
+        case PT_TRIANGLES_ADJACENCY:
+          mCurrentIndex = start;
+          mA = mArray->at(start+0);
+          mB = mArray->at(start+2);
+          mC = mArray->at(start+4);
           break;
         case PT_TRIANGLE_STRIP:
           mCurrentIndex = start;
@@ -151,6 +156,8 @@ namespace vl
           mC = mArray->at(start+2);
           break;
         default:
+          Log::error( Say("TriangleIteratorIndexed::initialize(): unsupported primitive type %n.\n") << mPrimType );
+          VL_TRAP();
           break;
         }
       }
@@ -195,6 +202,27 @@ namespace vl
           mA = mArray->at(mCurrentIndex + 0);
           mB = mArray->at(mCurrentIndex + 1);
           mC = mArray->at(mCurrentIndex + 2);
+        }
+        break;
+
+      case PT_TRIANGLES_ADJACENCY:
+        mCurrentIndex += 6;
+        // check for the end
+        if ( mCurrentIndex >= mEnd )
+          mCurrentIndex = mEnd;
+        else
+        if ( isPrimRestart(mCurrentIndex) )
+        {
+          mCurrentIndex += 1;
+          mA = mArray->at(mCurrentIndex + 0);
+          mB = mArray->at(mCurrentIndex + 2);
+          mC = mArray->at(mCurrentIndex + 4);
+        }
+        else
+        {
+          mA = mArray->at(mCurrentIndex + 0);
+          mB = mArray->at(mCurrentIndex + 2);
+          mC = mArray->at(mCurrentIndex + 4);
         }
         break;
 
@@ -536,8 +564,8 @@ namespace vl
         mCurPrim = (int)(*mpCountVector).size()-1;
     }
 
-    bool next() 
-    { 
+    bool next()
+    {
       if ( TriangleIteratorIndexed<TArray>::next() )
         return true;
       else
@@ -553,7 +581,7 @@ namespace vl
     }
 
     bool hasNext() const
-    { 
+    {
       if ( !TriangleIteratorIndexed<TArray>::hasNext() && mCurPrim == (int)(*mpCountVector).size()-1 )
         return false;
       else
@@ -569,7 +597,7 @@ namespace vl
 //-----------------------------------------------------------------------------
 // TriangleIterator
 //-----------------------------------------------------------------------------
-  /** Iterator used to extract the indices of every single triangle of a DrawCall 
+  /** Iterator used to extract the indices of every single triangle of a DrawCall
     * regardless of the primitive type.
     * \sa DrawCall::triangles() */
   class TriangleIterator
