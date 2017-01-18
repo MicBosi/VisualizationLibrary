@@ -108,17 +108,24 @@ namespace vl
     //! Fills the color array with the given color
     void setColorArray(const fvec4& color)
     {
-      u32 vert_count = (u32)(vertexArray() ? vertexArray()->size() : vertexAttribArray(VA_Position) ? vertexAttribArray(VA_Position)->data()->size() : 0);
+      u32 vert_count = (u32)(vertexArray() ? vertexArray()->size() : 0);
       VL_CHECK( vert_count )
-      ref<ArrayFloat4> color_array = new ArrayFloat4;
-      color_array->resize(vert_count);
-      for(u32 i=0; i<color_array->size(); ++i)
-        color_array->at(i) = color;
-      #if defined(VL_OPENGL_ES2)
-        setVertexAttribArray(VA_Color, color_array.get());
-      #else
-        setColorArray(color_array.get());
-      #endif
+
+      // try to minimize reallocations
+      ref<ArrayFloat4> color_array = colorArray()->as<ArrayFloat4>();
+      if ( ! color_array ) {
+        color_array = new ArrayFloat4;
+      }
+      if ( color_array->size() != vert_count ) {
+        color_array->resize(vert_count);
+      }
+      for( u32 i = 0; i < color_array->size(); ++i ) {
+        color_array->at( i ) = color;
+      }
+      color_array->setBufferObjectDirty();
+      setBufferObjectDirty();
+
+      setColorArray(color_array.get());
     }
 
     /** Removes all the previously installed arrays. */
