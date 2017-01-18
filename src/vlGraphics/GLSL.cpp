@@ -31,6 +31,7 @@
 
 #include <vlGraphics/GLSL.hpp>
 #include <vlGraphics/OpenGL.hpp>
+#include <vlGraphics/OpenGLContext.hpp>
 #include <vlCore/GlobalSettings.hpp>
 #include <vlCore/VirtualFile.hpp>
 #include <vlCore/Log.hpp>
@@ -158,26 +159,26 @@ void GLSLShader::setSource( const String& source_or_path )
 bool GLSLShader::compile()
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( Has_GLSL );
+
+  if( ! Has_GLSL ) {
     return false;
+  }
 
   if (mSource.empty())
   {
     Log::error("GLSLShader::compile() failed: shader source is empty!\n");
-    VL_TRAP();
+    // VL_TRAP();
     return false;
   }
 
-  if (!mCompiled)
-  {
-    // compile the shader
+  // compile the shader
 
-    if (!handle())
-    {
-      // createShader();
-      mHandle = glCreateShader(mType);
-    }
+  if ( ! mCompiled )
+  {
+    // make sure shader object exists
+
+    createShader();
 
     // assign sources
 
@@ -186,7 +187,7 @@ bool GLSLShader::compile()
 
     // compile the shader
 
-    glCompileShader(handle());
+    glCompileShader( handle() );
 
     if ( compileStatus() )
     {
@@ -346,15 +347,20 @@ void GLSLProgram::deleteProgram()
     glDeleteProgram(handle()); // VL_CHECK_OGL();
     mHandle = 0;
   }
+  resetBindingLocations();
   scheduleRelinking();
 }
 //-----------------------------------------------------------------------------
 bool GLSLProgram::attachShader(GLSLShader* shader)
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( Has_GLSL );
+
+  if( ! Has_GLSL ) {
     return false;
+  }
+
+  createProgram();
 
   scheduleRelinking();
 
@@ -371,16 +377,10 @@ bool GLSLProgram::attachShader(GLSLShader* shader)
     mShaders.push_back(shader);
   #endif
 
-  if ( shader->compile() )
-  {
-    createProgram();
-    glAttachShader( handle(), shader->handle() ); VL_CHECK_OGL();
-    return true;
-  }
+  shader->createShader();
+  glAttachShader( handle(), shader->handle() ); VL_CHECK_OGL();
 
-  VL_CHECK_OGL();
-  return false;
-
+  return shader->compile();
 }
 //-----------------------------------------------------------------------------
 void GLSLProgram::detachAllShaders()
@@ -420,71 +420,76 @@ bool GLSLProgram::detachShader(GLSLShader* shader)
 void GLSLProgram::discardAllShaders()
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
-    return;
+  VL_CHECK( Has_GLSL );
 
-  if (!handle())
+  if( ! Has_GLSL ) {
     return;
+  }
 
-  for(int i=0; i<(int)mShaders.size(); ++i)
+  if ( ! handle() ) {
+    return;
+  }
+
+  for( size_t i = 0; i < mShaders.size(); ++i )
   {
-    if (mShaders[i]->handle())
+    if ( mShaders[i]->handle() )
     {
       glDetachShader( handle(), mShaders[i]->handle() ); VL_CHECK_OGL();
-      mShaders[i]->deleteShader();
+      mShaders[i]->deleteShader(); VL_CHECK_OGL();
     }
   }
 
   mShaders.clear();
+  mScheduleLink = true;
 }
 //-----------------------------------------------------------------------------
 bool GLSLProgram::linkProgram(bool force_relink)
 {
   VL_CHECK_OGL();
   VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  if( ! Has_GLSL ) {
     return false;
-
-  if (!linked() || force_relink)
-  {
-    if (shaderCount() == 0)
-    {
-      Log::bug("GLSLProgram::linkProgram() called on a GLSLProgram with no shaders! (" + String(objectName().c_str()) + ")\n");
-      VL_TRAP()
-      return false;
-    }
-
-    createProgram();
-
-    // pre-link operations
-    preLink();
-
-    // link the program
-
-    glLinkProgram(handle()); VL_CHECK_OGL();
-    mScheduleLink = !linkStatus();
-
-    // check link error
-    if(linked())
-    {
-      // post-link operations
-      postLink();
-
-      #ifndef NDEBUG
-        String log = infoLog();
-        if (!log.empty())
-          Log::warning( Say("%s\n%s\n\n") << objectName().c_str() << log );
-      #endif
-    }
-    else
-    {
-      Log::bug("GLSLProgram::linkProgram() failed! (" + String(objectName().c_str()) + ")\n");
-      Log::bug( Say("Info log:\n%s\n") << infoLog() );
-      // VL_TRAP()
-      return false;
-    }
   }
+
+  if ( linked() && ! force_relink ) {
+    return true;
+  }
+
+  resetBindingLocations();
+
+  if (shaderCount() == 0) {
+    Log::bug("GLSLProgram::linkProgram() called on a GLSLProgram with no shaders! (" + String(objectName()) + ")\n");
+    VL_TRAP()
+    return false;
+  }
+
+  createProgram();
+
+  // pre-link operations
+  preLink();
+
+  // link the program
+
+  glLinkProgram(handle()); VL_CHECK_OGL();
+
+  mScheduleLink = ! linkStatus();
+
+  // check link error
+  if( ! linked() ) {
+    Log::bug("GLSLProgram::linkProgram() failed! (" + String(objectName()) + ")\n");
+    Log::bug( infoLog() );
+    return false;
+  }
+
+  // post-link operations
+  postLink();
+
+  #ifndef NDEBUG
+    String log = infoLog();
+    if ( ! log.empty() ) {
+      Log::warning( Say("%s\n%s\n\n") << objectName().c_str() << log );
+    }
+  #endif
 
   return true;
 }
@@ -494,7 +499,7 @@ void GLSLProgram::preLink()
   VL_CHECK_OGL();
   // fragment shader color number binding
 
-  if (Has_GL_EXT_gpu_shader4||Has_GL_Version_3_0||Has_GL_Version_4_0)
+  if ( Has_GL_EXT_gpu_shader4 || Has_GL_Version_3_0 || Has_GL_Version_4_0 )
   {
     std::map<std::string, int>::iterator it = mFragDataLocation.begin();
     while(it != mFragDataLocation.end())
@@ -597,19 +602,21 @@ String GLSLProgram::infoLog() const
 {
   VL_CHECK_OGL();
   VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  if( ! Has_GLSL ) {
     return "OpenGL Shading Language not supported!\n";
+  }
 
-  VL_CHECK(handle())
+  VL_CHECK( handle() )
 
-  if (handle() == 0)
-    return "GLSLProgram::infoLog(): error! GLSL program object not yet created! (" + String(objectName().c_str()) + ")\n";
+  if (handle() == 0) {
+    return "GLSLProgram::infoLog(): error! GLSL program object not yet created! (" + String(objectName()) + ")\n";
+  }
 
   int max_length = 0;
   glGetProgramiv(handle(), GL_INFO_LOG_LENGTH, &max_length); VL_CHECK_OGL();
   std::vector<char> log_buffer;
-  log_buffer.resize(max_length+1);
-  glGetProgramInfoLog(handle(), max_length, NULL, &log_buffer[0]); VL_CHECK_OGL();
+  log_buffer.resize( max_length + 1 );
+  glGetProgramInfoLog( handle(), max_length, NULL, &log_buffer[0] ); VL_CHECK_OGL();
   return &log_buffer[0];
 }
 //-----------------------------------------------------------------------------
@@ -625,9 +632,9 @@ bool GLSLProgram::validateProgram() const
   if (handle() == 0)
     return false;
 
-  glValidateProgram(handle());
-  int status = 0;
-  glGetProgramiv(handle(), GL_VALIDATE_STATUS, &status); VL_CHECK_OGL();
+  GLint status = 0;
+  glValidateProgram( handle() );
+  glGetProgramiv( handle(), GL_VALIDATE_STATUS, &status ); VL_CHECK_OGL();
   return status == GL_TRUE;
 }
 //-----------------------------------------------------------------------------
@@ -641,53 +648,12 @@ void GLSLProgram::bindAttribLocation(unsigned int index, const char* name)
   glBindAttribLocation(handle(), index, name); VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
-bool GLSLProgram::useProgram() const
-{
-  VL_CHECK_OGL()
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
-    return false;
-
-  if (!handle())
-  {
-    Log::bug("GLSLProgram::useProgram() failed! GLSL program handle is null! (" + String(objectName().c_str()) + ")\n");
-    VL_TRAP()
-    return false;
-  }
-
-  if (!linked())
-  {
-    Log::bug("GLSLProgram::useProgram() failed! GLSL program not linked! (" + String(objectName().c_str()) + ")\n");
-    VL_TRAP()
-    return false;
-  }
-
-// The program validation should be done only after all the uniforms have been applied, just before rendering an object.
-//#ifndef NDEBUG
-//  if (!validateProgram())
-//  {
-//    Log::bug("GLSLProgram::useProgram() failed validation! (" + String(objectName().c_str()) + ")\n");
-//    Log::bug( Say("Info log:\n%s\n") << infoLog() );
-//    VL_TRAP();
-//    return false;
-//  }
-//#endif
-
-  // bind the GLSL program
-  glUseProgram(handle()); VL_CHECK_OGL()
-
-  return true;
-}
-//-----------------------------------------------------------------------------
-void GLSLProgram::apply(int /*index*/, const Camera*, OpenGLContext*) const
+void GLSLProgram::apply(int /*index*/, const Camera*, OpenGLContext* ctx) const
 {
   VL_CHECK_OGL();
   if(Has_GLSL)
   {
-    if ( handle() )
-      useProgram();
-    else
-      glUseProgram(0); VL_CHECK_OGL();
+    ctx->useGLSLProgram(this);
   }
 }
 //-----------------------------------------------------------------------------
@@ -730,7 +696,7 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
         Log::warning("\nActive uniforms:\n");
         for( ; it != activeUniforms().end(); ++it )
           Log::warning( Say("\t%s\n") << it->first.c_str() );
-  
+
         // Check the following:
         // (1) Is the uniform variable declared but not used in your GLSL program?
         // (2) Double-check the spelling of the uniform variable name.
@@ -899,7 +865,7 @@ bool GLSLProgram::programBinary(GLenum binary_format, const void* binary, int le
     }
     else
     {
-      Log::bug("GLSLProgram::programBinary() failed! (" + String(objectName().c_str()) + ")\n");
+      Log::bug("GLSLProgram::programBinary() failed! (" + String(objectName()) + ")\n");
       Log::bug( Say("Info log:\n%s\n") << infoLog() );
       VL_TRAP();
     }

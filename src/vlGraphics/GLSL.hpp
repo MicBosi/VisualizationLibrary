@@ -209,7 +209,7 @@ namespace vl
    *
    * \par Uniforms
    * You have 5 ways to set the value of a uniform:
-   * -# call useProgram() to activate the GLSLProgram and directly call glUniform* (see also getUniformLocation()).
+   * -# call OpenGLContext::useGLSLProgram() to activate the GLSLProgram and directly call glUniform* (see also getUniformLocation()).
    * -# add a Uniform to the GLSLProgram UniformSet, see vl::GLSLProgram::getUniformSet().
    * -# add a Uniform to the Actor's UniformSet, see vl::Actor::getUniformSet().
    * -# add a Uniform to the Actor's Shader UniformSet, see vl::Shader::getUniformSet().
@@ -222,7 +222,7 @@ namespace vl
    * \par Attribute Location Bindings
    * MIC FIXME: WRITE THIS SECTION
    *
-   * Note that for option #1 and #2 you need to relink the GLSLProgram in order for the changes to take effect (linkProgram(force_relink=true)). 
+   * Note that for option #1 and #2 you need to relink the GLSLProgram in order for the changes to take effect (linkProgram(force_relink=true)).
    * Option #2 and #3 automatically schedule a re-link of the GLSL program. See also http://www.opengl.org/sdk/docs/man/xhtml/glBindAttribLocation.xml
    *
    * \sa
@@ -275,10 +275,7 @@ namespace vl
     //! - deleteProgram()
     unsigned int handle() const { return mHandle; }
 
-    //! Equivalent to glUseProgram(handle()), see also http://www.opengl.org/sdk/docs/man/xhtml/glUseProgram.xml for more information.
-    bool useProgram() const;
-
-    //! Calls useProgram()
+    //! Calls OpenGLContext::useGLSLProgram()
     void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
     //! Links the GLSLProgram calling glLinkProgram(handle()) only if the program needs to be linked.
@@ -306,8 +303,8 @@ namespace vl
     //! Detaches a GLSLShader from the GLSLShader (note: it does NOT schedule a relink of the program), see also http://www.opengl.org/sdk/docs/man/xhtml/glDetachShader.xml for more information.
     bool detachShader(GLSLShader* shader);
 
-    //! Detaches all the shaders and deletes them (note that the GLSL Program remains still valid). 
-    //! Use this function when your GLSL program compiled well, you don't want to re-link or re-compile it and you want to save 
+    //! Detaches all the shaders and deletes them (note that the GLSL Program remains still valid).
+    //! Use this function when your GLSL program compiled well, you don't want to re-link or re-compile it and you want to save
     //! some memory by discarding unnecessary shaders objects.
     void discardAllShaders();
 
@@ -318,22 +315,21 @@ namespace vl
     bool validateProgram() const;
 
     /** Equivalent to glBindAttribLocation(handle(), index, name.c_str()) with the difference that this function will automatically create a GLSL program if none is present
-      * and it will schedule a re-link since the new specified bindings take effect after linking the GLSL program.
-      * \sa setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), 
-      *     removeAutoAttribLocation(), addAutoAttribLocation() */
+      * and it will schedule a re-link since the new specified bindings take effect after linking the GLSL program. */
     void bindAttribLocation(unsigned int index, const char* name);
-
 
     //! Eqivalento to glGetAttribLocation(handle(), name).
     //! \note The program must be linked before calling this function.
     int getAttribLocation(const char* name) const
     {
+      VL_CHECK_OGL();
       VL_CHECK( Has_GLSL )
-      if( !Has_GLSL )
+      VL_CHECK( handle() )
+      if( ! Has_GLSL || ! linked() ) {
         return -1;
-      VL_CHECK(handle())
-      VL_CHECK(linked())
-      int location = glGetAttribLocation(handle(), name);
+      }
+      int location = glGetAttribLocation( handle(), name );
+      VL_CHECK_OGL();
       return location;
     }
 
@@ -361,27 +357,26 @@ namespace vl
 
     // --------------- geometry shader ---------------
 
-
     // --------------- GLSL 4.x ---------------
 
-    //! Indicate to the implementation the intention of the application to retrieve the program's binary representation 
-    //! with glGetProgramBinary. The implementation may use this information to store information that may be useful for 
+    //! Indicate to the implementation the intention of the application to retrieve the program's binary representation
+    //! with glGetProgramBinary. The implementation may use this information to store information that may be useful for
     //! a future query of the program's binary. See http://www.opengl.org/sdk/docs/man4/xhtml/glProgramParameter.xml
     void setProgramBinaryRetrievableHint(bool hint) { mProgramBinaryRetrievableHint = hint; }
-    
-    //! Indicate to the implementation the intention of the application to retrieve the program's binary representation 
-    //! with glGetProgramBinary. The implementation may use this information to store information that may be useful for 
+
+    //! Indicate to the implementation the intention of the application to retrieve the program's binary representation
+    //! with glGetProgramBinary. The implementation may use this information to store information that may be useful for
     //! a future query of the program's binary. See http://www.opengl.org/sdk/docs/man4/xhtml/glProgramParameter.xml
     bool programBinaryRetrievableHint() const { return mProgramBinaryRetrievableHint; }
 
     //! Indicates whether program can be bound to individual pipeline stages via glUseProgramStages, see also http://www.opengl.org/sdk/docs/man4/xhtml/glProgramParameter.xml
     //! \note Changing the program-separable attribute will schedule a relink of the GLSL program.
-    void setProgramSeparable(bool separable) 
-    { 
+    void setProgramSeparable(bool separable)
+    {
       if (mProgramSeparable != separable)
       {
         scheduleRelinking();
-        mProgramSeparable = separable; 
+        mProgramSeparable = separable;
       }
     }
 
@@ -401,7 +396,7 @@ namespace vl
 
     /**
      * Applies a set of uniforms to the currently bound GLSL program.
-     * This function expects the GLSLProgram to be already bound, see useProgram().
+     * This function expects the GLSLProgram to be already bound, see OpenGLContext::useGLSLProgram().
      *
      * @param uniforms If NULL uses GLSLProgram::getUniformSet()
     */
@@ -412,12 +407,14 @@ namespace vl
     */
     int getUniformLocation(const char* name) const
     {
+      VL_CHECK_OGL();
       VL_CHECK( Has_GLSL )
-      if( !Has_GLSL )
+      VL_CHECK( handle() )
+      if( ! Has_GLSL || ! linked() ) {
         return -1;
-      VL_CHECK(linked())
-
-      int location = glGetUniformLocation(handle(), name);
+      }
+      int location = glGetUniformLocation( handle(), name );
+      VL_CHECK_OGL();
       return location;
     }
 
