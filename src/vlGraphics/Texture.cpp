@@ -358,8 +358,10 @@ namespace
 //-----------------------------------------------------------------------------
 void Texture::destroyTexture()
 {
-  if (mHandle)
-    glDeleteTextures(1, &mHandle);
+  if ( mHandle && mManaged ) {
+    glDeleteTextures( 1, &mHandle ); VL_CHECK_OGL();
+  }
+
   reset();
   // getTexParameter()->mDirty = true;
 }
@@ -378,10 +380,13 @@ void Texture::reset()
   setHeight(0);
   setDepth(0);
   mHandle = 0;
+  mManaged = true;
   mSetupParams = NULL;
   mBufferObject = NULL;
   mSamples = 0;
   mFixedSamplesLocation = true;
+  // TexParameter is not reset but is marked dirty
+  mTexParameter->setDirty(true);
 }
 //-----------------------------------------------------------------------------
 Texture::Texture(int width, ETextureFormat format, bool border)
@@ -702,9 +707,14 @@ bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_
 {
   VL_CHECK_OGL()
 
+  // Destroy previous texture but save and restore the setup params
+  ref<SetupParams> setup_params = mSetupParams;
+  destroyTexture();
+  mSetupParams = setup_params;
+
   if ( tex_dimension == TD_TEXTURE_BUFFER )
   {
-    if( !buffer_object || !buffer_object->handle() || !glIsBuffer(buffer_object->handle()) )
+    if( ! buffer_object || ! buffer_object->handle() || ! glIsBuffer( buffer_object->handle() ) )
     {
       Log::bug( "Texture::createTexture() requires a non NULL valid buffer object in order to create a texture buffer!\n" );
       VL_CHECK(buffer_object);
@@ -712,135 +722,123 @@ bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_
       VL_CHECK(glIsBuffer(buffer_object->handle()));
       return false;
     }
-    else
+
+    // the buffer object must not be empty!
+    GLint buffer_size = 0;
+    glBindBuffer(GL_TEXTURE_BUFFER, buffer_object->handle());
+    glGetBufferParameteriv(GL_TEXTURE_BUFFER, GL_BUFFER_SIZE, &buffer_size);
+    glBindBuffer(GL_TEXTURE_BUFFER, 0);
+    if ( buffer_size == 0 )
     {
-      // the buffer object must not be empty!
-      GLint buffer_size = 0;
-      glBindBuffer(GL_TEXTURE_BUFFER, buffer_object->handle());
-      glGetBufferParameteriv(GL_TEXTURE_BUFFER, GL_BUFFER_SIZE, &buffer_size);
-      glBindBuffer(GL_TEXTURE_BUFFER, 0);
-      if ( buffer_size == 0 )
-      {
-        Log::bug("Texture::createTexture(): cannot create a texture buffer with an empty buffer object!\n"); VL_TRAP();
-        return false;
-      }
+      Log::bug("Texture::createTexture(): cannot create a texture buffer with an empty buffer object!\n"); VL_TRAP();
+      return false;
     }
   }
 
-  if (mHandle)
+  if ( !supports(tex_dimension , tex_format, 0, ID_None, w, h, d, border, samples, fixedsamplelocations, true) )
   {
-    Log::bug("Texture::createTexture(): a texture can be created only once!\n");
+    VL_CHECK_OGL()
+    Log::bug("Texture::createTexture(): the format/size combination requested is not supported!\n"); VL_TRAP();
     return false;
   }
-  else
+
+  glGenTextures( 1, &mHandle ); VL_CHECK_OGL();
+
+  if (!mHandle)
   {
-    if ( !supports(tex_dimension , tex_format, 0, ID_None, w, h, d, border, samples, fixedsamplelocations, true) )
-    {
-      VL_CHECK_OGL()
-      Log::bug("Texture::createTexture(): the format/size combination requested is not supported!\n"); VL_TRAP();
-      return false;
-    }
-
-    reset();
-
-    glGenTextures( 1, &mHandle ); VL_CHECK_OGL();
-
-    if (!mHandle)
-    {
-      Log::bug("Texture::createTexture(): texture creation failed!\n");
-      VL_TRAP();
-      return false;
-    }
-
-    setDimension(tex_dimension);
-    setInternalFormat(tex_format);
-    setWidth(w);
-    setHeight(h);
-    setDepth(d);
-    setBorder(border);
-    mBufferObject = buffer_object; // the user cannot change this
-    mSamples = samples;
-    mFixedSamplesLocation = fixedsamplelocations;
-    glBindTexture(tex_dimension, mHandle); VL_CHECK_OGL();
-
-    int default_format = getDefaultFormat(tex_format);
-    int default_type   = getDefaultType(tex_format);
-
-    if (tex_dimension == TD_TEXTURE_2D_MULTISAMPLE)
-    {
-      glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, tex_format, w, h, fixedsamplelocations ); VL_CHECK_OGL();
-    }
-    else
-    if (tex_dimension == TD_TEXTURE_2D_MULTISAMPLE_ARRAY)
-    {
-      glTexImage3DMultisample(GL_TEXTURE_2D_MULTISAMPLE_ARRAY, samples, tex_format, w, h, d, fixedsamplelocations ); VL_CHECK_OGL();
-    }
-    else
-    if (tex_dimension == TD_TEXTURE_BUFFER)
-    {
-      VL_CHECK(buffer_object)
-      VL_CHECK(buffer_object->handle())
-      glTexBuffer(GL_TEXTURE_BUFFER, tex_format, buffer_object->handle());
-      unsigned int glerr = glGetError();
-      if (glerr != GL_NO_ERROR)
-      {
-        String msg( (const char*)getGLErrorString(glerr) );
-        Log::bug( "Texture::createTexture(): glTexBuffer() failed with error: '" + msg + "'.\n" );
-        Log::error("Probably you supplied a non supported texture format! Review the glTexBuffer() man page for a complete list of supported texture formats.\n");
-        VL_TRAP();
-      }
-    }
-    else
-    if (tex_dimension == TD_TEXTURE_CUBE_MAP)
-    {
-      glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
-      glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
-      glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
-      glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
-      glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
-      glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
-      VL_CHECK_OGL();
-    }
-    else
-    if (tex_dimension == TD_TEXTURE_2D_ARRAY)
-    {
-      VL_glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, default_format, default_type, NULL);
-      VL_CHECK_OGL();
-    }
-    else
-    if (tex_dimension == TD_TEXTURE_3D)
-    {
-      VL_glTexImage3D(GL_TEXTURE_3D, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, default_format, default_type, NULL);
-      VL_CHECK_OGL();
-    }
-    else
-    if (tex_dimension == TD_TEXTURE_RECTANGLE)
-    {
-      glTexImage2D(GL_TEXTURE_RECTANGLE, 0, tex_format, w, h, 0, default_format, default_type, NULL);
-      VL_CHECK_OGL();
-    }
-    else
-    if (tex_dimension == TD_TEXTURE_1D_ARRAY)
-    {
-      glTexImage2D(GL_TEXTURE_1D_ARRAY, 0, tex_format, w, h, 0, default_format, default_type, NULL);
-      VL_CHECK_OGL();
-    }
-    else
-    if (tex_dimension == TD_TEXTURE_2D)
-    {
-      glTexImage2D(GL_TEXTURE_2D, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
-      VL_CHECK_OGL();
-    }
-    else
-    if (tex_dimension == TD_TEXTURE_1D)
-    {
-      glTexImage1D(GL_TEXTURE_1D, 0, tex_format, w + (border?2:0), border?1:0, default_format, default_type, NULL);
-      VL_CHECK_OGL();
-    }
-
-    glBindTexture(tex_dimension, 0); VL_CHECK_OGL();
-    return true;
+    Log::bug("Texture::createTexture(): texture creation failed!\n");
+    VL_TRAP();
+    return false;
   }
+
+  setDimension(tex_dimension);
+  setInternalFormat(tex_format);
+  setWidth(w);
+  setHeight(h);
+  setDepth(d);
+  setBorder(border);
+  mBufferObject = buffer_object; // the user cannot change this
+  mSamples = samples;
+  mFixedSamplesLocation = fixedsamplelocations;
+  glBindTexture(tex_dimension, mHandle); VL_CHECK_OGL();
+
+  int default_format = getDefaultFormat(tex_format);
+  int default_type   = getDefaultType(tex_format);
+
+  if (tex_dimension == TD_TEXTURE_2D_MULTISAMPLE)
+  {
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, tex_format, w, h, fixedsamplelocations ); VL_CHECK_OGL();
+  }
+  else
+  if (tex_dimension == TD_TEXTURE_2D_MULTISAMPLE_ARRAY)
+  {
+    glTexImage3DMultisample(GL_TEXTURE_2D_MULTISAMPLE_ARRAY, samples, tex_format, w, h, d, fixedsamplelocations ); VL_CHECK_OGL();
+  }
+  else
+  if (tex_dimension == TD_TEXTURE_BUFFER)
+  {
+    VL_CHECK(buffer_object)
+    VL_CHECK(buffer_object->handle())
+    glTexBuffer(GL_TEXTURE_BUFFER, tex_format, buffer_object->handle());
+    unsigned int glerr = glGetError();
+    if (glerr != GL_NO_ERROR)
+    {
+      String msg( (const char*)getGLErrorString(glerr) );
+      Log::bug( "Texture::createTexture(): glTexBuffer() failed with error: '" + msg + "'.\n" );
+      Log::error("Probably you supplied a non supported texture format! Review the glTexBuffer() man page for a complete list of supported texture formats.\n");
+      VL_TRAP();
+    }
+  }
+  else
+  if (tex_dimension == TD_TEXTURE_CUBE_MAP)
+  {
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
+    VL_CHECK_OGL();
+  }
+  else
+  if (tex_dimension == TD_TEXTURE_2D_ARRAY)
+  {
+    VL_glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, default_format, default_type, NULL);
+    VL_CHECK_OGL();
+  }
+  else
+  if (tex_dimension == TD_TEXTURE_3D)
+  {
+    VL_glTexImage3D(GL_TEXTURE_3D, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, default_format, default_type, NULL);
+    VL_CHECK_OGL();
+  }
+  else
+  if (tex_dimension == TD_TEXTURE_RECTANGLE)
+  {
+    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, tex_format, w, h, 0, default_format, default_type, NULL);
+    VL_CHECK_OGL();
+  }
+  else
+  if (tex_dimension == TD_TEXTURE_1D_ARRAY)
+  {
+    glTexImage2D(GL_TEXTURE_1D_ARRAY, 0, tex_format, w, h, 0, default_format, default_type, NULL);
+    VL_CHECK_OGL();
+  }
+  else
+  if (tex_dimension == TD_TEXTURE_2D)
+  {
+    glTexImage2D(GL_TEXTURE_2D, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, default_format, default_type, NULL);
+    VL_CHECK_OGL();
+  }
+  else
+  if (tex_dimension == TD_TEXTURE_1D)
+  {
+    glTexImage1D(GL_TEXTURE_1D, 0, tex_format, w + (border?2:0), border?1:0, default_format, default_type, NULL);
+    VL_CHECK_OGL();
+  }
+
+  glBindTexture(tex_dimension, 0); VL_CHECK_OGL();
+  return true;
 }
 //-----------------------------------------------------------------------------
 bool Texture::setMipLevel(int mip_level, const Image* img, bool gen_mipmaps)
@@ -1094,7 +1092,7 @@ bool Texture::createTexture()
     Texture* mTex;
   public:
     InOutCondition(Texture* tex): mTex(tex) {}
-    ~InOutCondition() 
+    ~InOutCondition()
     {
       // make sure no errors were generated
       VL_CHECK_OGL()
@@ -1102,8 +1100,9 @@ bool Texture::createTexture()
       // release Image and BufferObject from SetupParams
       if (mTex->mSetupParams)
       {
-        if (mTex->mSetupParams->imagePath().empty() && mTex->mSetupParams->image())
+        if ( mTex->mSetupParams->image() ) {
           mTex->mSetupParams->setImagePath( mTex->mSetupParams->image()->filePath() );
+        }
         mTex->mSetupParams->setImage(NULL);
         mTex->mSetupParams->setBufferObject(NULL);
       }
@@ -1126,7 +1125,8 @@ bool Texture::createTexture()
     }
   }
 
-  ref<Image> img = const_cast<Image*>(setupParams()->image());
+  VL_CHECK( mSetupParams.get() );
+  const Image* img = setupParams()->image();
 
   int w = setupParams()->width();
   int h = setupParams()->height();
@@ -1159,7 +1159,7 @@ bool Texture::createTexture()
   {
     // compile mipmapping levels
     std::vector<const vl::Image*> mipmaps;
-    mipmaps.push_back(img.get());
+    mipmaps.push_back(img);
     for(int i=0; i<(int)img->mipmaps().size(); ++i)
       mipmaps.push_back( img->mipmaps()[i].get() );
 
@@ -1167,9 +1167,9 @@ bool Texture::createTexture()
 
     if (!gen_mipmaps) // no mipmaps
     {
-      ok = setMipLevel(0, img.get(), false);
+      ok = setMipLevel(0, img, false);
     }
-    else 
+    else
     {
       if (mipmaps.size() > 1) // explicit mipmaps
       {
@@ -1179,7 +1179,7 @@ bool Texture::createTexture()
       else // automatic mipmaps generation
       if (mipmaps.size() == 1)
       {
-        ok = setMipLevel(0, img.get(), true);
+        ok = setMipLevel(0, img, true);
       }
     }
     return ok;

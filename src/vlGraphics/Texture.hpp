@@ -670,10 +670,19 @@ namespace vl
       return createTexture();
     }
 
-    /** OpenGL texture handle as returned by glGenTextures(). */
-    void setHandle(unsigned int id) { mHandle = id; }
+    /** OpenGL texture handle as returned by glGenTextures().
+    If `managed` is true the texture will be automatically destroyed when the vl::Texture is destroyed or destroyTexture() is called.
+    See also destroyTexture(). */
+    void setHandle(unsigned int id, bool managed = true ) { mHandle = id; mManaged = managed; }
     /** OpenGL texture handle as returned by glGenTextures(). */
     unsigned int handle() const { return mHandle; }
+
+    /** If `managed` is true the texture will be automatically destroyed when the vl::Texture is destroyed or destroyTexture() is called.
+    See also destroyTexture(). */
+    void setManaged( bool managed ) { mManaged = managed; }
+    /** If `managed` is true the texture will be automatically destroyed when the vl::Texture is destroyed or destroyTexture() is called.
+    See also destroyTexture(). */
+    bool managed() const { return mManaged; }
 
     /** The texture type (1d, 2d, cubemap etc.) as specified by the \p target parameter of glTexImage*(). */
     void setDimension(ETextureDimension dimension) { mDimension = dimension; }
@@ -743,10 +752,12 @@ namespace vl
   private:
     Texture(const Texture& other): Object(other) {}
     void operator=(const Texture&) {}
+    // TexParameter is not reset but is marked dirty
     void reset();
 
   protected:
     unsigned int mHandle;
+    bool mManaged;
     ref<TexParameter> mTexParameter;
     mutable ref<TexParameter> mTexParameterOverride;
     ref<SetupParams> mSetupParams;
