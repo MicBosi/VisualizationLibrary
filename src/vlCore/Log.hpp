@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -52,11 +52,11 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
       mLogLevel = LL_LogPrint; // only used by operator<<()
     }
-    
+
     Log& operator<<( ELogLevel log_level ) { mLogLevel = log_level; return *this; }
 
     Log& operator<<( const String& str )
-    { 
+    {
       switch(mLogLevel)
       {
       case LL_LogNotify: notify(str); break;
@@ -182,7 +182,7 @@ namespace vl
     /** Application message for the user.
      * \note Log generated only if verbosity level != vl::VEL_VERBOSITY_SILENT */
     static void print(const String& message);
-    
+
     /** Use this function to provide extra information useful to investigate and solve problems.
       * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_DEBUG */
     static void debug(const String& message);

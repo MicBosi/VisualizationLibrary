@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -161,7 +161,7 @@ ref<Geometry> Tessellator::tessellateGeometry(bool append_tessellated_tris)
 
   ref<Geometry> geom = new Geometry;
   ref<ArrayFloat3> vert_array = new ArrayFloat3;
-  
+
   vert_array->initFrom(mTessellatedTris);
 
   geom->setVertexArray(vert_array.get());

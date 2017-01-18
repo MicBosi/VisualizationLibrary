@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -71,10 +71,10 @@ namespace vl
 
         // initializes the source render target
         readFramebuffer()->activate(FBB_READ_FRAMEBUFFER); VL_CHECK_OGL()
-        
+
         // override read buffer specified by readFramebuffer()->activate() with the one specified by the user here
         glReadBuffer(mReadBuffer); VL_CHECK_OGL()
-        
+
         // activate destination render target
         drawFramebuffer()->activate(FBB_DRAW_FRAMEBUFFER); VL_CHECK_OGL()
 
@@ -82,8 +82,8 @@ namespace vl
         // ...
 
         // performs the blit
-        VL_glBlitFramebuffer( mSrcRect[0], mSrcRect[1], mSrcRect[2], mSrcRect[3], 
-                              mDstRect[0], mDstRect[1], mDstRect[2], mDstRect[3], 
+        VL_glBlitFramebuffer( mSrcRect[0], mSrcRect[1], mSrcRect[2], mSrcRect[3],
+                              mDstRect[0], mDstRect[1], mDstRect[2], mDstRect[3],
                               mBufferMask,
                               mLinearFilteringEnabled ? GL_LINEAR : GL_NEAREST);
         VL_CHECK_OGL()

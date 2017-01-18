@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -63,7 +63,7 @@ namespace vl
 
     void registerLoadWriter();
 
-    ref<ResourceDatabase> loadResource(const String& path) const 
+    ref<ResourceDatabase> loadResource(const String& path) const
     {
       return loadOBJ(path);
     }
@@ -156,13 +156,13 @@ namespace vl
     //! Texture file name
     String mFileName;
     //! -blendu on | off
-    bool   mBlendU; 
+    bool   mBlendU;
     //! -blendv on | off
-    bool   mBlendV; 
+    bool   mBlendV;
     //! -cc on | off
-    bool   mCC; 
+    bool   mCC;
     //! -clamp on | off
-    bool   mClamp; 
+    bool   mClamp;
     //! -mm base gain
     float  mMM_Base;
     //! -mm base gain
@@ -275,21 +275,21 @@ namespace vl
     //! Ni - optical density / index of refraction
     float mNi;
     //! map_Kd - ambient diffuse
-    ObjTexture mMap_Kd; 
+    ObjTexture mMap_Kd;
     //! map_Ka - ambient color map
-    ObjTexture mMap_Ka; 
+    ObjTexture mMap_Ka;
     //! map_Ks - specular color map
-    ObjTexture mMap_Ks; 
+    ObjTexture mMap_Ks;
     //! map_Ns - specular exponent map
-    ObjTexture mMap_Ns; 
+    ObjTexture mMap_Ns;
     //! map_d - transparency map
-    ObjTexture mMap_d;  
+    ObjTexture mMap_d;
     //! decal - decal map
-    ObjTexture mMap_Decal; 
+    ObjTexture mMap_Decal;
     //! disp - displace map
-    ObjTexture mMap_Disp;  
+    ObjTexture mMap_Disp;
     //! bump - bump map
-    ObjTexture mMap_Bump;  
+    ObjTexture mMap_Bump;
   };
 //-----------------------------------------------------------------------------
 // ObjMesh

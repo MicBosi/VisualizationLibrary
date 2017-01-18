@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,7 +40,7 @@ namespace vl
   // DistanceLODEvaluator
   //-----------------------------------------------------------------------------
   /**
-   * A LODEvaluator that computes the appropriate LOD based on the distance of an 
+   * A LODEvaluator that computes the appropriate LOD based on the distance of an
    * Actor from the Camera.
    *
    * \sa
@@ -52,7 +52,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::DistanceLODEvaluator, LODEvaluator)
 
   public:
-    DistanceLODEvaluator() 
+    DistanceLODEvaluator()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -79,7 +79,7 @@ namespace vl
   //-----------------------------------------------------------------------------
   // FBORenderbufferAttachment
   //-----------------------------------------------------------------------------
-  /** 
+  /**
    * Abstract class that represents a framebuffer renderbuffer attachment, that is, a non-texture fbo attachment (wraps \p glFramebufferRenderbuffer()).
    * \sa FramebufferObject.
    * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glFramebufferRenderbuffer.xml
@@ -90,81 +90,81 @@ namespace vl
 
     friend class FramebufferObject;
 
-  public:    
+  public:
     /** Constructor. */
     FBORenderbufferAttachment(): mHandle( 0 ), mWidth( 0 ), mHeight( 0 ), mSamples( 0 ), mReallocateRenderbuffer( true ) {}
 
     /** Destructor. */
     ~FBORenderbufferAttachment() { deleteRenderBuffer(); }
-    
+
     /**
-     * Creates a renderbuffer object calling glGenRenderbuffers(). 
+     * Creates a renderbuffer object calling glGenRenderbuffers().
      * The identifier returned by glGenRenderbuffers() can be queried calling the handle() method.
      */
     void createRenderBuffer();
-    
+
     /** Deletes the renderbuffer object created with the createRenderBuffer() method. */
     void deleteRenderBuffer();
-    
-    /** 
+
+    /**
      * Sets the handle for this attachment, the handle must have been created by glGenRenderbuffers().
      * Normally you don't need to call this. See also: createRenderBuffer(), handle().
      */
     void setHandle( GLuint  handle ) { if ( mHandle != handle ) { mHandle = handle; mReallocateRenderbuffer = false; } }
-    
+
     /** Returns the handle obtained by createRenderBuffer() using glGenRenderbuffers() */
     GLuint handle() const { return mHandle; }
-    
+
     /**
      * Initializes the storage of the renderbuffer with the given sample count and dimensions.
      * This method does nothing if the the width, height and sample count has not changed since last time it was called.
-     * Note that the renderbuffer storage type is defined by the setType() method of 
+     * Note that the renderbuffer storage type is defined by the setType() method of
      * FBOColorBufferAttachment, FBODepthBufferAttachment, FBOStencilBufferAttachment,
      * FBODepthStencilBufferAttachment. See also setSamples().
      */
     void initStorage( int w, int h, int samples );
-    
+
     /** The same as calling initStorage( width(), height() ) */
     void initStorage() { initStorage( width(), height(), samples() ); }
-    
-    /** 
-     * Returns the with of the renderbuffer storage. 
-     * Note that if renderbufferStorageReady() returns \p false it means that 
+
+    /**
+     * Returns the with of the renderbuffer storage.
+     * Note that if renderbufferStorageReady() returns \p false it means that
      * the renderbuffer has not been allocated yet.
      */
     int width() const { return mWidth; }
-    
-    /** 
-     * Returns the height of the renderbuffer storage. 
-     * Note that if renderbufferStorageReady() returns \p false it means that 
+
+    /**
+     * Returns the height of the renderbuffer storage.
+     * Note that if renderbufferStorageReady() returns \p false it means that
      * the renderbuffer has not been allocated yet.
      */
     int height() const { return mHeight; }
-    
-    /** 
+
+    /**
      * Returns the number of samples to be used when allocating the renderbuffer's storage.
-     * Note that if renderbufferStorageReady() returns \p false it means that 
+     * Note that if renderbufferStorageReady() returns \p false it means that
      * the renderbuffer has not been allocated yet.
      */
     int samples() const { return mSamples; }
-    
+
     /**
      * The width of the renderbuffer storage to be allocated.
      * If 'w' is set to 0 the renderbuffer storage allocation will use the dimensions of the next FramebufferObject bound.
      */
     void setWidth( int w ) { if ( w != mWidth ) /* schedules recreation */ mReallocateRenderbuffer = true; mWidth = w; }
-    
+
     /**
      * The height of the renderbuffer storage to be allocated.
      * If 'h' is set to 0 the renderbuffer storage allocation will use the dimensions of the next FramebufferObject bound.
      */
     void setHeight( int h ) { if ( h != mHeight ) /* schedules recreation */ mReallocateRenderbuffer = true; mHeight = h; }
-    
-    /** 
-     * Sets the number of samples to be specified when allocating the renderbuffer's storage. 
+
+    /**
+     * Sets the number of samples to be specified when allocating the renderbuffer's storage.
      */
     void setSamples( int samples ) { if ( samples != mSamples ) /* schedules recreation */ mReallocateRenderbuffer = true; mSamples = samples; }
-    
+
     /** Returns \p false if the renderbuffer storage needs to be created or reallocated due to a change of the sample count, renderbuffer type or dimension. */
     bool renderbufferStorageReady() const { return !mReallocateRenderbuffer; }
 
@@ -196,10 +196,10 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
       mType = type;
     }
-    
+
     /** The type to specify when allocating the renderbuffer storage. */
     void setType( EColorBufferFormat type ) { if ( type != mType ) /* schedules recreation */ mReallocateRenderbuffer = true; mType = type; }
-    
+
     /** The type to specify when allocating the renderbuffer storage. */
     EColorBufferFormat type() const { return mType; }
 
@@ -524,16 +524,16 @@ namespace vl
    * \sa
    * - \ref pagGuideFramebufferObject
    * - \p ARB_framebuffer_object specifications http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt
-   * - FBORenderbufferAttachment 
-   * - FBOColorBufferAttachment 
-   * - FBODepthBufferAttachment 
-   * - FBODepthStencilBufferAttachment 
-   * - FBOStencilBufferAttachment 
-   * - FBOTexture1DAttachment 
-   * - FBOTexture2DAttachment 
-   * - FBOTexture3DAttachment 
-   * - FBOTextureAttachment 
-   * - FBOTextureLayerAttachment 
+   * - FBORenderbufferAttachment
+   * - FBOColorBufferAttachment
+   * - FBODepthBufferAttachment
+   * - FBODepthStencilBufferAttachment
+   * - FBOStencilBufferAttachment
+   * - FBOTexture1DAttachment
+   * - FBOTexture2DAttachment
+   * - FBOTexture3DAttachment
+   * - FBOTextureAttachment
+   * - FBOTextureLayerAttachment
    */
   class VLGRAPHICS_EXPORT FramebufferObject: public Framebuffer
   {
@@ -543,17 +543,17 @@ namespace vl
 
   private:
     FramebufferObject( const FramebufferObject& other ): Framebuffer( other ), mHandle( 0 ) {}
-    
+
     void operator=( const FramebufferObject& ) {}
-    
-    FramebufferObject(): 
+
+    FramebufferObject():
     Framebuffer( NULL, 0, 0, RDB_COLOR_ATTACHMENT0, RDB_COLOR_ATTACHMENT0 ), mHandle( 0 )
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
-    FramebufferObject( OpenGLContext* ctx, int w, int h, 
-        EReadDrawBuffer draw_buffer=RDB_COLOR_ATTACHMENT0, 
+    FramebufferObject( OpenGLContext* ctx, int w, int h,
+        EReadDrawBuffer draw_buffer=RDB_COLOR_ATTACHMENT0,
         EReadDrawBuffer read_buffer=RDB_COLOR_ATTACHMENT0 ):
     Framebuffer( ctx, w, h, draw_buffer, read_buffer ), mHandle( 0 )
     {
@@ -564,14 +564,14 @@ namespace vl
     /** Destructor. */
     ~FramebufferObject() { if (openglContext()) deleteFBO(); }
 
-    /** 
-     * Creates a framebuffer object by calling glGenFramebuffers(). 
+    /**
+     * Creates a framebuffer object by calling glGenFramebuffers().
      * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glGenFramebuffers.xml
      */
     void createFBO();
 
-    /** 
-     * Deletes a framebuffer object by calling glDeleteFramebuffers(). 
+    /**
+     * Deletes a framebuffer object by calling glDeleteFramebuffers().
      * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glDeleteFramebuffers.xml
      */
     void deleteFBO();
@@ -597,37 +597,37 @@ namespace vl
 
     /** Binds a color attachment to a framebuffer object. */
     void addColorAttachment( EAttachmentPoint attach_point, FBOColorBufferAttachment* attachment );
-    
+
     /** Binds a texture attachment to a framebuffer object. */
     void addTextureAttachment( EAttachmentPoint attach_point, FBOAbstractTextureAttachment* attachment );
-    
-    /** 
-     * Binds a depth attachment to a framebuffer object. 
+
+    /**
+     * Binds a depth attachment to a framebuffer object.
      * The \p attachment parameter must point to either a FBODepthBufferAttachment or FBODepthStencilBufferAttachment.
      */
     void addDepthAttachment( FBOAbstractAttachment* attachment );
-    
-    /** 
-     * Binds a stencil attachment to a framebuffer object. 
+
+    /**
+     * Binds a stencil attachment to a framebuffer object.
      * The \p attachment parameter must point to either a FBOStencilBufferAttachment or FBODepthStencilBufferAttachment.
      */
     void addStencilAttachment( FBOAbstractAttachment* attachment );
-    
+
     /** Binds a depth-stencil attachment to a framebuffer object. */
     void addDepthStencilAttachment( FBOAbstractAttachment* attachment );
-    
+
     /** Unbinds the given attachments from a framebuffer object. */
     void removeAttachment( FBOAbstractAttachment* attachment );
-    
+
     /** Unbinds the attachment associated to the given attachment point from a framebuffer object. */
     void removeAttachment( EAttachmentPoint attach_point );
-    
+
     /** Unbinds all attachments bound to a framebuffer object. */
     void removeAllAttachments();
 
     /** A map associating which fbo-attachment belongs to which attachment point in a framebuffer object. */
     const std::map< EAttachmentPoint, ref<FBOAbstractAttachment> >& fboAttachments() const { return mFBOAttachments; }
-    
+
   public:
     std::map< EAttachmentPoint, ref<FBOAbstractAttachment> > mFBOAttachments;
     GLuint mHandle;

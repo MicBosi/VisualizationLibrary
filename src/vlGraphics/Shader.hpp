@@ -54,7 +54,7 @@ namespace vl
   // VertexAttrib
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glVertexAttrib(), see also http://www.opengl.org/sdk/docs/man3/xhtml/glVertexAttrib.xml for more information.
-   * 
+   *
    * \sa Shader, Effect, Actor */
   // todo: would be nice to support double, int and uint types as well.
   class VLGRAPHICS_EXPORT VertexAttrib: public RenderStateIndexed
@@ -62,7 +62,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::VertexAttrib, RenderStateIndexed)
 
   public:
-    VertexAttrib(): mValue( fvec4(0,0,0,0) ) 
+    VertexAttrib(): mValue( fvec4(0,0,0,0) )
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -89,7 +89,7 @@ namespace vl
   // Color
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glColor(), see also http://www.opengl.org/sdk/docs/man/xhtml/glColor.xml for more information.
-   * 
+   *
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT Color: public RenderStateNonIndexed
   {
@@ -123,7 +123,7 @@ namespace vl
   // SecondaryColor
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glSecondaryColor(), see also http://www.opengl.org/sdk/docs/man/xhtml/glSecondaryColor.xml for more information.
-   * 
+   *
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT SecondaryColor: public RenderStateNonIndexed
   {
@@ -157,7 +157,7 @@ namespace vl
   // Normal
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glNormal(), see also http://www.opengl.org/sdk/docs/man/xhtml/glNormal.xml for more information.
-   * 
+   *
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT Normal: public RenderStateNonIndexed
   {
@@ -191,7 +191,7 @@ namespace vl
   // PixelTransfer
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glPixelTransfer(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPixelTransfer.xml for more information.
-   * 
+   *
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT PixelTransfer: public RenderStateNonIndexed
   {
@@ -467,15 +467,15 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_DepthFunc; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(EFunction depthfunc) { mDepthFunc = depthfunc; }
-    
+
     EFunction depthFunc() const { return mDepthFunc; }
-  
+
     virtual ref<RenderState> clone() const
     {
       ref<DepthFunc> rs = new DepthFunc;
@@ -533,19 +533,19 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_PolygonMode; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(EPolygonMode frontface, EPolygonMode backface) { mFrontFace = frontface; mBackFace = backface; }
-    
+
     void setFrontFace(EPolygonMode frontface) { mFrontFace = frontface; }
-    
+
     void setBackFace(EPolygonMode backface) { mBackFace = backface; }
-    
+
     EPolygonMode frontFace() const { return mFrontFace; }
-    
+
     EPolygonMode backFace() const { return mBackFace; }
 
     virtual ref<RenderState> clone() const
@@ -607,31 +607,31 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_BlendFunc; }
-    
+
     // if glBlendFuncSeparate is not supported uses RGB factor for both RGB and Alpha
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(EBlendFactor src_rgb, EBlendFactor dst_rgb, EBlendFactor src_alpha, EBlendFactor dst_alpha) { mSrcRGB = src_rgb; mSrcAlpha = src_alpha; mDstRGB = dst_rgb; mDstAlpha = dst_alpha; }
-    
+
     void set(EBlendFactor src_rgba, EBlendFactor dst_rgba) { mSrcRGB = src_rgba; mSrcAlpha = src_rgba; mDstRGB = dst_rgba; mDstAlpha = dst_rgba; }
-    
+
     void setSrcRGB(EBlendFactor factor) { mSrcRGB = factor; }
-    
+
     void setDstRGB(EBlendFactor factor) { mDstRGB = factor; }
-    
+
     void setSrcAlpha(EBlendFactor factor) { mSrcAlpha = factor; }
-    
+
     void setDstAlpha(EBlendFactor factor) { mDstAlpha = factor; }
-    
+
     EBlendFactor srcRGB() const { return mSrcRGB; }
-    
+
     EBlendFactor dstRGB() const { return mDstRGB; }
-    
+
     EBlendFactor srcAlpha() const { return mSrcAlpha; }
-    
+
     EBlendFactor dstAlpha() const { return mDstAlpha; }
 
     virtual ref<RenderState> clone() const
@@ -650,8 +650,8 @@ namespace vl
   //------------------------------------------------------------------------------
   // BlendEquation
   //------------------------------------------------------------------------------
-  /** RenderState wrapping the OpenGL function glBlendEquation()/glBlendEquationSeparate(), see also 
-   * http://www.opengl.org/sdk/docs/man/xhtml/glBlendEquation.xml and 
+  /** RenderState wrapping the OpenGL function glBlendEquation()/glBlendEquationSeparate(), see also
+   * http://www.opengl.org/sdk/docs/man/xhtml/glBlendEquation.xml and
    * http://www.opengl.org/sdk/docs/man/xhtml/glBlendEquationSeparate.xml for more information.
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT BlendEquation: public RenderStateNonIndexed
@@ -663,19 +663,19 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_BlendEquation; }
-    
+
     // if glBlendEquationSeparate is not supported uses RGB mode for both RGB and Alpha
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(EBlendEquation mode_rgba) { mModeRGB = mode_rgba; mModeAlpha = mode_rgba; }
-    
+
     void set(EBlendEquation mode_rgb, EBlendEquation mode_alpha) { mModeRGB = mode_rgb; mModeAlpha = mode_alpha; }
-    
+
     EBlendEquation modeRGB() const { return mModeRGB; }
-    
+
     EBlendEquation modeAlpha() const { return mModeAlpha; }
 
     virtual ref<RenderState> clone() const
@@ -703,19 +703,19 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_SampleCoverage; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(GLclampf value, bool invert) { mValue = value; mInvert = invert; }
-    
+
     void setValue(GLclampf value) { mValue = value; }
-    
+
     void setInvert(bool invert) { mInvert = invert; }
-    
+
     GLclampf value() const { return mValue; }
-    
+
     bool invert() const { return mInvert; }
 
     virtual ref<RenderState> clone() const
@@ -743,15 +743,15 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_AlphaFunc; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(EFunction alphafunc, float ref_value) { mAlphaFunc = alphafunc; mRefValue = ref_value; }
-    
+
     EFunction alphaFunc() const { return mAlphaFunc; }
-    
+
     float refValue() const { return mRefValue; }
 
     virtual ref<RenderState> clone() const
@@ -1272,7 +1272,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // StencilFunc
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL functions glStencilFunc() and glStencilFuncSeparate(), see also 
+  /** Wraps the OpenGL functions glStencilFunc() and glStencilFuncSeparate(), see also
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilFunc.xml and
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilFuncSeparate.xml for more information.
    * \sa Shader, Effect, Actor, StencilMask, StencilOp, vl::EN_STENCIL_TEST */
@@ -1281,44 +1281,44 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::StencilFunc, RenderStateNonIndexed)
 
   public:
-    StencilFunc(EFunction function=FU_ALWAYS, int refvalue=0, unsigned int mask=~(unsigned int)0): 
-        mFunction_Front(function), mFunction_Back(function), 
-        mRefValue_Front(refvalue), mRefValue_Back(refvalue), 
+    StencilFunc(EFunction function=FU_ALWAYS, int refvalue=0, unsigned int mask=~(unsigned int)0):
+        mFunction_Front(function), mFunction_Back(function),
+        mRefValue_Front(refvalue), mRefValue_Back(refvalue),
         mMask_Front(mask),         mMask_Back(mask)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
     virtual ERenderState type() const { return RS_StencilFunc; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
-    void set(EPolygonFace face, EFunction function, int refvalue, unsigned int mask) 
-    { 
+
+    void set(EPolygonFace face, EFunction function, int refvalue, unsigned int mask)
+    {
       if (face == PF_FRONT || face == PF_FRONT_AND_BACK)
       {
-        mFunction_Front = function; 
-        mRefValue_Front = refvalue; 
-        mMask_Front     = mask; 
+        mFunction_Front = function;
+        mRefValue_Front = refvalue;
+        mMask_Front     = mask;
       }
       if (face == PF_BACK || face == PF_FRONT_AND_BACK)
       {
-        mFunction_Back = function; 
-        mRefValue_Back = refvalue; 
-        mMask_Back     = mask; 
+        mFunction_Back = function;
+        mRefValue_Back = refvalue;
+        mMask_Back     = mask;
       }
     }
-    
+
     EFunction function_Front() const { return mFunction_Front; }
-    
+
     int refValue_Front() const { return mRefValue_Front; }
-    
+
     unsigned int mask_Front() const { return mMask_Front; }
-    
+
     EFunction function_Back() const { return mFunction_Back; }
-    
+
     int refValue_Back() const { return mRefValue_Back; }
-    
+
     unsigned int mask_Back() const { return mMask_Back; }
 
     virtual ref<RenderState> clone() const
@@ -1339,7 +1339,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // StencilOp
   //------------------------------------------------------------------------------
-  /** RenderState wrapping the OpenGL function glStencilOp() and glStencilOpSeparate(), see also 
+  /** RenderState wrapping the OpenGL function glStencilOp() and glStencilOpSeparate(), see also
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilOp.xml and
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilOpSeparate.xml for more information.
    * \sa Shader, Effect, Actor, StencilMask, StencilFunc, vl::EN_STENCIL_TEST */
@@ -1348,44 +1348,44 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::StencilOp, RenderStateNonIndexed)
 
   public:
-    StencilOp(EStencilOp sfail=SO_KEEP, EStencilOp dpfail=SO_KEEP, EStencilOp dppass=SO_KEEP): 
-        mSFail_Front(sfail),   mSFail_Back(sfail), 
-        mDpFail_Front(dpfail), mDpFail_Back(dpfail), 
+    StencilOp(EStencilOp sfail=SO_KEEP, EStencilOp dpfail=SO_KEEP, EStencilOp dppass=SO_KEEP):
+        mSFail_Front(sfail),   mSFail_Back(sfail),
+        mDpFail_Front(dpfail), mDpFail_Back(dpfail),
         mDpPass_Front(dppass), mDpPass_Back(dppass)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
     virtual ERenderState type() const { return RS_StencilOp; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
-    void set(EPolygonFace face, EStencilOp sfail, EStencilOp dpfail, EStencilOp dppass) 
-    { 
+
+    void set(EPolygonFace face, EStencilOp sfail, EStencilOp dpfail, EStencilOp dppass)
+    {
       if (face == PF_FRONT || face == PF_FRONT_AND_BACK)
       {
-        mSFail_Front  = sfail; 
-        mDpFail_Front = dpfail; 
-        mDpPass_Front = dppass; 
+        mSFail_Front  = sfail;
+        mDpFail_Front = dpfail;
+        mDpPass_Front = dppass;
       }
       if (face == PF_BACK || face == PF_FRONT_AND_BACK)
       {
-        mSFail_Back  = sfail; 
-        mDpFail_Back = dpfail; 
-        mDpPass_Back = dppass; 
+        mSFail_Back  = sfail;
+        mDpFail_Back = dpfail;
+        mDpPass_Back = dppass;
       }
     }
-    
+
     EStencilOp sFail_Front()  const { return mSFail_Front;  }
-    
+
     EStencilOp dpFail_Front() const { return mDpFail_Front; }
-    
+
     EStencilOp dpPass_Front() const { return mDpPass_Front; }
-    
+
     EStencilOp sFail_Back()   const { return mSFail_Front;  }
-    
+
     EStencilOp dpFail_Back()  const { return mDpFail_Front; }
-    
+
     EStencilOp dpPass_Back()  const { return mDpPass_Front; }
 
     virtual ref<RenderState> clone() const
@@ -1406,7 +1406,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // StencilMask
   //------------------------------------------------------------------------------
-  /** RenderState wrapping the OpenGL function glStencilMask() and glStencilMaskSeparate(), see also 
+  /** RenderState wrapping the OpenGL function glStencilMask() and glStencilMaskSeparate(), see also
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilMask.xml and
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilMaskSeparate.xml for more information.
    * \sa Shader, Effect, Actor, StencilOp, StencilFunc, vl::EN_STENCIL_TEST */
@@ -1424,12 +1424,12 @@ namespace vl
 
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
-    void set(EPolygonFace face, unsigned int mask) 
-    { 
+    void set(EPolygonFace face, unsigned int mask)
+    {
       if (face == PF_FRONT || face == PF_FRONT_AND_BACK)
-        mMask_Front = mask; 
+        mMask_Front = mask;
       if (face == PF_BACK  || face == PF_FRONT_AND_BACK)
-        mMask_Back = mask;       
+        mMask_Back = mask;
     }
 
     unsigned int mask_Front() const { return mMask_Front; }

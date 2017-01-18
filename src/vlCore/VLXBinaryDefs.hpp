@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -35,7 +35,7 @@
 namespace vl
 {
   bool compress(const void* data, size_t size, std::vector<unsigned char>& out, int level);
-  
+
   bool decompress(const void* cdata, size_t csize, void* data_out);
 
   typedef enum

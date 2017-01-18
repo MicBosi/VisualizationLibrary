@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -85,15 +85,15 @@ Font* FontManager::acquireFont(const String& path, int size, bool smooth)
 }
 //-----------------------------------------------------------------------------
 void FontManager::releaseFont(Font* font)
-{ 
+{
   std::vector< ref<Font> >::iterator it = std::find(mFonts.begin(), mFonts.end(), font);
   if (it != mFonts.end())
     mFonts.erase(it);
 }
 //-----------------------------------------------------------------------------
 void FontManager::releaseAllFonts()
-{ 
+{
   for(unsigned i=0; i<mFonts.size(); ++i)
-    mFonts[i]->releaseFreeTypeData(); 
+    mFonts[i]->releaseFreeTypeData();
 }
 //-----------------------------------------------------------------------------

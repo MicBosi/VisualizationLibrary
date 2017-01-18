@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -48,7 +48,7 @@ namespace vl
   /**
    * Base interface for all DrawRangeElements* sub classes.
    * Implements the index-type-independent interface of the class. That is you can cast to DrawRangeElementsBase*
-   * and access its members without needing to know whether the actual class is a 
+   * and access its members without needing to know whether the actual class is a
    * vl::DrawRangeElementsUInt, vl::DrawRangeElementsUShort or vl::DrawRangeElementsUByte. */
   class DrawRangeElementsBase: public DrawCall
   {
@@ -73,8 +73,8 @@ namespace vl
     /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
 
-    /** If base_vertx is != 0 glDrawRangeElementsBaseVertex/glDrawRangeElementsInstancedBaseVertex will be used instead of their non *BaseVertx counterparts. 
-      * Note that using base_vertx != requires OpenGL 3.2 or higher or ARB_draw_elements_base_vertex. 
+    /** If base_vertx is != 0 glDrawRangeElementsBaseVertex/glDrawRangeElementsInstancedBaseVertex will be used instead of their non *BaseVertx counterparts.
+      * Note that using base_vertx != requires OpenGL 3.2 or higher or ARB_draw_elements_base_vertex.
       * For more information see also http://www.opengl.org/sdk/docs/man3/xhtml/glDrawRangeElementsBaseVertex.xml
       */
     void setBaseVertex(int base_vertex) { mBaseVertex = base_vertex; }
@@ -92,7 +92,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // DrawRangeElements
   //------------------------------------------------------------------------------
-  /** 
+  /**
    * Wrapper for the OpenGL function glDrawRangeElements(). See also http://www.opengl.org/sdk/docs/man3/xhtml/glDrawRangeElements.xml for more information.
    *
    * This class wraps the following OpenGL functions:
@@ -100,18 +100,18 @@ namespace vl
    * - glDrawRangeElementsBaseVertex (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawRangeElementsBaseVertex.xml)
    *
    * Supports:
-   * - <b>Multi instancing</b>: NO 
+   * - <b>Multi instancing</b>: NO
    * - <b>Base vertex</b>: YES
    * - <b>Primitive restart</b>: YES
    *
-   * Use the functions setPrimitiveRestartIndex() and setPrimitiveRestartEnabled() to use the <b>primitive 
+   * Use the functions setPrimitiveRestartIndex() and setPrimitiveRestartEnabled() to use the <b>primitive
    * restart</b> functionality (requires OpenGL 3.1). For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glPrimitiveRestartIndex.xml
    *
-   * Use the function setBaseVertex() to use the <b>base vertex</b> functionality. 
+   * Use the function setBaseVertex() to use the <b>base vertex</b> functionality.
    * Requires OpenGL 3.2 or GL_ARB_draw_elements_base_vertex. For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glDrawRangeElementsBaseVertex.xml
    *
    * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
-   * The indices are stored in a BufferObject and thus they can be stored locally or on the GPU. 
+   * The indices are stored in a BufferObject and thus they can be stored locally or on the GPU.
    * To gain direct access to the BufferObject use the indexBuffer() function.
    *
    * DrawArrays, DrawElements, MultiDrawElements and DrawRangeElements are used by Geometry to define a set of primitives to be rendered.
@@ -179,8 +179,8 @@ namespace vl
       return *this;
     }
 
-    virtual ref<DrawCall> clone() const 
-    { 
+    virtual ref<DrawCall> clone() const
+    {
       ref<DrawRangeElements> de = new DrawRangeElements;
       *de = *this;
       return de;
@@ -293,8 +293,8 @@ namespace vl
 
     TriangleIterator triangleIterator() const
     {
-      ref< TriangleIteratorIndexed<arr_type> > it = 
-        new TriangleIteratorIndexed<arr_type>( mIndexBuffer.get(), primitiveType(), 
+      ref< TriangleIteratorIndexed<arr_type> > it =
+        new TriangleIteratorIndexed<arr_type>( mIndexBuffer.get(), primitiveType(),
             baseVertex(), primitiveRestartEnabled(), primitive_restart_index );
       it->initialize();
       return TriangleIterator(it.get());

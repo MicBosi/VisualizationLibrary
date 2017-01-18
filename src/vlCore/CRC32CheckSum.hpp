@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -48,20 +48,20 @@ namespace vl
     //! Constructor.
     CRC32CheckSum() { crc32_init(); }
 
-    unsigned int compute(const void* buf, int length) 
+    unsigned int compute(const void* buf, int length)
     {
       const unsigned char* buffer = (const unsigned char*)buf;
-      unsigned int mCRC32 = 0xffffffff; 
-      while(length--) 
+      unsigned int mCRC32 = 0xffffffff;
+      while(length--)
         mCRC32 = (mCRC32 >> 8) ^ crc32_table[(mCRC32 & 0xFF) ^ *buffer++];
-      return mCRC32 ^ 0xffffffff; 
+      return mCRC32 ^ 0xffffffff;
     }
 
-    unsigned int compute(VirtualFile* stream) 
+    unsigned int compute(VirtualFile* stream)
     {
       std::vector<unsigned char> buffer;
       buffer.resize(CHUNK_SIZE);
-      unsigned char *ptr = &buffer.front(); 
+      unsigned char *ptr = &buffer.front();
       startCRC32();
 
       for( int length = (int)stream->read(ptr, CHUNK_SIZE); length; length = (int)stream->read(ptr, CHUNK_SIZE) )
@@ -74,34 +74,34 @@ namespace vl
     unsigned int finalizeCRC32() { return mCRC32 ^ 0xffffffff; }
     void continueCRC32(unsigned char* ptr, int length)
     {
-      while(length--) 
+      while(length--)
         mCRC32 = (mCRC32 >> 8) ^ crc32_table[(mCRC32 & 0xFF) ^ *ptr++];
     }
 
   protected:
-    void crc32_init() 
+    void crc32_init()
     {
       mCRC32 = 0;
       unsigned int ulPolynomial = 0x04c11db7;
-      for(int i = 0; i <= 0xFF; i++) 
-      { 
-        crc32_table[i]=reflect(i, 8) << 24; 
-        for (int j = 0; j < 8; j++) 
-          crc32_table[i] = (crc32_table[i] << 1) ^ (crc32_table[i] & (1 << 31) ? ulPolynomial : 0); 
-        crc32_table[i] = reflect(crc32_table[i], 32); 
-      } 
+      for(int i = 0; i <= 0xFF; i++)
+      {
+        crc32_table[i]=reflect(i, 8) << 24;
+        for (int j = 0; j < 8; j++)
+          crc32_table[i] = (crc32_table[i] << 1) ^ (crc32_table[i] & (1 << 31) ? ulPolynomial : 0);
+        crc32_table[i] = reflect(crc32_table[i], 32);
+      }
     }
 
-    unsigned int reflect(unsigned int val, char ch) 
+    unsigned int reflect(unsigned int val, char ch)
     {
       unsigned int refl = 0;
-      for(int i = 1; i < (ch + 1); i++) 
-      { 
-        if(val & 1) 
-          refl |= 1 << (ch - i); 
-        val >>= 1; 
-      } 
-      return refl; 
+      for(int i = 1; i < (ch + 1); i++)
+      {
+        if(val & 1)
+          refl |= 1 << (ch - i);
+        val >>= 1;
+      }
+      return refl;
     }
 
   protected:

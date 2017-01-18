@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -38,7 +38,7 @@ namespace vl
 {
   class Geometry;
 
-  /** 
+  /**
    * The TriangleStripGenerator class is used to substitute lists of triangles or quads with triangle strips.
    */
   class VLGRAPHICS_EXPORT TriangleStripGenerator

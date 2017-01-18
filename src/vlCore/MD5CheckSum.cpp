@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -41,7 +41,7 @@ using namespace vl;
 std::string MD5CheckSum::toStdString() const
 {
   char sum[33];
-  sprintf ( sum, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x", 
+  sprintf ( sum, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
     mMD5[0], mMD5[1], mMD5[2],  mMD5[3],  mMD5[4],  mMD5[5],  mMD5[6],  mMD5[7],
     mMD5[8], mMD5[9], mMD5[10], mMD5[11], mMD5[12], mMD5[13], mMD5[14], mMD5[15] );
   return sum;
@@ -63,8 +63,8 @@ void MD5CheckSum::compute(VirtualFile* file)
   MD5Context md5context;
   MD5Init(&md5context);
 
-  for( unsigned bytes_read = (unsigned)file->read(&buffer.front(), CHUNK_SIZE); 
-       bytes_read; 
+  for( unsigned bytes_read = (unsigned)file->read(&buffer.front(), CHUNK_SIZE);
+       bytes_read;
        bytes_read = (unsigned)file->read(&buffer.front(), CHUNK_SIZE) )
   {
     MD5Update(&md5context, &buffer.front(), bytes_read);

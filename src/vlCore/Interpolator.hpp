@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -44,7 +44,7 @@ namespace vl
    * An Interpolator is an object that implements a specific interpolation scheme (linear, Catmull-Rom, Bezier etc.) to interpolate data such as vectors, colors, rotations an so on.
    * Interpolators are very useful for tasks such as animating an object's position and/or rotation, creating a smooth curved line from a set of control points, creating extrusion paths and silhouettes etc.
    *
-   * \sa 
+   * \sa
    *
    * LinearInterpolator, CatmullRomInterpolator, the \ref pagGuideInterpolators "Interpolators Tutorial" page and the Extrusion class.
    *
@@ -53,7 +53,7 @@ namespace vl
   {
     VL_INSTRUMENT_CLASS(vl::Interpolator, Object)
   public:
-    Interpolator() 
+    Interpolator()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }

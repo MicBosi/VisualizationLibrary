@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -39,7 +39,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // OcclusionCullRenderer
   //------------------------------------------------------------------------------
-  /** Wraps a Renderer performing occlusion culling acceleration. 
+  /** Wraps a Renderer performing occlusion culling acceleration.
     * For more information see \ref pagGuideOcclusionCulling */
   class VLGRAPHICS_EXPORT OcclusionCullRenderer: public Renderer
   {
@@ -79,18 +79,18 @@ namespace vl
     /** Returns the number or objects not rendered due to the occlusion culling. */
     int statsOccludedObjects() const { return mStatsOccludedObjects; }
 
-    /** The Shader used to render the bounding boxes during the occlusion culling query. 
-      * For example if you have problems with the zbuffer percision you can access the Shader to modify 
+    /** The Shader used to render the bounding boxes during the occlusion culling query.
+      * For example if you have problems with the zbuffer percision you can access the Shader to modify
       * the polygon offset settings. */
     Shader* occlusionShader() { return mOcclusionShader.get(); }
 
-    /** The Shader used to render the bounding boxes during the occlusion culling query. 
-      * For example if you have problems with the zbuffer percision you can access the Shader to modify 
+    /** The Shader used to render the bounding boxes during the occlusion culling query.
+      * For example if you have problems with the zbuffer percision you can access the Shader to modify
       * the polygon offset settings. */
     const Shader* occlusionShader() const { return mOcclusionShader.get(); }
 
-    /** The Shader used to render the bounding boxes during the occlusion culling query. 
-      * For example if you have problems with the zbuffer percision you can access the Shader to modify 
+    /** The Shader used to render the bounding boxes during the occlusion culling query.
+      * For example if you have problems with the zbuffer percision you can access the Shader to modify
       * the polygon offset settings. */
     void setOcclusionShader(Shader* occ_sh) { mOcclusionShader = occ_sh; }
 

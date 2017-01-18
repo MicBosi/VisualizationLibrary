@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -198,7 +198,7 @@ namespace vl
       t.y() += q.y();
       t.z() += q.z();
       t.w() += q.w();
-      return t; 
+      return t;
     }
     //-----------------------------------------------------------------------------
     Quaternion& operator+=(const Quaternion& q)
@@ -217,7 +217,7 @@ namespace vl
       t.y() -= q.y();
       t.z() -= q.z();
       t.w() -= q.w();
-      return t; 
+      return t;
     }
     //-----------------------------------------------------------------------------
     Quaternion& operator-=(const Quaternion& q)
@@ -472,7 +472,7 @@ namespace vl
       return out;
     }
     //-----------------------------------------------------------------------------
-    
+
   protected:
     Vector4<T_Scalar> mXYZW;
   };
@@ -553,7 +553,7 @@ namespace vl
     tr = m.e(0,0) + m.e(1,1) + m.e(2,2);
 
     // check the diagonal
-    if (tr + (T_Scalar)1.0 > 0.0) 
+    if (tr + (T_Scalar)1.0 > 0.0)
     {
       s = vl::sqrt(tr + (T_Scalar)1.0);
       w() = s / (T_Scalar)2.0;
@@ -561,9 +561,9 @@ namespace vl
       x() = (m.e(2,1) - m.e(1,2)) * s;
       y() = (m.e(0,2) - m.e(2,0)) * s;
       z() = (m.e(1,0) - m.e(0,1)) * s;
-    } 
-    else 
-    {    
+    }
+    else
+    {
       // diagonal is negative
       int i, j, k;
       i = 0;
@@ -576,7 +576,7 @@ namespace vl
 
       q[i] = s * (T_Scalar)0.5;
 
-      if (s != 0.0) 
+      if (s != 0.0)
         s = (T_Scalar)0.5 / s;
 
       q[3] = (m.e(k,j) - m.e(j,k)) * s;
@@ -642,7 +642,7 @@ namespace vl
     T_Scalar wy = w() * y();
     T_Scalar wz = w() * z();
 
-    return out = Matrix4<T_Scalar>( 
+    return out = Matrix4<T_Scalar>(
       (1.0f - 2.0f * (y2 + z2)), (2.0f * (xy - wz)),        (2.0f * (xz + wy)),        0.0f,
       (2.0f * (xy + wz)),        (1.0f - 2.0f * (x2 + z2)), (2.0f * (yz - wx)),        0.0f,
       (2.0f * (xz - wy)),        (2.0f * (yz + wx)),        (1.0f - 2.0f * (x2 + y2)), 0.0f,
@@ -669,7 +669,7 @@ namespace vl
     T_Scalar wy = w() * y();
     T_Scalar wz = w() * z();
 
-    return out = Matrix3<T_Scalar>( 
+    return out = Matrix3<T_Scalar>(
       (1.0f - 2.0f * (y2 + z2)), (2.0f * (xy + wz)),        (2.0f * (xz - wy)),
       (2.0f * (xy - wz)),        (1.0f - 2.0f * (x2 + z2)), (2.0f * (yz + wx)),
       (2.0f * (xz + wy)),        (2.0f * (yz - wx)),        (1.0f - 2.0f * (x2 + y2)) );
@@ -699,8 +699,8 @@ namespace vl
     Quaternion<T_Scalar> b2(b);
 
     if ( cosom < 0 )
-    { 
-      cosom = -cosom; 
+    {
+      cosom = -cosom;
       b2 = -b;
     }
 

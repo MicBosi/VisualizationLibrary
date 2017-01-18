@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -58,12 +58,12 @@ namespace vl
       mWidth  = -1;
       mHeight = -1;
     }
-    Rect(T x, T y, T width, T height) 
-    { 
-      mX = x; 
-      mY = y; 
-      mWidth = width; 
-      mHeight = height; 
+    Rect(T x, T y, T width, T height)
+    {
+      mX = x;
+      mY = y;
+      mWidth = width;
+      mHeight = height;
     }
 
     T x() const { return mX; }
@@ -155,7 +155,7 @@ namespace vl
    * This class is mainly used to manipulate rectangles in pixel coordinates (as opposed to real coordinates).
    * The RectI and RectF differ in the following way:
    * - RectF dimensions are implemented using \a float precision, while RectI uses \a int precision.
-   * - RectF::right() returns x()+width(), while RectI::right() returns x()+width()-1 
+   * - RectF::right() returns x()+width(), while RectI::right() returns x()+width()-1
    * - RectF::top() return y()+height(), while RectI::top() return y()+height()-1
    * \sa
    * - RectF
@@ -181,7 +181,7 @@ namespace vl
    * This class is mainly used to manipulate rectangles in real coordinates (as opposed to pixel coordinates).
    * The RectI and RectF differ in the following way:
    * - RectF dimensions are implemented using \a float precision, while RectI uses \a int precision.
-   * - RectF::right() returns x()+width(), while RectI::right() returns x()+width()-1 
+   * - RectF::right() returns x()+width(), while RectI::right() returns x()+width()-1
    * - RectF::top() return y()+height(), while RectI::top() return y()+height()-1
    * \sa
    * - RectI

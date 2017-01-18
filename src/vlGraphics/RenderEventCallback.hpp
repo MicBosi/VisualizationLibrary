@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -45,8 +45,8 @@ namespace vl
   /**
    * An abstract class used to react to rendering events. You can bind a callback to both Rendering and Renderer.
    * The callbacks are executed in the same order in which they appear in the containing collection.
-   * \sa 
-   * - Rendering::renderEventCallbacks() 
+   * \sa
+   * - Rendering::renderEventCallbacks()
    * - Renderer::renderEventCallbacks().
    * - vl::RenderingAbstract, vl::Rendering
    * - vl::RendererAbstract, vl::Renderer */

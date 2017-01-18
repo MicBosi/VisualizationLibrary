@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -73,10 +73,10 @@ namespace vl
   public:
     /** Constructor. */
     Rendering();
-    
+
     /** Copy constructor. */
-    Rendering(const Rendering& other): RenderingAbstract(other) { *this = other; } 
-    
+    Rendering(const Rendering& other): RenderingAbstract(other) { *this = other; }
+
     /** Assignment operator. */
     Rendering& operator=(const Rendering& other);
 
@@ -85,22 +85,22 @@ namespace vl
 
     /** The RenderQueueSorter used to perform the sorting of the objects to be rendered, if NULL no sorting is performed. */
     void setRenderQueueSorter(RenderQueueSorter* render_queue_sorter) { mRenderQueueSorter = render_queue_sorter; }
-    
+
     /** The RenderQueueSorter used to perform the sorting of the objects to be rendered, if NULL no sorting is performed. */
     RenderQueueSorter* renderQueueSorter() { return mRenderQueueSorter.get(); }
 
-    /** The list of Renderers used to perform the rendering. 
-      * The output of one Renderer::render() operation will be fed as input for the next Renderer::render() operation. 
+    /** The list of Renderers used to perform the rendering.
+      * The output of one Renderer::render() operation will be fed as input for the next Renderer::render() operation.
       * \note All the renderers must target the same OpenGL context. */
     const Collection<Renderer>& renderers() const { return mRenderers; }
 
-    /** The list of Renderers used to perform the rendering. 
+    /** The list of Renderers used to perform the rendering.
       * The output of one Renderer::render() operation will be fed as input for the next Renderer::render() operation.
       * \note All the renderers must target the same OpenGL context. */
     Collection<Renderer>& renderers() { return mRenderers; }
 
     /** Uitlity function: clears the renderers() list and adds the specified one. */
-    void setRenderer(Renderer* renderer) 
+    void setRenderer(Renderer* renderer)
     {
       renderers().clear();
       renderers().push_back(renderer);
@@ -126,28 +126,28 @@ namespace vl
 
     /** The Camera that defines the point of view and viewport to be used when rendering the scene. */
     void setCamera(Camera* camera) { mCamera = camera; }
-    
+
     /** The Camera that defines the point of view and viewport to be used when rendering the scene. */
     const Camera* camera() const { return mCamera.get(); }
-    
+
     /** The Camera that defines the point of view and viewport to be used when rendering the scene. */
     Camera* camera() { return mCamera.get(); }
 
     /** Returns the list of SceneManager[s] containing the Actor[s] to be rendered. */
     Collection<SceneManager>* sceneManagers() { return mSceneManagers.get(); }
-    
+
     /** Returns the list of SceneManager[s] containing the Actor[s] to be rendered. */
     const Collection<SceneManager>* sceneManagers() const { return mSceneManagers.get(); }
 
-    /** The root of the Transform tree <b>updated at every rendering frame</b>. For more information 
+    /** The root of the Transform tree <b>updated at every rendering frame</b>. For more information
       * about how and when using it see the documentation of Transform. */
     void setTransform(Transform* transform) { mTransform = transform; }
-    
-    /** The root of the Transform tree <b>updated at every rendering frame</b>. For more information 
+
+    /** The root of the Transform tree <b>updated at every rendering frame</b>. For more information
       * about how and when using it see the documentation of Transform. */
     const Transform* transform() const { return mTransform.get(); }
-    
-    /** The root of the Transform tree <b>updated at every rendering frame</b>. For more information 
+
+    /** The root of the Transform tree <b>updated at every rendering frame</b>. For more information
       * about how and when using it see the documentation of Transform. */
     Transform* transform() { return mTransform.get(); }
 
@@ -157,53 +157,53 @@ namespace vl
     /** Whether the Level-Of-Detail should be evaluated or not. When disabled lod #0 is used. */
     bool evaluateLOD() const { return mEvaluateLOD; }
 
-    /** Whether Shader::shaderAnimator()->updateShader() should be called or not. 
+    /** Whether Shader::shaderAnimator()->updateShader() should be called or not.
     \note
     Only Shader[s] belonging to visible Actor[s] are animated. */
     void setShaderAnimationEnabled(bool animate_shaders) { mShaderAnimationEnabled = animate_shaders; }
 
-    /** Whether Shader::shaderAnimator()->updateShader() should be called or not. 
+    /** Whether Shader::shaderAnimator()->updateShader() should be called or not.
     \note
     Only Shader[s] belonging to visible Actor[s] are animated. */
     bool shaderAnimationEnabled() const { return mShaderAnimationEnabled; }
 
     /** Whether the installed SceneManager[s] should perform Actor culling or not in order to maximize the rendering performances. */
     void setCullingEnabled(bool enabled) { mCullingEnabled = enabled; }
-    
+
     /** Whether the installed SceneManager[s] should perform Actor culling or not in order to maximize the rendering performances. */
     bool cullingEnabled() const { return mCullingEnabled; }
 
-    /** Whether OpenGL resources such as textures and GLSL programs should be automatically initialized when first used. 
-      * Enabling this features forces VL to keep track of which resources are used for each rendering, which might slighly impact the 
+    /** Whether OpenGL resources such as textures and GLSL programs should be automatically initialized when first used.
+      * Enabling this features forces VL to keep track of which resources are used for each rendering, which might slighly impact the
       * rendering time, thus to obtain the maximum performances disable this option and manually initialize your textures and GLSL shaders. */
     void setAutomaticResourceInit(bool enable) { mAutomaticResourceInit = enable; }
-    
+
     /** Whether OpenGL resources such as textures and GLSL programs should be automatically initialized before the rendering takes place. */
     bool automaticResourceInit() const { return mAutomaticResourceInit; }
 
     /** Returns whether near/far planes optimization is enabled. */
     bool nearFarClippingPlanesOptimized() const { return mNearFarClippingPlanesOptimized; }
-    
+
     /** Enabled/disables near/far planes optimization. When enabled, the automatic near/far clipping planes optimization
       * modifies the projection matrix of the current camera to minimize z-fighting artifacts. If later you disable
-      * this feature you might want to recompute the original projection matrix of the camera using the method 
+      * this feature you might want to recompute the original projection matrix of the camera using the method
       * vl::Camera::setProjectionPerspective(). */
     void setNearFarClippingPlanesOptimized(bool enabled) { mNearFarClippingPlanesOptimized = enabled; }
 
-    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: 
+    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition:
        (Actors::enableMask() & bitmask) != 0. Useful when you want to override the Effect of a whole set of Actors.
         If multiple mask/effect pairs match an Actor's enable mask then the effect with the corresponding lowest mask will be used.
         See also vl::Actor::enableMask() and vl::Renderer::shaderOverrideMask(). */
     const std::map<unsigned int, ref<Effect> >& effectOverrideMask() const { return mEffectOverrideMask; }
 
-    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: 
+    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition:
        (Actors::enableMask() & bitmask) != 0. Useful when you want to override the Effect of a whole set of Actors.
         If multiple mask/effect pairs match an Actor's enable mask then the effect with the corresponding lowest mask will be used.
         See also vl::Actor::enableMask() and vl::Renderer::shaderOverrideMask(). */
     std::map<unsigned int, ref<Effect> >& effectOverrideMask() { return mEffectOverrideMask; }
 
   protected:
-    // mic fixme: it would be nice to have a mechanism to request the visible actors at will and to 
+    // mic fixme: it would be nice to have a mechanism to request the visible actors at will and to
     // compile and save the render-queue for later renderings to be reused without recomputing the culling.
     // The user could be able to install actor-list or render-queue and use the flags READ|WRITE|TERMINATE
     // to define wether the list should be used for reading, filled, cleaned up after rendering.

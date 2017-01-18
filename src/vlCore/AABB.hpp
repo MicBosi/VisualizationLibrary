@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -41,7 +41,7 @@ namespace vl
   // AABB
   //-----------------------------------------------------------------------------
   /** The AABB class implements an axis-aligned bounding box using vl::real precision. */
-  class VLCORE_EXPORT AABB 
+  class VLCORE_EXPORT AABB
   {
   public:
     /** Constructs a null AABB. */
@@ -62,7 +62,7 @@ namespace vl
     /** Returns true if the AABB contains a single point, that is, if the min and max corners of the AABB are equal. */
     bool isPoint() const { return mMin == mMax; }
 
-    /** Enlarges the AABB in all directions by \p displace amount. 
+    /** Enlarges the AABB in all directions by \p displace amount.
         As a result every edge of the AABB will be \p displace*2 longer. */
     void enlarge(real displace);
 
@@ -72,7 +72,7 @@ namespace vl
     /** Clips the position of the given \p p point to be inside an AABB. */
     vec3 clip(const vec3& p, bool clipx=true, bool clipy=true, bool clipz=true) const;
 
-    /** Returns true if the given point is inside the AABB. 
+    /** Returns true if the given point is inside the AABB.
         This method allows you to restrict the test to any of the x, y, z axes. */
     bool isInside(const vec3& p, bool clipx, bool clipy, bool clipz) const;
 
@@ -139,12 +139,12 @@ namespace vl
       return side;
     }
 
-    /** Updates the AABB to contain the given point. 
+    /** Updates the AABB to contain the given point.
         The point can represent a sphere if \p radius > 0. */
     void addPoint(const vec3& p, real radius);
 
     /** Updates the AABB to contain the given point. */
-    void addPoint(const vec3& p) 
+    void addPoint(const vec3& p)
     {
       if (isNull())
       {
@@ -162,7 +162,7 @@ namespace vl
     }
 
     /** Transforms an AABB by the given matrix and returns it into the \p out parameter. */
-    void transformed(AABB& out, const mat4& mat) const 
+    void transformed(AABB& out, const mat4& mat) const
     {
       out.setNull();
       if ( !isNull() )
@@ -179,13 +179,13 @@ namespace vl
     }
 
     /** Returns the AABB transformed by the given matrix. */
-    AABB transformed(const mat4& mat) const 
+    AABB transformed(const mat4& mat) const
     {
       AABB aabb;
       transformed(aabb, mat);
       return aabb;
     }
-    
+
     /** Returns the corner of the AABB with the minimum x y z coordinates. */
     const vec3& minCorner() const { return mMin; }
 

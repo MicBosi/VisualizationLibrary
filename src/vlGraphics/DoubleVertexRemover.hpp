@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -48,7 +48,7 @@ namespace vl
   public:
     //! Regenerates a new Array based on the given mapping.
     //! \param data The array to be regenerated
-    //! \param map_new_to_old Specifies the mapping from the old vetices to the new one. The \p i-th vertex of the new vertex array will use the \p map_new_to_old[i]-th vertex of the old array, 
+    //! \param map_new_to_old Specifies the mapping from the old vetices to the new one. The \p i-th vertex of the new vertex array will use the \p map_new_to_old[i]-th vertex of the old array,
     //! that is, \p map_new_to_old[i] specifies the \a old vertex to be used to generate the \a new \p i-th vertex.
     ref<ArrayAbstract> regenerate(ArrayAbstract* data, const std::vector<u32>& map_new_to_old) const;
   private:
@@ -58,7 +58,7 @@ namespace vl
   //-----------------------------------------------------------------------------
   // DoubleVertexRemover
   //-----------------------------------------------------------------------------
-  //! Removes from a Geometry the vertices with the same attributes. 
+  //! Removes from a Geometry the vertices with the same attributes.
   //! As a result also all the DrawArrays prensent in the Geometry are substituted with DrawElements.
   class VLGRAPHICS_EXPORT DoubleVertexRemover: public VertexMapper
   {

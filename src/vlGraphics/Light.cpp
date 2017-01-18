@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -86,7 +86,7 @@ void Light::apply(int index, const Camera* camera, OpenGLContext*) const
     glLightf(GL_LIGHT0+index, GL_SPOT_CUTOFF, mSpotCutoff);
 
     // if its a spot light
-    if (mSpotCutoff != 180.0f) 
+    if (mSpotCutoff != 180.0f)
     {
       VL_CHECK(mSpotCutoff>=0.0f && mSpotCutoff<=90.0f);
       glLightfv(GL_LIGHT0+index, GL_SPOT_DIRECTION, mSpotDirection.ptr());
@@ -111,18 +111,18 @@ void Light::apply(int index, const Camera* camera, OpenGLContext*) const
   }
 }
 //------------------------------------------------------------------------------
-void Light::bindTransform(Transform* transform) 
-{ 
-  mBoundTransform = transform; 
+void Light::bindTransform(Transform* transform)
+{
+  mBoundTransform = transform;
 }
 //------------------------------------------------------------------------------
 Transform* Light::boundTransform()
-{ 
-  return mBoundTransform.get(); 
+{
+  return mBoundTransform.get();
 }
 //------------------------------------------------------------------------------
 const Transform* Light::boundTransform() const
-{ 
-  return mBoundTransform.get(); 
+{
+  return mBoundTransform.get();
 }
 //------------------------------------------------------------------------------

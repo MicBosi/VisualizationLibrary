@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -54,8 +54,8 @@ namespace vl
     class LoadOptions: public Object
     {
     public:
-      enum TransparencyOption 
-      { 
+      enum TransparencyOption
+      {
         TransparencyKeep,   //!<< Keep the <transparency> value as it is.
         TransparencyInvert, //!<< Transparency becomes 1.0 - <transparency>.
         TransparencyAuto    //!<< Transparency is inverted if <authoring_tool> contains the string "Google" or reports ColladaMax or ColladaMaya version less than 3.03.
@@ -150,12 +150,12 @@ namespace vl
 
     static VLGRAPHICS_EXPORT ref<ResourceDatabase> load(VirtualFile* file, const LoadOptions* options);
 
-    LoadWriterDae(): ResourceLoadWriter("|dae|", "|dae|") 
-    { 
+    LoadWriterDae(): ResourceLoadWriter("|dae|", "|dae|")
+    {
       mLoadOptions = new LoadOptions;
     }
 
-    ref<ResourceDatabase> loadResource(const String& path) const 
+    ref<ResourceDatabase> loadResource(const String& path) const
     {
       return load(path, loadOptions());
     }

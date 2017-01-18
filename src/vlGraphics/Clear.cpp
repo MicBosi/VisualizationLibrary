@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -103,11 +103,11 @@ void Clear::render_Implementation(const Actor*, const Shader*, const Camera* cam
     if (scissor_box[2] > viewport[2]) scissor_box[2] = viewport[2];
     if (scissor_box[3] > viewport[3]) scissor_box[3] = viewport[3];
     // culling
-    if (scissor_box[0] > scissor_box[2]) 
+    if (scissor_box[0] > scissor_box[2])
       return;
-    if (scissor_box[1] > scissor_box[3]) 
+    if (scissor_box[1] > scissor_box[3])
       return;
-    // scissor_box from x,y,x2,y2 -> x,y,w,h 
+    // scissor_box from x,y,x2,y2 -> x,y,w,h
     scissor_box[2] = scissor_box[2] -scissor_box[0] +1;
     scissor_box[3] = scissor_box[3] -scissor_box[1] +1;
 

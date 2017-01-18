@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -179,10 +179,10 @@ String Say::parse( const Say& pset ) const
   int base = -1;
   int field = -1;
   int decimals = -1;
-  int align = -1; 
+  int align = -1;
   int fill = -1;
   int plus = -1;
-  
+
   int fmtstart = -1;
 
   // %H+014.5n
@@ -445,7 +445,7 @@ String Say::parse( const Say& pset ) const
           case SayArg::FLOAT64:   out += format(p.float64, base, field, decimals, align, fill, plus, ch, eur); break;
           case SayArg::SLONGLONG: out += format(p.slonglong, base, field, decimals, align, fill, plus, ch, eur); break;
           case SayArg::ULONGLONG: out += format(p.ulonglong, base, field, decimals, align, fill, plus, ch, eur); break;
-          default: 
+          default:
             out += " !!! wrong argument type for '%n' !!! ";
             break;
           }
@@ -469,7 +469,7 @@ String Say::parse( const Say& pset ) const
       base = -1;
       field = -1;
       decimals = -1;
-      align = -1; 
+      align = -1;
       fill = -1;
       plus = -1;
       eur = -1;
@@ -528,7 +528,7 @@ String Say::euronotation(const String& str, int base) const
 
   return tmp;
 }
-  
+
 String Say::format(unsigned long long n, int base, int field, int decimals, int align, int fill, int plus, int finalizer, int eur) const
 {
   if (field < 0)
@@ -577,7 +577,7 @@ String Say::format(unsigned long long n, int base, int field, int decimals, int 
 
   bool negative = false;
 
-  return pipeline(str, base, field, decimals, finalizer, align, eur, fill, negative, plus); 
+  return pipeline(str, base, field, decimals, finalizer, align, eur, fill, negative, plus);
 }
 
 String Say::format(signed long long nn, int base, int field, int decimals, int align, int fill, int plus, int finalizer, int eur) const
@@ -631,7 +631,7 @@ String Say::format(signed long long nn, int base, int field, int decimals, int a
     n = n  / base;
   }
   while(n);
-  
+
   if (decimals)
   {
     str += '.';
@@ -640,9 +640,9 @@ String Say::format(signed long long nn, int base, int field, int decimals, int a
       str += '0';
   }
 
-  return pipeline(str, base, field, decimals, finalizer, align, eur, fill, negative, plus); 
+  return pipeline(str, base, field, decimals, finalizer, align, eur, fill, negative, plus);
 }
-  
+
 String Say::format(double num, int base, int field, int decimals, int align, int fill, int plus, int finalizer, int eur) const
 {
   if (field < 0)
@@ -672,7 +672,7 @@ String Say::format(double num, int base, int field, int decimals, int align, int
 
   // INDEFINITE = - 127 192 0 0
   // -INFINITE  = - 127 128 0 0
-  // +INFINITE  = + 127 128 0 0 
+  // +INFINITE  = + 127 128 0 0
   float tmp = (float)f;
   unsigned char *nan= (unsigned char*)&tmp;
   const char* sign = nan[3] >= 128 ? "-" : "+";
@@ -696,7 +696,7 @@ String Say::format(double num, int base, int field, int decimals, int align, int
 
     if (finalizer == 'n' || finalizer == 'N')
     {
-      double fp = f - floor(f); 
+      double fp = f - floor(f);
       double eps = base/2;
       int dec = decimals;
       do
@@ -723,7 +723,7 @@ String Say::format(double num, int base, int field, int decimals, int align, int
       }
       while(fp>0);
     }
-      
+
     if (f < 0)
     {
       f = -f;
@@ -733,7 +733,7 @@ String Say::format(double num, int base, int field, int decimals, int align, int
 
     // INTEGER PART
 
-    int count = 0; 
+    int count = 0;
     unsigned int base2 = base*base;
     unsigned int base3 = base*base*base;
     unsigned int base4 = base*base*base*base;

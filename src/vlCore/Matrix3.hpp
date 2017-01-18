@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -73,15 +73,15 @@ namespace vl
                       T_Scalar e10, T_Scalar e11, T_Scalar e12,
                       T_Scalar e20, T_Scalar e21, T_Scalar e22)
     {
-      e(0,0) = e00; e(0,1) = e01; e(0,2) = e02; 
-      e(1,0) = e10; e(1,1) = e11; e(1,2) = e12; 
+      e(0,0) = e00; e(0,1) = e01; e(0,2) = e02;
+      e(1,0) = e10; e(1,1) = e11; e(1,2) = e12;
       e(2,0) = e20; e(2,1) = e21; e(2,2) = e22;
     }
     //-----------------------------------------------------------------------------
     Matrix3& fill(T_Scalar val)
     {
-      e(0,0) = e(1,0) = e(2,0) = 
-      e(0,1) = e(1,1) = e(2,1) = 
+      e(0,0) = e(1,0) = e(2,0) =
+      e(0,1) = e(1,1) = e(2,1) =
       e(0,2) = e(1,2) = e(2,2) = val;
       return *this;
     }
@@ -122,38 +122,38 @@ namespace vl
       return v;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& setX(const Vector2<T_Scalar>& v) 
+    Matrix3& setX(const Vector2<T_Scalar>& v)
     {
       e(0,0) = v.x();
       e(1,0) = v.y();
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& setY(const Vector2<T_Scalar>& v) 
+    Matrix3& setY(const Vector2<T_Scalar>& v)
     {
       e(0,1) = v.x();
       e(1,1) = v.y();
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& setT(const Vector2<T_Scalar>& v) 
+    Matrix3& setT(const Vector2<T_Scalar>& v)
     {
       e(0,2) = v.x();
       e(1,2) = v.y();
       return *this;
     }
     //-----------------------------------------------------------------------------
-    bool operator==(const Matrix3& m) const 
+    bool operator==(const Matrix3& m) const
     {
       return memcmp(m.mVec, mVec, sizeof(T_Scalar)*9) == 0;
     }
     //-----------------------------------------------------------------------------
-    bool operator!=(const Matrix3& m) const 
+    bool operator!=(const Matrix3& m) const
     {
       return !operator==(m);
     }
     //-----------------------------------------------------------------------------
-    Matrix3& operator=(const Matrix3& m) 
+    Matrix3& operator=(const Matrix3& m)
     {
       memcpy(mVec, m.mVec, sizeof(T_Scalar)*9);
       return *this;
@@ -291,7 +291,7 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    //! This writes only on the upper 2x2 part of the matrix without touching the last row and column. 
+    //! This writes only on the upper 2x2 part of the matrix without touching the last row and column.
     void set2x2(const Matrix2<T_Scalar>& m)
     {
       e(0,0) = m.e(0,0); e(1,0) = m.e(1,0);
@@ -347,7 +347,7 @@ namespace vl
       return true;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& setNull() 
+    Matrix3& setNull()
     {
       fill(0);
       return *this;
@@ -366,11 +366,11 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix3& setIdentity()
     {
-      static const T_Scalar I3d[] = 
-      { 
-        (T_Scalar)1, (T_Scalar)0, (T_Scalar)0,  
-        (T_Scalar)0, (T_Scalar)1, (T_Scalar)0, 
-        (T_Scalar)0, (T_Scalar)0, (T_Scalar)1, 
+      static const T_Scalar I3d[] =
+      {
+        (T_Scalar)1, (T_Scalar)0, (T_Scalar)0,
+        (T_Scalar)0, (T_Scalar)1, (T_Scalar)0,
+        (T_Scalar)0, (T_Scalar)0, (T_Scalar)1,
       };
       memcpy(mVec, I3d, sizeof(T_Scalar)*9);
       return *this;
@@ -637,7 +637,7 @@ namespace vl
       if (det == 0)
         dest.fill(0);
       else
-        dest = Matrix3<T_Scalar>(A, a13*a32 - a33*a12, a12*a23 - a22*a13, 
+        dest = Matrix3<T_Scalar>(A, a13*a32 - a33*a12, a12*a23 - a22*a13,
                                  B, a11*a33 - a31*a13, a13*a21 - a23*a11,
                                  C, a12*a31 - a32*a11, a11*a22 - a21*a12) / det;
       return det;

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -62,7 +62,7 @@ namespace vl
   public:
     //! Default constructor.
     ArrayAbstract()
-    { 
+    {
       VL_DEBUG_SET_OBJECT_NAME()
       mBufferObject = new BufferObject;
       mBufferObjectDirty = true;
@@ -70,7 +70,7 @@ namespace vl
     }
 
     //! Copies only the local data and not the BufferObject related fields
-    ArrayAbstract(const ArrayAbstract& other): Object(other) 
+    ArrayAbstract(const ArrayAbstract& other): Object(other)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mBufferObject = new BufferObject;
@@ -80,7 +80,7 @@ namespace vl
     }
 
     //! Copies only the local data and not the BufferObject related fields
-    void operator=(const ArrayAbstract& other) 
+    void operator=(const ArrayAbstract& other)
     {
       bufferObject()->resize( other.bufferObject()->bytesUsed() );
       memcpy( ptr(), other.ptr(), bytesUsed() );
@@ -136,9 +136,13 @@ namespace vl
     virtual int compare(int a, int b) const = 0;
 
     //! Wether the BufferObject should be updated or not using the local storage. Initially set to true.
+    //! IMPORTANT: To automatically update the buffer object of a Renderable, Geometry etc. you also need to call Renderable::setBufferObjectDirty().
+    //! IMPORTANT: To immediately update the buffer object manually call the updateBufferObject() method of this class.
     bool isBufferObjectDirty() const { return mBufferObjectDirty; }
 
     //! Wether the BufferObject should be updated or not using the local storage. Initially set to true.
+    //! IMPORTANT: To automatically update the buffer object of a Renderable, Geometry etc. you also need to call Renderable::setBufferObjectDirty().
+    //! IMPORTANT: To immediately update the buffer object manually call the updateBufferObject() method of this class.
     void setBufferObjectDirty(bool dirty=true) { mBufferObjectDirty = dirty; }
 
     //! BU_STATIC_DRAW by default
@@ -147,7 +151,7 @@ namespace vl
     //! BU_STATIC_DRAW by default
     void setUsage(EBufferObjectUsage usage) { mBufferObjectUsage = usage; }
 
-    //! Updates the BufferObject. 
+    //! Updates the BufferObject.
     //! @param mode Only the BUF_DiscardRamBuffer flag is checked as the BUF_ForceUpdate flag is considered always set for this function. By default mode is set to BUM_KeepRamBuffer.
     void updateBufferObject(EBufferObjectUpdateMode mode = BUM_KeepRamBuffer)
     {
@@ -201,15 +205,15 @@ namespace vl
     // ---
 
     void clear() { resize(0); bufferObject()->deleteBufferObject(); }
-    
+
     void resize(size_t dim) { bufferObject()->resize(dim*bytesPerVector()); }
-    
+
     size_t size() const { return bytesUsed() / bytesPerVector(); }
-    
+
     size_t sizeBufferObject() const { return bufferObject() ? bufferObject()->byteCountBufferObject() / bytesPerVector() : 0; }
-    
+
     size_t scalarCount() const { return size() * T_GL_Size; }
-    
+
     size_t scalarCountBufferObject() const { return sizeBufferObject() * T_GL_Size; }
 
     // ---
@@ -217,7 +221,7 @@ namespace vl
     const T_VectorType* begin() const { return reinterpret_cast<const T_VectorType*>(ptr()); }
 
     T_VectorType* begin() { return reinterpret_cast<T_VectorType*>(ptr()); }
-    
+
     const T_VectorType* end() const { return (reinterpret_cast<const T_VectorType*>(ptr()))+size(); }
 
     T_VectorType* end() { return (reinterpret_cast<T_VectorType*>(ptr()))+size(); }
@@ -277,7 +281,7 @@ namespace vl
     }
 
     AABB computeBoundingBox() const
-    { 
+    {
       AABB aabb;
       const int count = T_GL_Size == 4 ? 3 : T_GL_Size;
       for(size_t i=0; i<size(); ++i)

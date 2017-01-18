@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -56,6 +56,18 @@ namespace vl
       y() = (T_Scalar)other.y();
       z() = (T_Scalar)other.z();
     }
+
+    explicit Vector3(T_Scalar val)
+    {
+      mScalar[0] = mScalar[1] = mScalar[2] = val;
+    }
+
+    //explicit Vector3(const T_Scalar* pval)
+    //{
+    //  mScalar[0] = pval[0];
+    //  mScalar[1] = pval[1];
+    //  mScalar[2] = pval[2];
+    //}
 
     explicit Vector3(T_Scalar x, T_Scalar y, T_Scalar z)
     {
@@ -218,8 +230,8 @@ namespace vl
       if (len)
         *len = l;
       if (l)
-        *this *= (T_Scalar)(1.0/l); 
-      return *this; 
+        *this *= (T_Scalar)(1.0/l);
+      return *this;
     }
 
   protected:

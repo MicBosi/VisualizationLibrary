@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -56,7 +56,7 @@ namespace
 
   /* Expanded data source object for stdio input */
 
-  typedef struct 
+  typedef struct
   {
     struct jpeg_source_mgr pub;
     VirtualFile * infile;  /* source stream */
@@ -660,7 +660,7 @@ bool vl::saveJPG(const Image* src, VirtualFile* fout, int quality)
    */
   row_stride = w * 3;  /* JSAMPLEs per row in image_buffer */
 
-  while (cinfo.next_scanline < cinfo.image_height) 
+  while (cinfo.next_scanline < cinfo.image_height)
   {
     /* jpeg_write_scanlines expects an array of pointers to scanlines.
      * Here the array is only one element long, but you could pass

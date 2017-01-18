@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -88,13 +88,13 @@ namespace vl
     Object* getImportedStructure(const VLXStructure* st);
 
     VLXStructure* getExportedObject(const Object* obj);
-    
+
     //! The VLXRegistry used by the serializer, by default set to vl::defVLXRegistry().
     VLXRegistry* registry() { return mRegistry.get(); }
 
     //! The VLXRegistry used by the serializer, by default set to vl::defVLXRegistry().
     const VLXRegistry* registry() const { return mRegistry.get(); }
-    
+
     //! The VLXRegistry used by the serializer, by default set to vl::defVLXRegistry().
     void setRegistry(const VLXRegistry* registry) { mRegistry = registry; }
 

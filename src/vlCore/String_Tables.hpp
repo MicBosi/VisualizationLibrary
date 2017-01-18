@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -41,9 +41,9 @@ namespace
     const char* ascii;
   };
   //-----------------------------------------------------------------------------
-  const char* unicode_to_ascii_table1[] = 
+  const char* unicode_to_ascii_table1[] =
   {
-    //       00    01    02    03    04    05    06    07    08    09    0A    0B    0C    0D    0E    0F     10    11    12    13    14    15    16    17    18    19    1A    1B    1C    1D    1E    1F  
+    //       00    01    02    03    04    05    06    07    08    09    0A    0B    0C    0D    0E    0F     10    11    12    13    14    15    16    17    18    19    1A    1B    1C    1D    1E    1F
     /*0000*/ NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL , NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,"?",
     /*0020*/ NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL , NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,"?",
     /*0040*/ NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL , NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,NULL ,"?",
@@ -112,14 +112,14 @@ namespace
     { 0xFE60, "\x26" }, // ampersand
     { 0xFE61, "\x2A" }, // asterisk
     { 0xFE62, "\x2B" }, // plus sign
-    { 0x02A6, "ts"  }, 
-    { 0x2026, "..." }, 
+    { 0x02A6, "ts"  },
+    { 0x2026, "..." },
     { 0x20AC, "euro"}, // euro sign
-    { 0x22EF, "..." }, 
-    { 0x2190, "<-"  }, 
-    { 0x2192, "->"  }, 
-    { 0x21D0, "<="  }, 
-    { 0x21D2, "=>"  }, 
+    { 0x22EF, "..." },
+    { 0x2190, "<-"  },
+    { 0x2192, "->"  },
+    { 0x21D0, "<="  },
+    { 0x21D2, "=>"  },
     { 0xFB00, "ff"  }, // latin small ligature ff
     { 0xFB01, "fi"  }, // latin small ligature fi
     { 0xFB02, "fl"  }, // latin small ligature fl
@@ -143,7 +143,7 @@ namespace
     0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7F,
 
     // extension to plain ascii
-    0x20AC,0x0081,0x201A,0x0192,0x201E,0x2026,0x2020,0x2021,0x02C6,0x2030,0x0160,0x2039,0x0152,0x008D,0x017D,0x008F, 
+    0x20AC,0x0081,0x201A,0x0192,0x201E,0x2026,0x2020,0x2021,0x02C6,0x2030,0x0160,0x2039,0x0152,0x008D,0x017D,0x008F,
     0x0090,0x2018,0x2019,0x201C,0x201D,0x2022,0x2013,0x2014,0x02DC,0x2122,0x0161,0x203A,0x0153,0x009D,0x017E,0x0178,
     0x00A0,0x00A1,0x00A2,0x00A3,0x00A4,0x00A5,0x00A6,0x00A7,0x00A8,0x00A9,0x00AA,0x00AB,0x00AC,0x00AD,0x00AE,0x00AF,
     0x00B0,0x00B1,0x00B2,0x00B3,0x00B4,0x00B5,0x00B6,0x00B7,0x00B8,0x00B9,0x00BA,0x00BB,0x00BC,0x00BD,0x00BE,0x00BF,
@@ -2246,7 +2246,7 @@ namespace
   const char* unicode_to_ascii(unsigned int unicode)
   {
     const char* translation = NULL;
-    if ( unicode < 0x0250) 
+    if ( unicode < 0x0250)
       translation = unicode_to_ascii_table1[ unicode ];
     if (!translation)
     {

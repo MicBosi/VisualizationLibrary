@@ -142,7 +142,7 @@ namespace vl
 
   //! Returns the address of the specified OpenGL function if supported by the active OpenGL driver and profile.
   VLGRAPHICS_EXPORT void* getGLProcAddress(const char* name);
-  
+
   //! Returns a readable string corresponding to the given OpenGL error code as returned by glGetError()
   VLGRAPHICS_EXPORT const char* getGLErrorString(int err);
 
@@ -159,7 +159,7 @@ namespace vl
   #endif
 
   //------------------------------------------------------------------------------
-  
+
 }
 
 //-----------------------------------------------------------------------------
@@ -169,7 +169,7 @@ namespace vl
 #if defined(VL_OPENGL)
   #include <vlGraphics/GL/VL_Functions_GL.hpp>
 #endif
-  
+
 #if defined(VL_OPENGL_ES1)
   #include <vlGraphics/GL/VL_Functions_GLES1.hpp>
 #endif

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -42,7 +42,7 @@ namespace vl
   class VirtualFile;
 
   /**
-   * The ResourceDatabase class contains and manipulates a set of resources. It works with 
+   * The ResourceDatabase class contains and manipulates a set of resources. It works with
    * any kind of resources derived from vl::Object, even user-customized ones.
   */
   class VLCORE_EXPORT ResourceDatabase: public Object

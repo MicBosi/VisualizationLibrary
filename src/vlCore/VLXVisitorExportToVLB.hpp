@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -168,10 +168,10 @@ namespace vl
 
       // header
       mOutputFile->writeUInt8( VLB_ChunkStructure );
-      
+
       // tag
       writeString( obj->tag().c_str() );
-      
+
       // ID
       writeString( obj->uid().c_str() );
 
@@ -200,10 +200,10 @@ namespace vl
 
       // header
       mOutputFile->writeUInt8( VLB_ChunkList );
-      
+
       // tag
       writeString( list->tag().c_str() );
-      
+
       // value count
       writeInteger( list->value().size() );
 
@@ -373,8 +373,8 @@ namespace vl
 
     const std::map< std::string, int >* uidSet() const { return mIDSet; }
 
-    void setOutputFile(VirtualFile* file) 
-    { 
+    void setOutputFile(VirtualFile* file)
+    {
       mOutputFile = file;
       if (file)
       {

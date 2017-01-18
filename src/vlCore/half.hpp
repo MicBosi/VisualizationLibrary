@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -41,15 +41,15 @@ namespace vl
   {
   public:
     half(): bits(0) {}
-    
+
     half(const half& hf): bits(hf.bits) {}
-    
+
     half(int i): bits(convertFloatToHalf((float)i).bits) {}
-    
+
     half(long long i): bits(convertFloatToHalf((float)i).bits) {}
-    
+
     half(float f): bits(convertFloatToHalf(f).bits) {}
-    
+
     half(double d): bits(convertFloatToHalf((float)d).bits) {}
 
     operator float() const
@@ -307,8 +307,8 @@ namespace vl
       }
       else
       {
-        hf.bits = (((hfloat)sign)<<15) | 
-                  (hfloat)((exp - HALF_FLOAT_MIN_BIASED_EXP_AS_SINGLE_FP_EXP) >> 13) | 
+        hf.bits = (((hfloat)sign)<<15) |
+                  (hfloat)((exp - HALF_FLOAT_MIN_BIASED_EXP_AS_SINGLE_FP_EXP) >> 13) |
                   (hfloat)(mantissa >> 13);
       }
       return hf;
@@ -401,8 +401,8 @@ namespace vl
         }
         else
         {
-          hf = (((hfloat)sign)<<15) | 
-               (hfloat)((exp - HALF_FLOAT_MIN_BIASED_EXP_AS_SINGLE_FP_EXP) >> 13) | 
+          hf = (((hfloat)sign)<<15) |
+               (hfloat)((exp - HALF_FLOAT_MIN_BIASED_EXP_AS_SINGLE_FP_EXP) >> 13) |
                (hfloat)(mantissa >> 13);
         }
       }
@@ -466,11 +466,11 @@ namespace vl
   private:
     // -15 stored using a single precision bias of 127
     static const unsigned int  HALF_FLOAT_MIN_BIASED_EXP_AS_SINGLE_FP_EXP = 0x38000000;
-    
-    // max exponent value in single precision that will be converted 
+
+    // max exponent value in single precision that will be converted
     // to Inf or Nan when stored as a half-float
     static const unsigned int  HALF_FLOAT_MAX_BIASED_EXP_AS_SINGLE_FP_EXP = 0x47800000;
-    
+
     // 255 is the max exponent biased value
     static const unsigned int  FLOAT_MAX_BIASED_EXP = (0xFF << 23);
     static const unsigned int  HALF_FLOAT_MAX_BIASED_EXP = (0x1F << 10);

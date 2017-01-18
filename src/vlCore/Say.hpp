@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -158,11 +158,11 @@ namespace vl
     String parse( const Say& pset ) const;
 
     String euronotation(const String& str, int base) const;
-      
+
     String format(unsigned long long n, int base, int field, int decimals, int align, int fill, int plus, int finalizer, int eur) const;
 
     String format(signed long long nn, int base, int field, int decimals, int align, int fill, int plus, int finalizer, int eur) const;
-      
+
     String format(double num, int base, int field, int decimals, int align, int fill, int plus, int finalizer, int eur) const;
 
     String pipeline(const String& str, int base, int field, int decimals, int finalizer, int align, int eur, int fill, int negative, int plus) const;

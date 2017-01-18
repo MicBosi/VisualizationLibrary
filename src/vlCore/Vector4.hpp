@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -57,6 +57,19 @@ namespace vl
       z() = (T_Scalar)other.z();
       w() = (T_Scalar)other.w();
     }
+
+    explicit Vector4(T_Scalar val)
+    {
+      mScalar[0] = mScalar[1] = mScalar[2] = mScalar[3] = val;
+    }
+
+    //explicit Vector4(const T_Scalar* pval)
+    //{
+    //  mScalar[0] = pval[0];
+    //  mScalar[1] = pval[1];
+    //  mScalar[2] = pval[2];
+    //  mScalar[3] = pval[3];
+    //}
 
     explicit Vector4(T_Scalar x, T_Scalar y, T_Scalar z, T_Scalar w)
     {
@@ -238,14 +251,14 @@ namespace vl
     T_Scalar length() const { return (T_Scalar)::sqrt(x()*x()+y()*y()+z()*z()+w()*w()); }
     T_Scalar lengthSquared() const { return x()*x()+y()*y()+z()*z()+w()*w(); }
     bool isNull() const { return !x() && !y() && !z() && !w(); }
-    const Vector4& normalize(T_Scalar *len=NULL) 
+    const Vector4& normalize(T_Scalar *len=NULL)
     {
       T_Scalar l = length();
       if (len)
         *len = l;
       if (l)
-        *this *= (T_Scalar)(1.0/l); 
-      return *this; 
+        *this *= (T_Scalar)(1.0/l);
+      return *this;
     }
 
   protected:

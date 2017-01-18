@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -54,7 +54,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     const RenderToken* mNextPass;
-    
+
     Actor* mActor; // Actor is non-const as it can be updated by the ActorEventCallback
     Renderable* mRenderable; // Renderable is non-const because Actor is non-const
     const Shader* mShader;

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -94,12 +94,13 @@ bool Actor::boundsDirty() const
 //-----------------------------------------------------------------------------
 void Actor::computeBounds()
 {
-  if ( lod(0) == NULL )
+  if ( ! lod(0) ) {
     return;
+  }
 
   bool geom_update = lod(0)->boundsDirty() || lod(0)->boundsUpdateTick() != mBoundsUpdateTick;
 
-  if ( transform() && (geom_update || transform()->worldMatrixUpdateTick() != mTransformUpdateTick) )
+  if ( transform() && ( geom_update || transform()->worldMatrixUpdateTick() != mTransformUpdateTick ) )
   {
     lod(0)->boundingBox().transformed( mAABB, transform()->worldMatrix() );
     mTransformUpdateTick = transform()->worldMatrixUpdateTick();

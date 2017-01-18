@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -45,7 +45,7 @@
   #include <windows.h>
 #endif
 
-#if defined(__GNUG__) || defined(__MINGW32__) 
+#if defined(__GNUG__) || defined(__MINGW32__)
   #include <cstdio>
 #endif
 
@@ -61,12 +61,12 @@ namespace vl
   #if defined(_DEBUG) || !defined(NDEBUG) || VL_FORCE_CHECKS == 1
 
     // Visual Studio
-    #if defined(_MSC_VER) 
+    #if defined(_MSC_VER)
       #define VL_TRAP() { if (IsDebuggerPresent()) { __debugbreak(); } else ::vl::abort_vl(); }
     // GNU GCC
-    #elif defined(__GNUG__) || defined(__MINGW32__) 
+    #elif defined(__GNUG__) || defined(__MINGW32__)
       #define VL_TRAP() { fflush(stdout); fflush(stderr); asm("int $0x3"); }
-    #else 
+    #else
       #define VL_TRAP() { ::vl::abort_vl(); }
     #endif
 

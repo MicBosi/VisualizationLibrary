@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -76,13 +76,13 @@ namespace vl
     }
 
     /**
-     * Defines the scissor box. 
+     * Defines the scissor box.
      * The \p left, \p bottom, \p right and \p top parameters are in windows coordinates.
      * See also http://www.opengl.org/sdk/docs/man/xhtml/glScissor.xml for more information.
      */
     void setScissor(int x, int y, int width, int height) { setScissor( RectI(x,y,width,height) ); }
     /**
-     * Defines the scissor box. 
+     * Defines the scissor box.
      * The \p left, \p bottom, \p right and \p top parameters are in windows coordinates.
      * See also http://www.opengl.org/sdk/docs/man/xhtml/glScissor.xml for more information.
      */

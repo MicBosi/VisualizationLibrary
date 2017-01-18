@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -120,23 +120,23 @@ VLXStructure* VLXSerializer::exportVLX(const Object* obj)
   }
 }
 //-----------------------------------------------------------------------------
-bool VLXSerializer::canExport(const Object* obj) const 
-{ 
+bool VLXSerializer::canExport(const Object* obj) const
+{
   if (!registry())
     return false;
   else
-    return registry()->exportRegistry().find(obj->classType()) != registry()->exportRegistry().end(); 
+    return registry()->exportRegistry().find(obj->classType()) != registry()->exportRegistry().end();
 }
 //-----------------------------------------------------------------------------
-bool VLXSerializer::canImport(const VLXStructure* st) const 
-{ 
+bool VLXSerializer::canImport(const VLXStructure* st) const
+{
   if (!registry())
     return false;
   else
-    return registry()->importRegistry().find(st->tag()) != registry()->importRegistry().end(); 
+    return registry()->importRegistry().find(st->tag()) != registry()->importRegistry().end();
 }
 //-----------------------------------------------------------------------------
-void VLXSerializer::registerImportedStructure(const VLXStructure* st, Object* obj) 
+void VLXSerializer::registerImportedStructure(const VLXStructure* st, Object* obj)
 {
   VL_CHECK( mImportedStructures.find(st) == mImportedStructures.end() )
   mImportedStructures[st] = obj;
@@ -172,8 +172,8 @@ VLXStructure* VLXSerializer::getExportedObject(const Object* obj)
   }
 }
 //-----------------------------------------------------------------------------
-void VLXSerializer::signalImportError(const String& str) 
-{ 
+void VLXSerializer::signalImportError(const String& str)
+{
   // signal only the first one
   if (!error())
   {
@@ -183,12 +183,12 @@ void VLXSerializer::signalImportError(const String& str)
 }
 //-----------------------------------------------------------------------------
 void VLXSerializer::signalExportError(const String& str)
-{ 
+{
   // signal only the first one
   if (!error())
   {
     Log::error( str );
-    setError( VLXSerializer::ExportError ); 
+    setError( VLXSerializer::ExportError );
   }
 }
 //-----------------------------------------------------------------------------

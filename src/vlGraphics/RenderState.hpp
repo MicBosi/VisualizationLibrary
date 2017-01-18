@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -52,7 +52,7 @@ namespace vl
     VL_INSTRUMENT_ABSTRACT_CLASS(vl::RenderState, Object)
 
   public:
-    RenderState() 
+    RenderState()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -72,7 +72,7 @@ namespace vl
     VL_INSTRUMENT_ABSTRACT_CLASS(vl::RenderStateIndexed, RenderState)
 
   public:
-    RenderStateIndexed() 
+    RenderStateIndexed()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -86,7 +86,7 @@ namespace vl
     VL_INSTRUMENT_ABSTRACT_CLASS(vl::RenderStateNonIndexed, RenderState)
 
   public:
-    RenderStateNonIndexed() 
+    RenderStateNonIndexed()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -100,10 +100,10 @@ namespace vl
 
     virtual void apply(const Camera* camera, OpenGLContext* ctx) const { mRS->apply( mIndex, camera, ctx ); }
 
-    ERenderState type() const 
-    { 
+    ERenderState type() const
+    {
       if (mIndex > 0)
-        return (ERenderState)(mRS->type() + mIndex); 
+        return (ERenderState)(mRS->type() + mIndex);
       else
         return mRS->type();
     }

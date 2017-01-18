@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -119,11 +119,11 @@ void Camera::computeNearFarOptimizedProjMatrix(const Sphere& scene_bounding_sphe
     {
     case PMT_OrthographicProjection: setProjectionOrtho(mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane);
       break;
-    case PMT_PerspectiveProjection:  setProjectionPerspective(); 
+    case PMT_PerspectiveProjection:  setProjectionPerspective();
       break;
 
     // we cannot do this: if we change the near plane we have to recompute also left, right, bottom and top!
-    // case PMT_PerspectiveProjectionFrustum: setProjectionFrustum(mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane); 
+    // case PMT_PerspectiveProjectionFrustum: setProjectionFrustum(mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane);
     //   break;
 
     default:

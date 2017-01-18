@@ -56,14 +56,14 @@ Shader::~Shader()
 {
 }
 //------------------------------------------------------------------------------
-const GLSLProgram* Shader::getGLSLProgram() const 
-{ 
-  return static_cast<const GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); 
+const GLSLProgram* Shader::getGLSLProgram() const
+{
+  return static_cast<const GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) );
 }
 //------------------------------------------------------------------------------
-GLSLProgram* Shader::getGLSLProgram() 
-{ 
-  return static_cast<GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); 
+GLSLProgram* Shader::getGLSLProgram()
+{
+  return static_cast<GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) );
 }
 //------------------------------------------------------------------------------
 // state getters
@@ -184,15 +184,15 @@ void PixelTransfer::apply(int, const Camera*, OpenGLContext*) const
   glPixelTransferi(GL_MAP_STENCIL, mapStencil() ? GL_TRUE : GL_FALSE);
   glPixelTransferi(GL_INDEX_SHIFT, indexShift() );
   glPixelTransferi(GL_INDEX_OFFSET, indexOffset() );
-  glPixelTransferf(GL_RED_SCALE, redScale() );  
-  glPixelTransferf(GL_GREEN_SCALE, greenScale() ); 
-  glPixelTransferf(GL_BLUE_SCALE, blueScale() ); 
+  glPixelTransferf(GL_RED_SCALE, redScale() );
+  glPixelTransferf(GL_GREEN_SCALE, greenScale() );
+  glPixelTransferf(GL_BLUE_SCALE, blueScale() );
   glPixelTransferf(GL_ALPHA_SCALE, alphaScale() );
   glPixelTransferf(GL_DEPTH_SCALE, depthScale() );
   glPixelTransferf(GL_RED_BIAS, redBias() );
-  glPixelTransferf(GL_GREEN_BIAS, greenBias() );  
+  glPixelTransferf(GL_GREEN_BIAS, greenBias() );
   glPixelTransferf(GL_BLUE_BIAS, blueBias() );
-  glPixelTransferf(GL_ALPHA_BIAS, alphaBias() ); 
+  glPixelTransferf(GL_ALPHA_BIAS, alphaBias() );
   glPixelTransferf(GL_DEPTH_BIAS, depthBias() );
   VL_CHECK_OGL()
   if (Has_GL_ARB_imaging)
@@ -202,17 +202,17 @@ void PixelTransfer::apply(int, const Camera*, OpenGLContext*) const
     glPixelTransferf(GL_POST_COLOR_MATRIX_BLUE_SCALE, postColorMatrixBlueScale() );
     glPixelTransferf(GL_POST_COLOR_MATRIX_ALPHA_SCALE, postColorMatrixAlphaScale() );
     glPixelTransferf(GL_POST_COLOR_MATRIX_RED_BIAS, postColorMatrixRedBias() );
-    glPixelTransferf(GL_POST_COLOR_MATRIX_GREEN_BIAS, postColorMatrixGreenBias() ); 
+    glPixelTransferf(GL_POST_COLOR_MATRIX_GREEN_BIAS, postColorMatrixGreenBias() );
     glPixelTransferf(GL_POST_COLOR_MATRIX_BLUE_BIAS, postColorMatrixBlueBias() );
     glPixelTransferf(GL_POST_COLOR_MATRIX_ALPHA_BIAS, postColorMatrixAlphaBias() );
     glPixelTransferf(GL_POST_CONVOLUTION_RED_SCALE, postConvolutionRedScale() );
-    glPixelTransferf(GL_POST_CONVOLUTION_GREEN_SCALE, postConvolutionGreenScale() ); 
+    glPixelTransferf(GL_POST_CONVOLUTION_GREEN_SCALE, postConvolutionGreenScale() );
     glPixelTransferf(GL_POST_CONVOLUTION_BLUE_SCALE, postConvolutionBlueScale() );
     glPixelTransferf(GL_POST_CONVOLUTION_ALPHA_SCALE, postConvolutionAlphaScale() );
     glPixelTransferf(GL_POST_CONVOLUTION_RED_BIAS, postConvolutionRedBias() );
-    glPixelTransferf(GL_POST_CONVOLUTION_GREEN_BIAS, postConvolutionGreenBias() );  
+    glPixelTransferf(GL_POST_CONVOLUTION_GREEN_BIAS, postConvolutionGreenBias() );
     glPixelTransferf(GL_POST_CONVOLUTION_BLUE_BIAS, postConvolutionBlueBias() );
-    glPixelTransferf(GL_POST_CONVOLUTION_ALPHA_BIAS, postConvolutionAlphaBias() ); 
+    glPixelTransferf(GL_POST_CONVOLUTION_ALPHA_BIAS, postConvolutionAlphaBias() );
     VL_CHECK_OGL()
   }
 }
@@ -226,7 +226,7 @@ void Hint::apply(int, const Camera*, OpenGLContext*) const
   if( Has_Fixed_Function_Pipeline )
   {
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, mPerspectiveCorrectionHint ); VL_CHECK_OGL()
-    
+
     glHint( GL_FOG_HINT, mFogHint ); VL_CHECK_OGL()
 
     if (Has_GL_GENERATE_MIPMAP)
@@ -243,7 +243,7 @@ void Hint::apply(int, const Camera*, OpenGLContext*) const
   if ( Has_GL_Version_1_1 )
   {
     glHint( GL_POINT_SMOOTH_HINT, mPointSmoothHint ); VL_CHECK_OGL()
-  }  
+  }
 }
 //------------------------------------------------------------------------------
 // CullFace
@@ -302,11 +302,11 @@ void ShadeModel::apply(int, const Camera*, OpenGLContext*) const
 void BlendFunc::apply(int, const Camera*, OpenGLContext*) const
 {
   if (Has_GL_EXT_blend_func_separate||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_blend_func_separate||Has_GLES_Version_2_0)
-  { 
+  {
     VL_glBlendFuncSeparate(mSrcRGB, mDstRGB, mSrcAlpha, mDstAlpha); VL_CHECK_OGL()
   }
   else
-  { 
+  {
     glBlendFunc(mSrcRGB, mDstRGB); VL_CHECK_OGL() // modifies rgb and alpha
   }
 }
@@ -442,41 +442,41 @@ void Material::apply(int, const Camera*, OpenGLContext*) const
 
   if ( mFrontAmbient == mBackAmbient )
   {
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mFrontAmbient.ptr()); 
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mFrontAmbient.ptr());
   }
   else
   {
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mFrontAmbient.ptr()); 
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mFrontAmbient.ptr());
     glMaterialfv(GL_BACK, GL_AMBIENT, mBackAmbient.ptr());
   }
 
   if ( mFrontDiffuse == mBackDiffuse )
   {
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mFrontDiffuse.ptr()); 
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mFrontDiffuse.ptr());
   }
   else
   {
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mFrontDiffuse.ptr()); 
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mFrontDiffuse.ptr());
     glMaterialfv(GL_BACK, GL_DIFFUSE, mBackDiffuse.ptr());
   }
 
   if ( mFrontSpecular == mBackSpecular )
   {
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mFrontSpecular.ptr()); 
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mFrontSpecular.ptr());
   }
   else
   {
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mFrontSpecular.ptr()); 
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mFrontSpecular.ptr());
     glMaterialfv(GL_BACK, GL_SPECULAR, mBackSpecular.ptr());
   }
 
   if ( mFrontEmission == mBackEmission )
   {
-    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mFrontEmission.ptr()); 
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mFrontEmission.ptr());
   }
   else
   {
-    glMaterialfv(GL_FRONT, GL_EMISSION, mFrontEmission.ptr()); 
+    glMaterialfv(GL_FRONT, GL_EMISSION, mFrontEmission.ptr());
     glMaterialfv(GL_BACK, GL_EMISSION, mBackEmission.ptr());
   }
 
@@ -508,10 +508,10 @@ void Material::apply(int, const Camera*, OpenGLContext*) const
     glDisable(GL_COLOR_MATERIAL); VL_CHECK_OGL();
   }
 
-  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mFrontAmbient.ptr()); 
-  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mFrontDiffuse.ptr()); 
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mFrontSpecular.ptr()); 
-  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mFrontEmission.ptr()); 
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mFrontAmbient.ptr());
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mFrontDiffuse.ptr());
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mFrontSpecular.ptr());
+  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mFrontEmission.ptr());
   glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, mFrontShininess); VL_CHECK_OGL();
 
 #endif
@@ -524,8 +524,8 @@ void Material::apply(int, const Camera*, OpenGLContext*) const
 void LightModel::apply(int, const Camera*, OpenGLContext*) const
 {
   if (Has_GL_Version_1_2||Has_GL_EXT_separate_specular_color)
-  { 
-    glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL, (float)mColorControl); VL_CHECK_OGL() 
+  {
+    glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL, (float)mColorControl); VL_CHECK_OGL()
   }
 
   if (Has_GL_Version_1_1)
@@ -698,6 +698,7 @@ void VertexAttrib::apply(int index, const Camera*, OpenGLContext* ctx) const
 //------------------------------------------------------------------------------
 void Color::apply(int, const Camera*, OpenGLContext* ctx) const
 {
+  VL_CHECK( ctx );
   glColor4f( mColor.r(), mColor.g(), mColor.b(), mColor.a() ); VL_CHECK_OGL()
   ctx->mColor = mColor;
 }
@@ -750,8 +751,8 @@ TexParameter::TexParameter()
   setDepthTextureMode(DTM_LUMINANCE);
 }
 //------------------------------------------------------------------------------
-void TexParameter::setMagFilter(ETexParamFilter magfilter) 
-{ 
+void TexParameter::setMagFilter(ETexParamFilter magfilter)
+{
   mDirty = true;
 
   switch(magfilter)
@@ -759,12 +760,12 @@ void TexParameter::setMagFilter(ETexParamFilter magfilter)
     case TPF_LINEAR:
     case TPF_NEAREST:
     {
-      mMagfilter = magfilter; 
+      mMagfilter = magfilter;
       break;
     }
     default:
     {
-      mMagfilter = TPF_LINEAR; 
+      mMagfilter = TPF_LINEAR;
       #ifndef NDEBUG
         Log::bug("TexParameter::setMagFilter() accepts only the following values: TPF_LINEAR, TPF_NEAREST.\n");
       #endif
@@ -824,7 +825,7 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* ) const
     glTexParameteri(dimension, GL_TEXTURE_MAG_FILTER, magFilter()); VL_CHECK_OGL()
     glTexParameteri(dimension, GL_TEXTURE_WRAP_S, wrapS()); VL_CHECK_OGL()
     glTexParameteri(dimension, GL_TEXTURE_WRAP_T, wrapT()); VL_CHECK_OGL()
-    if (Has_Texture_3D) 
+    if (Has_Texture_3D)
       glTexParameteri(dimension, GL_TEXTURE_WRAP_R, wrapR()); VL_CHECK_OGL()
 
     if (Has_GL_EXT_texture_filter_anisotropic)

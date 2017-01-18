@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -46,7 +46,7 @@ Transform::~Transform()
 #if 0
   if (!mChildren.empty())
     Log::warning("Transform::~Transform(): a Transform with children is being destroyed! One or more Transforms will be orphaned.\n");
-#endif 
+#endif
 
   for(size_t i=0; i<mChildren.size(); ++i)
   {

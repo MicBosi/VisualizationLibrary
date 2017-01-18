@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,10 +40,10 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // GZipCodec
 //-----------------------------------------------------------------------------
-GZipCodec::GZipCodec(VirtualFile* stream): mStream(stream) 
+GZipCodec::GZipCodec(VirtualFile* stream): mStream(stream)
 {
   mCompressionLevel = 6;
-  mReadBytes = -1; 
+  mReadBytes = -1;
   mWrittenBytes = -1;
   mZStream = new z_stream_s;
   memset(mZStream, 0, sizeof(z_stream_s));
@@ -51,10 +51,10 @@ GZipCodec::GZipCodec(VirtualFile* stream): mStream(stream)
   mWarnOnSeek = true;
 }
 //-----------------------------------------------------------------------------
-GZipCodec::GZipCodec(const String& gz_path): mStream(NULL) 
+GZipCodec::GZipCodec(const String& gz_path): mStream(NULL)
 {
   mCompressionLevel = 6;
-  mReadBytes = -1; 
+  mReadBytes = -1;
   mWrittenBytes = -1;
   mZStream = new z_stream_s;
   memset(mZStream, 0, sizeof(z_stream_s));
@@ -63,10 +63,10 @@ GZipCodec::GZipCodec(const String& gz_path): mStream(NULL)
   mWarnOnSeek = true;
 }
 //-----------------------------------------------------------------------------
-GZipCodec::~GZipCodec() 
-{ 
-  close(); 
-  delete mZStream; mZStream = NULL; 
+GZipCodec::~GZipCodec()
+{
+  close();
+  delete mZStream; mZStream = NULL;
   mUncompressedSize = -1;
   mWrittenBytes = -1;
 }
@@ -156,7 +156,7 @@ void GZipCodec::close()
         break;
       }
       unsigned have = CHUNK_SIZE - mZStream->avail_out;
-      if (have>0) 
+      if (have>0)
       {
         long long written = stream()->write(next_out, have);
         if (written < have)
@@ -182,14 +182,14 @@ ref<VirtualFile> GZipCodec::clone() const
   return file;
 }
 //-----------------------------------------------------------------------------
-GZipCodec& GZipCodec::operator=(const GZipCodec& other) 
-{ 
-  close(); 
-  super::operator=(other); 
+GZipCodec& GZipCodec::operator=(const GZipCodec& other)
+{
+  close();
+  super::operator=(other);
   mCompressionLevel = other.mCompressionLevel;
   if (other.mStream)
     mStream = other.mStream->clone();
-  return *this; 
+  return *this;
 }
 //-----------------------------------------------------------------------------
 long long GZipCodec::read_Implementation(void* buffer, long long bytes_to_read)
@@ -246,7 +246,7 @@ long long GZipCodec::write_Implementation(const void* buffer, long long byte_cou
       return 0;
     }
     unsigned have = CHUNK_SIZE - mZStream->avail_out;
-    if (have>0) 
+    if (have>0)
     {
       long long written = stream()->write(next_out, have);
       if (written < have)
@@ -364,21 +364,21 @@ long long GZipCodec::uncompressedSize()
     return -1;
 }
 //-----------------------------------------------------------------------------
-long long GZipCodec::size() const 
-{ 
+long long GZipCodec::size() const
+{
   if (mMode == ZCompress)
     return mWrittenBytes;
   else
     return const_cast<GZipCodec*>(this)->uncompressedSize();
 }
 //-----------------------------------------------------------------------------
-void GZipCodec::setStream(VirtualFile* str) 
-{ 
-  if (stream() && stream()->isOpen()) 
-    stream()->close(); 
-  mStream = str; 
-  mUncompressedSize = -1; 
-  mWrittenBytes = -1; 
+void GZipCodec::setStream(VirtualFile* str)
+{
+  if (stream() && stream()->isOpen())
+    stream()->close();
+  mStream = str;
+  mUncompressedSize = -1;
+  mWrittenBytes = -1;
   setPath( str ? str->path() : String() );
 }
 //-----------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -52,16 +52,16 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
       mPBO = new BufferObject;
     }
-	
+
 	  //! Constructors: loads an image from the specified path.
-    ImagePBO(const String& path): Image(path) 
+    ImagePBO(const String& path): Image(path)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mPBO = new BufferObject;
     }
-	
+
 	  //! Constructor: initializes an image with the specified parameters.
-    ImagePBO(int x, int y, int z, int bytealign, EImageFormat format, EImageType type): Image(x, y, z, bytealign, format, type) 
+    ImagePBO(int x, int y, int z, int bytealign, EImageFormat format, EImageType type): Image(x, y, z, bytealign, format, type)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mPBO = new BufferObject;
@@ -69,10 +69,10 @@ namespace vl
 
 	  //! The associated OpenGL Buffer Object
     const BufferObject* pixelBufferObject() const { return mPBO.get(); }
-    
+
 	  //! The associated OpenGL Buffer Object
     BufferObject* pixelBufferObject() { return mPBO.get(); }
-    
+
 	  //! The associated OpenGL Buffer Object
     void setPixelBufferObject(BufferObject* pbo) { mPBO = pbo; }
 

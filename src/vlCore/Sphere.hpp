@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -55,21 +55,21 @@ namespace vl
     /** Sets the sphere as null.*/
     void setNull()  { mRadius =-1.0f; mCenter = vec3(0,0,0); }
 
-    /** Returns true if the sphere is null, ie, if radius is < 0. */    
+    /** Returns true if the sphere is null, ie, if radius is < 0. */
     bool isNull()  const { return mRadius <  0.0f; }
-    
+
     /** Returns true if the sphere as radius == 0 */
     bool isPoint() const { return mRadius == 0.0f; }
-    
+
     /** Sets the center of the sphere. */
     void setCenter(const vec3& center) { mCenter = center; }
-    
+
     /** Returns the center of the sphere. */
     const vec3& center() const { return mCenter; }
-    
+
     /** Sets the radius of the sphere. */
     void setRadius( real radius ) { mRadius = radius; }
-    
+
     /** Returns the radius of the sphere. */
     real radius() const { return mRadius; }
 
@@ -89,7 +89,7 @@ namespace vl
     }
 
     /** Returns true if two spheres are identical. */
-    bool operator==(const Sphere& other) const 
+    bool operator==(const Sphere& other) const
     {
       return mCenter == other.mCenter && mRadius == other.mRadius;
     }
@@ -99,7 +99,7 @@ namespace vl
     {
       return !operator==(other);
     }
-    
+
     /** Constructs a sphere that contains the specified AABB. */
     Sphere& operator=(const AABB& aabb)
     {
@@ -154,7 +154,7 @@ namespace vl
     }
 
     /** Returns a sphere that contains the original sphere transformed by the given matrix. */
-    void transformed(Sphere& out, const mat4& mat) const 
+    void transformed(Sphere& out, const mat4& mat) const
     {
       out.setNull();
       if ( !isNull() )
@@ -178,7 +178,7 @@ namespace vl
     }
 
     /** Returns a sphere that contains the original sphere transformed by the given matrix. */
-    Sphere transformed(const mat4& mat) const 
+    Sphere transformed(const mat4& mat) const
     {
       Sphere sphere;
       transformed(sphere, mat);

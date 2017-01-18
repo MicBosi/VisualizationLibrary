@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -47,8 +47,8 @@ namespace vl
     void registerClassWrapper(const TypeInfo& type, VLXClassWrapper* wrapper)
     {
       std::string tag = std::string("<") + type.name() + ">";
-      mExportRegistry[type] = wrapper; 
-      mImportRegistry[tag]  = wrapper; 
+      mExportRegistry[type] = wrapper;
+      mImportRegistry[tag]  = wrapper;
     }
 
     std::map< std::string, ref<VLXClassWrapper> >& importRegistry() { return mImportRegistry; }

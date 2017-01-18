@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -158,9 +158,9 @@ namespace vl
 
     virtual bool mightNeedZCameraDistance() const { return true; }
     virtual bool confirmZCameraDistanceNeed(const RenderToken* a) const
-    { 
+    {
       return mDepthSortMode != NeverDepthSort && (mDepthSortMode == AlwaysDepthSort  ||
-      (a->mShader->isBlendingEnabled() && (mDepthSortMode == AlphaDepthSort)) ); 
+      (a->mShader->isBlendingEnabled() && (mDepthSortMode == AlphaDepthSort)) );
     }
 
     virtual bool operator()(const RenderToken* a, const RenderToken* b) const
@@ -289,7 +289,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // RenderQueueSorterAggressive
   //------------------------------------------------------------------------------
-  //! Sorts the RenderTokens by Effect rank -> Actor rank -> blending on/off -> Z distance form the Camera -> 
+  //! Sorts the RenderTokens by Effect rank -> Actor rank -> blending on/off -> Z distance form the Camera ->
   //! GLSL program -> render state set -> enable set -> texture set -> light set -> Shader pointer -> Renderable pointer
   class RenderQueueSorterAggressive: public RenderQueueSorter
   {

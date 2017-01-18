@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -215,11 +215,11 @@ ref<Image> vl::loadDICOM(VirtualFile* vfile)
   #endif
 
   int w=1,h=1,d=1;
-  if (ndim>=1) 
+  if (ndim>=1)
     w = dims[0];
-  if (ndim>=2) 
+  if (ndim>=2)
     h = dims[1];
-  if (ndim>=3) 
+  if (ndim>=3)
     d = dims[2];
   h = h * d;
 
@@ -398,7 +398,7 @@ bool vl::saveDICOM(const Image* src, VirtualFile* fout)
   *img = *src;
 
   // bytes per sample
-  unsigned short bps = 0; 
+  unsigned short bps = 0;
   switch(img->type())
   {
   case vl::IT_UNSIGNED_BYTE:  bps = 1; break;
@@ -479,6 +479,6 @@ bool vl::saveDICOM(const Image* src, VirtualFile* fout)
     vl::Log::error("saveDICOM(): error writing file.\n");
     return false;
   }
-  
+
   return true;
 }

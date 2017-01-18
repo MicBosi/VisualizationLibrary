@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -41,10 +41,10 @@ KeyValues::KeyValues()
   VL_DEBUG_SET_OBJECT_NAME()
 }
 //-----------------------------------------------------------------------------
-String KeyValues::value(const String& key) const 
-{ 
+String KeyValues::value(const String& key) const
+{
   std::map<String, String>::const_iterator it = mKeyValues.find(key);
-  if ( it != mKeyValues.end() ) 
+  if ( it != mKeyValues.end() )
     return it->second;
   else
   {

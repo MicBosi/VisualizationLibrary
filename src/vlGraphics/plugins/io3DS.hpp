@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -61,7 +61,7 @@ namespace vl
   public:
     LoadWriter3DS(): ResourceLoadWriter("|3ds|", "|3ds|") {}
 
-    ref<ResourceDatabase> loadResource(const String& path) const 
+    ref<ResourceDatabase> loadResource(const String& path) const
     {
       return load3DS(path);
     }
@@ -94,7 +94,7 @@ namespace vl
   public:
     A3DSTexture(): mUScale(1), mVScale(1), mUOffset(1), mVOffset(1), mRotation(0),
     mOpt_tile(true), mOpt_decal(false), mOpt_mirror(false), mOpt_negative(false),
-    mOpt_summed_area(false), mOpt_use_alpha(false), mOpt_one_channel_tint(false), 
+    mOpt_summed_area(false), mOpt_use_alpha(false), mOpt_one_channel_tint(false),
     mOpt_ignore_alpha(false), mOpt_rgb_tint(false) {}
 
     String mFileName;
@@ -159,19 +159,19 @@ namespace vl
     A3DSVertex(): mSmoothingGroup(0), mIndex(-1) {}
     bool operator<(const A3DSVertex& other) const
     {
-      if (mPos.x() != other.mPos.x()) 
+      if (mPos.x() != other.mPos.x())
         return mPos.x() < other.mPos.x();
       else
-      if (mPos.y() != other.mPos.y()) 
+      if (mPos.y() != other.mPos.y())
         return mPos.y() < other.mPos.y();
       else
-      if (mPos.z() != other.mPos.z()) 
+      if (mPos.z() != other.mPos.z())
         return mPos.z() < other.mPos.z();
       else
-      if (mUV.s() != other.mUV.s()) 
+      if (mUV.s() != other.mUV.s())
         return mUV.s() < other.mUV.s();
       else
-      if (mUV.t() != other.mUV.t()) 
+      if (mUV.t() != other.mUV.t())
         return mUV.t() < other.mUV.t();
       else
         return mSmoothingGroup < other.mSmoothingGroup;

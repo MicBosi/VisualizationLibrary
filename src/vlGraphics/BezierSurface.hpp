@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -37,7 +37,7 @@
 namespace vl
 {
   /** Defines one or more concatenated bicubic Bézier patches to be used with the BezierSurface class.
-    See also: 
+    See also:
     - \ref pagGuideBezierSurfaces "Bézier Patches and Surfaces Tutorial" for a practical example on how to use the BezierSurface class.
     - BezierSurface
   */
@@ -49,13 +49,13 @@ namespace vl
     //! The control points grid defining the bicubic Bézier patch(es).
     typedef std::vector< vec3 > Points;
     //! Constructor
-    BezierPatch(): mX(0), mY(0) 
+    BezierPatch(): mX(0), mY(0)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
     //! Constructor
-    BezierPatch(int x, int y): mX(0), mY(0) 
-    { 
+    BezierPatch(int x, int y): mX(0), mY(0)
+    {
       VL_DEBUG_SET_OBJECT_NAME()
       resize(x,y);
     }
@@ -87,7 +87,7 @@ namespace vl
 
     "Bézier surfaces were first described in 1972 by the French engineer Pierre Bézier who used them to design automobile bodies. Bézier surfaces can be of any degree, but bicubic Bézier surfaces generally provide enough degrees of freedom for most applications."</i>
 
-    See also: 
+    See also:
     - \ref pagGuideBezierSurfaces "Bézier Patches and Surfaces Tutorial" for a practical example on how to use the BezierSurface class.
     - BezierPatch
   */
@@ -97,7 +97,7 @@ namespace vl
 
   public:
     //! Constructor
-    BezierSurface(): mDetail(16) 
+    BezierSurface(): mDetail(16)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -114,7 +114,7 @@ namespace vl
     unsigned detail() const { return mDetail; }
 
     //! Generates the Bézier surface geometry based on the current patches and detail.
-    //! Note that this method does not recompte the normals of the mesh, this means that if you are using the OpenGL lighting or other 
+    //! Note that this method does not recompte the normals of the mesh, this means that if you are using the OpenGL lighting or other
     //! techniques requiring vertex normals you should call computeNormals() right after calling this function.
     //! \param gen_tex_coords If set to \p true the function will also generate normalized (0..1) texture coordinates.
     void updateBezierSurface(bool gen_tex_coords=true);

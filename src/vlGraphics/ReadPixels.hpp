@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -137,10 +137,10 @@ namespace vl
   // ReadPixels
   //-----------------------------------------------------------------------------
   /**
-   * A RenderEventCallback that copyes a rectangular pixel area from a source 
+   * A RenderEventCallback that copyes a rectangular pixel area from a source
    * buffer to an Image at the end of a rendering.
    *
-   * The actual copy is performed using the function Image::readPixels(). 
+   * The actual copy is performed using the function Image::readPixels().
    * Using the function setSavePath() the Image will be saved
    * on the specified location.
    *

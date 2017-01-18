@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,13 +40,13 @@
 
 using namespace vl;
 
-namespace 
+namespace
 {
   // MD2 structures and defines
   class LoaderMD2
   {
   public:
-    LoaderMD2(): verbose(false) {} 
+    LoaderMD2(): verbose(false) {}
 
     enum {
       MD2_MAX_TRIANGLES = 4096,
@@ -147,10 +147,10 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
     Log::error( Say("Error opening '%s'\n") << file->path() );
     return NULL;
   }
-    
+
   LoaderMD2 loader;
   file->read( &loader.header, sizeof(loader.header) );
-  
+
   if (loader.verbose)
   {
     Log::print( Say("tris  %n:\n") <<  loader.header.numTriangles);
@@ -169,33 +169,33 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
   // load data into memory
   file->seekSet(loader.header.offsetFrames);
   loader.md2_frame.resize(loader.header.numFrames);
-  for(unsigned i=0; i<loader.md2_frame.size(); ++i) 
+  for(unsigned i=0; i<loader.md2_frame.size(); ++i)
   {
     loader.md2_frame[i] = (LoaderMD2::md2_frame_info*)malloc(loader.header.frameSize * sizeof(char) );
     file->read(loader.md2_frame[i], loader.header.frameSize);
   }
-    
+
   // uv
   loader.md2_uv.resize(loader.header.numTexCoords);
   file->seekSet( loader.header.offsetTexCoords );
-  file->read(&loader.md2_uv[0], loader.header.numTexCoords*sizeof(LoaderMD2::md2_uv_info) );  
-  
+  file->read(&loader.md2_uv[0], loader.header.numTexCoords*sizeof(LoaderMD2::md2_uv_info) );
+
   // triangles
   loader.md2_triangle.resize(loader.header.numTriangles);
   file->seekSet(loader.header.offsetTriangles );
-  file->read(&loader.md2_triangle[0], loader.header.numTriangles*sizeof(LoaderMD2::md2_triangle_info) );  
-  
-  // textures 
-  if (loader.header.numSkins) 
+  file->read(&loader.md2_triangle[0], loader.header.numTriangles*sizeof(LoaderMD2::md2_triangle_info) );
+
+  // textures
+  if (loader.header.numSkins)
   {
     loader.md2_skin.resize(loader.header.numSkins);
     file->seekSet( loader.header.offsetSkins );
     file->read(&loader.md2_skin[0], loader.header.numSkins*sizeof(LoaderMD2::md2_skin_info) );
   }
-  
+
   // fclose(fin);
   file->close();
-  
+
   // conversion
 
   std::vector< ref<ArrayFloat3> > vertex_frames;
@@ -218,7 +218,7 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
 
   int vert_idx = 0;
   VL_CHECK( (int)loader.md2_triangle.size() == loader.header.numTriangles )
-  for(int itri=0; itri<loader.header.numTriangles; itri++) 
+  for(int itri=0; itri<loader.header.numTriangles; itri++)
   {
     for( int ivert=3; ivert--; ++vert_idx )
     {
@@ -228,7 +228,7 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
       tex_coords->at(vert_idx) = fvec2(u, v);
 
       // add vert
-      for(int iframe=0; iframe<loader.header.numFrames; iframe++) 
+      for(int iframe=0; iframe<loader.header.numFrames; iframe++)
       {
         fvec3 vec;
         vec.x() =      loader.md2_frame[iframe]->vertices[ loader.md2_triangle[itri].vert_idx[ivert] ].vertex[0] * loader.md2_frame[iframe]->scale[0] + loader.md2_frame[iframe]->translate[0];
@@ -236,13 +236,13 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
         vec.z() = -1 *(loader.md2_frame[iframe]->vertices[ loader.md2_triangle[itri].vert_idx[ivert] ].vertex[1] * loader.md2_frame[iframe]->scale[1] + loader.md2_frame[iframe]->translate[1]);
         vertex_frames[iframe]->at( vert_idx ) = vec;
       }
-      
+
       // add index
       polygons->indexBuffer()->at( vert_idx ) = vert_idx;
     }
   }
 
-  for(int iframe=0; iframe<loader.header.numFrames; iframe++) 
+  for(int iframe=0; iframe<loader.header.numFrames; iframe++)
     free(loader.md2_frame[iframe]);
 
   // remove double vertices using the first vertex frame
@@ -275,7 +275,7 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
 
   // compute normals
   normal_frames.resize( loader.header.numFrames );
-  for(int iframe=0; iframe<loader.header.numFrames; iframe++) 
+  for(int iframe=0; iframe<loader.header.numFrames; iframe++)
   {
     geometry->setVertexArray( vertex_frames[iframe].get() );
     geometry->computeNormals();

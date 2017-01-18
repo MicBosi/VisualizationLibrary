@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -67,7 +67,7 @@ namespace vl
     explicit Matrix4(T_Scalar n)
     {
       setIdentity();
-      e(0,0) = e(1,1) = e(2,2) = e(3,3) = n; 
+      e(0,0) = e(1,1) = e(2,2) = e(3,3) = n;
     }
     //-----------------------------------------------------------------------------
     explicit Matrix4(T_Scalar* val)
@@ -88,9 +88,9 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix4& fill(T_Scalar val)
     {
-      e(0,0) = e(1,0) = e(2,0) = e(3,0) = 
-      e(0,1) = e(1,1) = e(2,1) = e(3,1) = 
-      e(0,2) = e(1,2) = e(2,2) = e(3,2) = 
+      e(0,0) = e(1,0) = e(2,0) = e(3,0) =
+      e(0,1) = e(1,1) = e(2,1) = e(3,1) =
+      e(0,2) = e(1,2) = e(2,2) = e(3,2) =
       e(0,3) = e(1,3) = e(2,3) = e(3,3) = val;
       return *this;
     }
@@ -133,7 +133,7 @@ namespace vl
       return Vector3<T_Scalar>(mVec[3].x(), mVec[3].y(), mVec[3].z());
     }
     //-----------------------------------------------------------------------------
-    Matrix4& setX(const Vector3<T_Scalar>& v) 
+    Matrix4& setX(const Vector3<T_Scalar>& v)
     {
       mVec[0].x() = v.x();
       mVec[0].y() = v.y();
@@ -141,7 +141,7 @@ namespace vl
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix4& setY(const Vector3<T_Scalar>& v) 
+    Matrix4& setY(const Vector3<T_Scalar>& v)
     {
       mVec[1].x() = v.x();
       mVec[1].y() = v.y();
@@ -149,7 +149,7 @@ namespace vl
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix4& setZ(const Vector3<T_Scalar>& v) 
+    Matrix4& setZ(const Vector3<T_Scalar>& v)
     {
       mVec[2].x() = v.x();
       mVec[2].y() = v.y();
@@ -157,7 +157,7 @@ namespace vl
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix4& setT(const Vector3<T_Scalar>& v) 
+    Matrix4& setT(const Vector3<T_Scalar>& v)
     {
       mVec[3].x() = v.x();
       mVec[3].y() = v.y();
@@ -329,7 +329,7 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    //! This writes only on the upper 3x3 part of the matrix without touching the last row and column. 
+    //! This writes only on the upper 3x3 part of the matrix without touching the last row and column.
     void set3x3(const Matrix3<T_Scalar>& m)
     {
       e(0,0) = m.e(0,0); e(1,0) = m.e(1,0); e(2,0) = m.e(2,0);
@@ -386,7 +386,7 @@ namespace vl
       return true;
     }
     //-----------------------------------------------------------------------------
-    Matrix4& setNull() 
+    Matrix4& setNull()
     {
       fill(0);
       return *this;
@@ -405,12 +405,12 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix4& setIdentity()
     {
-      static const T_Scalar I4d[] = 
+      static const T_Scalar I4d[] =
       {
-        (T_Scalar)1, (T_Scalar)0, (T_Scalar)0, (T_Scalar)0, 
-        (T_Scalar)0, (T_Scalar)1, (T_Scalar)0, (T_Scalar)0, 
-        (T_Scalar)0, (T_Scalar)0, (T_Scalar)1, (T_Scalar)0, 
-        (T_Scalar)0, (T_Scalar)0, (T_Scalar)0, (T_Scalar)1 
+        (T_Scalar)1, (T_Scalar)0, (T_Scalar)0, (T_Scalar)0,
+        (T_Scalar)0, (T_Scalar)1, (T_Scalar)0, (T_Scalar)0,
+        (T_Scalar)0, (T_Scalar)0, (T_Scalar)1, (T_Scalar)0,
+        (T_Scalar)0, (T_Scalar)0, (T_Scalar)0, (T_Scalar)1
       };
       memcpy(mVec, I4d, sizeof(T_Scalar)*16);
       return *this;
@@ -829,7 +829,7 @@ namespace vl
     T_Scalar rads = (fovy / ((T_Scalar)2)) * (T_Scalar)dDEG_TO_RAD;
     T_Scalar dz = zfar - znear;
     T_Scalar sa = sin(rads);
-    if ((dz == 0) || (sa == 0) || (aspect_ratio == 0)) 
+    if ((dz == 0) || (sa == 0) || (aspect_ratio == 0))
       return m * 0;
     T_Scalar ctan = cos(rads) / sa;
 
@@ -907,7 +907,7 @@ namespace vl
 
     if (degrees == 0 || (x == 0 && y ==0 && z == 0))
       return out;
-      
+
     degrees = T_Scalar(degrees * dDEG_TO_RAD);
 
     T_Scalar xx, yy, zz, xy, yz, zx, xs, ys, zs, one_c, s, c;
@@ -916,21 +916,21 @@ namespace vl
     c = (T_Scalar) cos(degrees);
 
     // simple cases
-    if (x == 0) 
+    if (x == 0)
     {
-      if (y == 0) 
+      if (y == 0)
       {
-        if (z != 0) 
+        if (z != 0)
         {
           // rotate only around z-axis
           out.e(0,0) = (T_Scalar)c;
           out.e(1,1) = (T_Scalar)c;
-          if (z < 0) 
+          if (z < 0)
           {
             out.e(1,0) = -(T_Scalar)s;
             out.e(0,1) = (T_Scalar)s;
           }
-          else 
+          else
           {
             out.e(1,0) = (T_Scalar)s;
             out.e(0,1) = -(T_Scalar)s;
@@ -938,17 +938,17 @@ namespace vl
           return out;
         }
       }
-      else if (z == 0) 
+      else if (z == 0)
       {
         // rotate only around y-axis
         out.e(0,0) = (T_Scalar)c;
         out.e(2,2) = (T_Scalar)c;
-        if (y < 0) 
+        if (y < 0)
         {
           out.e(2,0) = (T_Scalar)s;
           out.e(0,2) = -(T_Scalar)s;
         }
-        else 
+        else
         {
           out.e(2,0) = -(T_Scalar)s;
           out.e(0,2) = (T_Scalar)s;
@@ -956,19 +956,19 @@ namespace vl
         return out;
       }
     }
-    else if (y == 0) 
+    else if (y == 0)
     {
-      if (z == 0) 
+      if (z == 0)
       {
         // rotate only around x-axis
         out.e(1,1) = (T_Scalar)c;
         out.e(2,2) = (T_Scalar)c;
-        if (x < 0) 
+        if (x < 0)
         {
           out.e(2,1) = -(T_Scalar)s;
           out.e(1,2) = (T_Scalar)s;
         }
-        else 
+        else
         {
           out.e(2,1) = (T_Scalar)s;
           out.e(1,2) = -(T_Scalar)s;
@@ -980,7 +980,7 @@ namespace vl
     // Beginning of general axisa to matrix conversion
     T_Scalar dot = x*x + y*y + z*z;
 
-    if (dot > (T_Scalar)((T_Scalar)1.0001) || dot < (T_Scalar)0.99999) 
+    if (dot > (T_Scalar)((T_Scalar)1.0001) || dot < (T_Scalar)0.99999)
     {
       T_Scalar mag = (T_Scalar) sqrt(dot);
       x /= mag;
@@ -1189,8 +1189,8 @@ namespace vl
     return getRotation(out, alpha*(T_Scalar)dRAD_TO_DEG, axis.x(), axis.y(), axis.z());
   }
   //-----------------------------------------------------------------------------
-  //! If this matrix can be represented as \p RY(degrees_y) * \p RX(degrees_x), where 
-  //! RX and RY are getRotation matrices around the X and Y axis respectively, this 
+  //! If this matrix can be represented as \p RY(degrees_y) * \p RX(degrees_x), where
+  //! RX and RY are getRotation matrices around the X and Y axis respectively, this
   //! function returns the getRotation angles \p degrees_y and \p degrees_x.
   //! \note This function can only retrieve angles that satisfy the following conditions:
   //! - -180 <= degrees_y <= 180

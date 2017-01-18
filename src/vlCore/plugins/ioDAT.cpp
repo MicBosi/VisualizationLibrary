@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -118,6 +118,9 @@ ref<Image> vl::loadDAT(VirtualFile* file)
   if (String(typ) == "UCHAR")
     type = IT_UNSIGNED_BYTE;
   else
+  if (String(typ) == "USHORT")
+    type = IT_UNSIGNED_SHORT;
+  else
   {
     Log::error( Say("loadDAT('%s'): type '%s' not supported.\n") << file->path() << typ );
     return NULL;
@@ -209,7 +212,7 @@ bool vl::isDAT(VirtualFile* file)
   String raw_file = file->path().extractPath() + filename;
 
   // check type
-  if (String(typ) != "UCHAR") 
+  if (String(typ) != "UCHAR")
     return false;
 
   if (String(fmt) != "LUMINANCE" && String(fmt) != "LUMINANCE_ALPHA" && String(fmt) != "RGB" && String(fmt) != "RGBA")

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -95,43 +95,43 @@ namespace vl
     //! Whether a set of triangles should be generated to fill the ending of the extrusion (default is \p true).
     bool fillTop() const { return mFillTop; }
 
-    //! The path along which the silhouette is extruded. 
+    //! The path along which the silhouette is extruded.
     //! The path starts and ends with one extra control point on each side that define the orientation of the start/end extruded segments.
     const std::vector<vl::fvec3>& positionPath() const { return mPositionPath; }
     //! The path along which the silhouette is extruded.
     //! The path starts and ends with one extra control point on each side that define the orientation of the start/end extruded segments.
     std::vector<vl::fvec3>& positionPath() { return mPositionPath; }
     //! The scaling to be applied along the extrusion.
-    //! There must be one scaling control point for each position control point in the positionPath() with the exclusion 
+    //! There must be one scaling control point for each position control point in the positionPath() with the exclusion
     //! of the starting and ending control points, i.e scalingPath().size() must be equal to positionPath().size()-2.
     const std::vector<float>& scalingPath() const { return mScalingPath; }
     //! The scaling to be applied along the extrusion.
-    //! There must be one scaling control point for each position control point in the positionPath() with the exclusion 
+    //! There must be one scaling control point for each position control point in the positionPath() with the exclusion
     //! of the starting and ending control points, i.e scalingPath().size() must be equal to positionPath().size()-2.
     std::vector<float>& scalingPath() { return mScalingPath; }
     //! The rotation to be applied along the extrusion.
-    //! There must be one rotation control point for each position control point in the positionPath() with the exclusion 
+    //! There must be one rotation control point for each position control point in the positionPath() with the exclusion
     //! of the starting and ending control points, i.e rotationPath().size() must be equal to positionPath().size()-2.
     const std::vector<float>& rotationPath() const { return mRotationPath; }
     //! The rotation to be applied along the extrusion.
-    //! There must be one rotation control point for each position control point in the positionPath() with the exclusion 
+    //! There must be one rotation control point for each position control point in the positionPath() with the exclusion
     //! of the starting and ending control points, i.e rotationPath().size() must be equal to positionPath().size()-2.
     std::vector<float>& rotationPath() { return mRotationPath; }
     //! The color to be applied to the extrusion.
-    //! There must be one color control point for each position control point in the positionPath() with the exclusion 
+    //! There must be one color control point for each position control point in the positionPath() with the exclusion
     //! of the starting and ending control points, i.e colorPath().size() must be equal to positionPath().size()-2.
     const std::vector<vl::fvec4>& colorPath() const { return mColorPath; }
     //! The color to be applied to the extrusion.
-    //! There must be one color control point for each position control point in the positionPath() with the exclusion 
+    //! There must be one color control point for each position control point in the positionPath() with the exclusion
     //! of the starting and ending control points, i.e colorPath().size() must be equal to positionPath().size()-2.
     std::vector<vl::fvec4>& colorPath() { return mColorPath; }
 
   protected:
     std::vector<vl::fvec2> mSilhouette;
     std::vector<vl::fvec3> mPositionPath;
-    std::vector<float> mScalingPath; 
+    std::vector<float> mScalingPath;
     std::vector<float> mRotationPath;
-    std::vector<vl::fvec4> mColorPath;   
+    std::vector<vl::fvec4> mColorPath;
     ESilhouetteMode mSilhouetteMode;
     bool mSmooth;
     bool mFillBottom;

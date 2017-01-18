@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -53,6 +53,7 @@ namespace vl
    * \sa
    * - VirtualDirectory
    * - DiskDirectory
+   * - QtDirectory
    * - MemoryDirectory
    * - ZippedDirectory
    * - FileSystem
@@ -99,8 +100,6 @@ namespace vl
     virtual long long position_Implementation() const;
 
     virtual bool seekSet_Implementation(long long offset);
-
-    ref<DiskDirectory> parentDir() const;
 
   protected:
     #if defined(VL_PLATFORM_WINDOWS)

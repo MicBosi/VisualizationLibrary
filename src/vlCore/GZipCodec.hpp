@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -57,8 +57,8 @@ namespace vl
     //! Destructor
     ~GZipCodec();
 
-    //! Opens a compressed stream. 
-    //! - If \p mode == \p OM_ReadOnly the stream will be decompressed during read operations. 
+    //! Opens a compressed stream.
+    //! - If \p mode == \p OM_ReadOnly the stream will be decompressed during read operations.
     //! - If \p mode == \p OM_WriteOnly the stream will be compressed during write operations.
     virtual bool open(EOpenMode mode);
 
@@ -79,35 +79,35 @@ namespace vl
 
     GZipCodec& operator=(const GZipCodec& other);
 
-    //! Sets the compression level used during write operations. 
+    //! Sets the compression level used during write operations.
     //! \param level Values can be between 0 (faster compression) to 9 (slower but better compression).
     void setCompressionLevel(int level) { mCompressionLevel = level; }
-    
+
     int compressionLevel() const { return mCompressionLevel; }
 
     //! Installs the VirtualFile representing the GZip file to be read or to be written.
     void setStream(VirtualFile* stream);
-    
+
     //! Returns the VirtualFile representing the GZip file to be read or to be written.
     const VirtualFile* stream() const { return mStream.get(); }
-    
+
     //! Returns the VirtualFile representing the GZip file to be read or to be written.
     VirtualFile* stream() { return mStream.get(); }
 
-    /** 
+    /**
      * Returns the uncompressed size of the stream.
      * \note This function needs to seek to the end of the GZip stream in order to read the uncompressed file size.
      */
     long long uncompressedSize();
-    
+
     //! Returns the size of the compressed stream as returned by \p stream()->size().
     long long compressedSize() const { return stream() ? stream()->size() : -1; }
-    
+
     //! Returns the compression ratio computed as \p compressedsize/uncompressedsize.
     float compressionRatio() const;
 
     bool warnOnSeek() const { return mWarnOnSeek; }
-    
+
     void setWarnOnSeek(bool warn_on) { mWarnOnSeek = warn_on; }
 
   protected:

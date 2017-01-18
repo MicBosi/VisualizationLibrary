@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,22 +40,22 @@ namespace vl
   /**
    * The Terrain class implements a ActorKdTree-based terrain scene manager.
    *
-   * Some applications do not need complex LOD or CLOD management algorithms to display height fields or terrains, 
-   * either because the data displayed has a limited size or because particular constraints are applied to the camera 
-   * (like in RTS games for example) for which only a limited portion of the terrain is visible at a given time. 
-   
-   * This applications can greatly benefit from the vl::Terrain scene manager which implements a fool-proof, high-precision 
-   * (8, 16 and 32 bits heightmaps are supported) and efficient terrain/heightfield generation and management system. 
-   * All the user has to provide is a texture for the terrain, a heightfield image and a detail texture following very 
-   * simple and precise guidelines. 
-   
-   * The vl::Terrain class takes care of all the rest, like dividing the provided images 
-   * into chunks, generating the geometry, generating the kd-tree, computing the appropriate texture coordinates in order 
-   * to prevent seams and so on. 
-   
-   * If the OpenGL Shading Language is available, the vl::Terrain class can also store the 
-   * heightmap directly on the GPU and can generate the geometry on the fly using a technique called "vertex texture 
-   * fetch" (http://developer.nvidia.com/object/using_vertex_textures.html). This technique allows the application to 
+   * Some applications do not need complex LOD or CLOD management algorithms to display height fields or terrains,
+   * either because the data displayed has a limited size or because particular constraints are applied to the camera
+   * (like in RTS games for example) for which only a limited portion of the terrain is visible at a given time.
+
+   * This applications can greatly benefit from the vl::Terrain scene manager which implements a fool-proof, high-precision
+   * (8, 16 and 32 bits heightmaps are supported) and efficient terrain/heightfield generation and management system.
+   * All the user has to provide is a texture for the terrain, a heightfield image and a detail texture following very
+   * simple and precise guidelines.
+
+   * The vl::Terrain class takes care of all the rest, like dividing the provided images
+   * into chunks, generating the geometry, generating the kd-tree, computing the appropriate texture coordinates in order
+   * to prevent seams and so on.
+
+   * If the OpenGL Shading Language is available, the vl::Terrain class can also store the
+   * heightmap directly on the GPU and can generate the geometry on the fly using a technique called "vertex texture
+   * fetch" (http://developer.nvidia.com/object/using_vertex_textures.html). This technique allows the application to
    * save GPU memory and to manage even greater terrain databases at a higher speed.
    *
    * \sa setTerrainTexture(), setHeightmapTexture(), setDetailTexture()
@@ -65,10 +65,10 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::Terrain, SceneManagerActorKdTree)
 
   public:
-    Terrain(): 
-        mShaderNode(new ShaderNode), mWidth(0), mHeight(0), mDepth(0), mDetailRepetitionCount(0), 
+    Terrain():
+        mShaderNode(new ShaderNode), mWidth(0), mHeight(0), mDepth(0), mDetailRepetitionCount(0),
         mHeightmapTextureFormat(TF_LUMINANCE16F), mTerrainTextureFormat(TF_RGB), mDetailTextureFormat(TF_RGB),
-        mUseGLSL(true) 
+        mUseGLSL(true)
     {
       mChunks.setAutomaticDelete(false);
     }

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -73,8 +73,8 @@ namespace vl
       // copy local data
       *this = other;
     }
-    Buffer& operator=(const Buffer& other) 
-    { 
+    Buffer& operator=(const Buffer& other)
+    {
       if ( mAllocationMode == AutoAllocatedBuffer)
       {
         // same alignment
@@ -118,10 +118,12 @@ namespace vl
 
     void clear()
     {
-      if ( mAllocationMode == AutoAllocatedBuffer )
+      if ( mAllocationMode == AutoAllocatedBuffer ) {
         alignedFree(mPtr);
+      }
       mPtr = NULL;
       mByteCount = 0;
+      mAllocationMode = AutoAllocatedBuffer;
     }
 
     // if alignment < 1 uses the last specified alignment or the default one
@@ -161,7 +163,7 @@ namespace vl
       }
     }
 
-    /** 
+    /**
      * Uses a user-allocated buffer as storage.
      * After calling this function any call to resize() is illegal.
      * Calling this function enables the UserAllocatedBuffer mode. Call
@@ -177,8 +179,8 @@ namespace vl
       mAllocationMode = UserAllocatedBuffer;
     }
 
-    void setAllocationMode( EAllocationMode mode ) 
-    { 
+    void setAllocationMode( EAllocationMode mode )
+    {
       if ( mAllocationMode != mode )
       {
         clear();
@@ -210,7 +212,7 @@ namespace vl
       if ( alignment & (alignment-1))
         return NULL;
 
-      size_t actual_byte_count = bytes + alignment - 1; 
+      size_t actual_byte_count = bytes + alignment - 1;
 
       // reserve space to store the delta
       actual_byte_count += sizeof(int);

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -52,7 +52,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::RayIntersection, Object)
 
   public:
-    RayIntersection(): mActor(NULL), mDistance(0.0f) 
+    RayIntersection(): mActor(NULL), mDistance(0.0f)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -82,14 +82,14 @@ namespace vl
   //-----------------------------------------------------------------------------
   // RayIntersectionGeometry
   //-----------------------------------------------------------------------------
-  /** The RayIntersectionGeometry encapsulates all the information relative to a Ray/Actor intersection, 
+  /** The RayIntersectionGeometry encapsulates all the information relative to a Ray/Actor intersection,
       providing also extra information relative to the intersection on the Geometry in use by the Actor. */
   class RayIntersectionGeometry: public RayIntersection
   {
     VL_INSTRUMENT_CLASS(vl::RayIntersectionGeometry, RayIntersection)
 
   public:
-    RayIntersectionGeometry(): mGeometry(NULL), mDrawCalls(NULL), mTriangleIndex(-1) 
+    RayIntersectionGeometry(): mGeometry(NULL), mDrawCalls(NULL), mTriangleIndex(-1)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       memset(mTriangle, 0xFF, sizeof(mTriangle));

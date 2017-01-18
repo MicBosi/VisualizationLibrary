@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -57,7 +57,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::Glyph, Object)
 
   private:
-    Glyph(const Glyph& other): Object(other)  
+    Glyph(const Glyph& other): Object(other)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -131,16 +131,16 @@ namespace vl
     friend class CoreText;
     friend class Text;
     friend class FontManager;
-    
+
     //! Assignment operator
     void operator=(const Font&) { VL_TRAP() } // should never get used
-    
+
     //! Copy constructor.
     Font(const Font& other): Object(other) { VL_TRAP() } // should never get used
-    
+
     //! Constructor.
     Font(FontManager* fm = NULL);
-    
+
     //! Constructor. The specified 'font_file' is immediately loaded.
     Font(FontManager* fm, const String& font_file, int size );
 
@@ -159,22 +159,22 @@ namespace vl
 
     //! The font's file path.
     const String& filePath() const { return mFilePath; }
-    
+
     //! Loads a font using fileSystem()::locateFile().
     void loadFont(const String& path);
 
     //! The size of the font.
     int size() const { return mSize; }
-    
+
     //! The size of the font.
     void setSize(int size);
 
     //! Returns (and eventually creates) the Glyph* associated to the given character.
     Glyph* glyph(int character);
-    
+
     //! Whether the font rendering should use linear filtering or not.
     void setSmooth(bool smooth);
-    
+
     //! Whether the font rendering should use linear filtering or not.
     bool smooth() const { return mSmooth; }
 
@@ -183,7 +183,7 @@ namespace vl
 
     //! The FontManager associated to this Font used to acquire/release FreeType resources.
     void setFontManager(FontManager* fm) { mFontManager = fm; }
-    
+
     //! The FontManager associated to this Font used to acquire/release FreeType resources.
     const FontManager* fontManager() const { return mFontManager; }
 

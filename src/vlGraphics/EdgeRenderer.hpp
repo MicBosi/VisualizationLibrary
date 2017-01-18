@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,15 +40,15 @@ namespace vl
 {
   /** The EdgeRenderer class implements a special Renderer that automatically extracts and renders the edges of the objects in the scene.
 
-  In order to efficiently and transparently render the edges of the objects present in the scene the EdgeRenderer class 
+  In order to efficiently and transparently render the edges of the objects present in the scene the EdgeRenderer class
   keeps an internal cache of Geometry and Actor objects that contain the extracted edges. For this
-  reason if the Geometry of an Actor changes or if an Actor is removed from the scene you should call the setActorDirty() method. This way 
+  reason if the Geometry of an Actor changes or if an Actor is removed from the scene you should call the setActorDirty() method. This way
   the cached information relative to that Actor will be removed and will be recreated only if/when such Actor becomes visible again. Call
-  the clearCache() method to invalidate the whole cache. In order to minimized the amount of memory used by the cache it is important to 
+  the clearCache() method to invalidate the whole cache. In order to minimized the amount of memory used by the cache it is important to
   keep the cache as clean and up to date as possible.
   The color used to render the edges can be set globally using the setDefaultLineColor() method or by Actor using the declareActor() method.
 
-  \sa 
+  \sa
   - \ref pagGuideEdgeRendering "Edge Enhancement and Wireframe Rendering Tutorial"
   - vl::EdgeExtractor
   */

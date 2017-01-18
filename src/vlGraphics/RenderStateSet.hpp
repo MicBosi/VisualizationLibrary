@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -77,7 +77,7 @@ namespace vl
     void eraseRenderState(ERenderState type, int index);
 
     void eraseAllRenderStates() { mRenderStates.clear(); mGLSLProgram = NULL; }
-    
+
     //! Returns the GLSLProgram associated to a RenderStateSet (if any)
     const GLSLProgram* glslProgram() const { return mGLSLProgram; }
 

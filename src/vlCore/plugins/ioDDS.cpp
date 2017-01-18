@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -37,7 +37,7 @@
 #include <vlCore/VirtualFile.hpp>
 #include <vlCore/Image.hpp>
 
-// mic fixme: 
+// mic fixme:
 // http://msdn.microsoft.com/en-us/library/bb943991(v=vs.85).aspx#dds_variants
 // - read and write float and half float images.
 // - support directx 10 dds and formats
@@ -112,11 +112,11 @@ namespace
   const unsigned long DDSCAPS2_CUBEMAP_NEGATIVEY = 0x00002000;
   const unsigned long DDSCAPS2_CUBEMAP_POSITIVEZ = 0x00004000;
   const unsigned long DDSCAPS2_CUBEMAP_NEGATIVEZ = 0x00008000;
-  const unsigned long DDSCAPS2_CUBEMAP_FACES = DDSCAPS2_CUBEMAP_POSITIVEX | DDSCAPS2_CUBEMAP_NEGATIVEX | 
+  const unsigned long DDSCAPS2_CUBEMAP_FACES = DDSCAPS2_CUBEMAP_POSITIVEX | DDSCAPS2_CUBEMAP_NEGATIVEX |
                                                DDSCAPS2_CUBEMAP_POSITIVEY | DDSCAPS2_CUBEMAP_NEGATIVEY |
-                                               DDSCAPS2_CUBEMAP_POSITIVEZ | DDSCAPS2_CUBEMAP_NEGATIVEZ ; 
+                                               DDSCAPS2_CUBEMAP_POSITIVEZ | DDSCAPS2_CUBEMAP_NEGATIVEZ ;
 
-  inline unsigned int makeFourCC(unsigned int ch0, unsigned int ch1, unsigned int ch2, unsigned int ch3) 
+  inline unsigned int makeFourCC(unsigned int ch0, unsigned int ch1, unsigned int ch2, unsigned int ch3)
   {
       return ch0 | (ch1 << 8) | ( ch2 << 16) | ( ch3 << 24 );
   }

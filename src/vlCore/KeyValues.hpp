@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -45,23 +45,23 @@ namespace vl
 
   public:
     KeyValues();
-    
+
     bool has(const String& key) const { return mKeyValues.find(key) != mKeyValues.end(); }
-    
+
     String value(const String& key) const;
-    
+
     String& set(const String& key) { return mKeyValues[key]; }
-    
+
     void erase(const String& key) { mKeyValues.erase(key); }
-    
+
     void getKeys(std::vector<String>& keys) const;
-    
+
     void clear() { mKeyValues.clear(); }
-    
+
     const std::map<String,String>& keyValueMap() const { return mKeyValues; }
-    
+
     std::map<String,String>& keyValueMap() { return mKeyValues; }
-    
+
     void print();
 
   protected:

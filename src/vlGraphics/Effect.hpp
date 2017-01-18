@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -53,7 +53,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::ShaderPasses, Collection<Shader>)
 
   public:
-    /** Constructor. 
+    /** Constructor.
     \param pass1 The Shader (if any) to be used for pass #1
     \param pass2 The Shader (if any) to be used for pass #2
     \param pass3 The Shader (if any) to be used for pass #3
@@ -76,15 +76,15 @@ namespace vl
   // Effect
   //------------------------------------------------------------------------------
   /** Defines the sequence of Shader objects used to render an Actor.
-   Typically an Effect will have only one LOD (level of detail) with 1 pass 
-   (i.e. 1 Shader) but you can specify multiple LODs each of which defines its 
+   Typically an Effect will have only one LOD (level of detail) with 1 pass
+   (i.e. 1 Shader) but you can specify multiple LODs each of which defines its
    own set of Shader[s].
 
    When a LOD has more than one Shader the Actor is rendered several times, once
    for each Shader. This technique is called multipass rendering.
 
-   The LOD to be used during the rendering is defined at rendering time if a 
-   LODEvaluator has been installed using the method setLODEvaluator(), otherwise 
+   The LOD to be used during the rendering is defined at rendering time if a
+   LODEvaluator has been installed using the method setLODEvaluator(), otherwise
    the LOD #0 is selected.
    \sa Shader, Actor, LODEvaluator, ShaderPasses
   */
@@ -98,8 +98,8 @@ namespace vl
 
   public:
     /** Constructor. */
-    Effect() 
-    { 
+    Effect()
+    {
       VL_DEBUG_SET_OBJECT_NAME()
       mEnableMask = 0xFFFFFFFF;
       mRenderRank = 0;
@@ -169,20 +169,20 @@ namespace vl
     /** Returns the ShaderPasses representing the specified LOD level.
       * \note It must be: 0 <= \p lod_level < VL_MAX_EFFECT_LOD. */
     const ref<ShaderPasses>& lod(int lod_level) const { return mLODShaders[lod_level]; }
-    
+
     /** Returns the ShaderPasses representing the specified LOD level.
       * \note It must be: 0 <= \p lod_level < VL_MAX_EFFECT_LOD. */
     ref<ShaderPasses>& lod(int lod_level) { return mLODShaders[lod_level]; }
 
     /** Utility function, same as \p 'lod(lodi)->at(pass);' */
     Shader* shader(int lodi=0, int pass=0) { return lod(lodi)->at(pass); }
-    
+
     /** Utility function, same as \p 'lod(lodi)->at(pass);' */
     const Shader* shader(int lodi=0, int pass=0) const { return lod(lodi)->at(pass); }
-    
+
     /** Utility function, same as \p 'lod(lodi) = new ShaderPasses(shader1,shader2,shader3,shader4);' */
-    void setLOD(int lodi, Shader* shader1, Shader* shader2=NULL, Shader* shader3=NULL, Shader* shader4=NULL) 
-    { 
+    void setLOD(int lodi, Shader* shader1, Shader* shader2=NULL, Shader* shader3=NULL, Shader* shader4=NULL)
+    {
       VL_CHECK(lodi<VL_MAX_EFFECT_LOD)
       lod(lodi) = new ShaderPasses(shader1,shader2,shader3,shader4);
     }
@@ -206,11 +206,11 @@ namespace vl
     int evaluateLOD(Actor* actor, Camera* camera);
 
     /** Sets the lod to be used for rendering. It must be: 0 <= lod < VL_MAX_EFFECT_LOD. */
-    void setActiveLod(int lod) 
-    { 
+    void setActiveLod(int lod)
+    {
       VL_CHECK( lod < VL_MAX_EFFECT_LOD )
       VL_CHECK( lod >= 0 )
-      mActiveLod = lod; 
+      mActiveLod = lod;
     }
 
     /** Returns the lod to be used for rendering. */

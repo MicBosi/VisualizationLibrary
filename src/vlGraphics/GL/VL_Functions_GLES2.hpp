@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -41,13 +41,13 @@
 
 #define glTexGenf glTexGenfOES
 #define glTexGenfv glTexGenfvOES
-#define glTexGeni glTexGeniOES 
+#define glTexGeni glTexGeniOES
 #define glTexGeniv glTexGenivOES
-#define glTexGenx glTexGenxOES 
-#define glTexGenxv glTexGenxvOES 
-#define glGetTexGenfv glGetTexGenfvOES 
-#define glGetTexGeniv glGetTexGenivOES 
-#define glGetTexGenxv glGetTexGenxvOES 
+#define glTexGenx glTexGenxOES
+#define glTexGenxv glTexGenxvOES
+#define glGetTexGenfv glGetTexGenfvOES
+#define glGetTexGeniv glGetTexGenivOES
+#define glGetTexGenxv glGetTexGenxvOES
 
 #ifndef VL_UNSUPPORTED_FUNC
   #define VL_UNSUPPORTED_FUNC() { Log::error( String().printf("Function \"%s\" not supported under OpenGL ES 2.x (%s:%d).\n", __FUNCTION__, __FILE__, __LINE__) ); VL_TRAP(); }
@@ -99,9 +99,9 @@ namespace vl
       VL_TRAP();
     return GL_FALSE;
   }
-  
+
   //-----------------------------------------------------------------------------
-  
+
   inline void VL_glSecondaryColor3f(float r, float g, float b)
   {
     VL_UNSUPPORTED_FUNC();
@@ -111,18 +111,18 @@ namespace vl
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   //-----------------------------------------------------------------------------
-  
+
   inline void VL_glFogCoordPointer( GLenum type, GLsizei stride, GLvoid* pointer )
   {
   {
     VL_UNSUPPORTED_FUNC();
   }
   }
-  
+
   //-----------------------------------------------------------------------------
-  
+
   inline void glPushClientAttrib( GLbitfield mask )
   {
     VL_UNSUPPORTED_FUNC()
@@ -199,9 +199,9 @@ namespace vl
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   //-----------------------------------------------------------------------------
-  
+
   inline void VL_glClientActiveTexture(GLenum texture)
   {
     VL_UNSUPPORTED_FUNC();
@@ -211,9 +211,9 @@ namespace vl
   {
     glActiveTexture(texture);
   }
-  
+
   //-----------------------------------------------------------------------------
-  
+
   inline void VL_glBlendFuncSeparate( GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha)
   {
     glBlendFuncSeparate( srcRGB, dstRGB, srcAlpha, dstAlpha);
@@ -235,7 +235,7 @@ namespace vl
   }
 
   //-----------------------------------------------------------------------------
-  
+
   inline void VL_glPointParameterfv( GLenum pname, const GLfloat* params)
   {
     VL_UNSUPPORTED_FUNC();
@@ -250,9 +250,9 @@ namespace vl
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   //-----------------------------------------------------------------------------
-  
+
   inline void VL_glStencilFuncSeparate( GLenum face, GLenum func, GLint ref, GLuint mask)
   {
     glStencilFuncSeparate( face, func, ref, mask );
@@ -262,107 +262,107 @@ namespace vl
   {
     glStencilOpSeparate( face, sfail, dpfail, dppass );
   }
-  
+
   //-----------------------------------------------------------------------------
-  
+
   inline void VL_glSampleCoverage( GLclampf value, GLboolean invert)
   {
     glSampleCoverage(value,invert);
   }
-  
+
   //-----------------------------------------------------------------------------
-  
+
   inline void VL_glBindRenderbuffer(GLenum target, GLuint renderbuffer)
   {
     glBindRenderbuffer(target, renderbuffer);
   }
-  
+
   inline void VL_glDeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers)
   {
     glDeleteRenderbuffers(n, renderbuffers);
   }
-  
+
   inline void VL_glGenRenderbuffers(GLsizei n, GLuint *renderbuffers)
   {
     glGenRenderbuffers(n, renderbuffers);
   }
-  
+
   inline void VL_glRenderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
   {
     glRenderbufferStorage(target, internalformat, width, height);
   }
-  
+
   inline void VL_glGetRenderbufferParameteriv(GLenum target, GLenum pname, GLint *params)
   {
     glGetRenderbufferParameteriv(target, pname, params);
   }
-  
+
   inline GLboolean VL_glIsFramebuffer(GLuint framebuffer)
   {
     return glIsFramebuffer(framebuffer);
   }
-  
+
   inline void VL_glBindFramebuffer(GLenum target, GLuint framebuffer)
   {
     glBindFramebuffer(target, framebuffer);
   }
-  
+
   inline void VL_glDeleteFramebuffers(GLsizei n, const GLuint *framebuffers)
   {
     glDeleteFramebuffers(n, framebuffers);
   }
-  
+
   inline void VL_glGenFramebuffers(GLsizei n, GLuint *framebuffers)
   {
     glGenFramebuffers(n, framebuffers);
   }
-  
+
   inline GLenum VL_glCheckFramebufferStatus(GLenum target)
   {
     return glCheckFramebufferStatus(target);
   }
-  
+
   inline void VL_glFramebufferTexture1D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   inline void VL_glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
   {
     glFramebufferTexture2D(target, attachment, textarget, texture, level);
   }
-  
+
   inline void VL_glFramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset)
   {
     if (glFramebufferTexture3DOES)
       glFramebufferTexture3DOES(target, attachment, textarget, texture, level, zoffset);
   }
-  
+
   inline void VL_glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
   {
     glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
   }
-  
+
   inline void VL_glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GLenum pname, GLint *params)
   {
     glGetFramebufferAttachmentParameteriv(target,attachment,pname,params);
   }
-  
+
   inline void VL_glGenerateMipmap(GLenum target)
   {
     glGenerateMipmap(target);
   }
-  
+
   inline void VL_glFramebufferTexture(GLenum target, GLenum attachment, GLuint texture, GLint level)
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   inline void VL_glFramebufferTextureLayer(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer)
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   inline void VL_glRenderbufferStorageMultisample( GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height )
   {
 #ifdef GL_APPLE_framebuffer_multisample
@@ -382,7 +382,7 @@ namespace vl
 #endif
       VL_TRAP();
   }
-  
+
   inline void VL_glBlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter)
   {
 #ifdef GL_ANGLE_framebuffer_multisample
@@ -429,7 +429,7 @@ namespace vl
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   inline void glMultiDrawElementsBaseVertex (GLenum mode, const GLsizei *count, GLenum type, const GLvoid* *indices, GLsizei primcount, const GLint *basevertex)
   {
     VL_UNSUPPORTED_FUNC()
@@ -441,7 +441,7 @@ namespace vl
   }
 
   //-----------------------------------------------------------------------------
-  
+
   inline void VL_glProgramParameteri(GLuint program, GLenum pname, GLint value)
   {
     VL_UNSUPPORTED_FUNC();
@@ -456,24 +456,24 @@ namespace vl
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   inline void VL_glUniform2uiv(GLint location, GLsizei count, const GLuint *value)
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   inline void VL_glUniform3uiv(GLint location, GLsizei count, const GLuint *value)
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   inline void VL_glUniform4uiv(GLint location, GLsizei count, const GLuint *value)
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   //-----------------------------------------------------------------------------
-  
+
   inline void glPixelTransferf( GLenum pname, GLfloat param )
   {
     VL_UNSUPPORTED_FUNC()
@@ -483,7 +483,7 @@ namespace vl
   {
     VL_UNSUPPORTED_FUNC()
   }
-  
+
   inline void glPolygonMode( GLenum face, GLenum mode )
   {
     VL_UNSUPPORTED_FUNC()
@@ -606,7 +606,7 @@ namespace vl
   {
     VL_UNSUPPORTED_FUNC()
   }
-  
+
   //-----------------------------------------------------------------------------
 
   inline void glMatrixMode( GLenum mode )
@@ -735,7 +735,7 @@ namespace vl
   }
 
   //-----------------------------------------------------------------------------
-  
+
   inline void glUniformMatrix2x3fv (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
   {
     VL_UNSUPPORTED_FUNC()
@@ -831,7 +831,7 @@ namespace vl
   }
 
   //-----------------------------------------------------------------------------
-  
+
   inline void VL_glGetProgramBinary(GLuint program, GLsizei bufSize, GLsizei *length, GLenum *binaryFormat, GLvoid *binary)
   {
     if (glGetProgramBinaryOES)
@@ -857,7 +857,7 @@ namespace vl
   }
 
   //-----------------------------------------------------------------------------
-  
+
   inline void VL_glTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid* pixels)
   {
     if (glTexImage3DOES)
@@ -902,7 +902,7 @@ namespace vl
   //}
 
   //-----------------------------------------------------------------------------
-  
+
   inline void glTexImage1D( GLenum target, GLint level, GLint internalFormat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels )
   {
     VL_UNSUPPORTED_FUNC()
@@ -927,62 +927,62 @@ namespace vl
   {
     VL_UNSUPPORTED_FUNC()
   }
-  inline int gluBuild2DMipmaps ( GLenum target,  GLint components, GLint width,  GLint height,  GLenum format, GLenum type,  const void *data) 
-  { 
+  inline int gluBuild2DMipmaps ( GLenum target,  GLint components, GLint width,  GLint height,  GLenum format, GLenum type,  const void *data)
+  {
     VL_UNSUPPORTED_FUNC()
-    return GL_INVALID_OPERATION; 
+    return GL_INVALID_OPERATION;
   }
-  inline int gluBuild1DMipmaps ( GLenum target,  GLint components, GLint width,  GLenum format, GLenum type,  const void *data) 
-  { 
+  inline int gluBuild1DMipmaps ( GLenum target,  GLint components, GLint width,  GLenum format, GLenum type,  const void *data)
+  {
     VL_UNSUPPORTED_FUNC()
-    return GL_INVALID_OPERATION; 
+    return GL_INVALID_OPERATION;
   }
 
   //-----------------------------------------------------------------------------
-  
-  inline void glGenQueries (GLsizei n, GLuint *ids) 
+
+  inline void glGenQueries (GLsizei n, GLuint *ids)
   {
     VL_UNSUPPORTED_FUNC();
   }
 
-  inline void glDeleteQueries (GLsizei n, const GLuint *ids) 
+  inline void glDeleteQueries (GLsizei n, const GLuint *ids)
   {
     VL_UNSUPPORTED_FUNC();
   }
 
-  inline GLboolean glIsQuery (GLuint id) 
-  { 
+  inline GLboolean glIsQuery (GLuint id)
+  {
     VL_UNSUPPORTED_FUNC();
-    return GL_FALSE; 
+    return GL_FALSE;
   }
-  
+
   inline void glBeginQuery (GLenum target, GLuint id)
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   inline void glEndQuery (GLenum target)
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   inline void glGetQueryiv (GLenum target, GLenum pname, GLint *params)
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   inline void glGetQueryObjectiv (GLuint id, GLenum pname, GLint *params)
   {
     VL_UNSUPPORTED_FUNC();
   }
-  
+
   inline void glGetQueryObjectuiv (GLuint id, GLenum pname, GLuint *params)
   {
     VL_UNSUPPORTED_FUNC();
   }
 
   //-----------------------------------------------------------------------------
-  
+
   inline std::string getOpenGLExtensions()
   {
     VL_CHECK(glGetString(GL_EXTENSIONS));

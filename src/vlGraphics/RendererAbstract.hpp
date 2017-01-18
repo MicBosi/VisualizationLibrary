@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -45,7 +45,7 @@ namespace vl
   //-----------------------------------------------------------------------------
   // RendererAbstract
   //-----------------------------------------------------------------------------
-  /** Base class providing all the basic funtionalities of a Renderer. 
+  /** Base class providing all the basic funtionalities of a Renderer.
 
   */
   class VLGRAPHICS_EXPORT RendererAbstract: public Object
@@ -75,7 +75,7 @@ namespace vl
       return *this;
     }
 
-    /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing. 
+    /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing.
       * Renderer's implementation of this function always returns \p in_render_queue. */
     virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, real frame_clock) = 0;
 

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -57,7 +57,7 @@ void Billboard::computeWorldMatrix(Camera* camera)
 {
   if( assumeIdentityWorldMatrix() )
   {
-    setWorldMatrix( mat4() ); 
+    setWorldMatrix( mat4() );
   }
   else
   if ( !camera )
@@ -97,7 +97,7 @@ void Billboard::computeWorldMatrix(Camera* camera)
       world_mat = vl::mat4::getTranslation(pos) * mat4::getRotation(normal,bill_to_eye);
     }
 
-    setWorldMatrix( world_mat ); 
+    setWorldMatrix( world_mat );
   }
 }
 //-----------------------------------------------------------------------------

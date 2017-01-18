@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -38,21 +38,21 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-const ResourceLoadWriter* LoadWriterManager::findLoader(VirtualFile* file) const 
+const ResourceLoadWriter* LoadWriterManager::findLoader(VirtualFile* file) const
 {
   if (file->path().empty())
     Log::warning("findLoader(VirtualFile* file): cannot check the file extension, file->path() is empty!\n");
   return findLoader(file->path());
 }
 //-----------------------------------------------------------------------------
-const ResourceLoadWriter* LoadWriterManager::findWriter(VirtualFile* file) const 
+const ResourceLoadWriter* LoadWriterManager::findWriter(VirtualFile* file) const
 {
   if (file->path().empty())
     Log::warning("findWriter(VirtualFile* file): cannot check the file extension, file->path() is empty!\n");
   return findWriter(file->path());
 }
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> LoadWriterManager::loadResource(const String& path, bool quick) const 
+ref<ResourceDatabase> LoadWriterManager::loadResource(const String& path, bool quick) const
 {
   struct TimerClass
   {
@@ -86,7 +86,7 @@ ref<ResourceDatabase> LoadWriterManager::loadResource(const String& path, bool q
     return NULL;
 }
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> LoadWriterManager::loadResource(VirtualFile* file, bool quick) const 
+ref<ResourceDatabase> LoadWriterManager::loadResource(VirtualFile* file, bool quick) const
 {
   const ResourceLoadWriter* loadwriter = findLoader(file);
   if (loadwriter)
@@ -113,7 +113,7 @@ ref<ResourceDatabase> LoadWriterManager::loadResource(VirtualFile* file, bool qu
   else
   {
     Log::error( Say("no ResourceLoadWriter registered to load '%s'.\n") << file->path() );
-    return NULL; 
+    return NULL;
   }
 }
 //-----------------------------------------------------------------------------
@@ -131,12 +131,12 @@ bool LoadWriterManager::writeResource(const String& path, ResourceDatabase* reso
   else
   {
     Log::error( Say("no ResourceLoadWriter registered to write '%s'.\n") << path );
-    return false; 
+    return false;
   }
 }
 //-----------------------------------------------------------------------------
 bool LoadWriterManager::writeResource(VirtualFile* file, ResourceDatabase* resource) const
-{ 
+{
   const ResourceLoadWriter* loadwriter = findWriter(file);
   if (loadwriter)
   {
@@ -149,11 +149,11 @@ bool LoadWriterManager::writeResource(VirtualFile* file, ResourceDatabase* resou
   else
   {
     Log::error( Say("no ResourceLoadWriter registered to write '%s'.\n") << file->path() );
-    return false; 
+    return false;
   }
 }
 //-----------------------------------------------------------------------------
-const ResourceLoadWriter* LoadWriterManager::findLoader(const String& path) const 
+const ResourceLoadWriter* LoadWriterManager::findLoader(const String& path) const
 {
   String ext = path.extractFileExtension(false).toLowerCase();
   for(size_t i=0; i<loadWriters().size(); ++i)
@@ -163,7 +163,7 @@ const ResourceLoadWriter* LoadWriterManager::findLoader(const String& path) cons
   return NULL;
 }
 //-----------------------------------------------------------------------------
-const ResourceLoadWriter* LoadWriterManager::findWriter(const String& path) const 
+const ResourceLoadWriter* LoadWriterManager::findWriter(const String& path) const
 {
   String ext = path.extractFileExtension(false).toLowerCase();
   for(size_t i=0; i<loadWriters().size(); ++i)

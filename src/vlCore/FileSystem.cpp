@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -36,7 +36,7 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-/** 
+/**
 If more than a file exists with the same name the VirtualFile returned is the one found
 in the VirtualDirectory added the latest. This means that a VirtualDirectory overrides
 the ones added before if duplicate file name exists.
@@ -62,12 +62,12 @@ ref<VirtualFile> FileSystem::locateFile(const String& full_path, const String& a
 {
   std::vector<String> paths;
   paths.push_back(full_path);
-  if (!alternate_path.empty()) 
+  if (!alternate_path.empty())
     paths.push_back(alternate_path + '/' + full_path);
   if( full_path.extractFileName() != full_path )
   {
     paths.push_back(full_path.extractFileName());
-    if (!alternate_path.empty()) 
+    if (!alternate_path.empty())
       paths.push_back(alternate_path + '/' + full_path.extractFileName());
   }
 

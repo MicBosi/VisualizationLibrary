@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -43,7 +43,7 @@ namespace vl
 //---------------------------------------------------------------------------
 // VirtualDirectory
 //---------------------------------------------------------------------------
-  /** Abstact class representing a directory of files.  
+  /** Abstact class representing a directory of files.
   \sa
   - DiskDirectory
   - MemoryDirectory
@@ -93,6 +93,7 @@ namespace vl
     virtual void listFiles(std::vector<String>& file_list, bool append=false) const = 0;
 
     virtual void listSubDirs(std::vector<String>& dirs, bool append=false) const = 0;
+
     virtual ref<VirtualDirectory> subDir(const String& subdir_name) const  = 0;
 
   protected:

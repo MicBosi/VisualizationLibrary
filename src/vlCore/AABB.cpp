@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -36,18 +36,18 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // AABB
 //-----------------------------------------------------------------------------
-AABB::AABB() 
+AABB::AABB()
 {
   setNull();
 }
 //-----------------------------------------------------------------------------
-AABB::AABB( const vec3& center, real radius ) 
+AABB::AABB( const vec3& center, real radius )
 {
   mMax = center + radius;
   mMin = center - radius;
 }
 //-----------------------------------------------------------------------------
-AABB::AABB( const vec3& pt1, const vec3& pt2, real displace) 
+AABB::AABB( const vec3& pt1, const vec3& pt2, real displace)
 {
   mMax = mMin = pt1;
   if ( mMax.x() < pt2.x() ) mMax.x() = pt2.x();
@@ -89,7 +89,7 @@ bool AABB::intersects(const AABB& bb) const
   return true;
 }
 //-----------------------------------------------------------------------------
-vec3 AABB::clip(const vec3& v, bool clipx, bool clipy, bool clipz) const 
+vec3 AABB::clip(const vec3& v, bool clipx, bool clipy, bool clipz) const
 {
   if (isNull())
     return v;
@@ -119,20 +119,20 @@ vec3 AABB::clip(const vec3& v, bool clipx, bool clipy, bool clipz) const
     return tmp;
 }
 //-----------------------------------------------------------------------------
-bool AABB::isInside(const vec3& v, bool clipx, bool clipy, bool clipz) const 
+bool AABB::isInside(const vec3& v, bool clipx, bool clipy, bool clipz) const
 {
   vec3 t = v;
   return v == clip(t, clipx, clipy, clipz);
 }
 //-----------------------------------------------------------------------------
-bool AABB::isInside(const vec3& v) const 
+bool AABB::isInside(const vec3& v) const
 {
   return v.x() >= minCorner().x() && v.x() <= maxCorner().x() &&
          v.y() >= minCorner().y() && v.y() <= maxCorner().y() &&
          v.z() >= minCorner().z() && v.z() <= maxCorner().z();
 }
 //-----------------------------------------------------------------------------
-void AABB::addPoint(const vec3& v, real radius) 
+void AABB::addPoint(const vec3& v, real radius)
 {
   if (isNull())
   {
@@ -169,7 +169,7 @@ real AABB::depth() const {
     return mMax.z() - mMin.z();
 }
 //-----------------------------------------------------------------------------
-AABB AABB::operator+(const AABB& aabb) const 
+AABB AABB::operator+(const AABB& aabb) const
 {
   if(isNull())
     return aabb;

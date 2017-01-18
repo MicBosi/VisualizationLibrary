@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -36,7 +36,7 @@
 
 namespace vl
 {
-  /** Utility class to setup a pair of left/right cameras for stereo rendering. 
+  /** Utility class to setup a pair of left/right cameras for stereo rendering.
       \par Usage
       - Assign the mono camera representing the point of view of your observer using the setMonoCamera() method.
       - Assign the left and right cameras representing the left and right eyes with the setLeftCamera()/setRightCamera() methods.
@@ -55,10 +55,10 @@ namespace vl
       mEyeSeparation = 1;
     }
 
-    /** Distance of the convergence plane from the camera. 
+    /** Distance of the convergence plane from the camera.
         The points laying on the convergence plane look the same from both the left and right camera. */
     void setConvergence( float convergence ) { mConvergence = convergence; }
-    /** Distance of the convergence plane from the camera. 
+    /** Distance of the convergence plane from the camera.
         The points laying on the convergence plane look the same from both the left and right camera. */
     float convergence() const { return mConvergence; }
 
@@ -67,13 +67,13 @@ namespace vl
     /** The distance between the center of the two eyes. */
     float eyeSeparation() const { return mEyeSeparation; }
 
-    /** The Camera used to drive the left and right cameras. 
+    /** The Camera used to drive the left and right cameras.
         The mono camera viewport will be automatically used by the left and right cameras as well. */
     void setMonoCamera(Camera* camera) { mMonoCamera = camera; }
-    /** The Camera used to drive the left and right cameras. 
+    /** The Camera used to drive the left and right cameras.
         The mono camera viewport will be automatically used by the left and right cameras as well. */
     Camera* monoCamera() { return mMonoCamera.get(); }
-    /** The Camera used to drive the left and right cameras. 
+    /** The Camera used to drive the left and right cameras.
         The mono camera viewport will be automatically used by the left and right cameras as well. */
     const Camera* monoCamera() const { return mMonoCamera.get(); }
 

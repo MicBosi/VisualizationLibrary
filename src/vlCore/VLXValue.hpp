@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -43,7 +43,7 @@ namespace vl
     VL_INSTRUMENT_ABSTRACT_CLASS(vl::VLXTaggedValue, Object)
 
   public:
-    VLXTaggedValue(const char* tag=NULL): mLineNumber(0) 
+    VLXTaggedValue(const char* tag=NULL): mLineNumber(0)
     {
       if (tag)
         mTag = tag;
@@ -56,7 +56,7 @@ namespace vl
     void setLineNumber(int line) { mLineNumber = line; }
 
     virtual void acceptVisitor(VLXVisitor*) = 0;
-  
+
     void setTag(const char* tag) { mTag = tag; }
 
     const std::string& tag() const { return mTag; }
@@ -67,12 +67,12 @@ namespace vl
   };
   //-----------------------------------------------------------------------------
   /** A block of raw text. */
-  class VLXRawtextBlock: public VLXTaggedValue 
-  { 
+  class VLXRawtextBlock: public VLXTaggedValue
+  {
     VL_INSTRUMENT_CLASS(vl::VLXRawtextBlock, VLXTaggedValue)
 
   public:
-    VLXRawtextBlock(const char* tag=NULL, const char* value=NULL): VLXTaggedValue(tag) 
+    VLXRawtextBlock(const char* tag=NULL, const char* value=NULL): VLXTaggedValue(tag)
     {
       if (value)
         mValue = value;
@@ -91,8 +91,8 @@ namespace vl
   };
   //-----------------------------------------------------------------------------
   /** Base class for all arrays of VLX values. */
-  class VLXArray: public VLXTaggedValue 
-  { 
+  class VLXArray: public VLXTaggedValue
+  {
     VL_INSTRUMENT_ABSTRACT_CLASS(vl::VLXArray, VLXTaggedValue)
 
   public:
@@ -111,13 +111,13 @@ namespace vl
 
   public:
     VLXArrayTemplate(const char* tag=NULL): VLXArray(tag) { }
-    
+
     std::vector<T>& value() { return mValue; }
-    
+
     const std::vector<T>& value() const { return mValue; }
 
     T* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
-    
+
     const T* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
     template<typename T2> void copyTo(T2*ptr) const { for(size_t i=0; i<mValue.size(); ++i, ++ptr) *ptr = (T2)mValue[i]; }
@@ -135,7 +135,7 @@ namespace vl
 
   public:
     VLXArrayInteger(const char* tag=NULL): VLXArrayTemplate<long long>(tag) { }
-    
+
     virtual void acceptVisitor(VLXVisitor* v) { v->visitArray(this); }
   };
   //-----------------------------------------------------------------------------
@@ -146,7 +146,7 @@ namespace vl
 
   public:
     VLXArrayReal(const char* tag=NULL): VLXArrayTemplate<double>(tag) { }
-    
+
     virtual void acceptVisitor(VLXVisitor* v) { v->visitArray(this); }
   };
   //-----------------------------------------------------------------------------
@@ -239,7 +239,7 @@ namespace vl
   class VLXValue
   {
   public:
-    enum EType 
+    enum EType
     {
       Bool,
       Integer,
@@ -492,7 +492,7 @@ namespace vl
     }
 
     long long getInteger() const { VL_CHECK(mType == Integer); return mUnion.mInteger; }
-    
+
     // floating point
 
     double setReal(double val)

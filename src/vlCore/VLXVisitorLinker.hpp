@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -43,7 +43,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::VLXVisitorLinker, VLXVisitor)
 
   public:
-    typedef enum 
+    typedef enum
     {
       NoError,
       UnresolvedID

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -75,7 +75,7 @@ namespace vl
       *this = other;
     }
 
-    ~ref() 
+    ~ref()
     {
       if (mObject)
         mObject->decReference();
@@ -118,7 +118,7 @@ namespace vl
     void swap(ref& other)
     {
       T* tmp = other.mObject;
-      other = mObject; 
+      other = mObject;
       mObject = tmp;
     }
 
@@ -198,8 +198,8 @@ namespace vl
     }
 
     //! Copy operator: copies the object's name, ref count mutex and user data.
-    Object& operator=(const Object& other) 
-    { 
+    Object& operator=(const Object& other)
+    {
       // copy the name, the ref count mutex and the user data.
       mObjectName = other.mObjectName;
       mRefCountMutex = other.mRefCountMutex;
@@ -219,19 +219,22 @@ namespace vl
     //! The name of the object, by default set to the object's class name in debug builds.
     void setObjectName(const char* name) { mObjectName = name; }
 
+    //! The name of the object, by default set to the object's class name in debug builds.
+    void setObjectName(const std::string& name) { mObjectName = name; }
+
     //! The mutex used to protect the reference counting of an Object across multiple threads.
     void setRefCountMutex(IMutex* mutex) { mRefCountMutex = mutex; }
-    
+
     //! The mutex used to protect the reference counting of an Object across multiple threads.
     IMutex* refCountMutex() { return mRefCountMutex; }
-    
+
     //! The mutex used to protect the reference counting of an Object across multiple threads.
     const IMutex* refCountMutex() const { return mRefCountMutex; }
 
     //! Returns the number of references of an object.
-    int referenceCount() const 
-    { 
-      return mReferenceCount; 
+    int referenceCount() const
+    {
+      return mReferenceCount;
     }
 
     //! Increments the reference count of an object.
@@ -242,7 +245,7 @@ namespace vl
         const_cast<IMutex*>(refCountMutex())->lock();
 
       ++mReferenceCount;
-      
+
       // Unlock mutex
       if(refCountMutex())
         const_cast<IMutex*>(refCountMutex())->unlock();
@@ -305,8 +308,8 @@ namespace vl
   public:
   #if VL_DEBUG_LIVING_OBJECTS
     static std::set< Object* >* mDebug_LivingObjects;
-    static std::set< Object* >* debug_living_objects() 
-    { 
+    static std::set< Object* >* debug_living_objects()
+    {
       if (!mDebug_LivingObjects)
         mDebug_LivingObjects = new std::set< Object* >;
       return mDebug_LivingObjects;

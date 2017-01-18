@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -48,14 +48,14 @@ namespace vl
     GlobalSettings();
 
     /** If \p true VL checks at the beginning of each rendering that the OpenGL states are
-      * clean and ready to be used by VL. If the test fails it can mean that either there 
+      * clean and ready to be used by VL. If the test fails it can mean that either there
       * is a bug in VL or that the user did not restore the OpenGL states to a VL friendly
       * state after modifying them.
       * \note This can slow down the rendering. Enabled by default in DEBUG mode only. */
     void setCheckOpenGLStates(bool check_clean) { mCheckOpenGLStates = check_clean; }
 
     /** If \p true VL checks at the beginning of each rendering that the OpenGL states are
-      * clean and ready to be used by VL. If the test fails it can mean that either there 
+      * clean and ready to be used by VL. If the test fails it can mean that either there
       * is a bug in VL or that the user did not restore the OpenGL states to a VL friendly
       * state after modifying them.
       * \note This can slow down the rendering. Enabled by default in DEBUG mode only. */
@@ -72,7 +72,7 @@ namespace vl
 
     /** The path of the default data directory. */
     const String& defaultDataPath() const { return mDefaultDataPath; }
-    
+
   protected:
     EVerbosityLevel mVerbosityLevel;
     bool mCheckOpenGLStates;

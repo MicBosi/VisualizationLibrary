@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -117,18 +117,18 @@ namespace
 {
   ref<Log> gDefaultLogger;
 }
-void vl::setDefLogger(Log* logger) 
-{ 
-  gDefaultLogger = logger; 
+void vl::setDefLogger(Log* logger)
+{
+  gDefaultLogger = logger;
 }
-Log* vl::defLogger() 
-{ 
-  return gDefaultLogger.get(); 
+Log* vl::defLogger()
+{
+  return gDefaultLogger.get();
 }
 //------------------------------------------------------------------------------
 // Default LoadWriterManager
 //------------------------------------------------------------------------------
-namespace 
+namespace
 {
   ref<LoadWriterManager> gDefaultLoadWriterManager = NULL;
 }
@@ -143,7 +143,7 @@ void vl::setDefLoadWriterManager(LoadWriterManager* lwm)
 //-----------------------------------------------------------------------------
 // Default FileSystem
 //-----------------------------------------------------------------------------
-namespace 
+namespace
 {
   ref<FileSystem> gDefaultFileSystem = NULL;;
 }
@@ -158,7 +158,7 @@ void vl::setDefFileSystem(FileSystem* fs)
 //-----------------------------------------------------------------------------
 // Default VLXRegistry
 //-----------------------------------------------------------------------------
-namespace 
+namespace
 {
   ref<VLXRegistry> gDefaultVLXRegistry = NULL;
 }
@@ -173,7 +173,7 @@ void vl::setDefVLXRegistry(VLXRegistry* reg)
 //-----------------------------------------------------------------------------
 // Default MersenneTwister
 //-----------------------------------------------------------------------------
-namespace 
+namespace
 {
   ref<MersenneTwister> gDefaultMersenneTwister = NULL;
 }
@@ -217,7 +217,7 @@ void VisualizationLibrary::initCore(bool log_info)
 
   // Install default MersenneTwister (seed done automatically)
   gDefaultMersenneTwister = new MersenneTwister;
-  
+
   // Register 2D modules
   #if defined(VL_IO_2D_JPG)
     registerLoadWriter(new LoadWriterJPG);
@@ -261,7 +261,7 @@ void VisualizationLibrary::shutdownCore()
 
   // Dispose default MersenneTwister
   gDefaultMersenneTwister = NULL;
-  
+
   // Dispose default VLXRegistry
   gDefaultVLXRegistry = NULL;
 
@@ -291,7 +291,7 @@ void vl::abort_vl()
 {
   vl::Time::sleep(3000);
   exit(1);
-}  
+}
 //------------------------------------------------------------------------------
 #if defined(VL_PLATFORM_WINDOWS)
   // console includes
@@ -306,7 +306,7 @@ void vl::showWin32Console()
     // stdout
     HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
     int hCrt = _open_osfhandle((intptr_t)handle_out, _O_TEXT);
-    FILE* hf_out = _fdopen(hCrt, "w"); 
+    FILE* hf_out = _fdopen(hCrt, "w");
     setvbuf(hf_out, NULL, _IONBF, 1);
     *stdout = *hf_out;
     // stderr

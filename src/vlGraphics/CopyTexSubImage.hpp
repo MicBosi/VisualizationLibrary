@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -45,20 +45,20 @@ namespace vl
     *
     * Is the base class of CopyTexSubImage1D, CopyTexSubImage2D, CopyTexSubImage3D.
     * Copies a rectangular pixels area from the specified read buffer to the specified portion of the texture.
-    * Can be bound to a Rendering as a RenderEventCallback in order to automatically copy 
+    * Can be bound to a Rendering as a RenderEventCallback in order to automatically copy
     * the result of a rendering into a texture, see Rendering.
     *
     * \note
     * This class supports Frame-Buffer-Objects, 3D textures, cubemaps.
     *
-    * \sa 
+    * \sa
     * FramebufferObject, FBOAbstractAttachment, Rendering, RenderEventCallback, CopyTexSubImage1D, CopyTexSubImage2D, CopyTexSubImage3D */
   class CopyTexSubImage: public RenderEventCallback
   {
     VL_INSTRUMENT_ABSTRACT_CLASS(vl::CopyTexSubImage, RenderEventCallback)
 
   public:
-    CopyTexSubImage(): mReadBuffer(RDB_BACK_LEFT) 
+    CopyTexSubImage(): mReadBuffer(RDB_BACK_LEFT)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }

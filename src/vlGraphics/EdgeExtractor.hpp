@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -48,13 +48,13 @@ namespace vl
 
   /** The EdgeExtractor class extracts the edges from one or more Geometry objects.
 
-  The edges are always extracted from the triangles or quads that are part of a vl::Geometry and can be of three types: 
-  \a silhouette edges, \a crease edges and \a boundary edges. 
-	
-	- \a Silhouette edges are those edges that are shared by a backfacing and front facing quad or triangle. 
-	
-	- \a Crease edges are those edges that are shared by two triangles or quads and that form an angle >= creaseAngle(), ie: 0 means that the two triangles or quads are coplanar; the edges of a cube define 90 degrees angles; the lateral edges of a 10 faces cylinder define 36 (360/10) degrees angles and so on. 
-	
+  The edges are always extracted from the triangles or quads that are part of a vl::Geometry and can be of three types:
+  \a silhouette edges, \a crease edges and \a boundary edges.
+
+	- \a Silhouette edges are those edges that are shared by a backfacing and front facing quad or triangle.
+
+	- \a Crease edges are those edges that are shared by two triangles or quads and that form an angle >= creaseAngle(), ie: 0 means that the two triangles or quads are coplanar; the edges of a cube define 90 degrees angles; the lateral edges of a 10 faces cylinder define 36 (360/10) degrees angles and so on.
+
 	- \a Boundary edges are those edges that belong to a single triangle or quad.
 
   <img src="pics/pagGuideWireframe_edges.jpg">
@@ -63,10 +63,10 @@ namespace vl
   - Extract the edges from one or more Geometry objects using one of the extractEdges() methods.
   - Assign the Geometry returned by generateEdgeGeometry() to a new Actor. This geometry will contain the edges previously extracted ready to be rendered.
   - Assign a new EdgeUpdateCallback to the previously created Actor, using the Actor::renderEventCallbacks() method.
-  - Initialize the previously created EdgeUpdateCallback edges with the edges extracted by the EdgeExtractor, 
+  - Initialize the previously created EdgeUpdateCallback edges with the edges extracted by the EdgeExtractor,
     that is, assign EdgeExtractor::edges() to EdgeUpdateCallback::edges().
- 
-  \sa 
+
+  \sa
   - \ref pagGuideEdgeRendering "Edge Enhancement and Wireframe Rendering Tutorial"
   - vl::EdgeRenderer
   */

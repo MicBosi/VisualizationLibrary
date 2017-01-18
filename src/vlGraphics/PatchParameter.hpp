@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -34,7 +34,7 @@
 
 #include <vlCore/Object.hpp>
 
-namespace vl 
+namespace vl
 {
   //------------------------------------------------------------------------------
   // PatchParameter
@@ -47,7 +47,7 @@ namespace vl
 
   public:
     //! Constructor
-    PatchParameter(): mPatchVertices(0), mPatchDefaultOuterLevel(fvec4(4,4,4,4)), mPatchDefaultInnerLevel(fvec2(4,4)) 
+    PatchParameter(): mPatchVertices(0), mPatchDefaultOuterLevel(fvec4(4,4,4,4)), mPatchDefaultInnerLevel(fvec2(4,4))
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -64,30 +64,30 @@ namespace vl
       }
     }
 
-    //! Specifies the number of vertices that will be used to make up a single patch primitive. 
-    //! Patch primitives are consumed by the tessellation control shader (if present) and subsequently 
-    //! used for tessellation. When primitives are specified using glDrawArrays or a similar function, 
-    //! each patch will be made from \a vertices control points, each represented by a vertex taken from 
-    //! the enabeld vertex arrays. \a vertices must be greater than zero, and less than or equal to the 
+    //! Specifies the number of vertices that will be used to make up a single patch primitive.
+    //! Patch primitives are consumed by the tessellation control shader (if present) and subsequently
+    //! used for tessellation. When primitives are specified using glDrawArrays or a similar function,
+    //! each patch will be made from \a vertices control points, each represented by a vertex taken from
+    //! the enabeld vertex arrays. \a vertices must be greater than zero, and less than or equal to the
     //! value of GL_MAX_PATCH_VERTICES.
     void setPatchVertices(int vertices) { mPatchVertices = vertices; }
 
-    //! Returns the number of vertices that will be used to make up a single patch primitive. 
+    //! Returns the number of vertices that will be used to make up a single patch primitive.
     int patchVertices() const { return mPatchVertices; }
 
-    //! The four floating-point values corresponding to the four outer tessellation levels 
+    //! The four floating-point values corresponding to the four outer tessellation levels
     //! for each subsequent patch to be used when no tessellation control shader is present.
     void setPatchDefaultOuterLevel(const fvec4& level) { mPatchDefaultOuterLevel = level; }
-    
-    //! The four floating-point values corresponding to the four outer tessellation levels 
+
+    //! The four floating-point values corresponding to the four outer tessellation levels
     //! for each subsequent patch to be used when no tessellation control shader is present.
     const fvec4& patchDefaultOuterLevel() const { return mPatchDefaultOuterLevel; }
 
-    //! The two floating-point values corresponding to the tow inner tessellation levels 
+    //! The two floating-point values corresponding to the tow inner tessellation levels
     //! for each subsequent patch to be used when no tessellation control shader is present.
     void setPatchDefaultInnerLevel(const fvec2& level) { mPatchDefaultInnerLevel = level; }
-    
-    //! The two floating-point values corresponding to the tow inner tessellation levels 
+
+    //! The two floating-point values corresponding to the tow inner tessellation levels
     //! for each subsequent patch to be used when no tessellation control shader is present.
     const fvec2& patchDefaultInnerLevel() const { return mPatchDefaultInnerLevel; }
 

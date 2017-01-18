@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -338,17 +338,17 @@ namespace
 //-----------------------------------------------------------------------------
 // ZippedFile
 //-----------------------------------------------------------------------------
-ZippedFile::ZippedFile() 
-{ 
-  mReadBytes = -1; 
+ZippedFile::ZippedFile()
+{
+  mReadBytes = -1;
   mZStream = new z_stream_s;
   memset(mZStream, 0, sizeof(z_stream_s));
 }
 //-----------------------------------------------------------------------------
-ZippedFile::~ZippedFile() 
-{ 
+ZippedFile::~ZippedFile()
+{
   close();
-  mReadBytes = -1; 
+  mReadBytes = -1;
   delete mZStream; mZStream = NULL;
 }
 //-----------------------------------------------------------------------------

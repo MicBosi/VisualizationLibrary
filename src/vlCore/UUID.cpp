@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -100,7 +100,7 @@ void UUID::fillString(char* guid_str, bool zero_terminate) const
 
   // ClockSeqLow:
   guid_str[22] = hex[ (mClockSeqLow >> (4-4*0)) & 0xF];
-  guid_str[23] = hex[ (mClockSeqLow >> (4-4*1)) & 0xF];  
+  guid_str[23] = hex[ (mClockSeqLow >> (4-4*1)) & 0xF];
 
   // Node:
   guid_str[25] = hex[ (mNode[0] >> (4-4*0)) & 0xF];
@@ -120,7 +120,7 @@ void UUID::fillString(char* guid_str, bool zero_terminate) const
 #if 0
   char guid_cstr[100];
   sprintf(guid_cstr, "{%8.8x-%4.4x-%4.4x-%2.2x%2.2x-%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x}",
-    mTimeLow, mTimeMid, mTimeHiAndVersion, 
+    mTimeLow, mTimeMid, mTimeHiAndVersion,
     mClockSeqHiAndReserved, mClockSeqLow,
     mNode[0], mNode[1], mNode[2], mNode[3], mNode[4], mNode[5]);
   VL_CHECK( memcmp(guid_str, guid_cstr, 38) == 0 )
@@ -141,19 +141,19 @@ bool UUID::fromString(const char* guid_str)
 
   if (guid_str[0] != '{')
     return false;
-  
+
   if (guid_str[37] != '}')
     return false;
-  
+
   if (guid_str[9] != '-')
     return false;
-  
+
   if (guid_str[14] != '-')
     return false;
-  
+
   if (guid_str[19] != '-')
     return false;
-  
+
   if (guid_str[24] != '-')
     return false;
 
@@ -181,7 +181,7 @@ bool UUID::fromString(const char* guid_str)
 
   memset(this, 0, sizeof(*this));
 
-  mTimeLow = (nibble[1] << 28) | (nibble[2] << 24) | (nibble[3] << 20) | (nibble[4] << 16) | 
+  mTimeLow = (nibble[1] << 28) | (nibble[2] << 24) | (nibble[3] << 20) | (nibble[4] << 16) |
              (nibble[5] << 12) | (nibble[6] <<  8) | (nibble[7] <<  4) | nibble[8];
 
   mTimeMid = (unsigned short)((nibble[10] << 12) | (nibble[11] <<  8) | (nibble[12] <<  4) | nibble[13]);

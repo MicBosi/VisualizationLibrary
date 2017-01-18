@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -44,15 +44,15 @@ namespace vl
   /**
    * Wraps the OpenGL function glDrawPixels().
    * Bind it to an Actor in order to render one or more bitmaps on the screen.
-   * DrawPixels supports multiple bitmaps, can draw a subsection of a bitmap, 
+   * DrawPixels supports multiple bitmaps, can draw a subsection of a bitmap,
    * and supports also PBOs (GL_EXT_pixel_buffer_object). See also DrawPixels::Pixels.
    *
    * \note
    * If the given Actor has an associated transform the bitmap position will follow it.
    *
    * \remarks
-   * Be aware that depth test, stencil test, alpha test, clipping planes etc. 
-   * can affect the rendering of the bitmap. Since this function uses the 
+   * Be aware that depth test, stencil test, alpha test, clipping planes etc.
+   * can affect the rendering of the bitmap. Since this function uses the
    * glRasterPos OpenGL function lighting, texturing and the current color might
    * affect the rendering. For more information look at the glRasterPos documentation.
   */
@@ -134,13 +134,13 @@ namespace vl
     void computeBounds_Implementation() { setBoundingBox(AABB()); setBoundingSphere(Sphere()); }
 
     /** Renders the bitamps.
-     * If camera != NULL and actor != NULL and actor->transform() != NULL then 
-     * the bitmaps position will follow the Actor's Transform. 
+     * If camera != NULL and actor != NULL and actor->transform() != NULL then
+     * the bitmaps position will follow the Actor's Transform.
      * The \p renderer parameter is ignored. */
     void render_Implementation(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context) const;
 
     const Collection<Pixels>* draws() const { return &mDraws; }
-    
+
     Collection<Pixels>* draws() { return &mDraws; }
 
     //! deallocate PBOs

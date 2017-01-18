@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -133,9 +133,9 @@ namespace vl
     };
 
   protected:
-    // mic fixme: would be nice not to allocate these dinamically. 
+    // mic fixme: would be nice not to allocate these dinamically.
     // Necessary because:
-    // 1- RenderToken.mNextPass: the pointer should be stable across std::vector reallocations. 
+    // 1- RenderToken.mNextPass: the pointer should be stable across std::vector reallocations.
     //    Maybe we can use indices?
     // 2- The sorting sorts only pointers instead of whole structures.
     // Note: we need two lists because the sorting must still respect the multipassing order.

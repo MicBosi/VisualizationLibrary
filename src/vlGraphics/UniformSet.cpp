@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -42,8 +42,8 @@ UniformSet& UniformSet::deepCopyFrom(const UniformSet& other)
   return *this;
 }
 //-----------------------------------------------------------------------------
-void UniformSet::setUniform(Uniform* uniform, bool check_for_doubles) 
-{ 
+void UniformSet::setUniform(Uniform* uniform, bool check_for_doubles)
+{
   VL_CHECK(uniform)
   if (uniform == NULL)
     return;
@@ -61,8 +61,8 @@ void UniformSet::setUniform(Uniform* uniform, bool check_for_doubles)
   mUniforms.push_back( uniform );
 }
 //-----------------------------------------------------------------------------
-void UniformSet::eraseUniform(const char* name) 
-{ 
+void UniformSet::eraseUniform(const char* name)
+{
   for(unsigned i=0; i<mUniforms.size(); ++i)
     if (mUniforms[i]->name() == name)
     {
@@ -71,8 +71,8 @@ void UniformSet::eraseUniform(const char* name)
     }
 }
 //-----------------------------------------------------------------------------
-void UniformSet::eraseUniform(const Uniform* uniform) 
-{ 
+void UniformSet::eraseUniform(const Uniform* uniform)
+{
   for(unsigned i=0; i<mUniforms.size(); ++i)
     if (mUniforms[i] == uniform)
     {
@@ -82,7 +82,7 @@ void UniformSet::eraseUniform(const Uniform* uniform)
 }
 //-----------------------------------------------------------------------------
 Uniform* UniformSet::gocUniform(const char* name)
-{ 
+{
   for(unsigned i=0; i<mUniforms.size(); ++i)
     if (mUniforms[i]->name() == name)
       return mUniforms[i].get();
@@ -93,7 +93,7 @@ Uniform* UniformSet::gocUniform(const char* name)
 }
 //-----------------------------------------------------------------------------
 Uniform* UniformSet::getUniform(const char* name)
-{ 
+{
   for(unsigned i=0; i<mUniforms.size(); ++i)
     if (mUniforms[i]->name() == name)
       return mUniforms[i].get();
@@ -101,7 +101,7 @@ Uniform* UniformSet::getUniform(const char* name)
 }
 //-----------------------------------------------------------------------------
 const Uniform* UniformSet::getUniform(const char* name) const
-{ 
+{
   for(unsigned i=0; i<mUniforms.size(); ++i)
     if (mUniforms[i]->name() == name)
       return mUniforms[i].get();

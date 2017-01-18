@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -131,7 +131,7 @@ namespace vl
       return other;
     }
 
-    operator bool() const 
+    operator bool() const
     {
       return mFlags != 0;
     }
@@ -162,17 +162,17 @@ namespace vl
   template<EnumType> Flags<EnumType> operator&(EnumType flag1, EnumType flag2); \
   typedef Flags<EnumType> FlagTypeName;
 
-/*** 
+/***
 
 usage:
- 
+
 enum MyFlagEnum
 {
   Flag1 = 0x1,
   Flag2 = 0x2,
   Flag3 = 0x4,
 };
- 
+
 VL_DECLARE_FLAGS(MyFlagEnum, MyFlags)
 
 ...

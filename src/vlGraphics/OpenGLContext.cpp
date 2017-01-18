@@ -362,15 +362,15 @@ void OpenGLContext::logOpenGLInfo()
   if(Has_GLSL)
   {
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_val); VL_CHECK_OGL();
-    Log::debug( Say("Max vertex attributes: %n\n")<<max_val);      
+    Log::debug( Say("Max vertex attributes: %n\n")<<max_val);
   }
 
   VL_CHECK_OGL();
 
-  max_val = 0; 
+  max_val = 0;
   if(Has_GLSL)
   {
-    // - opengl 3.2 seem to deprecate both  GL_MAX_VARYING_COMPONENTS and GL_MAX_VARYING_FLOATS 
+    // - opengl 3.2 seem to deprecate both  GL_MAX_VARYING_COMPONENTS and GL_MAX_VARYING_FLOATS
     //   but does not support explicitly GL_MAX_VARYING_VECTORS, leving the issue ambiguous.
     // - my GTX 460 in opengl 3.2 core allows GL_MAX_VARYING_VECTORS
     // - a user reported that a Quadro FX GL 3.2 compatibility did not support GL_MAX_VARYING_VECTORS
@@ -400,10 +400,10 @@ void OpenGLContext::logOpenGLInfo()
       glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
       max_val /= 4;
     }
-      
+
     Log::debug( Say("Max fragment uniform vectors: %n\n")<<max_val);
   }
-    
+
   max_val = 0;
   if(Has_GLSL)
   {
@@ -416,10 +416,10 @@ void OpenGLContext::logOpenGLInfo()
       glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
       max_val /= 4;
     }
-      
+
     Log::debug( Say("Max vertex uniform vectors: %n\n")<<max_val);
   }
-    
+
   max_val = 0;
   if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0)
   {
@@ -520,7 +520,8 @@ void OpenGLContext::applyEnables( const EnableSet* new_enables )
   std::swap(mNewEnableSet, mCurrentEnableSet);
 }
 //------------------------------------------------------------------------------
-void OpenGLContext::applyRenderStates( const RenderStateSet* new_rs, const Camera* camera) // mic fixme: this camera can also be taken away
+// MIC FIXME: `camera` can also be taken away
+void OpenGLContext::applyRenderStates( const RenderStateSet* new_rs, const Camera* camera)
 {
   VL_CHECK_OGL()
 
@@ -532,7 +533,7 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* new_rs, const Camer
     {
       const RenderStateSlot& rs = new_rs->renderStates()[i];
       mNewRenderStateSet->append(rs.type(), rs);
-      if (!mCurrentRenderStateSet->hasKey(rs.type()) || rs.mRS.get() != mCurrentRenderStateSet->valueFromKey(rs.type()).mRS.get())
+      if ( ! mCurrentRenderStateSet->hasKey(rs.type()) || rs.mRS.get() != mCurrentRenderStateSet->valueFromKey( rs.type() ).mRS.get() )
       {
         VL_CHECK(rs.mRS.get());
         rs.apply(camera, this); VL_CHECK_OGL()
@@ -540,9 +541,9 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* new_rs, const Camer
     }
   }
 
-  for( RenderStateSlot* rs = mCurrentRenderStateSet->begin(); rs != mCurrentRenderStateSet->end(); ++rs)
+  for( RenderStateSlot* rs = mCurrentRenderStateSet->begin(); rs != mCurrentRenderStateSet->end(); ++rs )
   {
-    if (!mNewRenderStateSet->hasKey(rs->type()))
+    if ( ! mNewRenderStateSet->hasKey( rs->type() ) )
     {
       mDefaultRenderStates[rs->type()].apply(NULL, this); VL_CHECK_OGL()
     }
@@ -613,13 +614,13 @@ void OpenGLContext::setupDefaultRenderStates()
   mDefaultRenderStates[RS_FrontFace]  = RenderStateSlot(new FrontFace, 0);
   mDefaultRenderStates[RS_Hint]       = RenderStateSlot(new Hint, 0);
   mDefaultRenderStates[RS_LineWidth]  = RenderStateSlot(new LineWidth, 0);
-  
+
   if (Has_GL_ARB_point_parameters||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_1) // note GLES 2.x is excluded
     mDefaultRenderStates[RS_PointParameter] = RenderStateSlot(new PointParameter, 0);
 
   if (Has_GL_ARB_multisample||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_1||Has_GLES_Version_2_0)
     mDefaultRenderStates[RS_SampleCoverage] = RenderStateSlot(new SampleCoverage, 0);
-  
+
   mDefaultRenderStates[RS_StencilFunc] = RenderStateSlot(new StencilFunc, 0);
   mDefaultRenderStates[RS_StencilMask] = RenderStateSlot(new StencilMask, 0);
   mDefaultRenderStates[RS_StencilOp]   = RenderStateSlot(new StencilOp, 0);

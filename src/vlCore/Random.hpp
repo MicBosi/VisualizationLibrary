@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -55,7 +55,7 @@ namespace vl
     //! \return This method returns \p false if the function had to fallback to MersenneTwister otherwise returns \p true.
     virtual bool fillRandom(void* ptr, size_t bytes) const;
 
-    //! Fills the specified buffer with random data generated using a defMersienneTwister(). 
+    //! Fills the specified buffer with random data generated using a defMersienneTwister().
     //! MersienneTwister produces high quality random number and can be much faster than fillRandom().
     void fillRandomMersenneTwister(void* ptr, size_t bytes) const;
 

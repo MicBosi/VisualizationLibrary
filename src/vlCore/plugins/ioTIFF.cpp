@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -84,7 +84,7 @@ namespace
       return 0;
     }
   }
-  int tiff_io_close_func(thandle_t fd) 
+  int tiff_io_close_func(thandle_t fd)
   {
     VirtualFile*fin = (VirtualFile*)fd;
     fin->close();
@@ -95,11 +95,11 @@ namespace
     VirtualFile *fin = (VirtualFile*)fd;
     return (tsize_t)fin->size();
   }
-  int tiff_io_map_func(thandle_t, tdata_t*, toff_t*) 
-  { 
-    return 0; 
+  int tiff_io_map_func(thandle_t, tdata_t*, toff_t*)
+  {
+    return 0;
   }
-  void tiff_io_unmap_func(thandle_t, tdata_t, toff_t) 
+  void tiff_io_unmap_func(thandle_t, tdata_t, toff_t)
   {
     return;
   }
@@ -127,7 +127,7 @@ ref<Image> vl::loadTIFF(VirtualFile* file)
   TIFFSetWarningHandler(tiff_warning);
 
   TIFF* tif = TIFFClientOpen("tiffread", "r", reinterpret_cast<thandle_t>(file),
-                tiff_io_read_func, 
+                tiff_io_read_func,
                 tiff_io_write_func,
                 tiff_io_seek_func,
                 tiff_io_close_func,
@@ -135,19 +135,19 @@ ref<Image> vl::loadTIFF(VirtualFile* file)
                 tiff_io_map_func,
                 tiff_io_unmap_func);
 
-  if (tif) 
+  if (tif)
   {
     uint32 w, h;
     size_t npixels;
     uint32* raster;
-    
+
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
     TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
     npixels = w * h;
     raster = (uint32*) _TIFFmalloc(npixels * sizeof (uint32));
-    if (raster != NULL) 
+    if (raster != NULL)
     {
-      if (TIFFReadRGBAImage(tif, w, h, raster, 0)) 
+      if (TIFFReadRGBAImage(tif, w, h, raster, 0))
       {
         img->allocate2D(w,h,1,vl::IF_RGBA,vl::IT_UNSIGNED_BYTE);
         memcpy(img->pixels(), raster, img->requiredMemory());
@@ -160,7 +160,7 @@ ref<Image> vl::loadTIFF(VirtualFile* file)
       img->flipVertically();
     TIFFClose(tif);
   }
-  
+
   file->close();
   return img;
 }

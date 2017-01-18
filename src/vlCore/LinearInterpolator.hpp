@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -46,7 +46,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::LinearInterpolator<typename T>, Object)
 
   public:
-    LinearInterpolator() 
+    LinearInterpolator()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -70,7 +70,7 @@ namespace vl
     }
 
     //! The control points defining the Catmull-Rom spline.
-    //! Because of the Catmull-Rom formula the interpolated path must start and end with an extra control point 
+    //! Because of the Catmull-Rom formula the interpolated path must start and end with an extra control point
     //! (one on each side) and cannot have less than 4 control points.
     void setPath(const std::vector<T>& path) { mPath = path; }
     //! The control points defining the Catmull-Rom spline.

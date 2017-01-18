@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -59,12 +59,12 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::LoadWriterTIFF, ResourceLoadWriter)
   public:
 
-    LoadWriterTIFF(): ResourceLoadWriter("|tif|tiff|", "|tif|tiff|") 
+    LoadWriterTIFF(): ResourceLoadWriter("|tif|tiff|", "|tif|tiff|")
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
-    ref<ResourceDatabase> loadResource(const String& path) const 
+    ref<ResourceDatabase> loadResource(const String& path) const
     {
       ref<ResourceDatabase> res_db = new ResourceDatabase;
       ref<Image> img = loadTIFF(path);

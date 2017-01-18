@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -46,7 +46,7 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
 
   // enter/exit behavior contract
 
-  class InOutContract 
+  class InOutContract
   {
     RendererAbstract* mRenderer;
   public:
@@ -80,7 +80,7 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
     }
   } contract(this, camera);
 
-  // --------------- rendering --------------- 
+  // --------------- rendering ---------------
 
   // update actor cache
 
@@ -127,7 +127,7 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
   glLineStipple(1,0xF0F0);
   glEnable(GL_LINE_STIPPLE);
 #endif
-  if (showHiddenLines()) 
+  if (showHiddenLines())
     renderLines(camera);
   glDisable(GL_LINE_SMOOTH);
 #if defined(VL_OPENGL)

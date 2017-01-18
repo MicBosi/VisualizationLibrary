@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -46,12 +46,12 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::EdgeUpdateCallback, ActorEventCallback)
 
   public:
-    EdgeUpdateCallback(): mShowCreases(true) 
+    EdgeUpdateCallback(): mShowCreases(true)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
-    EdgeUpdateCallback(const std::vector<EdgeExtractor::Edge>& edge): mEdges(edge), mShowCreases(false) 
+    EdgeUpdateCallback(const std::vector<EdgeExtractor::Edge>& edge): mEdges(edge), mShowCreases(false)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }

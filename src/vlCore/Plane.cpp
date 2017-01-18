@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -37,7 +37,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // Plane
 //-----------------------------------------------------------------------------
-real Plane::distance(const vec3 &v) const 
+real Plane::distance(const vec3 &v) const
 {
   return dot(v, mNormal) - mOrigin;
 }
@@ -53,7 +53,7 @@ bool Plane::isOutside(const AABB& aabb) const
 //-----------------------------------------------------------------------------
 int Plane::classify(const AABB& aabb) const
 {
-  vec3 corner[] = 
+  vec3 corner[] =
   {
     vec3(aabb.minCorner().x(), aabb.minCorner().y(), aabb.minCorner().z()),
     vec3(aabb.minCorner().x(), aabb.minCorner().y(), aabb.maxCorner().z()),
@@ -72,10 +72,10 @@ int Plane::classify(const AABB& aabb) const
 
   for(int i=0;i<8; ++i)
   {
-    if ( distance(corner[i]) < NEPS ) 
+    if ( distance(corner[i]) < NEPS )
       left++;
-    else 
-    if ( distance(corner[i]) > PEPS ) 
+    else
+    if ( distance(corner[i]) > PEPS )
       right++;
     // else -> we don't count the points on the plane
 
@@ -85,7 +85,7 @@ int Plane::classify(const AABB& aabb) const
 
   if (left)
     return -1;
-  else 
+  else
   if (right)
     return +1;
   else // all the points were on the plane

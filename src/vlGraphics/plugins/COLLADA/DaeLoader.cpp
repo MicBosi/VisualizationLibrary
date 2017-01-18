@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,11 +40,11 @@ namespace
   const char* VL_NO_MATERIAL_SPECIFIED = "<VL_NO_MATERIAL_SPECIFIED>";
   const char* VL_DEFAULT_LIGHT = "<VL_DEFAULT_LIGHT>";
   //-----------------------------------------------------------------------------
-  struct 
+  struct
   {
     Dae::EInputSemantic mSemantic;
     const char* mSemanticString;
-  } SemanticTable[] = 
+  } SemanticTable[] =
     {
       { Dae::IS_UNKNOWN,         "UNKNOWN"         },
       { Dae::IS_BINORMAL,        "BINORMAL"        },
@@ -120,7 +120,7 @@ void DaeLoader::parseInputs(Dae::Primitive* dae_primitive, const domInputLocalOf
         VL_CHECK(dae_input->mSource);
         VL_CHECK(dae_input->mSemantic != Dae::IS_UNKNOWN);
 
-          
+
         dae_primitive->mIndexStride = std::max(dae_primitive->mIndexStride, dae_input->mOffset);
       }
     }
@@ -142,7 +142,7 @@ void DaeLoader::parseInputs(Dae::Primitive* dae_primitive, const domInputLocalOf
         dae_primitive->mIndexStride = std::max(dae_primitive->mIndexStride, dae_input->mOffset);
     }
   }
-    
+
   dae_primitive->mIndexStride += 1;
 }
 //-----------------------------------------------------------------------------
@@ -210,7 +210,7 @@ ref<Dae::Mesh> DaeLoader::parseGeometry(daeElement* geometry)
 
     // --- ---- material ---- ---
     dae_primitive->mMaterial = triangles->getMaterial() ? triangles->getMaterial() : VL_NO_MATERIAL_SPECIFIED;
-      
+
     // --- ---- generates the geometry ---- ---
     generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
   }
@@ -262,7 +262,7 @@ ref<Dae::Mesh> DaeLoader::parseGeometry(daeElement* geometry)
 
     // --- ---- material ---- ---
     dae_primitive->mMaterial = tristrip->getMaterial() ? tristrip->getMaterial() : VL_NO_MATERIAL_SPECIFIED;
-      
+
     // --- ---- generates the geometry ---- ---
     generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
   }
@@ -288,7 +288,7 @@ ref<Dae::Mesh> DaeLoader::parseGeometry(daeElement* geometry)
 
     // --- ---- material ---- ---
     dae_primitive->mMaterial = polygon->getMaterial() ? polygon->getMaterial() : VL_NO_MATERIAL_SPECIFIED;
-      
+
     // --- ---- generates the geometry ---- ---
     generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
   }
@@ -323,7 +323,7 @@ ref<Dae::Mesh> DaeLoader::parseGeometry(daeElement* geometry)
 
     // --- ---- material ---- ---
     dae_primitive->mMaterial = polylist->getMaterial() ? polylist->getMaterial() : VL_NO_MATERIAL_SPECIFIED;
-      
+
     // --- ---- generates the geometry ---- ---
     generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
   }
@@ -349,7 +349,7 @@ ref<Dae::Mesh> DaeLoader::parseGeometry(daeElement* geometry)
 
     // --- ---- material ---- ---
     dae_primitive->mMaterial = linestrip->getMaterial() ? linestrip->getMaterial() : VL_NO_MATERIAL_SPECIFIED;
-      
+
     // --- ---- generates the geometry ---- ---
     generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
   }
@@ -374,7 +374,7 @@ ref<Dae::Mesh> DaeLoader::parseGeometry(daeElement* geometry)
 
     // --- ---- material ---- ---
     dae_primitive->mMaterial = line->getMaterial() ? line->getMaterial() : VL_NO_MATERIAL_SPECIFIED;
-      
+
     // --- ---- generates the geometry ---- ---
     generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
   }
@@ -394,7 +394,7 @@ Dae::Source* DaeLoader::getSource(daeElement* source_el)
 
     domSource::domTechnique_commonRef tech_common = source->getTechnique_common(); VL_CHECK(tech_common)
     domAccessorRef accessor = tech_common->getAccessor();
-      
+
     size_t mask = 0;
     // we support up to 32 parameters for a single accessor
     domParam_Array param_array = accessor->getParam_array();
@@ -610,7 +610,7 @@ void DaeLoader::parseNode(daeElement* el, Dae::Node* parent)
       ref<Dae::Mesh> dae_mesh = parseGeometry(geometry);
       if (dae_mesh)
         this_node->mMesh.push_back(dae_mesh.get());
-        
+
       // generate the Actors belonging to this node with their own material
       bindMaterials(this_node.get(), dae_mesh.get(), geometries[i]->getBind_material());
     }
@@ -636,7 +636,7 @@ void DaeLoader::parseNode(daeElement* el, Dae::Node* parent)
         ref<Dae::Mesh> dae_mesh = parseGeometry(geometry);
         if (dae_mesh)
           this_node->mMesh.push_back(dae_mesh.get());
-        
+
         // generate the Actors belonging to this node with their own material
         bindMaterials(this_node.get(), dae_mesh.get(), controllers[i]->getBind_material());
       }
@@ -646,7 +646,7 @@ void DaeLoader::parseNode(daeElement* el, Dae::Node* parent)
     for(size_t ichild=0; ichild<node->getChildren().getCount(); ++ichild)
     {
       daeElement* child = node->getChildren()[ichild];
-      
+
       if ( 0 == strcmp(child->getElementName(), "matrix") )
       {
         domMatrix* matrix = static_cast<domMatrix*>(child);
@@ -777,7 +777,7 @@ bool DaeLoader::load(VirtualFile* file)
   mScene->mTransform->computeWorldMatrixRecursive();
 
   // --- light setup ---
-  // Computes position and direction of lights, sorts them (direction -> spot -> point), 
+  // Computes position and direction of lights, sorts them (direction -> spot -> point),
   // adds them to the resource database.
   setupLights();
 
@@ -919,7 +919,7 @@ void DaeLoader::loadImages(const domImage_Array& images)
 
     std::string full_path = percentDecode( images[i]->getInit_from()->getValue().getURI() + 6 );
     ref<Image> image = loadImage( full_path.c_str() );
-      
+
     mImages[ images[i].cast() ] = image;
   }
 }
@@ -1007,7 +1007,7 @@ void DaeLoader::parseEffects(daeElement* library)
           if (newparam->getSampler2D())
           {
             domFx_sampler2D_commonRef sampler2D = newparam->getSampler2D();
-              
+
             dae_newparam->mDaeSampler2D = new Dae::Sampler2D;
 
             // --- <source> ---
@@ -1029,13 +1029,13 @@ void DaeLoader::parseEffects(daeElement* library)
               VL_LOG_DEBUG << "- 'mDaeNewParams.find(surface_newparam)' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
               continue;
             }
-              
+
             // --- <minfilter> ---
             if( sampler2D->getMinfilter() )
             {
               dae_newparam->mDaeSampler2D->mMinFilter = translateSampleFilter( sampler2D->getMinfilter()->getValue() );
             }
-                
+
 
             // --- <magfilter> ---
             if( sampler2D->getMagfilter() )
@@ -1692,7 +1692,7 @@ void DaeLoader::generateGeometry(Dae::Primitive* prim, const char* name)
       }
       else
         final_index = it->mIndex;
-        
+
       // this is the actual index
       (*index_buffer)[iidx] = final_index;
     }
@@ -1837,13 +1837,13 @@ void DaeLoader::generateGeometry(Dae::Primitive* prim, const char* name)
     {
       // compare VL normals with original ones
       float l = norm_old->at(i).length();
-      if ( l < 0.5f ) 
+      if ( l < 0.5f )
       {
         norm_old->at(i) = norm_new->at(i);
         ++degenerate;
       }
 
-      if ( l < 0.9f || l > 1.1f ) 
+      if ( l < 0.9f || l > 1.1f )
       {
         norm_old->at(i).normalize();
         ++degenerate;
@@ -1857,7 +1857,7 @@ void DaeLoader::generateGeometry(Dae::Primitive* prim, const char* name)
     }
 
     // mic fixme: issue these things as debug once things got stable
-    if (degenerate || flipped) 
+    if (degenerate || flipped)
       VL_LOG_DEBUG << ( Say("- LoadWriterDae: fixed bad normals in \"%s\": degenerate=%n, flipped=%n (out of %n).\n")  << prim->mGeometry->objectName() << degenerate << flipped << norm_old->size() );
 
     // reinstall fixed normals
@@ -1907,7 +1907,7 @@ void DaeLoader::parseAsset(domElement* root)
       for(size_t i=0; i<asset->getContributor_array().getCount(); ++i)
       {
         const char* tool = asset->getContributor_array()[i]->getAuthoring_tool()->getValue();
-        
+
         if (!tool)
           continue;
 

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -162,17 +162,17 @@ namespace vl
 
     bool extract(char* destination, bool check_sum = true);
 
-    ZippedFile& operator=(const ZippedFile& other) 
-    { 
-      close(); 
-      super::operator=(other); 
-      mZippedFileInfo = new ZippedFileInfo(*other.mZippedFileInfo); 
+    ZippedFile& operator=(const ZippedFile& other)
+    {
+      close();
+      super::operator=(other);
+      mZippedFileInfo = new ZippedFileInfo(*other.mZippedFileInfo);
       if (mZippedFileInfo->sourceZipFile())
       {
         ref<VirtualFile> src_zip_copy = mZippedFileInfo->sourceZipFile()->clone();
         mZippedFileInfo->setSourceZipFile(src_zip_copy.get());
       }
-      return *this; 
+      return *this;
     }
 
     virtual ref<VirtualFile> clone() const;

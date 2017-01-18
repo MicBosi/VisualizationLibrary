@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -64,7 +64,7 @@ ref<ResourceDatabase> vl::loadPLY(VirtualFile* file)
 //-----------------------------------------------------------------------------
 void PlyLoader::PlyScalar::read(VirtualFile* file, bool le)
 {
-  switch(scalarType()) 
+  switch(scalarType())
   {
     case PlyChar:   mData.mChar   = file->readSInt8(); break;
     case PlyUChar:  mData.mUChar  = file->readUInt8(); break;
@@ -262,7 +262,7 @@ PlyLoader::EType PlyLoader::translateType(const String& type)
   if (type == "float")  return PlyFloat; else
   if (type == "float32")  return PlyFloat; else
   if (type == "float64")  return PlyDouble; else
-  if (type == "double") return PlyDouble; 
+  if (type == "double") return PlyDouble;
   else
   {
     Log::error("PlyLoader: type parse error.\n");

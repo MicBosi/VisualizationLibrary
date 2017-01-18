@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -506,10 +506,10 @@ void A3DSLoader::read_TRIANGULAR_MESH()
         std::vector<fvec3> verts;
         verts.resize(vertc);
         mInputFile->read(&verts[0], 3*vertc*sizeof(float));
-        for(unsigned short i=0; i<vertc; ++i) 
+        for(unsigned short i=0; i<vertc; ++i)
           mObjects.back().mVertices[i].mPos = verts[i];
       #else
-        for(unsigned short i=0; i<vertc; ++i) 
+        for(unsigned short i=0; i<vertc; ++i)
           mObjects.back().mVertices[i].mPos = readVec3();
       #endif
     }
@@ -592,7 +592,7 @@ void A3DSLoader::read_TRIANGULAR_MESH()
         std::vector<fvec2> tuvs;
         tuvs.resize(vertc);
         mInputFile->read(&tuvs[0], 2*vertc*sizeof(float));
-        for(unsigned short i=0; i<vertc; ++i) 
+        for(unsigned short i=0; i<vertc; ++i)
           mObjects.back().mVertices[i].mUV = tuvs[i];
       #else
         for(unsigned short i=0; i<vertc; ++i)
@@ -662,7 +662,7 @@ bool A3DSLoader::parse3DS( VirtualFile* file )
     break;
 
     // 3D Editor
-    case ID_3D_EDITOR_CHUNK: 
+    case ID_3D_EDITOR_CHUNK:
     {
       read_3D_EDITOR_CHUNK();
     }
@@ -764,7 +764,7 @@ ref<ResourceDatabase> vl::load3DS(VirtualFile* file)
         if ( loader.mObjects[iobj].mFaceList[iface].mMaterialIndex != mat_index )
           continue;
 
-        unsigned int vertidx[] = 
+        unsigned int vertidx[] =
         {
           loader.mObjects[iobj].mFaceList[iface].mA,
           loader.mObjects[iobj].mFaceList[iface].mB,

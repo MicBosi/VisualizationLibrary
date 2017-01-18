@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -219,7 +219,7 @@ namespace vl
     bool parseStructure(VLXStructure* st)
     {
       std::string str;
-      
+
       // tag
       if (!readString(str))
         return false;
@@ -239,7 +239,7 @@ namespace vl
       for(int i=0; i<count; ++i)
       {
         VLXStructure::Value val;
-        
+
         // key
         if (!readString(str))
           return false;
@@ -250,14 +250,14 @@ namespace vl
           return false;
         st->value().push_back(val);
       }
-      
+
       return true;
     }
 
     bool parseList(VLXList* list)
     {
       std::string str;
-      
+
       // tag
       if (!readString(str))
         return false;
@@ -272,7 +272,7 @@ namespace vl
       for(int i=0; i<count; ++i)
       {
         VLXValue val;
-        
+
         if (!readValue(val))
           return false;
         else
@@ -297,7 +297,7 @@ namespace vl
       case VLB_ChunkStructure:
         val.setStructure( new VLXStructure );
         return parseStructure( val.getStructure() );
-      
+
       case VLB_ChunkList:
         val.setList( new VLXList );
         return parseList( val.getList() );
@@ -436,7 +436,7 @@ namespace vl
             return true;
           }
         }
-     
+
       case VLB_ChunkRealDouble:
         {
           double d = 0;

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -97,7 +97,7 @@ namespace vl
     static ETexParamFilter translateSampleFilter(domFx_sampler_filter_common filter);
 
     static ETexParamWrap translateWrapMode(domFx_sampler_wrap_common wrap);
-  
+
     // template required becase Transparent is implemented as something different from domCommon_color_or_texture_typeRef!!!
     template<class T_color_or_texture>
     void parseColor(const domProfile_COMMON* common, const T_color_or_texture& color_or_texture, Dae::ColorOrTexture* out_col);

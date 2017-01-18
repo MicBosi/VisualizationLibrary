@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -136,7 +136,7 @@ void Text::render_Implementation(const Actor* actor, const Shader*, const Camera
     if (Has_GL_Version_2_0)
       glStencilMaskSeparate(GL_BACK, stencil_back_mask);
   }
-  
+
   // restore the right color and normal since we changed them
   glColor4fv( gl_context->color().ptr() );
   glNormal3fv( gl_context->normal().ptr() );
@@ -370,13 +370,13 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
 
         texc[0] = glyph->s0();
         texc[1] = glyph->t1();
-        
+
         texc[2] = glyph->s1();
         texc[3] = glyph->t1();
 
         texc[4] = glyph->s1();
         texc[5] = glyph->t0();
-        
+
         texc[6] = glyph->s0();
         texc[7] = glyph->t0();
 
@@ -504,9 +504,9 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
           vect[3].y() += (float)v.y();
 
           // clever trick part #2
-          vect[0].z() = 
-          vect[1].z() = 
-          vect[2].z() = 
+          vect[0].z() =
+          vect[1].z() =
+          vect[2].z() =
           vect[3].z() = float((v.z() - 0.5f) / 0.5f);
         }
 
@@ -729,20 +729,20 @@ void Text::renderBackground(const Actor* actor, const Camera* camera) const
   }
 
   // Constant color
-  glColor4f(mBackgroundColor.r(),mBackgroundColor.g(), mBackgroundColor.b(), mBackgroundColor.a());
+  glColor4f(mBackgroundColor.r(),mBackgroundColor.g(), mBackgroundColor.b(), mBackgroundColor.a()); VL_CHECK_OGL()
 
   // Constant normal
-  glNormal3f(0, 0, 1);
+  glNormal3f(0, 0, 1); VL_CHECK_OGL()
 
-  vec3 a,b,c,d;
+  vec3 a, b, c, d;
   boundingRectTransformed( a, b, c, d, camera, mode() == Text2D ? actor : NULL );
   fvec3 vect[] = { (fvec3)a, (fvec3)b, (fvec3)c, (fvec3)d };
-  glEnableClientState( GL_VERTEX_ARRAY );
-  glVertexPointer(3, GL_FLOAT, 0, vect);
+  glEnableClientState( GL_VERTEX_ARRAY ); VL_CHECK_OGL()
+  glVertexPointer(3, GL_FLOAT, 0, vect); VL_CHECK_OGL()
 
-  glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 4); VL_CHECK_OGL()
 
-  glDisableClientState( GL_VERTEX_ARRAY );
+  glDisableClientState( GL_VERTEX_ARRAY ); VL_CHECK_OGL()
 
   if (mode() == Text2D)
   {
@@ -989,9 +989,9 @@ AABB Text::boundingRectTransformed(vec3& a, vec3& b, vec3& c, vec3& d, const Cam
       d += v.xyz();
 
       // clever trick part #2
-      a.z() = 
-      b.z() = 
-      c.z() = 
+      a.z() =
+      b.z() =
+      c.z() =
       d.z() = (v.z() - 0.5f) / 0.5f;
     }
   }

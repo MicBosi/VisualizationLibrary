@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -41,7 +41,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // Collection
   //------------------------------------------------------------------------------
-  /** It's basically an std::vector for Objects that is itself an Object so it can be reference 
+  /** It's basically an std::vector for Objects that is itself an Object so it can be reference
    * counted and passed around with ease. It has also handy utility functions like sort(), find(), etc.
    * Handy alternative to std::vector< ref< Object > > which becomes Collection<Object>.
    */
@@ -56,12 +56,12 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
       mVector = vector;
     }
-    
+
     Collection()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     Collection& operator=(const std::vector< ref<T> >& vector)
     {
       mVector = vector;
@@ -74,33 +74,33 @@ namespace vl
     }
 
     void push_back( T* data ) { mVector.push_back(data); }
-    
+
     void pop_back() { mVector.pop_back(); }
-    
+
     void resize(int size) { mVector.resize(size); }
-    
+
     int size() const { return (int)mVector.size(); }
-    
+
     bool empty() const { return mVector.empty(); }
-    
+
     void clear() { mVector.clear(); }
-    
+
     const T* back() const { return mVector.back().get(); }
-    
+
     T* back() { return mVector.back().get(); }
-    
+
     void reserve(int capacity) { mVector.reserve(capacity); }
-    
+
     int capacity() const { return (int)mVector.capacity(); }
-    
+
     const ref<T>& operator[](int i) const { return mVector[i]; }
-    
+
     ref<T>& operator[](int i) { return mVector[i]; }
-    
+
     const T* at(int i) const { return mVector[i].get(); }
-    
+
     T* at(int i) { return mVector[i].get(); }
-    
+
     void swap(Collection& other) { mVector.swap(other.mVector); }
 
     // added functionalities
@@ -118,48 +118,48 @@ namespace vl
       else
         return (int)(pos - mVector.begin());
     }
-    
+
     void shrink()
     {
       Collection<T>(mVector).swap(mVector);
     }
-    
+
     void push_back(const Collection<T>& objs )
     {
       mVector.insert(mVector.end(), objs.mVector.begin(), objs.mVector.end());
     }
-    
+
     void insert(int start, const Collection<T>& objs )
     {
       mVector.insert(mVector.begin()+start, objs.mVector.begin(), objs.mVector.end());
     }
-    
+
     void set(const Collection<T>& objs)
     {
       mVector = objs.mVector;
     }
-    
+
     void erase(int start, int count)
     {
       mVector.erase(mVector.begin()+start, mVector.begin()+start+count);
     }
-    
+
     void set(int index, T* obj) { mVector[index] = obj; }
-    
+
     void insert(int index, T* obj) { mVector.insert(mVector.begin() + index, obj); }
-    
+
     void erase(const T* data)
     {
       typename std::vector< ref<T> >::iterator it = std::find(mVector.begin(), mVector.end(), data);
       if (it != mVector.end())
         mVector.erase(it);
-    
+
     }
 
     void eraseAt(int index) { mVector.erase(mVector.begin()+index); }
 
     const std::vector< ref<T> >& vector() const { return mVector; }
-    
+
     std::vector< ref<T> >& vector() { return mVector; }
 
   protected:

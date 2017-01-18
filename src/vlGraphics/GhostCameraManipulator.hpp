@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,7 +40,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // GhostCameraManipulator
   //------------------------------------------------------------------------------
-  /** 
+  /**
    * The GhostCameraManipulator class is an UIEventListener that controls the position and orientation of a Camera.
    * Using the GhostCameraManipulator class the user can freely fly around in the scene as if it was a ghost.
    * Default key bindings:
@@ -99,34 +99,34 @@ namespace vl
 
     /** The camera to be manipulated. */
     Camera* camera();
-    
+
     /** The camera to be manipulated. */
     const Camera* camera() const;
 
     /** Key bindings to move forward (default = Key_W). */
     void setKeysForward(EKey key, EKey modifier = Key_None)  { mKeysForward[0] = key; mKeysForward[1] = modifier; };
-    
+
     /** Key bindings to move backward (default = Key_S). */
     void setKeysBackward(EKey key, EKey modifier = Key_None) { mKeysBackward[0] = key; mKeysBackward[1] = modifier; };
-    
+
     /** Key bindings to move left (default = Key_A). */
     void setKeysLeft(EKey key, EKey modifier = Key_None)     { mKeysLeft[0] = key; mKeysLeft[1] = modifier; };
-    
+
     /** Key bindings to move right (default = Key_D). */
     void setKeysRight(EKey key, EKey modifier = Key_None)    { mKeysRight[0] = key; mKeysRight[1] = modifier; };
-    
+
     /** Key bindings to move up (default = Key_W + Key_Shift). */
     void setKeysUp(EKey key, EKey modifier = Key_None)       { mKeysUp[0] = key; mKeysUp[1] = modifier; };
-    
+
     /** Key bindings to move down (default = Key_S + Key_Shift). */
     void setKeysDown(EKey key, EKey modifier = Key_None)     { mKeysDown[0] = key; mKeysDown[1] = modifier; };
 
     /** The camera rotation speed (default = 0.5). */
     void setRotationSpeed(real speed) { mRotationSpeed = speed; }
-    
+
     /** The camera rotation speed (default = 0.5). */
     real rotationSpeed() const { return mRotationSpeed; }
-    
+
     /** The camera translation speed (default = 50). */
     void setMovementSpeed(real speed) { mMovementSpeed = speed; }
 

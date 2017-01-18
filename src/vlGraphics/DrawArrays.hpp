@@ -59,8 +59,8 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::DrawArrays, DrawCall)
 
   public:
-    DrawArrays(): mStart(0), mCount(0) 
-    { 
+    DrawArrays(): mStart(0), mCount(0)
+    {
       VL_DEBUG_SET_OBJECT_NAME()
       mType      = PT_TRIANGLES;
       mInstances = 1;
@@ -68,7 +68,7 @@ namespace vl
 
     DrawArrays(EPrimitiveType primitive, int start, int count, int instances=1)
       : mStart(start), mCount(count)
-    { 
+    {
       VL_DEBUG_SET_OBJECT_NAME()
       mInstances = instances;
       mType = primitive;
@@ -83,9 +83,9 @@ namespace vl
       return *this;
     }
 
-    virtual ref<DrawCall> clone() const 
-    { 
-      return new DrawArrays( primitiveType(), (int)start(), (int)count(), (int)instances() ); 
+    virtual ref<DrawCall> clone() const
+    {
+      return new DrawArrays( primitiveType(), (int)start(), (int)count(), (int)instances() );
     }
 
     virtual void deleteBufferObject() {}
@@ -93,6 +93,8 @@ namespace vl
 
     virtual void render(bool) const
     {
+      VL_CHECK_OGL()
+
       // apply patch parameters if any and if using PT_PATCHES
       applyPatchParameters();
 

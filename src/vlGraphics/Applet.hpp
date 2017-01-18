@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -44,18 +44,18 @@ namespace vl
 //-----------------------------------------------------------------------------
 // Applet
 //-----------------------------------------------------------------------------
-  /** 
-   * The Applet class is an utilitly UIEventListener that features a ghost manipulator, 
-   * trackball manipulator, an FPS counter and a simple rendering pipeline. 
-   * 
+  /**
+   * The Applet class is an utilitly UIEventListener that features a ghost manipulator,
+   * trackball manipulator, an FPS counter and a simple rendering pipeline.
+   *
    * Default key bindings:
    * - Key_Escape: calls openglContext()->quitApplication()
    * - Key_T: enables the TrackballManipulator.
    * - Key_F: enables the GhostCameraManipulator (fly mode).
    * - Key_F1: toggles fullscreen mode if supported.
-   * - Key_F5: saves a screenshot of the current OpenGL window. 
+   * - Key_F5: saves a screenshot of the current OpenGL window.
    * - Key_C: toggles the continuous update of the OpenGL window (see also OpenGLContext::setContinuousUpdate()).
-   * - Key_U: updates the OpenGL window content by calling openglContext()->update(). 
+   * - Key_U: updates the OpenGL window content by calling openglContext()->update().
    */
   class VLGRAPHICS_EXPORT Applet: public UIEventListener
   {
@@ -65,9 +65,9 @@ namespace vl
     /** Constructor */
     Applet();
 
-    /** 
-     * Initializes the default rendering (with Rendering), the default scene manager (with SceneManagerActorTree) 
-     * and camera manipulators (GhostCameraManipulator and TrackballManipulator). 
+    /**
+     * Initializes the default rendering (with Rendering), the default scene manager (with SceneManagerActorTree)
+     * and camera manipulators (GhostCameraManipulator and TrackballManipulator).
      */
     void initialize();
 
@@ -86,7 +86,7 @@ namespace vl
     virtual void resizeEvent(int, int);
 
     virtual void initEvent() {}
-    
+
     virtual void enableEvent(bool) {}
 
     virtual void mouseMoveEvent(int, int) {}
@@ -107,10 +107,10 @@ namespace vl
 
     /** The rendering used by the Applet, by default a Rendering. */
     RenderingAbstract* rendering() { return mRendering.get(); }
-    
+
     /** The rendering used by the Applet, by default a Rendering. */
     const RenderingAbstract* rendering() const { return mRendering.get(); }
-    
+
     /** Sets the rendering used by the Applet, by default a Rendering. */
     void setRendering(RenderingAbstract* rendering) { mRendering = rendering; }
 
@@ -137,16 +137,16 @@ namespace vl
     /** Current average frames per second (updated every 500ms). */
     double fps() const { return mFPS; }
 
-    /** 
-     * Override this to update the content of your scene. 
-     * Called by updateEvent() right before rendering()->render() and swapping opengl front/back buffers. 
+    /**
+     * Override this to update the content of your scene.
+     * Called by updateEvent() right before rendering()->render() and swapping opengl front/back buffers.
      * \note Since updateScene() is called by updateEvent() this function is called only if somebody
-     * requests a OpenGLContext::update() or if OpenGLContext::continuousUpdate() is set to \p true. 
+     * requests a OpenGLContext::update() or if OpenGLContext::continuousUpdate() is set to \p true.
      */
 	  virtual void updateScene() {}
 
     /** Sets the applet name, used for the window title and for naming screenshots. */
-    void setAppletName(const String& app_name) { mAppletName = app_name; } 
+    void setAppletName(const String& app_name) { mAppletName = app_name; }
 
     /** The applet name, used for the window title and for naming screenshots. */
     const String& appletName() const { return mAppletName; }
@@ -154,7 +154,7 @@ namespace vl
   protected:
     void bindManipulators(Camera* camera);
 
-  private:
+  protected:
     ref<RenderingAbstract> mRendering;
     ref<GhostCameraManipulator> mFly;
     ref<TrackballManipulator> mTrackball;

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -38,19 +38,19 @@ void VLXValue::release()
 {
   switch(mType)
   {
-  case Structure: 
+  case Structure:
     if (mUnion.mStructure)
-      mUnion.mStructure->decReference(); 
+      mUnion.mStructure->decReference();
     break;
 
   case List:
     if (mUnion.mList)
-      mUnion.mList->decReference(); 
+      mUnion.mList->decReference();
     break;
 
   case RawtextBlock:
     if (mUnion.mRawtextBlock)
-      mUnion.mRawtextBlock->decReference(); 
+      mUnion.mRawtextBlock->decReference();
     break;
 
   /*
@@ -61,15 +61,15 @@ void VLXValue::release()
   case ArrayInteger:
   case ArrayReal:
     if (mUnion.mArray)
-      mUnion.mArray->decReference(); 
+      mUnion.mArray->decReference();
     break;
 
   case String:
   case ID:
   case Identifier:
     VL_CHECK(mUnion.mString)
-    delete mUnion.mString; 
-    mUnion.mString = NULL; 
+    delete mUnion.mString;
+    mUnion.mString = NULL;
     break;
 
   default:
@@ -89,17 +89,17 @@ VLXValue& VLXValue::operator=(const VLXValue& other)
   {
   case Structure:
     if (other.mUnion.mStructure)
-      other.mUnion.mStructure->incReference(); 
+      other.mUnion.mStructure->incReference();
     break;
 
   case List:
     if (other.mUnion.mList)
-      other.mUnion.mList->incReference(); 
+      other.mUnion.mList->incReference();
     break;
 
   case RawtextBlock:
     if (other.mUnion.mRawtextBlock)
-      other.mUnion.mRawtextBlock->incReference(); 
+      other.mUnion.mRawtextBlock->incReference();
     break;
 
   /*
@@ -110,7 +110,7 @@ VLXValue& VLXValue::operator=(const VLXValue& other)
   case ArrayInteger:
   case ArrayReal:
     if (other.mUnion.mArray)
-      other.mUnion.mArray->incReference(); 
+      other.mUnion.mArray->incReference();
     break;
 
   default:

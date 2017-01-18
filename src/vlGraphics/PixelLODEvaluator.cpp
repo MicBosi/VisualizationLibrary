@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -42,7 +42,7 @@ int PixelLODEvaluator::evaluate(Actor* actor, Camera* camera)
 
   AABB aabb = actor->transform() ? actor->lod(0)->boundingBox().transformed( actor->transform()->worldMatrix() ) : actor->lod(0)->boundingBox();
 
-  vec3 corner[] = 
+  vec3 corner[] =
   {
     vec3(aabb.minCorner().x(), aabb.minCorner().y(), aabb.minCorner().z()),
     vec3(aabb.minCorner().x(), aabb.maxCorner().y(), aabb.minCorner().z()),

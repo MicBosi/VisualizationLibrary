@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -68,14 +68,14 @@ namespace vl
     void setSpecular(const fvec4& specularcolor) { mSpecular = specularcolor; }
     const fvec4& specular() const { return mSpecular; }
 
-    /** The position or direction of a light. 
+    /** The position or direction of a light.
      * - If the fourth component of position equals 0.0f then the light is considered a directional light and position points in the direction of the light.
      * - If the fourth component of position equals 1.0f then the light is considered a positional light and position contains the position of the light.
      *
      * \b Note. The position or direction of a light is relative to the followed Transform or to the camera if the light does not follow any transform.
      */
     void setPosition(const fvec4& position) { mPosition = position; }
-    //! The position or direction of a light. 
+    //! The position or direction of a light.
     const fvec4& position() const { return mPosition; }
 
     void setSpotDirection(const fvec3& spotdirection) { mSpotDirection = spotdirection; }
@@ -89,20 +89,20 @@ namespace vl
     //! Valid values are from 0.0f to 90.0f plus the special value 180.0f (default) which disables the spot lighting.
     float spotCutoff() const { return mSpotCutoff; }
 
-    //! If the light is positional, rather than directional, its intensity is attenuated by the reciprocal 
-    //! of the sum of the constant attenuation, the linear attenuation times the distance between the light and the 
+    //! If the light is positional, rather than directional, its intensity is attenuated by the reciprocal
+    //! of the sum of the constant attenuation, the linear attenuation times the distance between the light and the
     //! vertex being lighted, and the quadratic attenuation times the square of the same distance.
     void setLinearAttenuation(float linearattenuation) { mLinearAttenuation = linearattenuation; }
     float linearAttenuation() const { return mLinearAttenuation; }
 
-    //! If the light is positional, rather than directional, its intensity is attenuated by the reciprocal 
-    //! of the sum of the constant attenuation, the linear attenuation times the distance between the light and the 
+    //! If the light is positional, rather than directional, its intensity is attenuated by the reciprocal
+    //! of the sum of the constant attenuation, the linear attenuation times the distance between the light and the
     //! vertex being lighted, and the quadratic attenuation times the square of the same distance.
     void setQuadraticAttenuation(float quadraticattenuation) { mQuadraticAttenuation = quadraticattenuation; }
     float quadraticAttenuation() const { return mQuadraticAttenuation; }
 
-    //! If the light is positional, rather than directional, its intensity is attenuated by the reciprocal 
-    //! of the sum of the constant attenuation, the linear attenuation times the distance between the light and the 
+    //! If the light is positional, rather than directional, its intensity is attenuated by the reciprocal
+    //! of the sum of the constant attenuation, the linear attenuation times the distance between the light and the
     //! vertex being lighted, and the quadratic attenuation times the square of the same distance.
     void setConstantAttenuation(float constantattenuation) { mConstantAttenuation = constantattenuation; }
     float constantAttenuation() const { return mConstantAttenuation; }
@@ -113,7 +113,7 @@ namespace vl
     Transform* boundTransform();
 
     const Transform* boundTransform() const;
-    
+
     virtual ref<RenderState> clone() const
     {
       ref<Light> rs = new Light;
@@ -122,7 +122,7 @@ namespace vl
     }
 
     void setEnabled(bool enabled) { mEnabled = enabled; }
-    
+
     bool enabled() const { return mEnabled; }
 
   protected:

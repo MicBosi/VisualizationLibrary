@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -68,8 +68,8 @@ bool MemoryDirectory::setPath(const String& name)
   return true;
 }
 //---------------------------------------------------------------------------
-bool MemoryDirectory::addFile(MemoryFile* file) 
-{ 
+bool MemoryDirectory::addFile(MemoryFile* file)
+{
   if (path().empty())
   {
     Log::error( "VirtualDirectory::path() must not be empty!\n" );
@@ -90,15 +90,15 @@ bool MemoryDirectory::addFile(MemoryFile* file)
   return true;
 }
 //---------------------------------------------------------------------------
-bool MemoryDirectory::removeFile(MemoryFile* file) 
-{ 
+bool MemoryDirectory::removeFile(MemoryFile* file)
+{
   return removeFile( file->path() );
 }
 //---------------------------------------------------------------------------
 bool MemoryDirectory::removeFile(const String& name)
-{ 
+{
   bool ok = mFiles.find( name ) != mFiles.end();
-  mFiles.erase( name ); 
+  mFiles.erase( name );
   return ok;
 }
 //---------------------------------------------------------------------------

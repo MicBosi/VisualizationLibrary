@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -78,7 +78,7 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix2& fill(T_Scalar val)
     {
-      e(0,0) = e(1,0) = 
+      e(0,0) = e(1,0) =
       e(0,1) = e(1,1) = val;
       return *this;
     }
@@ -95,17 +95,17 @@ namespace vl
       return err;
     }
     //-----------------------------------------------------------------------------
-    bool operator==(const Matrix2& m) const 
+    bool operator==(const Matrix2& m) const
     {
       return memcmp(m.mVec, mVec, sizeof(T_Scalar)*4) == 0;
     }
     //-----------------------------------------------------------------------------
-    bool operator!=(const Matrix2& m) const 
+    bool operator!=(const Matrix2& m) const
     {
       return !operator==(m);
     }
     //-----------------------------------------------------------------------------
-    Matrix2& operator=(const Matrix2& m) 
+    Matrix2& operator=(const Matrix2& m)
     {
       memcpy(mVec, m.mVec, sizeof(T_Scalar)*4);
       return *this;
@@ -284,7 +284,7 @@ namespace vl
       return true;
     }
     //-----------------------------------------------------------------------------
-    Matrix2& setNull() 
+    Matrix2& setNull()
     {
       fill(0);
       return *this;
@@ -303,8 +303,8 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix2& setIdentity()
     {
-      static const T_Scalar I2d[] = 
-      { 
+      static const T_Scalar I2d[] =
+      {
         (T_Scalar)1, (T_Scalar)0,
         (T_Scalar)0, (T_Scalar)1
       };
@@ -334,10 +334,10 @@ namespace vl
       }
       else
       {
-        const T_Scalar& a11 = e(0,0); 
-        const T_Scalar& a12 = e(1,0); 
-        const T_Scalar& a21 = e(0,1); 
-        const T_Scalar& a22 = e(1,1); 
+        const T_Scalar& a11 = e(0,0);
+        const T_Scalar& a12 = e(1,0);
+        const T_Scalar& a21 = e(0,1);
+        const T_Scalar& a22 = e(1,1);
 
         dest.fill(0);
 

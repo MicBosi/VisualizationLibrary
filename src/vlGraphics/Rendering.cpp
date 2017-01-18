@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -115,7 +115,7 @@ void Rendering::render()
       mOpenGLContext->resetContextStates(RCS_RenderingStarted);
 
       // pre rendering callback
-      mRendering->dispatchOnRenderingStarted(); 
+      mRendering->dispatchOnRenderingStarted();
 
       // check user-generated errors.
       VL_CHECK_OGL()
@@ -133,11 +133,11 @@ void Rendering::render()
       VL_CHECK_OGL()
 
       // render states ]shield[
-      mOpenGLContext->resetContextStates(RCS_RenderingFinished); 
+      mOpenGLContext->resetContextStates(RCS_RenderingFinished);
     }
   } contract(this);
 
-  // --------------- rendering --------------- 
+  // --------------- rendering ---------------
 
   if (renderers().empty())
   {
@@ -190,18 +190,18 @@ void Rendering::render()
   {
     // perform only near culling with plane at distance 0
     camera()->frustum().planes().resize(5);
-    camera()->frustum().planes()[4] = Plane( camera()->modelingMatrix().getT(), 
+    camera()->frustum().planes()[4] = Plane( camera()->modelingMatrix().getT(),
                                              camera()->modelingMatrix().getZ());
   }
 
   actorQueue()->clear();
-  for(int i=0; i<sceneManagers()->size(); ++i)
+  for(int i = 0; i < sceneManagers()->size(); ++i )
   {
-    if ( isEnabled(sceneManagers()->at(i)->enableMask()) )
+    if ( isEnabled( sceneManagers()->at(i)->enableMask() ) )
     {
-      if (cullingEnabled() && sceneManagers()->at(i)->cullingEnabled())
+      if ( cullingEnabled() && sceneManagers()->at(i)->cullingEnabled() )
       {
-        if (sceneManagers()->at(i)->boundsDirty())
+        if ( sceneManagers()->at(i)->boundsDirty() ) {
           sceneManagers()->at(i)->computeBounds();
         // try to cull the scene with both bsphere and bbox
         bool visible = !camera()->frustum().cull(sceneManagers()->at(i)->boundingSphere()) && 
@@ -303,8 +303,9 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
 
     // effect override: select the first that matches
     
-    for( std::map< unsigned int, ref<Effect> >::iterator eom_it = mEffectOverrideMask.begin(); 
-         eom_it != mEffectOverrideMask.end(); 
+
+    for( std::map< unsigned int, ref<Effect> >::iterator eom_it = mEffectOverrideMask.begin();
+         eom_it != mEffectOverrideMask.end();
          ++eom_it )
     {
       if (eom_it->first & actor->enableMask())

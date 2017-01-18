@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -56,16 +56,16 @@ namespace vl
     Camera();
 
     /** The near and far clipping planes are adjusted to fit the provided \p scene_bounding_sphere.
-    Optimizing the near and far clipping planes results in an optimized usage of the z-buffer with 
+    Optimizing the near and far clipping planes results in an optimized usage of the z-buffer with
     the consequence of minimizing possible z-fighting artifacts, thus enhancing the rendering quality.
-    \note Optimizing the near and far clipping planes might slightly impact the rendering performances 
+    \note Optimizing the near and far clipping planes might slightly impact the rendering performances
     if the scene contains a huge number of objects.
-    \note At the moment the near and far clipping planes optimization is available only when using a 
+    \note At the moment the near and far clipping planes optimization is available only when using a
     projection matrix set up by setProjectionPerspective() or setProjectionOrtho*(). */
     void computeNearFarOptimizedProjMatrix(const Sphere& scene_bounding_sphere);
 
     /** Computes the Camera's frustum planes in world space.
-    If nearFarClippingPlanesOptimized() == true the near and far culling planes distances 
+    If nearFarClippingPlanesOptimized() == true the near and far culling planes distances
     are respectively set to nearPlane() and farPlane(). */
     void computeFrustumPlanes();
 
@@ -78,9 +78,9 @@ namespace vl
     /** Loads the GL_PROJECTION matrix with the Camera's projection matrix. */
     void applyProjMatrix() const;
 
-    /** Returns the aspect ratio computed as viewport()->width()/viewport()->height(). 
+    /** Returns the aspect ratio computed as viewport()->width()/viewport()->height().
     If viewport() == NULL the function returns 0. */
-    real aspectRatio() const 
+    real aspectRatio() const
     {
       if (viewport())
         return (real)viewport()->width()/viewport()->height();
@@ -88,10 +88,10 @@ namespace vl
         return 0;
     }
 
-    /** The field of view of the camera. 
+    /** The field of view of the camera.
     \note This setting will not take effect until setProjectionPerspective() is called. */
     void setFOV(real fov) { mFOV = fov; }
-    
+
     /** The field of view of the camera. */
     real fov() const { return mFOV; }
 
@@ -102,7 +102,7 @@ namespace vl
     /** The near clipping plane. */
     real nearPlane() const { return mNearPlane; }
 
-    /** The far clipping plane. 
+    /** The far clipping plane.
     \note This setting will not take effect until setProjectionPerspective() or setProjectionOrtho() is called. */
     void setFarPlane(real farplane) { mFarPlane = farplane; }
 
@@ -177,27 +177,27 @@ namespace vl
     /** The Camera's projection matrix type. */
     EProjectionMatrixType projectionMatrixType() const { return mProjectionType; }
 
-    /** Builds a perspective projection matrix for the Camera based on the Camera's and Viewport's settings. 
+    /** Builds a perspective projection matrix for the Camera based on the Camera's and Viewport's settings.
     See also http://www.opengl.org/sdk/docs/man/xhtml/gluPerspective.xml for more information. */
     void setProjectionPerspective();
 
-    /** Builds a perspective projection matrix for the Camera based on the Camera's and Viewport's settings. 
+    /** Builds a perspective projection matrix for the Camera based on the Camera's and Viewport's settings.
     See also http://www.opengl.org/sdk/docs/man/xhtml/gluPerspective.xml for more information. */
     void setProjectionPerspective(real fov, real near, real far);
 
-    /** Produces a perspective projection matrix. 
-    The <left, bottom, zfar> and <right, top, znear> parameters specify the points on the near clipping plane that are mapped to the lower-left and upper-right corners of the viewport, 
+    /** Produces a perspective projection matrix.
+    The <left, bottom, zfar> and <right, top, znear> parameters specify the points on the near clipping plane that are mapped to the lower-left and upper-right corners of the viewport,
     respectively, assuming that the eye is located at (0,0,0). The zfar parameter specifies the location of the far clipping plane. Both znear and zfar must be positive.
 
-    This function is more general that setProjectionPerspective() as it's capable of generating off-axis projections, while setProjectionPerspective() only produces 
-    symmetrical (on-axis) projections. Since setProjectionFrustum() is more general than setProjectionPerspective(), you can use it in cases where setProjectionPerspective() 
+    This function is more general that setProjectionPerspective() as it's capable of generating off-axis projections, while setProjectionPerspective() only produces
+    symmetrical (on-axis) projections. Since setProjectionFrustum() is more general than setProjectionPerspective(), you can use it in cases where setProjectionPerspective()
     can't be used. Some examples include shadows projection, tiled renderings, and stereo views.
     \sa
-    - http://www.opengl.org/sdk/docs/man/xhtml/glFrustum.xml 
+    - http://www.opengl.org/sdk/docs/man/xhtml/glFrustum.xml
     - http://www.opengl.org/resources/faq/technical/transformations.htm */
     void setProjectionFrustum(real left, real right, real bottom, real top, real znear, real zfar);
 
-    /** Builds an orthographic projection matrix for the Camera based on the Camera's near/far planes and its Viewport's settings. 
+    /** Builds an orthographic projection matrix for the Camera based on the Camera's near/far planes and its Viewport's settings.
     - See also http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml and http://www.opengl.org/sdk/docs/man/xhtml/glOrtho2D.xml for more information.
     Equivalent to:
     \code
@@ -205,7 +205,7 @@ namespace vl
     \endcode */
     void setProjectionOrtho(real left, real right, real bottom, real top, real znear, real zfar);
 
-    /** Builds an orthographic projection matrix for the Camera based on the Camera's near/far planes and its Viewport's settings. 
+    /** Builds an orthographic projection matrix for the Camera based on the Camera's near/far planes and its Viewport's settings.
     - See also http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml and http://www.opengl.org/sdk/docs/man/xhtml/glOrtho2D.xml for more information.
     Equivalent to:
     \code
@@ -213,7 +213,7 @@ namespace vl
     \endcode */
     void setProjectionOrtho();
 
-    /** Builds an orthographic projection matrix for the Camera based on the Camera's near/far planes and its Viewport's settings. 
+    /** Builds an orthographic projection matrix for the Camera based on the Camera's near/far planes and its Viewport's settings.
     This function is similar to glOrtho2D() with the difference that it can optionally add a translation offset on both x and y. For example with
     an offset of -0.5 the center of the pixels will be exactly at integer coordinates 0, 1, 2, etc.
     - See also http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml and http://www.opengl.org/sdk/docs/man/xhtml/glOrtho2D.xml for more information.
@@ -223,7 +223,7 @@ namespace vl
     \endcode */
     void setProjectionOrtho(real offset);
 
-    /** Setup the modelview transform of the camera based on look-at parameters. 
+    /** Setup the modelview transform of the camera based on look-at parameters.
     \param eye The position of the camera.
     \param center The point the camera is looking at.
     \param up The vector defining the up direction. */
@@ -240,10 +240,10 @@ namespace vl
     bool project(const vec4& in_world, vec4& out_viewp) const;
 
     /** Unprojects a vector from viewport coordinates to world coordinates.
-    \param in_viewp The viewport coordinates point to be projected. Note that, in accordance to OpenGL conventions, 
+    \param in_viewp The viewport coordinates point to be projected. Note that, in accordance to OpenGL conventions,
     the viewport  coordinates have the Y axis pointing upwards and origin at the bottom left corner of the viewport.
     \param out_world The world coordinates of the projected point.
-    \note The \p z coordinate of \p in_viewp determines the position of the projected point along the ray passing through \p in_viewp. 
+    \note The \p z coordinate of \p in_viewp determines the position of the projected point along the ray passing through \p in_viewp.
     If \p z equals 0 then \p out_world will lay on the near clipping plane, if \p z equals 1 then \p out_world will lay on the far clipping plane. */
     bool unproject(const vec3& in_viewp, vec4& out_world) const;
 
@@ -254,7 +254,7 @@ namespace vl
     \param viewp_x The x position of the point defining the ray
     \param viewp_y The y position of the point defining the ray
     \note <viewp_x,viewp_y> is considered to be a point in viewport coordinate. In accordance to the OpenGL conventions the viewport coordinates
-    have origin on the bottom left corner of the viewport, with the Y axis pointing upwards. Most GUI libraries define the 
+    have origin on the bottom left corner of the viewport, with the Y axis pointing upwards. Most GUI libraries define the
     the orgin at the top left corner of the window and Y axis pointing downwards. You can convert such coordinates to OpenGL ones
     using the folloviewp_g simple formula: \p "opengl_y = window_height - coord_y". */
     Ray computeRay(int viewp_x, int viewp_y);

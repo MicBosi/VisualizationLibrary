@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -50,7 +50,7 @@ namespace vl
     //! Constructor: uses the given FT_Library handle otherwise will initialize and use its own FT_Library.
     FontManager(void* free_type_library=NULL);
 
-    //! Destructor: releases all fonts and disposes the FT_Library if not NULL. 
+    //! Destructor: releases all fonts and disposes the FT_Library if not NULL.
     //! If you don't want the FontManager to dispose the associated FT_Library then call setFreeTypeLibrary(NULL)
     //! before the FontManager is destroyed.
     ~FontManager();
@@ -73,7 +73,7 @@ namespace vl
     //! Returns the FT_Library handle.
     void* freeTypeLibrary() { return mFreeTypeLibrary; }
 
-    //! Sets the FT_Library to the given one and returns the former one. 
+    //! Sets the FT_Library to the given one and returns the former one.
     //! It is the user responsibility to dispose the returned one (if non-NULL).
     void* setFreeTypeLibrary(void* ftlib) { void* ret = mFreeTypeLibrary; mFreeTypeLibrary = ftlib; return ret; }
 

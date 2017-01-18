@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -38,7 +38,7 @@ namespace vl
 {
   /**
    * The LinearInterpolator class is a template class that implements Catmull-Rom spline interpolation.
-   * Catmull-Rom spline interpolation allows smoother interpolations than simple linear interpolation, is thus indicated 
+   * Catmull-Rom spline interpolation allows smoother interpolations than simple linear interpolation, is thus indicated
    * for example when you want to smoothly interpolate from one position to another or from one color to another.
    * \sa LinearInterpolator, Interpolator and the \ref pagGuideInterpolators "Interpolators Tutorial" page.
    */
@@ -48,7 +48,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolator<typename T>, Object)
 
   public:
-    CatmullRomInterpolator() 
+    CatmullRomInterpolator()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -124,14 +124,14 @@ namespace vl
     }
 
     //! The control points defining the Catmull-Rom spline.
-    //! Because of the Catmull-Rom formula the interpolated path must start and end with an extra control point 
-    //! (one on each side) and cannot have less than 4 control points. You can also automatically generate such 
+    //! Because of the Catmull-Rom formula the interpolated path must start and end with an extra control point
+    //! (one on each side) and cannot have less than 4 control points. You can also automatically generate such
     //! extra control points by calling the setupEndPoints() method.
     void setPath(const std::vector<T>& path) { mPath = path; }
-    
+
     //! The control points defining the Catmull-Rom spline.
     const std::vector<T>& path() const { return mPath; }
-    
+
     //! The control points defining the Catmull-Rom spline.
     std::vector<T>& path() { return mPath; }
 

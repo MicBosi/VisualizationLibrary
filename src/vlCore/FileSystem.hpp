@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -60,8 +60,8 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::FileSystem, Object)
 
   public:
-    FileSystem() 
-    { 
+    FileSystem()
+    {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
@@ -82,7 +82,7 @@ namespace vl
 
     //! Returns the list of VirtualDirectory objects added to a FileSystem
     std::vector< ref<VirtualDirectory> >& directories() { return mDirectories; }
-    
+
     //! Returns the list of VirtualDirectory objects added to a FileSystem
     const std::vector< ref<VirtualDirectory> >& directories() const { return mDirectories; }
 

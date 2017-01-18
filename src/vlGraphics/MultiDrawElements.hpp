@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -47,7 +47,7 @@ namespace vl
   /**
    * Base interface for all MultiDrawElements* sub classes.
    * Implements the index-type-independent interface of the class. That is you can cast to MultiDrawElementsBase*
-   * and access its members without needing to know whether the actual class is a 
+   * and access its members without needing to know whether the actual class is a
    * vl::MultiDrawElementsUInt, vl::MultiDrawElementsUShort or vl::MultiDrawElementsUByte. */
   class MultiDrawElementsBase: public DrawCall
   {
@@ -56,7 +56,7 @@ namespace vl
   public:
     /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     virtual bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
-    
+
     /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
 
@@ -72,7 +72,7 @@ namespace vl
         mBaseVertices.resize(mCountVector.size());
     }
 
-    /** Sets the vector defining the length of each primitive and automatically computes the pointer vectors used to exectue glMultiDrawElements(). 
+    /** Sets the vector defining the length of each primitive and automatically computes the pointer vectors used to exectue glMultiDrawElements().
       * @note Must be called after the index buffer has been filled. */
     void setCountVector(const std::vector<GLsizei>& vcount)
     {
@@ -96,8 +96,8 @@ namespace vl
     /** The count vector used as 'count' parameter of glMultiDrawElements. */
     std::vector<GLsizei>& countVector() { return mCountVector; }
 
-    /** Returns the list of base vertices, one for each primitive. This will enable the use 
-      * of glMultiDrawElementsBaseVertex() to render a set of primitives. 
+    /** Returns the list of base vertices, one for each primitive. This will enable the use
+      * of glMultiDrawElementsBaseVertex() to render a set of primitives.
       * See also http://www.opengl.org/sdk/docs/man3/xhtml/glMultiDrawElementsBaseVertex.xml */
     void setBaseVertices(const std::vector<GLint>& base_verts) { mBaseVertices = base_verts; }
 
@@ -123,26 +123,26 @@ namespace vl
   //------------------------------------------------------------------------------
   // MultiDrawElements
   //------------------------------------------------------------------------------
-  /** 
+  /**
    * Wrapper for the OpenGL function glMultiDrawElements(). See vl::DrawCall for an overview of the different draw call methods.
    *
    * This class wraps the following OpenGL functions:
    * - glMultiDrawElements (http://www.opengl.org/sdk/docs/man4/xhtml/glMultiDrawElements.xml)
    * - glMultiDrawElementsBaseVertex (http://www.opengl.org/sdk/docs/man4/xhtml/glMultiDrawElementsBaseVertex.xml)
    *
-   * Supports: 
-   * - <b>Multi instancing</b>: NO 
+   * Supports:
+   * - <b>Multi instancing</b>: NO
    * - <b>Base vertex</b>: YES
    * - <b>Primitive restart</b>: YES
    *
-   * Use the functions setPrimitiveRestartIndex() and setPrimitiveRestartEnabled() to use the <b>primitive 
+   * Use the functions setPrimitiveRestartIndex() and setPrimitiveRestartEnabled() to use the <b>primitive
    * restart</b> functionality (requires OpenGL 3.1). For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glPrimitiveRestartIndex.xml
    *
-   * Use the function setBaseVertices() to use the <b>base vertex</b> functionality. 
+   * Use the function setBaseVertices() to use the <b>base vertex</b> functionality.
    * Requires OpenGL 3.2 or GL_ARB_draw_elements_base_vertex. For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glMultiDrawElementsBaseVertex.xml
    *
    * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
-   * The indices are stored in a BufferObject and thus they can be stored locally or on the GPU. 
+   * The indices are stored in a BufferObject and thus they can be stored locally or on the GPU.
    * To gain direct access to the BufferObject use the indexBuffer() function.
    *
    * DrawArrays, DrawElements, MultiDrawElements and DrawRangeElements are used by Geometry to define a set of primitives to be rendered.
@@ -176,8 +176,8 @@ namespace vl
       return *this;
     }
 
-    virtual ref<DrawCall> clone() const 
-    { 
+    virtual ref<DrawCall> clone() const
+    {
       ref<MultiDrawElements> de = new MultiDrawElements;
       *de = *this;
       return de;
@@ -272,7 +272,7 @@ namespace vl
       return iit;
     }
 
-    /** The pointer vector used as 'indices' parameter of glMultiDrawElements when NOT using BufferObjects. 
+    /** The pointer vector used as 'indices' parameter of glMultiDrawElements when NOT using BufferObjects.
      * Automatically computed when calling setCountVector(). If you need to modify this manually then you also have to modify the bufferObjectPointerVector. */
     const std::vector<const index_type*>& pointerVector() const { return mPointerVector; }
 
@@ -362,8 +362,8 @@ namespace vl
   template <class arr_type>
   TriangleIterator MultiDrawElements<arr_type>::triangleIterator() const
   {
-    ref< TriangleIteratorMulti<arr_type> > it = 
-      new TriangleIteratorMulti<arr_type>( &mBaseVertices, &mCountVector, mIndexBuffer.get(), primitiveType(), 
+    ref< TriangleIteratorMulti<arr_type> > it =
+      new TriangleIteratorMulti<arr_type>( &mBaseVertices, &mCountVector, mIndexBuffer.get(), primitiveType(),
           primitiveRestartEnabled(), primitive_restart_index );
     it->initialize();
     return TriangleIterator(it.get());

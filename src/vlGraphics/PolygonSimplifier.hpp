@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -123,7 +123,7 @@ namespace vl
       {
 #if 0
         dmat3 Ainv;
-        double det = matrix().getInverse(Ainv); 
+        double det = matrix().getInverse(Ainv);
         if (!det)
           return false;
         v = -(Ainv*vector());
@@ -138,7 +138,7 @@ namespace vl
         else
         {
           double inv_det = 1.0 / det;
-          dmat3 Ainv( A*inv_det,             B*inv_det,             C*inv_det, 
+          dmat3 Ainv( A*inv_det,             B*inv_det,             C*inv_det,
                       (ac*bc-c2*ab)*inv_det, (c2*a2-ac*ac)*inv_det, (ab*ac-bc*a2)*inv_det,
                       (bc*ab-ac*b2)*inv_det, (ac*ab-bc*a2)*inv_det, (b2*a2-ab*ab)*inv_det );
           v = Ainv * dvec3( -ad, -bd, -cd );

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -45,7 +45,7 @@ namespace vl
     VL_INSTRUMENT_ABSTRACT_CLASS(vl::IndexIteratorAbstract, Object)
 
   public:
-    IndexIteratorAbstract(): mIndex(-1) 
+    IndexIteratorAbstract(): mIndex(-1)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -101,16 +101,16 @@ namespace vl
       mIndex  = start;
     }
 
-    virtual bool hasNext() const 
-    { 
-      return mCurPos != mStart + mCount; 
+    virtual bool hasNext() const
+    {
+      return mCurPos != mStart + mCount;
     }
 
-    virtual bool next() 
-    { 
-      ++mCurPos; 
+    virtual bool next()
+    {
+      ++mCurPos;
       mIndex = mCurPos;
-      return true; 
+      return true;
     }
 
   protected:
@@ -134,7 +134,7 @@ namespace vl
       initialize( NULL, NULL, NULL, 0, false, 0 );
     }
 
-    void initialize( const TArray* idx_array, const std::vector<GLint>* p_base_vertices, const std::vector<GLsizei>* p_vert_counts, 
+    void initialize( const TArray* idx_array, const std::vector<GLint>* p_base_vertices, const std::vector<GLsizei>* p_vert_counts,
                      int base_vert, bool prim_restart_on, unsigned int prim_restart_idx )
     {
       mArray = idx_array;
@@ -163,12 +163,12 @@ namespace vl
       }
     }
 
-    virtual bool hasNext() const 
-    { 
-      return mCurPos != (int)mArray->size(); 
+    virtual bool hasNext() const
+    {
+      return mCurPos != (int)mArray->size();
     }
 
-    virtual bool next() 
+    virtual bool next()
     {
       ++mCurPos;
       while( mCurPos < (int)mArray->size() && mArray->at(mCurPos) == mPrimRestartIdx && mPrimRestartEnabled  )
@@ -188,13 +188,13 @@ namespace vl
           mIndex += (*mpBaseVertices)[mBaseIdx];
         }
 
-        return true; 
+        return true;
       }
       else
       {
         mIndex = -1;
         mCurPos = (int)mArray->size();
-        return false; 
+        return false;
       }
     }
 

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -45,7 +45,7 @@
 
 using namespace vl;
 
-namespace 
+namespace
 {
   /*
    * Utility function
@@ -415,7 +415,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
         while( line[i] == ' ' || line[i] == '\t' ) ++i;
         int slash1 = 0;
         int slash2 = 0;
-        while( i < (int)line.size() && line[i] != ' ' && line[i] != '\t' ) 
+        while( i < (int)line.size() && line[i] != ' ' && line[i] != '\t' )
         {
           if (line[i] == '/')
           {
@@ -455,7 +455,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
           ++face_type;
 
           // eat all the spaces
-          while( line[i] == ' ' ) 
+          while( line[i] == ' ' )
             ++i;
 
           if (line[i] == 0)
@@ -469,26 +469,26 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
           switch(f_format_type)
           {
           case 0:
-            sscanf(line.c_str()+i, "%d", &iv); 
+            sscanf(line.c_str()+i, "%d", &iv);
             if (iv>0)  --iv; else  iv  = (int)mCoords.size()    - iv;
             append(cur_mesh->facePositionIndex(), iv);
             break;
           case 1:
-            sscanf(line.c_str()+i, "%d/%d", &iv,&ivt); 
+            sscanf(line.c_str()+i, "%d/%d", &iv,&ivt);
             if (iv>0)  --iv; else  iv  = (int)mCoords.size()    - iv;
             if (ivt>0) --ivt; else ivt = (int)mTexCoords.size() - ivt;
             append(cur_mesh->facePositionIndex(), iv);
             append(cur_mesh->faceTexCoordIndex(), ivt);
             break;
           case 2:
-            sscanf(line.c_str()+i, "%d//%d", &iv,&ivn); 
+            sscanf(line.c_str()+i, "%d//%d", &iv,&ivn);
             if (iv>0)  --iv; else  iv  = (int)mCoords.size()    - iv;
             if (ivn>0) --ivn; else ivn = (int)mNormals.size()   - ivn;
             append(cur_mesh->facePositionIndex(), iv);
             append(cur_mesh->faceNormalIndex(), ivn);
             break;
           case 3:
-            sscanf(line.c_str()+i, "%d/%d/%d", &iv,&ivt,&ivn); 
+            sscanf(line.c_str()+i, "%d/%d/%d", &iv,&ivt,&ivn);
             if (iv>0)  --iv; else  iv  = (int)mCoords.size()    - iv;
             if (ivt>0) --ivt; else ivt = (int)mTexCoords.size() - ivt;
             if (ivn>0) --ivn; else ivn = (int)mNormals.size()   - ivn;
@@ -506,7 +506,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
       append(cur_mesh->face_type(), face_type);
     }
     else
-    /*if (strcmp(cmd,"p") == 0) // Point 
+    /*if (strcmp(cmd,"p") == 0) // Point
     {
     }
     else

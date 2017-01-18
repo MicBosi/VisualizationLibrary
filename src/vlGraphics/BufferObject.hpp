@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -48,7 +48,7 @@ namespace vl
 // BufferObject
 //-----------------------------------------------------------------------------
   /**
-   * The BufferObject class is a Buffer that can upload its data on the GPU memory. 
+   * The BufferObject class is a Buffer that can upload its data on the GPU memory.
    * \remarks
    * BufferObject is the storage used by ArrayAbstract and subclasses like ArrayFloat3, ArrayUByte4 etc.
   */
@@ -76,10 +76,10 @@ namespace vl
     }
 
     // deletes the BufferObject data and copyes only the local data
-    BufferObject& operator=(const BufferObject& other) 
-    { 
+    BufferObject& operator=(const BufferObject& other)
+    {
       deleteBufferObject();
-      super::operator=(other); 
+      super::operator=(other);
       return *this;
     }
 

@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -51,7 +51,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
     {
       mPosition = 0;
     }
-    
+
     inline ~StringTurbo()
     {
       mBuffer[mPosition] = '\0';
@@ -92,7 +92,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
 
   // read chars skipping spaces
   char ch1=0, ch2=0;
-  do 
+  do
   {
     if (!readTextChar(ch1))
     {
@@ -156,7 +156,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
     token.mType = VLTToken::LeftRoundBracket;
     string_turbo = "(";
     return true;
-    
+
   case ')':
     token.mType = VLTToken::RightRoundBracket;
     string_turbo = ")";
@@ -166,7 +166,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
     token.mType = VLTToken::LeftSquareBracket;
     string_turbo = "[";
     return true;
-    
+
   case ']':
     token.mType = VLTToken::RightSquareBracket;
     string_turbo = "]";
@@ -177,8 +177,8 @@ bool VLTTokenizer::getToken(VLTToken& token)
     {
       // actual data starts at the next new line
       // eat all the spaces until the end of the current line
-      while(ch2 != '\n' && readTextChar(ch2)) 
-      { 
+      while(ch2 != '\n' && readTextChar(ch2))
+      {
         switch(ch2)
         {
         case '\f':
@@ -247,7 +247,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
     }
 
   case '=':
-    token.mType = VLTToken::Equals; 
+    token.mType = VLTToken::Equals;
     string_turbo = "=";
     return true;
 
@@ -606,7 +606,7 @@ bool VLTTokenizer::getRawtextBlock(VLTToken& token)
           ungetToken(ch2);
       }
     }
-    
+
     token.mString.push_back(ch);
   }
 

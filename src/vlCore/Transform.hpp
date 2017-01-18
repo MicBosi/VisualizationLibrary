@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -61,10 +61,10 @@ namespace vl
     *
     * - Call computeWorldMatrix() / computeWorldMatrixRecursive() not at each frame but only if the local matrix has actually changed.
     *
-    * - Do not add a Transform hierarchy to vl::Rendering::transform() if such Transforms are not animated every frame. 
+    * - Do not add a Transform hierarchy to vl::Rendering::transform() if such Transforms are not animated every frame.
     *
-    * - Remember: VL does not require your Actors to have a Transform or such Transforms to be part of any hierarchy, it just expect that the 
-    *   worldMatrix() of an Actor's Transform (if it has any) is up to date at rendering time. How and when they are updated can be fine 
+    * - Remember: VL does not require your Actors to have a Transform or such Transforms to be part of any hierarchy, it just expect that the
+    *   worldMatrix() of an Actor's Transform (if it has any) is up to date at rendering time. How and when they are updated can be fine
     *   tuned by the user according to the specific application needs.
     *
     * \sa setLocalAndWorldMatrix(), setAssumeIdentityWorldMatrix(), Rendering::transform()
@@ -79,17 +79,17 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
 
-      #ifdef VL_USER_DATA_TRANSFORM 
+      #ifdef VL_USER_DATA_TRANSFORM
         mTransformUserData = NULL;
       #endif
     }
 
     /** Constructor. The \p matrix parameter is used to set both the local and world matrix. */
     Transform(const mat4& matrix): mWorldMatrixUpdateTick(0), mAssumeIdentityWorldMatrix(false), mParent(NULL)
-    { 
+    {
       VL_DEBUG_SET_OBJECT_NAME()
 
-      #ifdef VL_USER_DATA_TRANSFORM 
+      #ifdef VL_USER_DATA_TRANSFORM
         mTransformUserData = NULL;
       #endif
 
@@ -102,26 +102,26 @@ namespace vl
 
     /** Returns the parent Transform. */
     const Transform* parent() const { return mParent; }
-    
+
     /** Returns the parent Transform. */
     Transform* parent() { return mParent; }
 
     /** Utility function equivalent to \p setLocalMatrix( mat4::getTranslation(x,y,z)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void translate(real x, real y, real z);
-    
+
     /** Utility function equivalent to \p setLocalMatrix( mat4::getTranslation(t)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void translate(const vec3& t);
-    
+
     /** Utility function equivalent to \p setLocalMatrix( mat4::getScaling(x,y,z)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void scale(real x, real y, real z);
-    
+
     /** Utility function equivalent to \p setLocalMatrix( mat4::getRotation(degrees,x,y,z)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void rotate(real degrees, real x, real y, real z);
-    
+
     /** Utility function equivalent to \p setLocalMatrix( mat4::getRotation(from,to)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void rotate(const vec3& from, const vec3& to);
@@ -137,28 +137,36 @@ namespace vl
     /** The matrix representing the transform's local space.
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void setLocalMatrix(const mat4& m)
-    { 
+    {
       mLocalMatrix = m;
     }
 
     /** The matrix representing the transform's local space. */
     const mat4& localMatrix() const
-    { 
+    {
       return mLocalMatrix;
     }
 
-    /** Normally you should not use directly this function, call it only if you are sure you cannot do otherwise. 
+    /** The matrix representing the transform's local space.
+        Use this non-const version to directly modify the local matrix.
+        Call computeWorldMatrix() after modifying the local matrix. */
+    mat4& localMatrix()
+    {
+      return mLocalMatrix;
+    }
+
+    /** Normally you should not use directly this function, call it only if you are sure you cannot do otherwise.
       * Usually you want to call computeWorldMatrix() or computeWorldMatrixRecursive().
       * Calling this function will also increment the worldMatrixUpdateTick(). */
-    void setWorldMatrix(const mat4& matrix) 
-    { 
-      mWorldMatrix = matrix; 
+    void setWorldMatrix(const mat4& matrix)
+    {
+      mWorldMatrix = matrix;
       ++mWorldMatrixUpdateTick;
     }
 
     /** Returns the world matrix used for rendering. */
-    const mat4& worldMatrix() const 
-    { 
+    const mat4& worldMatrix() const
+    {
       return mWorldMatrix;
     }
 
@@ -166,12 +174,12 @@ namespace vl
       * This function is useful to quickly set those Transforms that do not have a parent, for which
       * is equivalent to: \p setLocalMatrix(matrix); \p computeWorldMatrix(NULL); */
     void setLocalAndWorldMatrix(const mat4& matrix)
-    { 
+    {
       mLocalMatrix = matrix;
       setWorldMatrix(matrix);
     }
 
-    /** Returns the internal update tick used to avoid unnecessary computations. The world matrix thick 
+    /** Returns the internal update tick used to avoid unnecessary computations. The world matrix thick
       * gets incremented every time the setWorldMatrix() or setLocalAndWorldMatrix() functions are called. */
     long long worldMatrixUpdateTick() const { return mWorldMatrixUpdateTick; }
 
@@ -188,7 +196,7 @@ namespace vl
     {
       if( assumeIdentityWorldMatrix() )
       {
-        setWorldMatrix(mat4()); 
+        setWorldMatrix(mat4());
       }
       else
       /* top Transforms are usually assumeIdentityWorldMatrix() == true for performance reasons */
@@ -197,7 +205,9 @@ namespace vl
         setWorldMatrix( parent()->worldMatrix() * localMatrix() );
       }
       else
+      {
         setWorldMatrix( localMatrix() );
+      }
     }
 
     /** Computes the world matrix by concatenating the parent's world matrix with its local matrix, recursively descending to the children. */
@@ -241,7 +251,7 @@ namespace vl
       mChildren.push_back(child);
       child->mParent = this;
     }
-    
+
     /** Adds \p count children transforms. */
     void addChildren(Transform*const* children, size_t count)
     {
@@ -334,7 +344,7 @@ namespace vl
         mChildren[j] = mChildren[i];
 
       mChildren.resize( mChildren.size() - count );
-    }    
+    }
 
     /** Removes all the children of a Transform. */
     void eraseAllChildren()
@@ -392,8 +402,8 @@ namespace vl
         mChildren[i]->shrinkRecursive();
     }
 
-    /** Reserves space for \p count children. This function is very useful when you need to add one by one a large number of children transforms. 
-      * \note This function does not affect the number of children, it only reallocates the buffer used to store them 
+    /** Reserves space for \p count children. This function is very useful when you need to add one by one a large number of children transforms.
+      * \note This function does not affect the number of children, it only reallocates the buffer used to store them
       * so that it's large enough to \p eventually contain \p count of them. This will make subsequent calls to addChild() quicker
       * as fewer or no reallocations of the buffer will be needed. */
     void reserveChildren(size_t count) { mChildren.reserve(count); }
@@ -407,7 +417,7 @@ namespace vl
       return tr_set.size() != mChildren.size();
     }
 
-#ifdef VL_USER_DATA_TRANSFORM 
+#ifdef VL_USER_DATA_TRANSFORM
   public:
     const Object* transformUserData() const { return mTransformUserData.get(); }
     Object* transformUserData() { return mTransformUserData.get(); }

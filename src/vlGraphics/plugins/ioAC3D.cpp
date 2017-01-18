@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -49,19 +49,19 @@ using namespace vl;
 
 namespace
 {
-  class LoaderAC3D 
+  class LoaderAC3D
   {
   public:
 
-    class vert_info 
+    class vert_info
     {
     public:
       int Vert;
       float U;
       float V;
     };
-    
-    class material_info 
+
+    class material_info
     {
     public:
       String Name;
@@ -73,7 +73,7 @@ namespace
       float Trans;
     };
 
-    class surface_info 
+    class surface_info
     {
     public:
       int Flags;
@@ -82,11 +82,11 @@ namespace
       std::vector<vert_info> Vertex;
     };
 
-    class mesh_info 
+    class mesh_info
     {
     public:
       mesh_info();
-    
+
       String Name;
       String Data;
       String Texture;
@@ -96,14 +96,14 @@ namespace
       int NumVert;
       std::vector<fvec3> Vert;
       int NumSurf;
-      std::vector<surface_info> Surface;    
+      std::vector<surface_info> Surface;
       int NumKids;
     };
-    
-    LoaderAC3D();  
-    bool parseAC3D(VirtualFile* file);  
 
-    fvec3 readColor();  
+    LoaderAC3D();
+    bool parseAC3D(VirtualFile* file);
+
+    fvec3 readColor();
     fvec3 readVector();
     float readFloat();
     int readInt();
@@ -113,11 +113,11 @@ namespace
     String readName();
     void readMaterial();
     void readObject();
-    
+
     std::vector<material_info> materials;
     std::vector<mesh_info> meshes;
     bool verbose;
-    
+
   protected:
     ref<TextStream> mTokenizer;
     String mTmpStr;
@@ -448,7 +448,7 @@ ref<ResourceDatabase> vl::loadAC3D(const String& path)
   else
   {
     return loadAC3D(file.get() );
-  }  
+  }
 }
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> vl::loadAC3D( VirtualFile* file)

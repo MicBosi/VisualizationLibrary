@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -54,31 +54,31 @@ namespace vl
     Time();
 
     int year() const { return mYear; }
-    
+
     int month() const { return mMonth; }
-    
+
     int dayOfWeek() const { return mDayOfWeek; }
-    
+
     int dayOfMonth() const { return mDayOfMonth; }
-    
+
     int hour() const { return mHour; }
-    
+
     int minute() const { return mMinute; }
-    
+
     int second() const { return mSecond; }
-    
+
     int microsecond() const { return mMicrosecond; }
 
     static real currentTime();
-    
+
     static void sleep(unsigned int milliseconds);
 
     void start(int index=0) { mStart[index] = currentTime(); }
-    
+
     void stop(int index=0)  { mStart[index] = -1.0; }
-    
+
     bool isStarted(int index=0) const { return mStart[index] != -1; }
-    
+
     real elapsed(int index=0) const { return mStart[index] >= 0 ? currentTime() - mStart[index] : -1; }
 
   protected:

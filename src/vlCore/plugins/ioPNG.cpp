@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -271,7 +271,7 @@ ref<Image> vl::loadPNG(VirtualFile* file)
             MAX_SCREEN_COLORS, png_uint_16p_NULL, 0);
       }
       * This reduces the image to the palette supplied in the file */
-      else 
+      else
       if (png_get_PLTE(png_ptr, info_ptr, &palette, &num_palette))
       {
          png_uint_16p histogram = NULL;
@@ -359,7 +359,7 @@ ref<Image> vl::loadPNG(VirtualFile* file)
    //   }
    //}
    /* At this point you have read the entire image */
-  
+
    // initialize row pointers
    std::vector<png_bytep> row_p;
    row_p.resize(height);
@@ -453,11 +453,11 @@ bool vl::savePNG(const Image* src, VirtualFile* fout, int compression)
   png_infop   info = NULL;
 
   png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  if(!png) 
+  if(!png)
     return false;
 
   info = png_create_info_struct(png);
-  if(!info) 
+  if(!info)
     return false;
 
   png_set_write_fn(png,fout,png_write_vfile,png_flush_vfile);
@@ -470,20 +470,20 @@ bool vl::savePNG(const Image* src, VirtualFile* fout, int compression)
     rows[i] = (png_bytep)(src->pixels()+src->pitch()*y);
 
   int color;
-  switch(src->format()) 
+  switch(src->format())
   {
       case IF_RGB:             color = PNG_COLOR_TYPE_RGB; break;
       case IF_RGBA:            color = PNG_COLOR_TYPE_RGB_ALPHA; break;
-      case IF_ALPHA:           
+      case IF_ALPHA:
       case IF_LUMINANCE:       color = PNG_COLOR_TYPE_GRAY; break;
       case IF_LUMINANCE_ALPHA: color = PNG_COLOR_TYPE_GRAY_ALPHA; break;
-      default: 
+      default:
         return false;
   }
 
   int bit_depth = src->type() == IT_UNSIGNED_SHORT ? 16 : 8;
 
-  png_set_IHDR( png, info, w, h, bit_depth, color, 
+  png_set_IHDR( png, info, w, h, bit_depth, color,
                 PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
   unsigned short bet = 0x00FF;

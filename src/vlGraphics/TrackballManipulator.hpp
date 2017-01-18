@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -49,12 +49,12 @@ namespace vl
   /**
    * This class lets you rotate a Camera or a Transform node using a virtual trackball.
    * If you set a Transform node to manipulate, using the function setTransform(), the trackball
-   * will manipulate the given Transform (rotation only, panning and zooming will always affect 
-   * the bound Camera). If no Transform is specified or a NULL one is passed to the function 
+   * will manipulate the given Transform (rotation only, panning and zooming will always affect
+   * the bound Camera). If no Transform is specified or a NULL one is passed to the function
    * setTransform() then the trackball will manipulate the current camera.
-   * \note In any case, before using a TrackballManipulator you have to specify a Camera object 
+   * \note In any case, before using a TrackballManipulator you have to specify a Camera object
    * using the function setCamera().
-   * \note The Transform is expected to contain only rotation and translation information. 
+   * \note The Transform is expected to contain only rotation and translation information.
    * Other transformations like shearing, scaling, projection, and so on can produce unspecified results.
    * \sa GhostCameraManipulator
    */
@@ -64,11 +64,11 @@ namespace vl
 
   public:
     typedef enum { NoMode, RotationMode, TranslationMode, ZoomMode } ETrackballMode;
-  
+
   public:
     //! Constructor.
     TrackballManipulator(): mMode(NoMode),
-      mRotationButton(LeftButton), mTranslationButton(MiddleButton), mZoomButton(RightButton), 
+      mRotationButton(LeftButton), mTranslationButton(MiddleButton), mZoomButton(RightButton),
       mRotationSpeed(1.0f),        mTranslationSpeed(1.0f),          mZoomSpeed(1.0f)
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -89,7 +89,7 @@ namespace vl
     virtual void destroyEvent() {}
 
     virtual void updateEvent() {}
-    
+
     virtual void addedListenerEvent(OpenGLContext*) {}
 
     virtual void removedListenerEvent(OpenGLContext*) {}
@@ -146,7 +146,7 @@ namespace vl
 
     //! Rotation speed multiplicative factor (default = 1).
     float rotationSpeed() const { return mRotationSpeed; }
-    
+
     //! Rotation speed multiplicative factor (default = 1).
     void setRotationSpeed(float speed) { mRotationSpeed = speed; }
 
@@ -165,7 +165,7 @@ namespace vl
     //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB. See also Camera::adjustView().
     void adjustView(const AABB& aabb, const vec3& dir, const vec3& up, real bias=1.0f);
 
-    //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB containing the Actor[s]. See also Camera::adjustView().
+    //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB containing the Actors. See also Camera::adjustView().
     void adjustView(ActorCollection& actors, const vec3& dir, const vec3& up, real bias=1.0f);
 
     //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB containing the given scene manager. See also Camera::adjustView().

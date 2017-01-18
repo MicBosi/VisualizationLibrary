@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -108,6 +108,17 @@ namespace vl
       x() = (T_Scalar)other.x();
       y() = (T_Scalar)other.y();
     }
+
+    explicit Vector2(T_Scalar val)
+    {
+      mScalar[0] = mScalar[1] = val;
+    }
+
+    //explicit Vector2(const T_Scalar* pval)
+    //{
+    //  mScalar[0] = pval[0];
+    //  mScalar[1] = pval[1];
+    //}
 
     explicit Vector2(T_Scalar x, T_Scalar y)
     {
@@ -249,8 +260,8 @@ namespace vl
       if (len)
         *len = l;
       if (l)
-        *this *= (T_Scalar)(1.0/l); 
-      return *this; 
+        *this *= (T_Scalar)(1.0/l);
+      return *this;
     }
 
   protected:

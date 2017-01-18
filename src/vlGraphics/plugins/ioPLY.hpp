@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -60,7 +60,7 @@ namespace vl
   public:
     LoadWriterPLY(): ResourceLoadWriter("|ply|", "|ply|") {}
 
-    ref<ResourceDatabase> loadResource(const String& path) const 
+    ref<ResourceDatabase> loadResource(const String& path) const
     {
       return loadPLY(path);
     }
@@ -150,7 +150,7 @@ namespace vl
       EType scalarType() const { return mScalarType; }
       const std::vector<PlyScalar>& scalars() const { return mScalars; }
       std::vector<PlyScalar>& scalars() { return mScalars; }
-      virtual void read(VirtualFile* file, bool le) 
+      virtual void read(VirtualFile* file, bool le)
       {
         PlyScalar c;
         c.setScalarType(countType());

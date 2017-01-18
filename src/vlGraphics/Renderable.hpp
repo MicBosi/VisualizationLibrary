@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2017, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -53,7 +53,7 @@ namespace vl
     * In order to render a Renderable you have to bind it to an Actor.
     * An Actor glues together a Renderable, an Effect and eventually a Transform.
     * Note that the same Renderable can be associated to more than one Actor.
-    * 
+    *
     * \sa Actor, Effect, Shader, Transform, Geometry */
   class VLGRAPHICS_EXPORT Renderable: public Object
   {
@@ -66,9 +66,9 @@ namespace vl
 
   public:
     //! Constructor
-    Renderable(): mBoundsUpdateTick(0), mDisplayList(0), mBoundsDirty(true), 
+    Renderable(): mBoundsUpdateTick(0), mDisplayList(0), mBoundsDirty(true),
                   mDisplayListEnabled(false), mDisplayListDirty(true), mBufferObjectEnabled(true), mBufferObjectDirty(true){}
-    
+
     //! Destructor
     virtual ~Renderable() { deleteDisplayList(); }
 
@@ -76,7 +76,7 @@ namespace vl
     void render(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context)
     {
       VL_CHECK_OGL();
-      
+
       // display list have priority over BufferObjects
       if (isDisplayListEnabled())
       {
@@ -118,70 +118,70 @@ namespace vl
 
     //! Returns the bounds-update-tick which is a counter incremented every time the bounding box or bounding sphere is updated.
     long long boundsUpdateTick() const { return mBoundsUpdateTick; }
-    
+
     //! Marks the bounding box and bounding sphere as dirty in order to be recomputed at the next rendering.
     void setBoundsDirty(bool dirty) { mBoundsDirty = dirty; }
-    
+
     //! Returns whether the bounding sphere or bounding box are "dirty", that is, meant to be recomputed.
     bool boundsDirty() const { return mBoundsDirty; }
-    
+
     //! Sets the bounding box of a Renderable.
     void setBoundingBox( const AABB& aabb )
-    { 
-      if (mAABB != aabb) 
-      { 
-        mAABB = aabb; 
-        ++mBoundsUpdateTick; 
-      } 
-      setBoundsDirty(false); 
-    }
-    
-    //! Sets the bounding sphere of a Renderable.
-    void setBoundingSphere( const Sphere& sphere) 
-    { 
-      if (mSphere != sphere) 
+    {
+      if (mAABB != aabb)
       {
-        mSphere = sphere; 
-        ++mBoundsUpdateTick; 
+        mAABB = aabb;
+        ++mBoundsUpdateTick;
       }
-      setBoundsDirty(false); 
+      setBoundsDirty(false);
     }
-    
+
+    //! Sets the bounding sphere of a Renderable.
+    void setBoundingSphere( const Sphere& sphere)
+    {
+      if (mSphere != sphere)
+      {
+        mSphere = sphere;
+        ++mBoundsUpdateTick;
+      }
+      setBoundsDirty(false);
+    }
+
     //! Returns the bounding box of a Renderable without recomputing the bounds if dirty.
-    const AABB& boundingBox() const 
-    { 
+    const AABB& boundingBox() const
+    {
       if (boundsDirty())
         vl::Log::warning("Renderable::boundingBox() returning dirty bounding box, call computeBounds() first or call boundingBox() from a non-const Renderable!\n");
-      return mAABB; 
+      return mAABB;
     }
-    
+
     //! Returns the bounding sphere of a Renderable without recomputing the bounds if dirty.
-    const Sphere& boundingSphere() const 
-    { 
+    const Sphere& boundingSphere() const
+    {
       if (boundsDirty())
         vl::Log::warning("Renderable::boundingSphere() returning dirty bounding sphere, call computeBounds() first or call boundingSphere() from a non-const Renderable!\n");
-      return mSphere; 
+      return mSphere;
     }
 
     //! Returns the bounding box of a Renderable recomputing the bounds if dirty.
-    const AABB& boundingBox() 
-    { 
+    const AABB& boundingBox()
+    {
       if (boundsDirty())
         computeBounds();
-      return mAABB; 
+      return mAABB;
     }
-    
+
     //! Returns the bounding sphere of a Renderable recomputing the bounds if dirty.
-    const Sphere& boundingSphere() 
-    { 
+    const Sphere& boundingSphere()
+    {
       if (boundsDirty())
         computeBounds();
-      return mSphere; 
+      return mSphere;
     }
 
     //! Returns the display list associated to a Renderable or 0 (zero) if no display list is associated.
     unsigned int displayList() const { return mDisplayList; }
-    
+
     //! Manually assciates a display list to a Renderable (to be used with care).
     void setDisplayList(unsigned int disp_list) { mDisplayList = disp_list; }
 
@@ -193,7 +193,7 @@ namespace vl
 
     //! Whether the display list associated to a Renderable should be recompiled at the next rendering.
     bool displayListDirty() const { return mDisplayListDirty; }
-    
+
     //! Whether the display list associated to a Renderable should be recompiled at the next rendering.
     void setDisplayListDirty(bool dirty) { mDisplayListDirty = dirty; }
 
@@ -207,7 +207,7 @@ namespace vl
     bool isBufferObjectDirty() const { return mBufferObjectDirty; }
 
     //! Whether BufferObjects associated to a Renderable should be recomputed on the next rendering.
-    void setBufferObjectDirty(bool dirty) { mBufferObjectDirty = dirty; }
+    void setBufferObjectDirty(bool dirty = true) { mBufferObjectDirty = dirty; }
 
     //! Uploads the data stored in the local buffers on the GPU memory.
     //! If 'discard_local_data' is set to \p true the memory used by the local buffers is released.
@@ -218,7 +218,7 @@ namespace vl
     virtual void deleteBufferObject() = 0;
 
     //! Deletes the display list currently associated to a Renderable.
-    void deleteDisplayList() 
+    void deleteDisplayList()
     {
       if (displayList())
         glDeleteLists(displayList(), 1);
