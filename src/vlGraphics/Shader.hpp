@@ -865,25 +865,24 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_LightModel; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void setLocalViewer(bool localviewer) { mLocalViewer = localviewer; }
-    
+
     void setTwoSide(bool twoside) { mTwoSide = twoside; }
-    
+
     void setColorControl(EColorControl colorcontrol) { mColorControl = colorcontrol; }
-    
 
     void setAmbientColor(const fvec4& ambientcolor) { mAmbientColor = ambientcolor; }
+
     bool localViewer() const { return mLocalViewer; }
-    
+
     bool twoSide() const { return mTwoSide; }
-    
+
     EColorControl colorControl() const { return mColorControl; }
-    
 
     const fvec4& ambientColor() const { return mAmbientColor; }
 
@@ -923,22 +922,23 @@ namespace vl
     void set(EFogMode mode, const fvec4& color, float density, float start, float end) { mColor = color; mMode = mode; mDensity = density; mStart = start; mEnd = end; }
 
     void setColor(const fvec4& color) { mColor = color; }
+
     void setMode(EFogMode mode) { mMode = mode; }
-    
+
     void setDensity(float density) { mDensity = density; }
-    
+
     void setStart(float start) { mStart = start; }
-    
+
     void setEnd(float end) { mEnd = end; }
 
     const fvec4& color() const { return mColor; }
 
     EFogMode mode() const { return mMode; }
-    
+
     float density() const { return mDensity; }
-    
+
     float start() const { return mStart; }
-    
+
     float end() const { return mEnd; }
 
     virtual ref<RenderState> clone() const
@@ -969,21 +969,21 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_PolygonOffset; }
-    
+
     PolygonOffset(float factor, float units): mFactor(factor), mUnits(units) {}
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(float factor, float units) { mFactor = factor; mUnits = units; }
-    
+
     void setFactor(float factor) { mFactor = factor; }
-    
+
     void setUnits(float units) { mUnits = units; }
-    
+
     float factor() const { return mFactor; }
-    
+
     float units() const { return mUnits; }
 
     virtual ref<RenderState> clone() const
@@ -1011,13 +1011,13 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_LogicOp; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(ELogicOp logicop) { mLogicOp = logicop; }
-    
+
     ELogicOp logicOp() const { return mLogicOp; }
 
     virtual ref<RenderState> clone() const
@@ -1044,24 +1044,24 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     DepthRange(float znear, float zfar): mZNear(znear), mZFar(zfar)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_DepthRange; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(float znear, float zfar) { mZNear = znear; mZFar = zfar; }
-    
+
     void setZNear(float znear) { mZNear = znear; }
-    
+
     void setZFar(float zfar) { mZFar = zfar; }
-    
+
     float zNear() const { return mZNear; }
-    
+
     float zFar() const { return mZFar; }
 
     virtual ref<RenderState> clone() const
@@ -1089,13 +1089,13 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_LineWidth; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(float linewidth) { mLineWidth = linewidth; }
-    
+
     float lineWidth() const { return mLineWidth; }
 
     virtual ref<RenderState> clone() const
@@ -1122,13 +1122,13 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_PointSize; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(float pointsize) { mPointSize = pointsize; }
-    
+
     float pointSize() const { return mPointSize; }
 
     virtual ref<RenderState> clone() const
@@ -1152,15 +1152,15 @@ namespace vl
 
   public:
     PolygonStipple();
-    
+
     PolygonStipple(const unsigned char* mask);
-    
+
     virtual ERenderState type() const { return RS_PolygonStipple; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(const unsigned char* mask);
-    
+
     const unsigned char* mask() const { return mMask; }
 
     virtual ref<RenderState> clone() const
@@ -1187,19 +1187,19 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_LineStipple; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(int factor, GLushort pattern) { mFactor = factor; mPattern = pattern; }
-    
+
     void setFactor(int factor) { mFactor = factor; }
-    
+
     void setPattern(GLushort pattern) { mPattern = pattern; }
-    
+
     int factor() const { return mFactor; }
-    
+
     GLushort pattern() const { return mPattern; }
 
     virtual ref<RenderState> clone() const
@@ -1230,29 +1230,29 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_PointParameter; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(float sizemin, float sizemax, float fadethresholdsize, fvec3 distanceattenuation) { mDistanceAttenuation = distanceattenuation; mSizeMin = sizemin; mSizeMax = sizemax; mFadeThresholdSize = fadethresholdsize; }
-    
+
     void setDistanceAttenuation(fvec3 attenuation) { mDistanceAttenuation = attenuation; }
-    
+
     void setSizeMin(float sizemin) { mSizeMin = sizemin; }
-    
+
     void setSizeMax(float sizemax) { mSizeMax = sizemax; }
-    
+
     void setFadeThresholdSize(float threshold) { mFadeThresholdSize = threshold; }
-    
+
     fvec3 distanceAttenuation() const { return mDistanceAttenuation; }
-    
+
     float sizeMin() const { return mSizeMin; }
-    
+
     float sizeMax() const { return mSizeMax; }
-    
+
     float fadeThresholdSize() const { return mFadeThresholdSize; }
-    
+
     EPointSpriteCoordOrigin pointSpriteCoordOrigin() const { return mPointSpriteCoordOrigin; }
-    
+
     void setPointSpriteCoordOrigin(EPointSpriteCoordOrigin orig) { mPointSpriteCoordOrigin = orig; }
 
     virtual ref<RenderState> clone() const
@@ -1496,25 +1496,25 @@ namespace vl
     }
 
     virtual ERenderState type() const { return RS_ColorMask; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     void set(bool red, bool green, bool blue, bool alpha) { mRed = red; mGreen = green; mBlue = blue; mAlpha = alpha; }
-    
+
     void setRed(bool red) { mRed = red; }
-    
+
     void setGreen(bool green) { mGreen = green; }
-    
+
     void setBlue(bool blue) { mBlue = blue; }
-    
+
     void setAlpha(bool alpha) { mAlpha = alpha; }
-    
+
     bool red() const { return mRed; }
-    
+
     bool green() const { return mGreen; }
-    
+
     bool blue() const { return mBlue; }
-    
+
     bool alpha() const { return mAlpha; }
 
     virtual ref<RenderState> clone() const
@@ -1542,27 +1542,27 @@ namespace vl
 
   public:
     TextureMatrix() { mUseCameraRotationInverse = false; }
-    
+
     virtual ERenderState type() const { return RS_TextureMatrix; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
+
     const fmat4& matrix() const { return mMatrix; }
-    
+
     const TextureMatrix& setMatrix(const fmat4& matrix)
     {
       mMatrix = matrix;
       return *this;
     }
-    
+
     /** Set this to \a true when you want your cubemap to appear in world space rather than eye space.
      *
      * When setUseCameraRotationInverse() is true the texture matrix is computed as:
      * \code matrix()*camera->modelingMatrix().as3x3() \endcode
-     * This way matrix() represents the transform of the texture in world coordinates, for example if you want to reorient 
+     * This way matrix() represents the transform of the texture in world coordinates, for example if you want to reorient
      * your cubemap in world space or when you want to rotate the direction of one or more highlights prerendered in a cubemap. */
     void setUseCameraRotationInverse(bool use) { mUseCameraRotationInverse = use; }
-    
+
     bool useCameraRotationInverse() const { return mUseCameraRotationInverse; }
 
     virtual ref<RenderState> clone() const
@@ -1582,7 +1582,7 @@ namespace vl
   /** RenderState wrapping the OpenGL function glTexEnv(), see also http://www.opengl.org/sdk/docs/man/xhtml/glTexEnv.xml for more information.
    *
    * \note
-   * A TexParameter defines a set of variables associated to a Texture while 
+   * A TexParameter defines a set of variables associated to a Texture while
    * TexGen and TexEnv define a set of variables associated to a TextureSampler.
    *
    * \sa Shader, TextureSampler, Texture, TexGen, TexParameter, Effect, Actor */
@@ -1675,7 +1675,7 @@ namespace vl
   /** RenderState wrapping the OpenGL function glTexGen(), see also http://www.opengl.org/sdk/docs/man/xhtml/glTexGen.xml for more information.
    *
    * \note
-   * A TexParameter defines a set of variables associated to a Texture while 
+   * A TexParameter defines a set of variables associated to a Texture while
    * TexGen and TexEnv define a set of variables associated to a TextureSampler.
    *
    * \sa Shader, TextureSampler, Texture, TexGen, TexParameter, Effect, Actor */
@@ -1796,8 +1796,8 @@ namespace vl
   //------------------------------------------------------------------------------
   // ShaderAnimator
   //------------------------------------------------------------------------------
-  /** Callback object used to update/animate a Shader during the rendering. 
-  The updateShader() method will be called whenever a visible object uses the 
+  /** Callback object used to update/animate a Shader during the rendering.
+  The updateShader() method will be called whenever a visible object uses the
   Shader to which the ShaderAnimator is bound.
   \sa Shader::setUpdater(); */
   class VLGRAPHICS_EXPORT ShaderAnimator: public Object
@@ -1828,13 +1828,13 @@ namespace vl
   //------------------------------------------------------------------------------
   /** Manages most of the OpenGL rendering states responsible of the final aspect of the rendered objects.
    *
-   * A Shader represents a rendering pass. Using the Effect class you can assign 
-   * more rendering passes to an Actor. You can also specify different sets of 
+   * A Shader represents a rendering pass. Using the Effect class you can assign
+   * more rendering passes to an Actor. You can also specify different sets of
    * rendering passes for each Effect LOD, for more information see Effect.
    *
    * \remarks
    * The Uniforms defined in the Actor and the ones defined in the Shader must not
-   * overlap, that is, an Actor must  not define Uniforms present in the 
+   * overlap, that is, an Actor must  not define Uniforms present in the
    * Shader and vice versa.
    *
    * \sa Effect, Actor */
@@ -1863,7 +1863,7 @@ namespace vl
 
     /** Performs a shallow copy from the given Shader.
      * The render states and the uniforms are shallow-copied however the Shader retains its own RenderStateSet, UniformSet and EnableSet. */
-    Shader& shallowCopyFrom(const Shader& other) 
+    Shader& shallowCopyFrom(const Shader& other)
     {
       super::operator=(other);
 
@@ -1900,7 +1900,7 @@ namespace vl
       mScissor = other.mScissor;
 
       mShaderAnimator = other.mShaderAnimator;
-          
+
       #ifdef VL_USER_DATA_SHADER
         mShaderUserData = other.mShaderUserData;
       #endif
@@ -1955,7 +1955,7 @@ namespace vl
 
       // note: this is shallow copied
       mShaderAnimator = other.mShaderAnimator;
-          
+
       #ifdef VL_USER_DATA_SHADER
         mShaderUserData = other.mShaderUserData;
       #endif
@@ -2111,55 +2111,55 @@ namespace vl
     // vertex attrib
 
     VertexAttrib* gocVertexAttrib(int attr_index);
-    
+
     const VertexAttrib* getVertexAttrib(int attr_index) const;
-    
+
     VertexAttrib* getVertexAttrib(int attr_index);
 
     // lights
 
     Light* gocLight(int light_index);
-    
+
     const Light* getLight(int light_index) const;
-    
+
     Light* getLight(int light_index);
 
     // clip planes
 
     ClipPlane* gocClipPlane(int plane_index);
-    
+
     const ClipPlane* getClipPlane(int plane_index) const;
-    
+
     ClipPlane* getClipPlane(int plane_index);
 
     // texture unit
 
     TextureSampler* gocTextureSampler(int unit_index);
-    
+
     const TextureSampler* getTextureSampler(int unit_index) const { return static_cast<const TextureSampler*>( getRenderStateSet()->renderState( RS_TextureSampler, unit_index ) ); }
-    
+
     TextureSampler* getTextureSampler(int unit_index) { return static_cast<TextureSampler*>( getRenderStateSet()->renderState( RS_TextureSampler, unit_index ) ); }
 
     // tex env
 
     TexEnv* gocTexEnv(int unit_index);
-    
+
     const TexEnv* getTexEnv(int unit_index) const { return static_cast<const TexEnv*>( getRenderStateSet()->renderState( RS_TexEnv, unit_index ) ); }
-    
+
     TexEnv* getTexEnv(int unit_index) { return static_cast<TexEnv*>( getRenderStateSet()->renderState( RS_TexEnv, unit_index ) ); }
 
     // tex gen
-    
+
     TexGen* gocTexGen(int unit_index);
-    
+
     const TexGen* getTexGen(int unit_index) const { return static_cast<const TexGen*>( getRenderStateSet()->renderState( RS_TexGen, unit_index ) ); }
-    
+
     TexGen* getTexGen(int unit_index) { return static_cast<TexGen*>( getRenderStateSet()->renderState( RS_TexGen, unit_index ) ); }
 
     // texture matrix
 
     TextureMatrix* gocTextureMatrix(int unit_index);
-    
+
     const TextureMatrix* getTextureMatrix(int unit_index) const { return static_cast<const TextureMatrix*>( getRenderStateSet()->renderState( RS_TextureMatrix, unit_index ) ); }
 
     TextureMatrix* getTextureMatrix(int unit_index) { return static_cast<TextureMatrix*>( getRenderStateSet()->renderState( RS_TextureMatrix, unit_index ) ); }
@@ -2167,27 +2167,27 @@ namespace vl
     // enable methods
 
     void enable(EEnable capability)  { gocEnableSet()->enable(capability); }
-    
+
     void disable(EEnable capability) { gocEnableSet()->disable(capability); }
-    
+
     const std::vector<EEnable>& enables() const { return getEnableSet()->enables(); }
-    
+
     int isEnabled(EEnable capability) const { if (!getEnableSet()) return false; return getEnableSet()->isEnabled(capability); }
-    
+
     void disableAll() { if (getEnableSet()) getEnableSet()->disableAll(); }
-    
+
     bool isBlendingEnabled() const { if (!getEnableSet()) return false; return getEnableSet()->isBlendingEnabled(); }
 
     // render states methods
 
     void setRenderState(RenderStateNonIndexed* renderstate) { gocRenderStateSet()->setRenderState(renderstate, -1); }
-    
+
     void setRenderState(RenderState* renderstate, int index) { gocRenderStateSet()->setRenderState(renderstate, index); }
-    
+
     const RenderState* renderState( ERenderState type, int index=0 ) const { if (!getRenderStateSet()) return NULL; return getRenderStateSet()->renderState(type, index); }
-    
+
     RenderState* renderState( ERenderState type, int index=0 ) { return gocRenderStateSet()->renderState(type, index); }
-    
+
     size_t renderStatesCount() const { return getRenderStateSet()->renderStatesCount(); }
 
     const RenderStateSlot* renderStates() const { return getRenderStateSet()->renderStates(); }
@@ -2196,11 +2196,11 @@ namespace vl
 
     //! If index == -1 all the renderstates of the given type are removed regardless of their binding index.
     void eraseRenderState(ERenderState type, int index=-1) { gocRenderStateSet()->eraseRenderState(type, index); }
-    
+
     void eraseRenderState(RenderState* rs, int index) { if (rs) gocRenderStateSet()->eraseRenderState(rs->type(), index); }
-    
+
     void eraseAllRenderStates() { if(getRenderStateSet()) getRenderStateSet()->eraseAllRenderStates(); }
-    
+
     //! Returns the GLSLProgram associated to a Shader (if any)
     const GLSLProgram* glslProgram() const { if (!getRenderStateSet()) return NULL; return getRenderStateSet()->glslProgram(); }
 
@@ -2211,42 +2211,42 @@ namespace vl
 
     //! Equivalent to gocUniformSet()->setUniform(...)
     void setUniform(Uniform* uniform) { VL_CHECK(uniform); gocUniformSet()->setUniform(uniform); }
-    
+
     //! Equivalent to gocUniformSet()->uniforms(...)
     const std::vector< ref<Uniform> >& uniforms() const { return getUniformSet()->uniforms(); }
-    
+
     //! Equivalent to gocUniformSet()->eraseUniform(...)
     void eraseUniform(const char* name) { gocUniformSet()->eraseUniform(name); }
-    
+
     //! Equivalent to gocUniformSet()->eraseUniform(...)
     void eraseUniform(const Uniform* uniform) { gocUniformSet()->eraseUniform(uniform); }
-    
+
     //! Equivalent to gocUniformSet()->eraseAllUniforms(...)
     void eraseAllUniforms() { if (getUniformSet()) getUniformSet()->eraseAllUniforms(); }
-    
+
     //! Equivalent to gocUniformSet()->gocUniform(...)
     Uniform* gocUniform(const char* name) { return gocUniformSet()->gocUniform(name); }
-    
+
     //! Equivalent to gocUniformSet()->getUniform(...)
     Uniform* getUniform(const char* name) { return getUniformSet()->getUniform(name); }
-    
+
     //! Equivalent to gocUniformSet()->getUniform(...)
     const Uniform* getUniform(const char* name) const { return getUniformSet()->getUniform(name); }
 
     // sets
 
     EnableSet* gocEnableSet() { if (!mEnableSet) mEnableSet = new EnableSet; return mEnableSet.get(); }
-    
+
     EnableSet* getEnableSet() { return mEnableSet.get(); }
-    
+
     const EnableSet* getEnableSet() const { return mEnableSet.get(); }
-    
+
     RenderStateSet* gocRenderStateSet() { if (!mRenderStateSet) mRenderStateSet = new RenderStateSet; return mRenderStateSet.get(); }
-    
+
     RenderStateSet* getRenderStateSet() { return mRenderStateSet.get(); }
-    
+
     const RenderStateSet* getRenderStateSet() const { return mRenderStateSet.get(); }
-    
+
     /**
      * Returns the UniformSet installed (creating it if no UniformSet has been installed)
      * \sa
@@ -2258,7 +2258,7 @@ namespace vl
      * - getUniform()
     */
     UniformSet* gocUniformSet() { if (!mUniformSet) mUniformSet = new UniformSet; return mUniformSet.get(); }
-    
+
     /**
      * Returns the UniformSet installed
      * \sa
@@ -2270,7 +2270,7 @@ namespace vl
      * - getUniform()
     */
     UniformSet* getUniformSet() { return mUniformSet.get(); }
-    
+
     /**
      * Returns the UniformSet installed
      * \sa
@@ -2284,9 +2284,9 @@ namespace vl
     const UniformSet* getUniformSet() const { return mUniformSet.get(); }
 
     void setEnableSet(EnableSet* es) { mEnableSet = es; }
-    
+
     void setRenderStateSet(RenderStateSet* rss) { mRenderStateSet = rss; }
-    
+
     /**
      * Installs a new UniformSet
      * \sa
@@ -2302,14 +2302,14 @@ namespace vl
     /**
      * Sets the Scissor to be used when rendering an Actor.
      * \note
-     * You can also define a Scissor on a per-Actor basis using the function Actor::setScissor(). 
+     * You can also define a Scissor on a per-Actor basis using the function Actor::setScissor().
      * In case both the Shader's and the Actor's Scissor are defined the Actor's Scissor is used.
      * \sa
      * - Scissor
      * - Actor::setScissor()
      */
     void setScissor(Scissor* scissor) { mScissor = scissor; }
-    
+
     /**
      * Returns the Scissor to be used when rendering an Actor.
      * \sa
@@ -2318,7 +2318,7 @@ namespace vl
      * - Actor::setScissor()
      */
     const Scissor* scissor() const { return mScissor.get(); }
-    
+
     /**
      * Returns the Scissor to be used when rendering an Actor.
      * \sa
