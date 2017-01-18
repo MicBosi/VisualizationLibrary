@@ -41,20 +41,16 @@ using namespace vl;
 //------------------------------------------------------------------------------
 void ProjViewTransfCallback::updateMatrices(bool cam_changed, bool transf_changed, const GLSLProgram* glsl_program, const Camera* camera, const Transform* transform)
 {
+  VL_CHECK_OGL();
   // Once you opt-in for using VL substitutes for matrix variables you should not use the GL fixed-function ones such as:
   // gl_ModelViewMatrix, gl_ProjectionMatrix, gl_ModelViewProjectionMatrix and gl_NormalMatrix
   // see http://www.opengl.org/registry/doc/GLSLangSpec.Full.1.10.59.pdf pag 45
-
-  // Also, don't use the fixed function pipeline if we don't have it!
-
-  bool use_fixed_function_matrices = Has_Fixed_Function_Pipeline;
 
   // projection matrix
   if ( cam_changed )
   {
     if ( glsl_program && glsl_program->vl_ProjectionMatrix() != -1 )
     {
-      use_fixed_function_matrices = false;
 #if VL_PIPELINE_PRECISION == 1
       glUniformMatrix4fv( glsl_program->vl_ProjectionMatrix(), 1, GL_FALSE, camera->projectionMatrix().ptr() ); VL_CHECK_OGL();
 #elif VL_PIPELINE_PRECISION == 2
@@ -62,10 +58,10 @@ void ProjViewTransfCallback::updateMatrices(bool cam_changed, bool transf_change
 #endif
     }
 
-    if ( use_fixed_function_matrices )
+    if ( Has_Fixed_Function_Pipeline )
     {
       // this updates 
-      glMatrixMode(GL_PROJECTION); VL_CHECK_OGL();
+      glMatrixMode( GL_PROJECTION ); VL_CHECK_OGL();
       VL_glLoadMatrix( camera->projectionMatrix().ptr() ); VL_CHECK_OGL();
     }
   }
@@ -85,7 +81,6 @@ void ProjViewTransfCallback::updateMatrices(bool cam_changed, bool transf_change
       // update vl_ModelViewMatrix if used
       if ( glsl_program->vl_ModelViewMatrix() != -1 )
       {
-        use_fixed_function_matrices = false;
 #if VL_PIPELINE_PRECISION == 1
         glUniformMatrix4fv( glsl_program->vl_ModelViewMatrix(), 1, GL_FALSE, modelview.ptr() ); VL_CHECK_OGL();
 #elif VL_PIPELINE_PRECISION == 2
@@ -96,7 +91,6 @@ void ProjViewTransfCallback::updateMatrices(bool cam_changed, bool transf_change
       // update vl_ModelViewProjectionMatrix if used
       if ( glsl_program->vl_ModelViewProjectionMatrix() != -1 )
       {
-        use_fixed_function_matrices = false;
 #if VL_PIPELINE_PRECISION == 1
         glUniformMatrix4fv( glsl_program->vl_ModelViewProjectionMatrix(), 1, GL_FALSE, (camera->projectionMatrix() * modelview).ptr() ); VL_CHECK_OGL();
 #elif VL_PIPELINE_PRECISION == 2
@@ -107,22 +101,29 @@ void ProjViewTransfCallback::updateMatrices(bool cam_changed, bool transf_change
       // update vl_NormalMatrix if used
       if ( glsl_program->vl_NormalMatrix() != -1 )
       {
-        use_fixed_function_matrices = false;
         // transpose of the inverse of the upper leftmost 3x3 of vl_ModelViewMatrix
-        mat4 normalmtx = modelview.as3x3();
-        normalmtx.invert();
-        normalmtx.transpose();
+        mat3 normalmtx = modelview.get3x3().invert().transpose();
 #if VL_PIPELINE_PRECISION == 1
-        glUniformMatrix4fv( glsl_program->vl_NormalMatrix(), 1, GL_FALSE, normalmtx.ptr() ); VL_CHECK_OGL();
+        glUniformMatrix3fv( glsl_program->vl_NormalMatrix(), 1, GL_FALSE, normalmtx.ptr() ); VL_CHECK_OGL();
 #elif VL_PIPELINE_PRECISION == 2
-        glUniformMatrix4fv( glsl_program->vl_NormalMatrix(), 1, GL_FALSE, ((fmat4)normalmtx).ptr() ); VL_CHECK_OGL();
+        glUniformMatrix3fv( glsl_program->vl_NormalMatrix(), 1, GL_FALSE, ((fmat4)normalmtx).ptr() ); VL_CHECK_OGL();
 #endif
+      }
+
+      // update vl_WorldMatrix if used
+      if ( transf_changed && glsl_program->vl_WorldMatrix() != - 1 ) {
+        mat4 world_matrix = transform ? transform->worldMatrix() : mat4::getIdentity();
+        #if VL_PIPELINE_PRECISION == 1
+                glUniformMatrix4fv( glsl_program->vl_WorldMatrix(), 1, GL_FALSE, world_matrix.ptr() ); VL_CHECK_OGL();
+        #elif VL_PIPELINE_PRECISION == 2
+                glUniformMatrix4fv( glsl_program->vl_WorldMatrix(), 1, GL_FALSE, ((fmat4)world_matrix).ptr() ); VL_CHECK_OGL();
+        #endif
       }
     }
 
-    if( use_fixed_function_matrices )
+    if( Has_Fixed_Function_Pipeline )
     {
-      glMatrixMode(GL_MODELVIEW); VL_CHECK_OGL();
+      glMatrixMode( GL_MODELVIEW ); VL_CHECK_OGL();
       VL_glLoadMatrix( modelview.ptr() ); VL_CHECK_OGL();
     }
   }
