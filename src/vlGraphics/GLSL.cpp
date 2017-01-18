@@ -101,6 +101,16 @@ String GLSLShader::processSource( const String& source ) {
   return new_source;
 }
 //-----------------------------------------------------------------------------
+bool GLSLShader::reload() {
+  if ( ! mPath.empty() ) {
+    // we need to make a copy of mPath as it gets reset inside setSource
+    setSource( String( path() ) );
+    return compile();
+  }
+
+  return false;
+}
+//-----------------------------------------------------------------------------
 void GLSLShader::setSource( const String& source_or_path )
 {
   // make sure `source_or_path` is not `mPath` since we clear it at the beginning.
@@ -865,5 +875,13 @@ bool GLSLProgram::programBinary(GLenum binary_format, const void* binary, int le
     VL_TRAP();
     return false;
   }
+}
+//-----------------------------------------------------------------------------
+bool GLSLProgram::reload() {
+  bool ok = true;
+  for( size_t i = 0; i < mShaders.size(); ++i ) {
+    ok &= mShaders[i]->reload();
+  }
+  return ok && linkProgram( true );
 }
 //-----------------------------------------------------------------------------

@@ -72,10 +72,13 @@ namespace vl
     const std::string& source() const { return mSource; }
 
     //! The path from which the shader was loaded
-    void setPath(const char* path) { mPath = path; }
+    void setPath(const String& path) { mPath = path; }
 
     //! The path from which the shader was loaded
-    const std::string& path() const { return mPath; }
+    const String& path() const { return mPath; }
+
+    //! Reloads the shader source and recompiles it. Returns true on success.
+    bool reload();
 
     //! Retrieves the shader source using glGetShaderSource()
     std::string getShaderSource() const;
@@ -103,7 +106,7 @@ namespace vl
   protected:
     EShaderType mType;
     std::string mSource;
-    std::string mPath;
+    String mPath;
     unsigned int mHandle;
     bool mCompiled;
   };
@@ -253,7 +256,8 @@ namespace vl
       return rs;
     }
 
-    GLSLProgram& operator=(const GLSLProgram& other);
+    //! Reloads all the shaders source and recompiles them and relinks. Returns true on success.
+    bool reload();
 
     //! Calls glCreateProgram() in order to acquire a GLSL program handle, see also http://www.opengl.org/sdk/docs/man/xhtml/glCreateProgram.xml for more information.
     //! \note
