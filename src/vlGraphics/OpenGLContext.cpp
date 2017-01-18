@@ -58,6 +58,8 @@ OpenGLContext::OpenGLContext(int w, int h)
   mLeftFramebuffer  = new Framebuffer(this, w, h, RDB_BACK_LEFT, RDB_BACK_LEFT);
   mRightFramebuffer = new Framebuffer(this, w, h, RDB_BACK_RIGHT, RDB_BACK_RIGHT);
 
+  mDefaultVAO = 0;
+
   // set to unknown texture target
   memset( mTexUnitBinding, 0, sizeof(mTexUnitBinding) );
 
@@ -69,9 +71,11 @@ OpenGLContext::OpenGLContext(int w, int h)
 
   mIsInitialized = false;
   mHasDoubleBuffer = false;
-  mMaxVertexAttrib = 0;
-  mTextureSamplerCount = 0;
+  mVertexAttribCount = 0;
+  mTextureImageUnitCount = 0;
+  mTextureCoordCount = 0;
   mCurVAS = NULL;
+  mGLSLUpdated = true;
 
   mNormal = fvec3(0,1,0);
   mColor  = fvec4(1,1,1,1);
@@ -235,32 +239,39 @@ bool OpenGLContext::initGLContext(bool log)
   VL_CHECK_OGL();
 
   // Find max number of texture units, see http://www.opengl.org/sdk/docs/man/xhtml/glActiveTexture.xml
-  mTextureSamplerCount = 1;
+  mTextureImageUnitCount = mTextureCoordCount = 1;
   if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_1) // for GL < 2.x
   {
     int max_tmp = 0;
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
-    mTextureSamplerCount = max_tmp > mTextureSamplerCount ? max_tmp : mTextureSamplerCount;
+    mTextureCoordCount = mTextureImageUnitCount = max_tmp > mTextureImageUnitCount ? max_tmp : mTextureImageUnitCount;
   }
   if (Has_GL_Version_2_0) // for GL == 2.x
   {
     int max_tmp = 0;
     glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
-    mTextureSamplerCount = max_tmp > mTextureSamplerCount ? max_tmp : mTextureSamplerCount;
+    mTextureCoordCount = mTextureImageUnitCount = max_tmp > mTextureImageUnitCount ? max_tmp : mTextureImageUnitCount;
   }
   if (Has_GLSL) // for GL >= 2.0
   {
     int max_tmp = 0;
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
-    mTextureSamplerCount = max_tmp > mTextureSamplerCount ? max_tmp : mTextureSamplerCount;
+    mTextureImageUnitCount = max_tmp > mTextureImageUnitCount ? max_tmp : mTextureImageUnitCount;
   }
-  mTextureSamplerCount = mTextureSamplerCount < VL_MAX_TEXTURE_UNITS ? mTextureSamplerCount : VL_MAX_TEXTURE_UNITS;
+  mTextureImageUnitCount = mTextureImageUnitCount < VL_MAX_TEXTURE_IMAGE_UNITS ? mTextureImageUnitCount : VL_MAX_TEXTURE_IMAGE_UNITS;
+  mTextureCoordCount = mTextureCoordCount < VL_MAX_LEGACY_TEXTURE_UNITS ? mTextureCoordCount : VL_MAX_LEGACY_TEXTURE_UNITS;
 
   // find max number of vertex attributes
-  mMaxVertexAttrib = 0;
+  mVertexAttribCount = 0;
   if(Has_GLSL)
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &mMaxVertexAttrib);
-  mMaxVertexAttrib = mMaxVertexAttrib < VL_MAX_GENERIC_VERTEX_ATTRIB ? mMaxVertexAttrib : VL_MAX_GENERIC_VERTEX_ATTRIB;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &mVertexAttribCount);
+  mVertexAttribCount = mVertexAttribCount < VA_MaxAttribCount ? mVertexAttribCount : VA_MaxAttribCount;
+
+  // default VAO needed for OpenGL Core profiles
+  if ( Is_OpenGL_Core_Profile && glGenVertexArrays && glBindVertexArray ) {
+    glGenVertexArrays( 1, &mDefaultVAO ); VL_CHECK_OGL();
+    glBindVertexArray( mDefaultVAO ); VL_CHECK_OGL();
+  }
 
   VL_CHECK_OGL();
 
@@ -316,7 +327,7 @@ void OpenGLContext::logOpenGLInfo()
 
   if (Has_GLSL)
     Log::debug( Say("GLSL version: %s\n") << glGetString(GL_SHADING_LANGUAGE_VERSION) );
-    
+
   int max_val = 0;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_val);
   Log::debug( Say("Max texture size: %n\n")<<max_val);
@@ -626,20 +637,21 @@ void OpenGLContext::setupDefaultRenderStates()
   mDefaultRenderStates[RS_StencilOp]   = RenderStateSlot(new StencilOp, 0);
   mDefaultRenderStates[RS_GLSLProgram] = RenderStateSlot(new GLSLProgram, 0);
 
-  for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
+  for(int i=0; i<textureImageUnitCount(); ++i) {
+    mDefaultRenderStates[RS_TextureSampler + i] = RenderStateSlot(new TextureSampler, i);
+  }
+
+  if( Has_Fixed_Function_Pipeline )
   {
-    if (i < textureUnitCount())
+    for(int i=0; i<textureCoordCount(); ++i)
     {
-      mDefaultRenderStates[RS_TextureSampler + i] = RenderStateSlot(new TextureSampler, i);
-      if( Has_Fixed_Function_Pipeline )
-      {
         // TexGen under GLES is supported only if GL_OES_texture_cube_map is present
-        if(!Has_GLES_Version_1_1 || Has_GL_OES_texture_cube_map)
+        if( ! Has_GLES_Version_1_1 || Has_GL_OES_texture_cube_map) {
           mDefaultRenderStates[RS_TexGen + i] = RenderStateSlot(new TexGen, i);
+        }
         mDefaultRenderStates[RS_TexEnv + i] = RenderStateSlot(new TexEnv, i);
         mDefaultRenderStates[RS_TextureMatrix + i] = RenderStateSlot(new TextureMatrix, i);
       }
-    }
   }
 
   VL_CHECK_OGL();
@@ -670,6 +682,16 @@ bool OpenGLContext::isCleanState(bool verbose)
 {
   VL_CHECK_OGL();
   String error_msg;
+
+  // check default VAO is active
+  if ( Is_OpenGL_Core_Profile && glBindVertexArray ) {
+    int vao = 0;
+    glGetIntegerv( GL_VERTEX_ARRAY_BINDING, &vao ); VL_CHECK_OGL();
+    if (vao != (int)mDefaultVAO ) {
+      error_msg += Say("Current VAO (%n) is not the default one (%n)!\n") << vao << mDefaultVAO;
+      glBindVertexArray( mDefaultVAO ); VL_CHECK_OGL();
+    }
+  }
 
   // everything must be disabled except GL_DITHER and GL_MULTISAMPLE
   for( unsigned i=0; i<EN_EnableCount; ++i )
@@ -1166,12 +1188,12 @@ bool OpenGLContext::isCleanState(bool verbose)
   }
 
 #if defined(VL_OPENGL)
-  GLint poly_mode[2];
+  GLint poly_mode[] = { GL_FILL, GL_FILL };
   glGetIntegerv(GL_POLYGON_MODE, poly_mode); VL_CHECK_OGL();
   if ( poly_mode[0] != GL_FILL || poly_mode[1] != GL_FILL )
   {
     error_msg += " - Polygon mode should be glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)!\n";
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); VL_CHECK_OGL();
   }
 #endif
 
@@ -1246,8 +1268,411 @@ void OpenGLContext::resetContextStates(EResetContextStates start_or_finish)
     resetEnables();
     resetRenderStates();
 
+    // default VAO needed for OpenGL Core profiles
+    if ( Is_OpenGL_Core_Profile && mDefaultVAO && glGenVertexArrays && glBindVertexArray ) {
+       glBindVertexArray( mDefaultVAO ); VL_CHECK_OGL();
+    }
+
     // reset Vertex Attrib Set tables and also calls "glBindBuffer(GL_ARRAY_BUFFER, 0)"
     bindVAS(NULL, false, true); VL_CHECK_OGL();
+  }
+}
+//-----------------------------------------------------------------------------
+void OpenGLContext::bindVAS_Fixed(const IVertexAttribSet* vas, bool use_bo) {
+  int buf_obj = 0;
+  const unsigned char* ptr = 0;
+  bool enabled = false;
+
+  // ----- vertex array -----
+
+  enabled = vas->vertexArray() != NULL;
+  if ( mVertexArray.mEnabled || enabled )
+  {
+    if (enabled)
+    {
+      if ( use_bo && vas->vertexArray()->bufferObject()->handle() )
+      {
+        buf_obj = vas->vertexArray()->bufferObject()->handle();
+        ptr = 0;
+      }
+      else
+      {
+        buf_obj = 0;
+        ptr = vas->vertexArray()->bufferObject()->ptr();
+      }
+      if ( mVertexArray.mPtr != ptr || mVertexArray.mBufferObject != buf_obj )
+      {
+        if (!mVertexArray.mEnabled)
+        {
+          glEnableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
+        }
+        // mic fixme:
+        // Note: for the moment we threat glBindBuffer and glVertexPointer as an atomic operation.
+        // In the future we'll want to eliminate all direct calls to glBindBuffer and similar an
+        // go through the OpenGLContext that will lazily do everything.
+        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+        glVertexPointer((int)vas->vertexArray()->glSize(), vas->vertexArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
+        mVertexArray.mPtr = ptr;
+        mVertexArray.mBufferObject = buf_obj;
+      }
+    }
+    else
+    {
+      glDisableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
+      mVertexArray.mPtr = 0;
+      mVertexArray.mBufferObject = 0;
+    }
+    mVertexArray.mEnabled = enabled;
+  }
+
+  // ----- normal array -----
+
+  enabled = vas->normalArray() != NULL;
+  if ( mNormalArray.mEnabled || enabled )
+  {
+    if (enabled)
+    {
+      if ( use_bo && vas->normalArray()->bufferObject()->handle() )
+      {
+        buf_obj = vas->normalArray()->bufferObject()->handle();
+        ptr = 0;
+      }
+      else
+      {
+        buf_obj = 0;
+        ptr = vas->normalArray()->bufferObject()->ptr();
+      }
+      if ( mNormalArray.mPtr != ptr || mNormalArray.mBufferObject != buf_obj )
+      {
+        if (!mNormalArray.mEnabled)
+        {
+          glEnableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
+        }
+        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+        glNormalPointer(vas->normalArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
+        mNormalArray.mPtr = ptr;
+        mNormalArray.mBufferObject = buf_obj;
+      }
+    }
+    else
+    {
+      glDisableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
+
+      // restore constant normal
+      glNormal3f( mNormal.x(), mNormal.y(), mNormal.z() );
+
+      mNormalArray.mPtr = 0;
+      mNormalArray.mBufferObject = 0;
+    }
+    mNormalArray.mEnabled = enabled;
+  }
+
+  // ----- color array -----
+
+  enabled = vas->colorArray() != NULL;
+  if ( mColorArray.mEnabled || enabled )
+  {
+    if (enabled)
+    {
+      if ( use_bo && vas->colorArray()->bufferObject()->handle() )
+      {
+        buf_obj = vas->colorArray()->bufferObject()->handle();
+        ptr = 0;
+      }
+      else
+      {
+        buf_obj = 0;
+        ptr = vas->colorArray()->bufferObject()->ptr();
+      }
+      if ( mColorArray.mPtr != ptr || mColorArray.mBufferObject != buf_obj )
+      {
+        if (!mColorArray.mEnabled)
+        {
+          glEnableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
+        }
+        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+        glColorPointer((int)vas->colorArray()->glSize(), vas->colorArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
+        mColorArray.mPtr = ptr;
+        mColorArray.mBufferObject = buf_obj;
+      }
+    }
+    else
+    {
+      glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
+
+      // restore constant color
+      glColor4f( mColor.r(), mColor.g(), mColor.b(), mColor.a() );
+
+      mColorArray.mPtr = 0;
+      mColorArray.mBufferObject = 0;
+    }
+    mColorArray.mEnabled = enabled;
+  }
+
+  // ----- secondary color array -----
+
+  enabled = vas->secondaryColorArray() != NULL;
+  if ( mSecondaryColorArray.mEnabled || enabled )
+  {
+    if (enabled)
+    {
+      if ( use_bo && vas->secondaryColorArray()->bufferObject()->handle() )
+      {
+        buf_obj = vas->secondaryColorArray()->bufferObject()->handle();
+        ptr = 0;
+      }
+      else
+      {
+        buf_obj = 0;
+        ptr = vas->secondaryColorArray()->bufferObject()->ptr();
+      }
+      if ( mSecondaryColorArray.mPtr != ptr || mSecondaryColorArray.mBufferObject != buf_obj )
+      {
+        if (!mSecondaryColorArray.mEnabled)
+        {
+          glEnableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
+        }
+        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+        glSecondaryColorPointer((int)vas->secondaryColorArray()->glSize(), vas->secondaryColorArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
+        mSecondaryColorArray.mPtr = ptr;
+        mSecondaryColorArray.mBufferObject = buf_obj;
+      }
+    }
+    else
+    {
+      glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
+
+      // restore constant secondary color
+      VL_glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() );
+
+      mSecondaryColorArray.mPtr = 0;
+      mSecondaryColorArray.mBufferObject = 0;
+    }
+    mSecondaryColorArray.mEnabled = enabled;
+  }
+
+  // ----- fog array -----
+
+  enabled = vas->fogCoordArray() != NULL;
+  if ( mFogArray.mEnabled || enabled )
+  {
+    if (enabled)
+    {
+      if ( use_bo && vas->fogCoordArray()->bufferObject()->handle() )
+      {
+        buf_obj = vas->fogCoordArray()->bufferObject()->handle();
+        ptr = 0;
+      }
+      else
+      {
+        buf_obj = 0;
+        ptr = vas->fogCoordArray()->bufferObject()->ptr();
+      }
+      if ( mFogArray.mPtr != ptr || mFogArray.mBufferObject != buf_obj )
+      {
+        if (!mFogArray.mEnabled)
+        {
+          glEnableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
+        }
+        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+        glFogCoordPointer(vas->fogCoordArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
+        mFogArray.mPtr = ptr;
+        mFogArray.mBufferObject = buf_obj;
+      }
+    }
+    else
+    {
+      glDisableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
+      mFogArray.mPtr = 0;
+      mFogArray.mBufferObject = 0;
+    }
+    mFogArray.mEnabled = enabled;
+  }
+
+  // ----- texture coords -----
+
+  for(int tex_coord_i=0; tex_coord_i<textureCoordCount(); ++tex_coord_i)
+  {
+    // texture array info
+    const ArrayAbstract* texarr = vas->texCoordArray(tex_coord_i);
+
+    if ( ! texarr ) {
+      if ( mTexCoordArray[tex_coord_i].mEnabled ) {
+        VL_glClientActiveTexture(GL_TEXTURE0 + tex_coord_i); VL_CHECK_OGL();
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
+        mTexCoordArray[tex_coord_i].mEnabled = false;
+        mTexCoordArray[tex_coord_i].mPtr = 0;
+        mTexCoordArray[tex_coord_i].mBufferObject = 0;
+      }
+    } else {
+      if ( ! mTexCoordArray[tex_coord_i].mEnabled ) {
+        VL_glClientActiveTexture(GL_TEXTURE0 + tex_coord_i); VL_CHECK_OGL();
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
+        mTexCoordArray[tex_coord_i].mEnabled = 1;
+      }
+
+      if ( use_bo && texarr->bufferObject()->handle() )
+      {
+        buf_obj = texarr->bufferObject()->handle();
+        ptr = 0;
+      }
+      else
+      {
+        buf_obj = 0;
+        ptr = texarr->bufferObject()->ptr();
+      }
+      if ( mTexCoordArray[tex_coord_i].mPtr != ptr || mTexCoordArray[tex_coord_i].mBufferObject != buf_obj )
+      {
+        mTexCoordArray[tex_coord_i].mPtr = ptr;
+        mTexCoordArray[tex_coord_i].mBufferObject = buf_obj;
+
+        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+        glTexCoordPointer((int)texarr->glSize(), texarr->glType(), 0/*texarr->stride()*/, ptr/*+ texarr->offset()*/); VL_CHECK_OGL();
+      }
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+void OpenGLContext::bindVAS_Attribs(const IVertexAttribSet* vas, bool use_bo) {
+  int buf_obj = 0;
+  const unsigned char* ptr = 0;
+
+  for(int idx=0; idx<vertexAttribCount(); ++idx)
+  {
+    const VertexAttribInfo& info = vas->vertexAttribArray(idx);
+
+    if ( ! info.data() )
+    {
+      // --- disable ---
+
+      if ( mVertexAttrib[idx].mEnabled ) {
+        VL_glDisableVertexAttribArray( idx ); VL_CHECK_OGL();
+        mVertexAttrib[idx].mEnabled = false;
+        mVertexAttrib[idx].mPtr = 0;
+        mVertexAttrib[idx].mBufferObject = 0;
+        // restore constant vertex attrib
+        glVertexAttrib4fv( idx, mVertexAttribValue[idx].ptr() ); VL_CHECK_OGL();
+      }
+      // make sure it's disabled
+      #if !defined(NDEBUG)
+        GLint enabled = 0;
+        glGetVertexAttribiv( idx, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled); VL_CHECK(!enabled);
+      #endif
+    }
+    else
+    {
+      // --- enable ---
+
+      if ( ! mVertexAttrib[idx].mEnabled ) {
+        VL_glEnableVertexAttribArray( idx ); VL_CHECK_OGL();
+        mVertexAttrib[idx].mEnabled = true;
+      }
+      // make sure it's enabled
+      #if !defined(NDEBUG)
+        GLint enabled = 0;
+        glGetVertexAttribiv( idx, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled); VL_CHECK(enabled);
+      #endif
+
+      if ( use_bo && info.data()->bufferObject()->handle() )
+      {
+        buf_obj = info.data()->bufferObject()->handle();
+        ptr = 0;
+      }
+      else
+      {
+        buf_obj = 0;
+        ptr = info.data()->bufferObject()->ptr();
+      }
+      if ( mVertexAttrib[idx].mPtr != ptr || mVertexAttrib[idx].mBufferObject != buf_obj )
+      {
+        mVertexAttrib[idx].mPtr = ptr;
+        mVertexAttrib[idx].mBufferObject = buf_obj;
+        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+
+        if ( info.interpretation() == VAI_NORMAL )
+        {
+          VL_glVertexAttribPointer( idx, (int)info.data()->glSize(), info.data()->glType(), info.normalize(), /*stride*/0, ptr ); VL_CHECK_OGL();
+        }
+        else
+        if ( info.interpretation() == VAI_INTEGER )
+        {
+          VL_glVertexAttribIPointer( idx, (int)info.data()->glSize(), info.data()->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
+        }
+        else
+        if ( info.interpretation() == VAI_DOUBLE )
+        {
+          VL_glVertexAttribLPointer( idx, (int)info.data()->glSize(), info.data()->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
+        }
+      }
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+void OpenGLContext::bindVAS_Reset()
+{
+  mCurVAS = NULL;
+  mGLSLUpdated = true;
+
+  for(int i=0; i<mVertexAttribCount; ++i) {
+    VL_glDisableVertexAttribArray(i); VL_CHECK_OGL();
+  }
+
+  for(int i=0; i<vertexAttribCount(); ++i)
+  {
+    mVertexAttrib[i].mEnabled = false;
+    mVertexAttrib[i].mPtr = 0;
+    mVertexAttrib[i].mBufferObject = 0;
+  }
+
+  for(int i=0; i<textureCoordCount(); ++i)
+  {
+    mTexCoordArray[i].mEnabled = false;
+    mTexCoordArray[i].mPtr = 0;
+    mTexCoordArray[i].mBufferObject = 0;
+  }
+
+  mVertexArray.mEnabled = false;
+  mVertexArray.mPtr = 0;
+  mVertexArray.mBufferObject = 0;
+
+  mNormalArray.mEnabled = false;
+  mNormalArray.mPtr = 0;
+  mNormalArray.mBufferObject = 0;
+
+  mColorArray.mEnabled = false;
+  mColorArray.mPtr = 0;
+  mColorArray.mBufferObject = 0;
+
+  mSecondaryColorArray.mEnabled = false;
+  mSecondaryColorArray.mPtr = 0;
+  mSecondaryColorArray.mBufferObject = 0;
+
+  mFogArray.mEnabled = false;
+  mFogArray.mPtr = 0;
+  mFogArray.mBufferObject = 0;
+
+  // reset all gl states
+
+  // note this one
+  VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL();
+
+  VL_glBindBuffer(GL_ARRAY_BUFFER, 0); VL_CHECK_OGL();
+
+  if(Has_Fixed_Function_Pipeline)
+  {
+    // iterate backwards so the last active is #0
+    for ( int i=mTextureCoordCount; i--; )
+    {
+      VL_glClientActiveTexture(GL_TEXTURE0 + i); VL_CHECK_OGL();
+      glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
+    }
+
+    glDisableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
+    glDisableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
+    glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
+
+    glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
+    glDisableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
   }
 }
 //-----------------------------------------------------------------------------
@@ -1257,461 +1682,34 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_bo, bool force
 
   // bring opengl to a known state
 
-  if (vas != mCurVAS || force)
+  if ( vas != mCurVAS || mGLSLUpdated || force )
   {
+    // reset all to default/disabled state
 
-    if (!vas || force)
+    if ( ! vas || force )
     {
-      mCurVAS = NULL;
-
-      // reset all internal states
-
-      for(int i=0; i<VL_MAX_GENERIC_VERTEX_ATTRIB; ++i)
-      {
-        mVertexAttrib[i].mEnabled = false; // not used
-        mVertexAttrib[i].mPtr = 0;
-        mVertexAttrib[i].mBufferObject = 0;
-        mVertexAttrib[i].mState = 0;
-      }
-
-      for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
-      {
-        mTexCoordArray[i].mEnabled = false; // not used
-        mTexCoordArray[i].mPtr = 0;
-        mTexCoordArray[i].mBufferObject = 0;
-        mTexCoordArray[i].mState = 0;
-      }
-
-      mVertexArray.mEnabled = false;
-      mVertexArray.mPtr = 0;
-      mVertexArray.mBufferObject = 0;
-      mVertexArray.mState = 0; // not used
-
-      mNormalArray.mEnabled = false;
-      mNormalArray.mPtr = 0;
-      mNormalArray.mBufferObject = 0;
-      mNormalArray.mState = 0; // not used
-
-      mColorArray.mEnabled = false;
-      mColorArray.mPtr = 0;
-      mColorArray.mBufferObject = 0;
-      mColorArray.mState = 0; // not used
-
-      mSecondaryColorArray.mEnabled = false;
-      mSecondaryColorArray.mPtr = 0;
-      mSecondaryColorArray.mBufferObject = 0;
-      mSecondaryColorArray.mState = 0; // not used
-
-      mFogArray.mEnabled = false;
-      mFogArray.mPtr = 0;
-      mFogArray.mBufferObject = 0;
-      mFogArray.mState = 0; // not used
-
-      // reset all gl states
-
-      for(int i=0; i<mMaxVertexAttrib; ++i)
-        VL_glDisableVertexAttribArray(i); VL_CHECK_OGL();
-
-      // note this one
-      VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL();
-
-      VL_glBindBuffer(GL_ARRAY_BUFFER, 0); VL_CHECK_OGL();
-
-      if(Has_Fixed_Function_Pipeline)
-      {
-        // iterate backwards so the last active is #0
-        for ( int i=mTextureSamplerCount; i--; )
-        {
-          VL_glClientActiveTexture(GL_TEXTURE0 + i); VL_CHECK_OGL();
-          glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
-        }
-
-        glDisableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
-        glDisableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
-        glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
-
-        // not supported under GLES
-#if defined(VL_OPENGL)
-        glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
-        glDisableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
-#endif
-      }
+      bindVAS_Reset();
     }
 
     if (vas)
     {
-      int buf_obj = 0;
-      const unsigned char* ptr = 0;
-      bool enabled = false;
-
-      if(Has_Fixed_Function_Pipeline)
+      if ( mGLSLProgram && mGLSLProgram->vl_VertexPosition() != -1 ) {
+        // disable fixed function arrays if enabled
+        if ( mVertexArray.mEnabled ) {
+          bindVAS_Reset();
+        }
+        bindVAS_Attribs( vas, use_bo );
+      } else
+      if( Has_Fixed_Function_Pipeline )
       {
-
-        // ----- vertex array -----
-
-        enabled = vas->vertexArray() != NULL;
-        if ( mVertexArray.mEnabled || enabled )
-        {
-          if (enabled)
-          {
-            if ( use_bo && vas->vertexArray()->bufferObject()->handle() )
-            {
-              buf_obj = vas->vertexArray()->bufferObject()->handle();
-              ptr = 0;
-            }
-            else
-            {
-              buf_obj = 0;
-              ptr = vas->vertexArray()->bufferObject()->ptr();
-            }
-            if ( mVertexArray.mPtr != ptr || mVertexArray.mBufferObject != buf_obj )
-            {
-              if (!mVertexArray.mEnabled)
-              {
-                glEnableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
-              }
-              // mic fixme:
-              // Note: for the moment we threat glBindBuffer and glVertexPointer as an atomic operation.
-              // In the future we'll want to eliminate all direct calls to glBindBuffer and similar an
-              // go through the OpenGLContext that will lazily do everything.
-              VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
-              glVertexPointer((int)vas->vertexArray()->glSize(), vas->vertexArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
-              mVertexArray.mPtr = ptr;
-              mVertexArray.mBufferObject = buf_obj;
-            }
-          }
-          else
-          {
-            glDisableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
-            mVertexArray.mPtr = 0;
-            mVertexArray.mBufferObject = 0;
-          }
-          mVertexArray.mEnabled = enabled;
+        // disable generic vertex attrib arrays if enabled
+        if ( mVertexAttrib[VA_Position].mEnabled ) {
+          bindVAS_Reset();
         }
-
-        // ----- normal array -----
-
-        enabled = vas->normalArray() != NULL;
-        if ( mNormalArray.mEnabled || enabled )
-        {
-          if (enabled)
-          {
-            if ( use_bo && vas->normalArray()->bufferObject()->handle() )
-            {
-              buf_obj = vas->normalArray()->bufferObject()->handle();
-              ptr = 0;
-            }
-            else
-            {
-              buf_obj = 0;
-              ptr = vas->normalArray()->bufferObject()->ptr();
-            }
-            if ( mNormalArray.mPtr != ptr || mNormalArray.mBufferObject != buf_obj )
-            {
-              if (!mNormalArray.mEnabled)
-              {
-                glEnableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
-              }
-              VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL(); 
-              glNormalPointer(vas->normalArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
-              mNormalArray.mPtr = ptr;
-              mNormalArray.mBufferObject = buf_obj;
-            }
-          }
-          else
-          {
-            glDisableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
-
-            // restore constant normal
-            glNormal3f( mNormal.x(), mNormal.y(), mNormal.z() );
-
-            mNormalArray.mPtr = 0;
-            mNormalArray.mBufferObject = 0;
-          }
-          mNormalArray.mEnabled = enabled;
-        }
-
-        // ----- color array -----
-
-        enabled = vas->colorArray() != NULL;
-        if ( mColorArray.mEnabled || enabled )
-        {
-          if (enabled)
-          {
-            if ( use_bo && vas->colorArray()->bufferObject()->handle() )
-            {
-              buf_obj = vas->colorArray()->bufferObject()->handle();
-              ptr = 0;
-            }
-            else
-            {
-              buf_obj = 0;
-              ptr = vas->colorArray()->bufferObject()->ptr();
-            }
-            if ( mColorArray.mPtr != ptr || mColorArray.mBufferObject != buf_obj )
-            {
-              if (!mColorArray.mEnabled)
-              {
-                glEnableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
-              }
-              VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
-              glColorPointer((int)vas->colorArray()->glSize(), vas->colorArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
-              mColorArray.mPtr = ptr;
-              mColorArray.mBufferObject = buf_obj;
-            }
-          }
-          else
-          {
-            glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
-
-            // restore constant color
-            glColor4f( mColor.r(), mColor.g(), mColor.b(), mColor.a() );
-
-            mColorArray.mPtr = 0;
-            mColorArray.mBufferObject = 0;
-          }
-          mColorArray.mEnabled = enabled;
-        }
-
-        // ----- secondary color array -----
-
-        enabled = vas->secondaryColorArray() != NULL;
-        if ( mSecondaryColorArray.mEnabled || enabled )
-        {
-          if (enabled)
-          {
-            if ( use_bo && vas->secondaryColorArray()->bufferObject()->handle() )
-            {
-              buf_obj = vas->secondaryColorArray()->bufferObject()->handle();
-              ptr = 0;
-            }
-            else
-            {
-              buf_obj = 0;
-              ptr = vas->secondaryColorArray()->bufferObject()->ptr();
-            }
-            if ( mSecondaryColorArray.mPtr != ptr || mSecondaryColorArray.mBufferObject != buf_obj )
-            {
-              if (!mSecondaryColorArray.mEnabled)
-              {
-                glEnableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
-              }
-              VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
-              glSecondaryColorPointer((int)vas->secondaryColorArray()->glSize(), vas->secondaryColorArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
-              mSecondaryColorArray.mPtr = ptr;
-              mSecondaryColorArray.mBufferObject = buf_obj;
-            }
-          }
-          else
-          {
-            glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
-
-            // restore constant secondary color
-            VL_glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() );
-
-            mSecondaryColorArray.mPtr = 0;
-            mSecondaryColorArray.mBufferObject = 0;
-          }
-          mSecondaryColorArray.mEnabled = enabled;
-        }
-
-        // ----- fog array -----
-
-        enabled = vas->fogCoordArray() != NULL;
-        if ( mFogArray.mEnabled || enabled )
-        {
-          if (enabled)
-          {
-            if ( use_bo && vas->fogCoordArray()->bufferObject()->handle() )
-            {
-              buf_obj = vas->fogCoordArray()->bufferObject()->handle();
-              ptr = 0;
-            }
-            else
-            {
-              buf_obj = 0;
-              ptr = vas->fogCoordArray()->bufferObject()->ptr();
-            }
-            if ( mFogArray.mPtr != ptr || mFogArray.mBufferObject != buf_obj )
-            {
-              if (!mFogArray.mEnabled)
-              {
-                glEnableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
-              }
-              VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
-              glFogCoordPointer(vas->fogCoordArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
-              mFogArray.mPtr = ptr;
-              mFogArray.mBufferObject = buf_obj;
-            }
-          }
-          else
-          {
-            glDisableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
-            mFogArray.mPtr = 0;
-            mFogArray.mBufferObject = 0;
-          }
-          mFogArray.mEnabled = enabled;
-        }
-
-        // ----- texture coords -----
-
-        // (1) enable pass
-        for(int i=0; i<vas->texCoordArrayCount(); ++i)
-        {
-          // texture array info
-          const ArrayAbstract* texarr = NULL;
-          int tex_unit = 0;
-          vas->getTexCoordArrayAt(i, tex_unit, texarr);
-          VL_CHECK(tex_unit<VL_MAX_TEXTURE_UNITS);
-
-          mTexCoordArray[tex_unit].mState += 1; // 0 -> 1; 1 -> 2;
-          VL_CHECK( mTexCoordArray[tex_unit].mState == 1 || mTexCoordArray[tex_unit].mState == 2 );
-
-          if ( use_bo && texarr->bufferObject()->handle() )
-          {
-            buf_obj = texarr->bufferObject()->handle();
-            ptr = 0;
-          }
-          else
-          {
-            buf_obj = 0;
-            ptr = texarr->bufferObject()->ptr();
-          }
-          if ( mTexCoordArray[tex_unit].mPtr != ptr || mTexCoordArray[tex_unit].mBufferObject != buf_obj )
-          {
-            mTexCoordArray[tex_unit].mPtr = ptr;
-            mTexCoordArray[tex_unit].mBufferObject = buf_obj;
-
-            VL_glClientActiveTexture(GL_TEXTURE0 + tex_unit); VL_CHECK_OGL();
-            VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
-            #if !defined(NDEBUG)
-              if ( Has_GLES_Version_1_1 && texarr->glSize() == 1)
-              {
-                Log::error("OpenGL ES does not allow 1D texture coordinates.\n"); VL_TRAP();
-              }
-            #endif
-            glTexCoordPointer((int)texarr->glSize(), texarr->glType(), 0/*texarr->stride()*/, ptr/*+ texarr->offset()*/); VL_CHECK_OGL();
-
-            // enable if not previously enabled
-            if (mTexCoordArray[tex_unit].mState == 1)
-            {
-              glEnableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
-            }
-            else
-            {
-              VL_CHECK(glIsEnabled(GL_TEXTURE_COORD_ARRAY));
-            }
-          }
-        }
-
-        // (2) disable pass
-        if (mCurVAS)
-        {
-          for(int i=0; i<mCurVAS->texCoordArrayCount(); ++i)
-          {
-            // texture array info
-            const ArrayAbstract* texarr = NULL;
-            int tex_unit = 0;
-            mCurVAS->getTexCoordArrayAt(i, tex_unit, texarr);
-            VL_CHECK(tex_unit<VL_MAX_TEXTURE_UNITS);
-
-            // disable if not used by new VAS
-            if ( mTexCoordArray[tex_unit].mState == 1 )
-            {
-              VL_glClientActiveTexture(GL_TEXTURE0 + tex_unit); VL_CHECK_OGL();
-              glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
-
-              mTexCoordArray[tex_unit].mPtr = 0;
-              mTexCoordArray[tex_unit].mBufferObject = 0;
-            }
-
-            mTexCoordArray[tex_unit].mState >>= 1; // 1 -> 0; 2 -> 1;
-          }
-        }
-
-      } // Has_Fixed_Function_Pipeline
-
-      // ----- vertex attrib -----
-
-      // (1) enable pass
-      for(int i=0; i<vas->vertexAttribArrays().size(); ++i)
-      {
-        const VertexAttribInfo* info = vas->vertexAttribArrays().at(i);
-        int idx = info->attribLocation();
-
-        mVertexAttrib[idx].mState += 1; // 0 -> 1; 1 -> 2;
-        VL_CHECK( mVertexAttrib[idx].mState == 1 || mVertexAttrib[idx].mState == 2 );
-
-        if ( use_bo && info->data()->bufferObject()->handle() )
-        {
-          buf_obj = info->data()->bufferObject()->handle();
-          ptr = 0;
-        }
-        else
-        {
-          buf_obj = 0;
-          ptr = info->data()->bufferObject()->ptr();
-        }
-        if ( mVertexAttrib[idx].mPtr != ptr || mVertexAttrib[idx].mBufferObject != buf_obj )
-        {
-          mVertexAttrib[idx].mPtr = ptr;
-          mVertexAttrib[idx].mBufferObject = buf_obj;
-          VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
-
-          if ( info->interpretation() == VAI_NORMAL )
-          {
-            VL_glVertexAttribPointer( idx, (int)info->data()->glSize(), info->data()->glType(), info->normalize(), /*stride*/0, ptr ); VL_CHECK_OGL();
-          }
-          else
-          if ( info->interpretation() == VAI_INTEGER )
-          {
-            VL_glVertexAttribIPointer( idx, (int)info->data()->glSize(), info->data()->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
-          }
-          else
-          if ( info->interpretation() == VAI_DOUBLE )
-          {
-            VL_glVertexAttribLPointer( idx, (int)info->data()->glSize(), info->data()->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
-          }
-
-          // enable if not previously enabled
-          if (mVertexAttrib[idx].mState == 1)
-          {
-            VL_glEnableVertexAttribArray( idx ); VL_CHECK_OGL();
-          }
-          else
-          {
-            // make sure it is actually enabled
-            #if !defined(NDEBUG)
-              GLint enabled = 0;
-              glGetVertexAttribiv( idx, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled); VL_CHECK(enabled);
-            #endif
-          }
-        }
-      }
-
-      // (2) disable pass
-      if (mCurVAS)
-      {
-        for(int i=0; i<mCurVAS->vertexAttribArrays().size(); ++i)
-        {
-          // vertex array
-          const VertexAttribInfo* info = mCurVAS->vertexAttribArrays().at(i);
-          VL_CHECK(info)
-          int idx = info->attribLocation();
-          // disable if not used by new VAS
-          if ( mVertexAttrib[idx].mState == 1 )
-          {
-            VL_glDisableVertexAttribArray( idx ); VL_CHECK_OGL();
-
-            // restore constant vertex attrib
-            glVertexAttrib4fv( idx, mVertexAttribValue[idx].ptr() ); VL_CHECK_OGL();
-
-            mVertexAttrib[idx].mPtr = 0;
-            mVertexAttrib[idx].mBufferObject = 0;
-          }
-
-          mVertexAttrib[idx].mState >>= 1; // 1 -> 0; 2 -> 1;
-        }
+        bindVAS_Fixed( vas, use_bo );
+      } else {
+        // one of the two must be present!
+        VL_TRAP()
       }
 
       // ----- end -----
@@ -1724,7 +1722,54 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_bo, bool force
   } // if(vas != mCurVAS || force)
 
   mCurVAS = vas;
+  mGLSLUpdated = false;
 
   VL_CHECK_OGL();
+}
+//-----------------------------------------------------------------------------
+void OpenGLContext::useGLSLProgram(const GLSLProgram* glsl)
+{
+  mGLSLUpdated = true;
+
+  if ( glsl )
+  {
+    VL_CHECK_OGL();
+    VL_CHECK( Has_GLSL );
+    bool ok = Has_GLSL;
+
+    // This if is necessary to distinguish the default GLSLProgram which has no shaders.
+    if ( glsl->shaderCount() ) {
+      if ( ! glsl->handle() )
+      {
+        Log::bug("GLSLProgram::useProgram() failed! GLSL program handle is null! (" + String(objectName()) + ")\n");
+        // VL_TRAP()
+        ok = false;
+      }
+
+      if ( ! glsl->linked() )
+      {
+        Log::bug("GLSLProgram::useProgram() failed! GLSL program not linked! (" + String(objectName()) + ")\n");
+        // VL_TRAP()
+        ok = false;
+      }
+    }
+
+    // bind the GLSL program
+    if ( ok )
+    {
+      glUseProgram( glsl->handle() ); VL_CHECK_OGL()
+      mGLSLProgram = glsl;
+    }
+    else
+    {
+      glUseProgram( 0 ); VL_CHECK_OGL()
+      mGLSLProgram = NULL;
+    }
+  }
+  else
+  {
+    glUseProgram( 0 ); VL_CHECK_OGL();
+    mGLSLProgram = NULL;
+  }
 }
 //-----------------------------------------------------------------------------

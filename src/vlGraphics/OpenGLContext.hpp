@@ -453,13 +453,23 @@ namespace vl
     //! Returns true if the OpenGLContext is in an initialized state.
     bool isInitialized() const { return mIsInitialized; }
 
-    //! The number (clamped to VL_MAX_TEXTURE_UNITS) of texture units supported by the current hardware.
-    int textureUnitCount() const { return mTextureSamplerCount; }
+    //! The number (clamped to VA_MaxAttribCount) of generic vertex attributes as returned by glGet(GL_MAX_VERTEX_ATTRIBS)
+    int vertexAttribCount() const { return mVertexAttribCount; }
+
+    //! The number (clamped to VL_MAX_TEXTURE_IMAGE_UNITS) of texture image units supported by the current hardware.
+    int textureImageUnitCount() const { return mTextureImageUnitCount; }
+
+    //! The number (clamped to VL_MAX_LEGACY_TEXTURE_UNITS) of fixed function pipeline texture units supported by the current hardware.
+    //! This is the number of texture units that support vl::TexEnv, vl::TexGen, vl::TextureMatrix and glClientActiveTexture().
+    int textureCoordCount() const { return mTextureCoordCount; }
 
     //! Returns \p true if an OpenGLContext supports double buffering.
     bool hasDoubleBuffer() const { return mHasDoubleBuffer; }
 
     // --- render states management ---
+
+    //! Activates the given GLSLProgram or unbinds the current one if `glsl` is NULL.
+    void useGLSLProgram(const GLSLProgram* glsl);
 
     //! Activates the specified vertex attribute set - For internal use only.
     //! \param vas The IVertexAttribSet to be activated. It can be NULL, in which case all vertex attributes are disabled.
@@ -467,6 +477,9 @@ namespace vl
     //! \param use_vbo Whether vertex-buffer-objects should be used when activating the vertex attributes.
     //! \param force Binds \p vas even if it was the last to be activated (this is also valid for NULL).
     void bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool force);
+    void bindVAS_Attribs(const IVertexAttribSet* vas, bool use_vbo);
+    void bindVAS_Fixed(const IVertexAttribSet* vas, bool use_vbo);
+    void bindVAS_Reset();
 
     //! Applies an EnableSet to an OpenGLContext - Typically for internal use only.
     void applyEnables( const EnableSet* cur );
@@ -481,9 +494,9 @@ namespace vl
     void resetRenderStates();
 
     //! Defines the default render state slot to be used by the opengl context.
-    void setDefaultRenderState(const RenderStateSlot& rs_slot) 
-    { 
-      mDefaultRenderStates[rs_slot.type()] = rs_slot; 
+    void setDefaultRenderState(const RenderStateSlot& rs_slot)
+    {
+      mDefaultRenderStates[rs_slot.type()] = rs_slot;
       // if we are in the default render state then apply it immediately
       if (!mCurrentRenderStateSet->hasKey(rs_slot.type()))
       {
@@ -498,25 +511,29 @@ namespace vl
     void resetContextStates(EResetContextStates start_or_finish);
 
     //! Declares that texture unit \p unit_i is currently bound to the specified texture target. - For internal use only.
-    void setTexUnitBinding(int unit_i, ETextureDimension target) 
-    { 
-      VL_CHECK(unit_i <= VL_MAX_TEXTURE_UNITS);
-      mTexUnitBinding[unit_i] = target; 
+    void setTexUnitBinding(int unit_i, ETextureDimension target)
+    {
+      VL_CHECK(unit_i <= VL_MAX_TEXTURE_IMAGE_UNITS);
+      mTexUnitBinding[unit_i] = target;
     }
 
     //! Returnes the texture target currently active for the specified texture unit. - For internal use only.
     ETextureDimension texUnitBinding(int unit_i) const
     {
-      VL_CHECK(unit_i <= VL_MAX_TEXTURE_UNITS);
-      return mTexUnitBinding[unit_i]; 
+      VL_CHECK(unit_i <= VL_MAX_TEXTURE_IMAGE_UNITS);
+      return mTexUnitBinding[unit_i];
     }
+
+    const GLSLProgram* glslProgram() const { return mGLSLProgram.get(); }
+    GLSLProgram* glslProgram() { return mGLSLProgram.get(); }
+
 
     //! Returns \p true if the two UniformSet contain at least one Uniform variable with the same name.
     static bool areUniformsColliding(const UniformSet* u1, const UniformSet* u2);
 
     //! Checks whether the OpenGL state is clean or not.
     //! \par Clean state conditions:
-    //! - All functionalities must be disabled, no GL_LIGHTING, GL_DEPTH_TEST, GL_LIGHTn, GL_CLIP_PLANEn etc. enabled, 
+    //! - All functionalities must be disabled, no GL_LIGHTING, GL_DEPTH_TEST, GL_LIGHTn, GL_CLIP_PLANEn etc. enabled,
     //!   with the sole exception of GL_MULTISAMPLE and GL_DITHER.
     //! - All buffer objects targets such as GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER etc. must be bound to buffer object #0.
     //! - Current texture unit and client texture unit must be #0.
@@ -539,7 +556,7 @@ namespace vl
     const fvec3& normal() const { return mNormal; }
     const fvec4& color() const { return mColor; }
     const fvec3& secondaryColor() const { return mSecondaryColor; }
-    const fvec4& vertexAttribValue(int i) const { VL_CHECK(i<VL_MAX_GENERIC_VERTEX_ATTRIB); return mVertexAttribValue[i]; }
+    const fvec4& vertexAttribValue(int i) const { VL_CHECK(i<VA_MaxAttribCount); return mVertexAttribValue[i]; }
 
   protected:
     ref<Framebuffer> mLeftFramebuffer;
@@ -548,8 +565,9 @@ namespace vl
     std::vector< ref<UIEventListener> > mEventListeners;
     std::set<EKey> mKeyboard;
     OpenGLContextFormat mGLContextInfo;
-    int mMaxVertexAttrib;
-    int mTextureSamplerCount;
+    int mVertexAttribCount;
+    int mTextureImageUnitCount;
+    int mTextureCoordCount;
     bool mMouseVisible;
     bool mContinuousUpdate;
     bool mIgnoreNextMouseMoveEvent;
@@ -559,7 +577,7 @@ namespace vl
     std::string mExtensions;
 
     // --- Render States ---
-  
+
     // default render states
     RenderStateSlot mDefaultRenderStates[RS_RenderStateCount];
 
@@ -572,15 +590,18 @@ namespace vl
     ref< NaryQuickMap<ERenderState, RenderStateSlot, RS_RenderStateCount> > mNewRenderStateSet;
 
     // for each texture unit tells which target has been bound last.
-    ETextureDimension mTexUnitBinding[VL_MAX_TEXTURE_UNITS];
+    ETextureDimension mTexUnitBinding[VL_MAX_TEXTURE_IMAGE_UNITS];
+
+    // current GLSL
+    ref<GLSLProgram> mGLSLProgram;
+    bool mGLSLUpdated;
 
   private:
     struct VertexArrayInfo
     {
-      VertexArrayInfo(): mBufferObject(0), mPtr(0), mState(0), mEnabled(false) {}
+      VertexArrayInfo(): mBufferObject(0), mPtr(0), mEnabled(false) {}
       int   mBufferObject;
       const unsigned char* mPtr;
-      int mState;
       bool mEnabled;
     };
 
@@ -592,7 +613,7 @@ namespace vl
     VertexArrayInfo mColorArray;
     VertexArrayInfo mSecondaryColorArray;
     VertexArrayInfo mFogArray;
-    VertexArrayInfo mTexCoordArray[VL_MAX_TEXTURE_UNITS];
+    VertexArrayInfo mTexCoordArray[VA_MaxTexCoordCount];
     VertexArrayInfo mVertexAttrib[VA_MaxAttribCount];
 
     // save and restore constant attributes
@@ -600,6 +621,7 @@ namespace vl
     fvec4 mColor;
     fvec3 mSecondaryColor;
     fvec4 mVertexAttribValue[VA_MaxAttribCount];
+    GLuint mDefaultVAO;
 
   private:
     void setupDefaultRenderStates();
