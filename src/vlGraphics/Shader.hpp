@@ -790,34 +790,34 @@ namespace vl
     void setBackFlatColor(const fvec4& color);
     void setFlatColor(const fvec4& color);
 
-    void setAmbient(fvec4 color)       { mFrontAmbient   = mBackAmbient   = color; }
-    void setDiffuse(fvec4 color)       { mFrontDiffuse   = mBackDiffuse   = color; }
-    void setSpecular(fvec4 color)      { mFrontSpecular  = mBackSpecular  = color; }
-    void setEmission(fvec4 color)      { mFrontEmission  = mBackEmission  = color; }
+    void setAmbient(const fvec4& color)       { mFrontAmbient   = mBackAmbient   = color; }
+    void setDiffuse(const fvec4& color)       { mFrontDiffuse   = mBackDiffuse   = color; }
+    void setSpecular(const fvec4& color)      { mFrontSpecular  = mBackSpecular  = color; }
+    void setEmission(const fvec4& color)      { mFrontEmission  = mBackEmission  = color; }
     void setShininess(float shininess) { mFrontShininess = mBackShininess = shininess; }
 
-    void setFrontAmbient(fvec4 color)  { mFrontAmbient = color; }
-    void setFrontDiffuse(fvec4 color)  { mFrontDiffuse = color; }
-    void setFrontSpecular(fvec4 color) { mFrontSpecular = color; }
-    void setFrontEmission(fvec4 color) { mFrontEmission = color; }
+    void setFrontAmbient(const fvec4& color)  { mFrontAmbient = color; }
+    void setFrontDiffuse(const fvec4& color)  { mFrontDiffuse = color; }
+    void setFrontSpecular(const fvec4& color) { mFrontSpecular = color; }
+    void setFrontEmission(const fvec4& color) { mFrontEmission = color; }
     void setFrontShininess(float shininess) { mFrontShininess=shininess; }
 
-    fvec4 frontAmbient() const   { return mFrontAmbient; }
-    fvec4 frontDiffuse() const   { return mFrontDiffuse; }
-    fvec4 frontSpecular() const  { return mFrontSpecular; }
-    fvec4 frontEmission() const  { return mFrontEmission; }
+    const fvec4& frontAmbient() const   { return mFrontAmbient; }
+    const fvec4& frontDiffuse() const   { return mFrontDiffuse; }
+    const fvec4& frontSpecular() const  { return mFrontSpecular; }
+    const fvec4& frontEmission() const  { return mFrontEmission; }
     float frontShininess() const { return mFrontShininess; }
 
-    void setBackAmbient(fvec4 color)  { mBackAmbient = color; }
-    void setBackDiffuse(fvec4 color)  { mBackDiffuse = color; }
-    void setBackSpecular(fvec4 color) { mBackSpecular = color; }
-    void setBackEmission(fvec4 color) { mBackEmission = color; }
+    void setBackAmbient(const fvec4& color)  { mBackAmbient = color; }
+    void setBackDiffuse(const fvec4& color)  { mBackDiffuse = color; }
+    void setBackSpecular(const fvec4& color) { mBackSpecular = color; }
+    void setBackEmission(const fvec4& color) { mBackEmission = color; }
     void setBackShininess(float shininess) { mBackShininess=shininess; }
 
-    fvec4 backAmbient() const   { return mBackAmbient; }
-    fvec4 backDiffuse() const   { return mBackDiffuse; }
-    fvec4 backSpecular() const  { return mBackSpecular; }
-    fvec4 backEmission() const  { return mBackEmission; }
+    const fvec4& backAmbient() const   { return mBackAmbient; }
+    const fvec4& backDiffuse() const   { return mBackDiffuse; }
+    const fvec4& backSpecular() const  { return mBackSpecular; }
+    const fvec4& backEmission() const  { return mBackEmission; }
     float backShininess() const { return mBackShininess; }
 
     // color material
@@ -876,15 +876,16 @@ namespace vl
     
     void setColorControl(EColorControl colorcontrol) { mColorControl = colorcontrol; }
     
-    void setAmbientColor(fvec4 ambientcolor) { mAmbientColor = ambientcolor; }
-    
+
+    void setAmbientColor(const fvec4& ambientcolor) { mAmbientColor = ambientcolor; }
     bool localViewer() const { return mLocalViewer; }
     
     bool twoSide() const { return mTwoSide; }
     
     EColorControl colorControl() const { return mColorControl; }
     
-    fvec4 ambientColor() const { return mAmbientColor; }
+
+    const fvec4& ambientColor() const { return mAmbientColor; }
 
     virtual ref<RenderState> clone() const
     {
@@ -909,20 +910,19 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::Fog, RenderStateNonIndexed)
 
   public:
-    Fog(EFogMode mode=FM_LINEAR, fvec4 color=fvec4(0,0,0,0), float density=1, float start=0, float end=1):
+    Fog(EFogMode mode=FM_LINEAR, const fvec4& color=fvec4(0,0,0,0), float density=1, float start=0, float end=1):
       mColor(color), mMode(mode), mDensity(density), mStart(start), mEnd(end)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
+
     virtual ERenderState type() const { return RS_Fog; }
-    
+
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
-    
-    void set(EFogMode mode, fvec4 color, float density, float start, float end) { mColor = color; mMode = mode; mDensity = density; mStart = start; mEnd = end; }
-    
-    void setColor(fvec4 color) { mColor = color; }
-    
+
+    void set(EFogMode mode, const fvec4& color, float density, float start, float end) { mColor = color; mMode = mode; mDensity = density; mStart = start; mEnd = end; }
+
+    void setColor(const fvec4& color) { mColor = color; }
     void setMode(EFogMode mode) { mMode = mode; }
     
     void setDensity(float density) { mDensity = density; }
@@ -930,9 +930,9 @@ namespace vl
     void setStart(float start) { mStart = start; }
     
     void setEnd(float end) { mEnd = end; }
-    
-    fvec4 color() const { return mColor; }
-    
+
+    const fvec4& color() const { return mColor; }
+
     EFogMode mode() const { return mMode; }
     
     float density() const { return mDensity; }
@@ -1457,7 +1457,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::BlendColor, RenderStateNonIndexed)
 
   public:
-    BlendColor(fvec4 blendcolor=fvec4(0,0,0,0)): mBlendColor(blendcolor)
+    BlendColor(const fvec4& blendcolor=fvec4(0,0,0,0)): mBlendColor(blendcolor)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -1466,9 +1466,9 @@ namespace vl
 
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
-    void set(fvec4 blendcolor) { mBlendColor = blendcolor; }
+    void set(const fvec4& blendcolor) { mBlendColor = blendcolor; }
 
-    fvec4 blendColor() const { return mBlendColor; }
+    const fvec4& blendColor() const { return mBlendColor; }
 
     virtual ref<RenderState> clone() const
     {
@@ -1601,8 +1601,8 @@ namespace vl
     ETexEnvMode combineRGB() const { return mCombineRGB; }
     void setCombineAlpha(ETexEnvMode combineAlpha) { mCombineAlpha = combineAlpha; }
     ETexEnvMode combineAlpha() const { return mCombineAlpha; }
-    void setColor(fvec4 color) { mColor = color; }
-    fvec4 color() const { return mColor; }
+    void setColor(const fvec4& color) { mColor = color; }
+    const fvec4& color() const { return mColor; }
     void setRGBScale(float rgbscale) { mRGBScale = rgbscale; }
     float rgbScale() const { return mRGBScale; }
     void setAlphaScale(float alphascale) { mAlphaScale = alphascale; }
@@ -1689,32 +1689,32 @@ namespace vl
     virtual ERenderState type() const { return RS_TexGen; }
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
-    void setEyePlaneS(fvec4 plane) { mEyePlaneS = plane; }
-    void setObjectPlaneS(fvec4 plane) { mObjectPlaneS = plane; }
+    void setEyePlaneS(const fvec4& plane) { mEyePlaneS = plane; }
+    void setObjectPlaneS(const fvec4& plane) { mObjectPlaneS = plane; }
     void setGenModeS(ETexGenMode mode) { mGenModeS = mode; }
-    fvec4 eyePlaneS() const { return mEyePlaneS; }
-    fvec4 objectPlaneS() const { return mObjectPlaneS; }
+    const fvec4& eyePlaneS() const { return mEyePlaneS; }
+    const fvec4& objectPlaneS() const { return mObjectPlaneS; }
     ETexGenMode genModeS() const { return mGenModeS; }
 
-    void setEyePlaneT(fvec4 plane) { mEyePlaneT = plane; }
-    void setObjectPlaneT(fvec4 plane) { mObjectPlaneT = plane; }
+    void setEyePlaneT(const fvec4& plane) { mEyePlaneT = plane; }
+    void setObjectPlaneT(const fvec4& plane) { mObjectPlaneT = plane; }
     void setGenModeT(ETexGenMode mode) { mGenModeT = mode; }
-    fvec4 eyePlaneT() const { return mEyePlaneT; }
-    fvec4 objectPlaneT() const { return mObjectPlaneT; }
+    const fvec4& eyePlaneT() const { return mEyePlaneT; }
+    const fvec4& objectPlaneT() const { return mObjectPlaneT; }
     ETexGenMode genModeT() const { return mGenModeT; }
 
-    void setEyePlaneR(fvec4 plane) { mEyePlaneR = plane; }
-    void setObjectPlaneR(fvec4 plane) { mObjectPlaneR = plane; }
+    void setEyePlaneR(const fvec4& plane) { mEyePlaneR = plane; }
+    void setObjectPlaneR(const fvec4& plane) { mObjectPlaneR = plane; }
     void setGenModeR(ETexGenMode mode) { mGenModeR = mode; }
-    fvec4 eyePlaneR() const { return mEyePlaneR; }
-    fvec4 objectPlaneR() const { return mObjectPlaneR; }
+    const fvec4& eyePlaneR() const { return mEyePlaneR; }
+    const fvec4& objectPlaneR() const { return mObjectPlaneR; }
     ETexGenMode genModeR() const { return mGenModeR; }
 
-    void setEyePlaneQ(fvec4 plane) { mEyePlaneQ = plane; }
-    void setObjectPlaneQ(fvec4 plane) { mObjectPlaneQ = plane; }
+    void setEyePlaneQ(const fvec4& plane) { mEyePlaneQ = plane; }
+    void setObjectPlaneQ(const fvec4& plane) { mObjectPlaneQ = plane; }
     void setGenModeQ(ETexGenMode mode) { mGenModeQ = mode; }
-    fvec4 eyePlaneQ() const { return mEyePlaneQ; }
-    fvec4 objectPlaneQ() const { return mObjectPlaneQ; }
+    const fvec4& eyePlaneQ() const { return mEyePlaneQ; }
+    const fvec4& objectPlaneQ() const { return mObjectPlaneQ; }
     ETexGenMode genModeQ() const { return mGenModeQ; }
 
     virtual ref<RenderState> clone() const
