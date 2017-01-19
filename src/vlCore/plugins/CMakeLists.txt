@@ -48,18 +48,26 @@ if(VL_IO_2D_JPG OR VL_IO_2D_TIFF)
 endif()
 
 if(VL_IO_2D_DICOM)
-	set(VL_IO_2D_GDCM_LIB_DIR "" CACHE PATH "GDCM library directory")
-	set(VL_IO_2D_GDCM_LIBRARIES "FILLME" CACHE LIST "GDCM libraries (semicolon separated)")
-	set(VL_IO_2D_GDCM_INC_DIR "FILLME" CACHE PATH "GDCM include directory")
+	FIND_PACKAGE(GDCM REQUIRED)
 
-	set(_GDCM_LIBS "")
-	foreach(lib ${VL_IO_2D_GDCM_LIBRARIES})
-		list(APPEND _GDCM_LIBS "${VL_IO_2D_GDCM_LIB_DIR}/${lib}")
-	endforeach()
+        MESSAGE(STATUS, ${GDCM_INCLUDE_DIRS})
+        MESSAGE(STATUS, ${GDCM_LIBRARY_DIRS})
+        
+        if(WIN32)
+            file(GLOB _gdcm_libs "${GDCM_LIBRARY_DIRS}/gdcm*.lib")
+        else()
+            file(GLOB _gdcm_libs "${GDCM_LIBRARY_DIRS}/libgdcm*.so*")
+        endif()
 
+        MESSAGE(STATUS, ${_gdcm_libs})
+        
+        set(VL_IO_2D_GDCM_LIB_DIR ${GDCM_LIBRARY_DIRS} CACHE PATH "GDCM library directory")
+	set(VL_IO_2D_GDCM_LIBRARIES ${_gdcm_libs} CACHE LIST "GDCM libraries (semicolon separated)")
+	set(VL_IO_2D_GDCM_INC_DIR ${GDCM_INCLUDE_DIRS} CACHE PATH "GDCM include directory")
+	
 	VL_PROJECT_ADD(VLCORE
 		INCLUDE_DIRECTORIES "${VL_IO_2D_GDCM_INC_DIR}"
-		LINK_LIBRARIES "${_GDCM_LIBS}"
+		LINK_LIBRARIES "${VL_IO_2D_GDCM_LIBRARIES}"
 	)
 else()
 	unset(VL_IO_2D_GDCM_LIB_DIR CACHE)
