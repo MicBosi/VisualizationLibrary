@@ -40,9 +40,19 @@ add_subdirectory("tools")
 # GLUT
 option(VL_GUI_GLUT_SUPPORT "Build GLUT support" OFF)
 if(VL_GUI_GLUT_SUPPORT)
-	set(GLUT_ROOT_PATH "${3RDPARTY_DIR}")
-	find_package(GLUT REQUIRED)
-	add_subdirectory("vlGLUT")
+  set(GLUT_ROOT_PATH "${3RDPARTY_DIR}")
+  find_package(GLUT REQUIRED)
+  add_subdirectory("vlGLUT")
+endif()
+
+# GLFW
+option(VL_GUI_GLFW_SUPPORT "Build GLFW support" OFF)
+if(VL_GUI_GLFW_SUPPORT)
+  # TODO: is there a better and portable method?
+  set(GLFW_INCLUDE_DIR "" CACHE PATH "Path to directory containing 'GLFW' include dir")
+  set(GLFW_glfw3dll_LIB "" CACHE FILEPATH "Path to GLFW library (must be compiled in DLL/PIC mode)")
+  add_definitions(-DGLFW_DLL)
+  add_subdirectory("vlGLFW")
 endif()
 
 # Qt4
@@ -118,6 +128,7 @@ endif()
 ################################################################################
 
 cmake_dependent_option(VL_GUI_GLUT_EXAMPLES "Build GLUT examples" ON "VL_GUI_GLUT_SUPPORT" OFF)
+cmake_dependent_option(VL_GUI_GLFW_EXAMPLES "Build GLFW examples" ON "VL_GUI_GLFW_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_QT4_EXAMPLES "Build Qt4 examples" ON "VL_GUI_QT4_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_QT5_EXAMPLES "Build Qt5 examples" ON "VL_GUI_QT5_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_MFC_EXAMPLES "Build MFC examples" ON "VL_GUI_MFC_SUPPORT" OFF)

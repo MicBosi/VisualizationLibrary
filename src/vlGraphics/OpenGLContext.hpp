@@ -101,9 +101,9 @@ namespace vl
   protected:
     ivec4 mRGBABits;
     ivec4 mAccumRGBABits;
-    bool mHasDoubleBuffer;
     int mZBufferBits;
     int mStencilBufferBits;
+    bool mHasDoubleBuffer;
     bool mHasMultisample;
     int mMultisampleSamples;
     bool mStereo;
