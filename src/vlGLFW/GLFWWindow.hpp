@@ -144,6 +144,8 @@ namespace vlGLFW
 
     static void glfw_scroll_callback(GLFWwindow *, double, double);
 
+    static void glfw_drop_callback(GLFWwindow *, int, const char**);
+
   protected:
     typedef std::map< ::GLFWwindow*, vlGLFW::GLFWWindow* > WinMapType;
     static WinMapType mWinMap;
