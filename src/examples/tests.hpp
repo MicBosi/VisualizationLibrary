@@ -75,6 +75,7 @@ BaseDemo* Create_App_CullingBenchmark();
 BaseDemo* Create_App_MarchingCubes();
 BaseDemo* Create_App_Interpolators();
 BaseDemo* Create_App_Extrusion();
+BaseDemo* Create_App_Extrusions();
 BaseDemo* Create_App_Tessellator();
 BaseDemo* Create_App_TessellationShader();
 BaseDemo* Create_App_Molecules();
@@ -188,6 +189,7 @@ public:
 #if defined(VL_OPENGL)
       { "tessellator", Create_App_Tessellator(), 10,10, 512, 512, vl::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
       { "extrusion", Create_App_Extrusion(), 10,10, 512, 512, vl::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
+	  { "extrusions", Create_App_Extrusions(), 10,10, 512, 512, vl::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
 #endif
       { "interpolator", Create_App_Interpolators(), 10,10, 512, 512, vl::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
       { "molecule", Create_App_Molecules(), 10,10, 512, 512, vl::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
