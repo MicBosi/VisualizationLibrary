@@ -517,7 +517,7 @@ vl::EKey GLFWWindow::translateKey(int key, int scancode, int mods)
     case GLFW_KEY_LEFT_BRACKET: return vl::Key_LeftBracket;
     case GLFW_KEY_BACKSLASH: return vl::Key_BackSlash;
     case GLFW_KEY_RIGHT_BRACKET: return vl::Key_RightBracket;
-    //case GLFW_KEY_GRAVE_ACCENT:
+    case GLFW_KEY_GRAVE_ACCENT: vl::Key_QuoteLeft;
     //case GLFW_KEY_WORLD_1:
     //case GLFW_KEY_WORLD_2:
     case GLFW_KEY_ESCAPE: return vl::Key_Escape;
@@ -536,7 +536,7 @@ vl::EKey GLFWWindow::translateKey(int key, int scancode, int mods)
     case GLFW_KEY_END: return vl::Key_End;
     //case GLFW_KEY_CAPS_LOCK:
     //case GLFW_KEY_SCROLL_LOCK:
-    //case GLFW_KEY_NUM_LOCK: return vl
+    //case GLFW_KEY_NUM_LOCK:
     case GLFW_KEY_PRINT_SCREEN: vl::Key_Print;
     case GLFW_KEY_PAUSE: return vl::Key_Pause;
     case GLFW_KEY_F1: return vl::Key_F1;
@@ -581,13 +581,13 @@ vl::EKey GLFWWindow::translateKey(int key, int scancode, int mods)
     case GLFW_KEY_KP_ADD: return vl::Key_Plus;
     case GLFW_KEY_KP_ENTER: return vl::Key_Return;
     case GLFW_KEY_KP_EQUAL: return vl::Key_Equal;
-    case GLFW_KEY_LEFT_SHIFT: return vl::Key_LeftShift;
-    case GLFW_KEY_LEFT_CONTROL: return vl::Key_LeftCtrl;
-    case GLFW_KEY_LEFT_ALT: return vl::Key_LeftAlt;
-    //case GLFW_KEY_LEFT_SUPER: windows key
-    case GLFW_KEY_RIGHT_SHIFT: return vl::Key_RightShift;
-    case GLFW_KEY_RIGHT_CONTROL: return vl::Key_RightCtrl;
-    case GLFW_KEY_RIGHT_ALT: return vl::Key_RightAlt;
+    case GLFW_KEY_LEFT_SHIFT: return vl::Key_Shift;
+    case GLFW_KEY_LEFT_CONTROL: return vl::Key_Ctrl;
+    case GLFW_KEY_LEFT_ALT: return vl::Key_Alt;
+    //case GLFW_KEY_LEFT_SUPER:
+    case GLFW_KEY_RIGHT_SHIFT: return vl::Key_Shift;
+    case GLFW_KEY_RIGHT_CONTROL: return vl::Key_Ctrl;
+    case GLFW_KEY_RIGHT_ALT: return vl::Key_Alt;
     //case GLFW_KEY_RIGHT_SUPER:
     // case GLFW_KEY_MENU:
   }
