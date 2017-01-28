@@ -22,7 +22,7 @@ include_directories("../src/3rdparty/libtiff")
 include_directories("../src/3rdparty/zlib")
 
 # List of "2D IO" plugins
-set(VLCORE_PLUGINS "BMP" "DAT" "DDS" "DICOM" "JPG" "PNG" "TGA" "TIFF")
+set(VLCORE_PLUGINS "BMP" "DAT" "MHD" "DDS" "DICOM" "JPG" "PNG" "TGA" "TIFF")
 set(INSTALL_DIR "${VL_INCLUDE_INSTALL_DIR}/vlCore/plugins")
 
 # All plugins are enabled by default, except for DICOM
@@ -52,7 +52,7 @@ if(VL_IO_2D_DICOM)
 
         MESSAGE(STATUS, ${GDCM_INCLUDE_DIRS})
         MESSAGE(STATUS, ${GDCM_LIBRARY_DIRS})
-        
+
         if(WIN32)
             file(GLOB _gdcm_libs "${GDCM_LIBRARY_DIRS}/gdcm*.lib")
         else()
@@ -60,11 +60,11 @@ if(VL_IO_2D_DICOM)
         endif()
 
         MESSAGE(STATUS, ${_gdcm_libs})
-        
+
         set(VL_IO_2D_GDCM_LIB_DIR ${GDCM_LIBRARY_DIRS} CACHE PATH "GDCM library directory")
 	set(VL_IO_2D_GDCM_LIBRARIES ${_gdcm_libs} CACHE LIST "GDCM libraries (semicolon separated)")
 	set(VL_IO_2D_GDCM_INC_DIR ${GDCM_INCLUDE_DIRS} CACHE PATH "GDCM include directory")
-	
+
 	VL_PROJECT_ADD(VLCORE
 		INCLUDE_DIRECTORIES "${VL_IO_2D_GDCM_INC_DIR}"
 		LINK_LIBRARIES "${VL_IO_2D_GDCM_LIBRARIES}"

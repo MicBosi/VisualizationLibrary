@@ -52,9 +52,6 @@ public:
     /* Initialize the OpenGL context and window properties */
     glfw_window->initGLFWWindow( title, format, width, height );
 
-    /* show the window */
-    glfw_window->show();
-
     /* run GLFW message loop */
     while ( glfw_window->handle() )
     {

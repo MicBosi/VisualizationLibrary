@@ -351,7 +351,7 @@ public:
 
     if( files.size() == 1 ) // if there is one file load it directly
     {
-      if ( files[0].endsWith( ".dat" ) || files[0].endsWith( ".dds" ) )
+      if ( files[0].endsWith( ".dat" ) || files[0].endsWith( ".dds" ) || files[0].endsWith( ".mhd" ) )
       {
         mVolumeImage = loadImage( files[0] );
         if ( mVolumeImage ) {
