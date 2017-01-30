@@ -355,6 +355,13 @@ public:
       {
         mVolumeImage = loadImage( files[0] );
 
+        // CT volumes are often in Hounsfield units saved as signed 16 bits ints ranging from -1000 to +3000.
+        // You can keep the values as they are but keep in mind that when OpenGL converts that image to a texture
+        // the values are mapped to a 0 ... 1 range following the OpenGL rules defined in the manual, so to render
+        // them properly you'll need to do an appropriate scaling operation in the GLSL shader.
+        // In the example below we prefer to scale/contrast the image values directly so we can reuse the usual
+        // shaders.
+
         // If image format is SHORT we assume it contains Hounsfield units so we rescale its values for
         // optimal visibility. Note that you can do this in the shader as well.
         if ( mVolumeImage->type() == vl::IT_SHORT ) {
