@@ -59,16 +59,16 @@ namespace vl
     OpenGLContextFormat():
       mRGBABits(ivec4(8,8,8,0)),
       mAccumRGBABits(ivec4(0,0,0,0)),
-      mHasDoubleBuffer(true),
       mZBufferBits(24),
       mStencilBufferBits(8),
-      mHasMultisample(false),
       mMultisampleSamples(16),
+      mContextClientVersion(1),
+      mHasDoubleBuffer(true),
+      mHasMultisample(false),
       mStereo(false),
       mFullscreen(false),
       mVSync(false),
-      mContextClientVersion(1),
-      mProfile(GLP_Default) {}
+      mProfile(GLP_Compatibility) {}
 
     void setRGBABits(int r, int g, int b, int a) { mRGBABits = ivec4(r,g,b,a); }
     void setAccumRGBABits(int r, int g, int b, int a) { mAccumRGBABits = ivec4(r,g,b,a); }
@@ -107,13 +107,13 @@ namespace vl
     ivec4 mAccumRGBABits;
     int mZBufferBits;
     int mStencilBufferBits;
+    int mMultisampleSamples;
+    int mContextClientVersion;
     bool mHasDoubleBuffer;
     bool mHasMultisample;
-    int mMultisampleSamples;
     bool mStereo;
     bool mFullscreen;
     bool mVSync;
-    int mContextClientVersion;
     EOpenGLProfile mProfile;
   };
   //-----------------------------------------------------------------------------
