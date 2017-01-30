@@ -66,7 +66,7 @@ ref<Image> vl::loadMHD(VirtualFile* file)
 
   ref<TextStream> stream = new TextStream(file);
   std::string line;
-  std::map<String, String> keyvals;
+  vl::ref<KeyValues> keyvals = new KeyValues;
   std::vector<String> keyval;
   String entry;
 
@@ -77,7 +77,7 @@ ref<Image> vl::loadMHD(VirtualFile* file)
     if ( keyval.size() == 2 ) {
       keyval[0].trim();
       keyval[1].trim();
-      keyvals[ keyval[0] ] = keyval[1];
+      keyvals->set( keyval[0] ) = keyval[1];
     }
   }
 
@@ -87,10 +87,10 @@ ref<Image> vl::loadMHD(VirtualFile* file)
   fvec3 element_spacing;
   int width=0, height=0, depth=0, bytealign=1;
   EImageFormat format = vl::IF_LUMINANCE;
-  EImageType type = vl::IT_UNSIGNED_SHORT;
+  EImageType type = vl::IT_SHORT;
   String raw_file;
 
-  for( std::map<String, String>::const_iterator it = keyvals.begin(); it != keyvals.end(); ++it )
+  for( std::map<String, String>::const_iterator it = keyvals->keyValueMap().begin(); it != keyvals->keyValueMap().end(); ++it )
   {
     const String& key = it->first;
     const String& val = it->second;
@@ -173,7 +173,9 @@ ref<Image> vl::loadMHD(VirtualFile* file)
   ref<VirtualFile> rawf = defFileSystem()->locateFile( raw_file );
   if (rawf)
   {
-    return loadRAW( rawf.get(), -1, width, height, depth, bytealign, format, type );
+    vl::ref<Image> img = loadRAW( rawf.get(), 0, width, height, depth, bytealign, format, type );
+    img->setTags( keyvals.get() );
+    return img;
   }
   else
   {

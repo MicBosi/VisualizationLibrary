@@ -112,6 +112,7 @@ ref<ResourceDatabase> STLLoader::loadBinary(VirtualFile* file)
   res_db->resources().push_back( effect.get() );
   return res_db;
 }
+//-----------------------------------------------------------------------------
 ref<ResourceDatabase> STLLoader::loadAscii(VirtualFile* file)
 {
   TextStream line_reader;
@@ -167,6 +168,7 @@ ref<ResourceDatabase> STLLoader::loadAscii(VirtualFile* file)
   res_db->resources().push_back( effect.get() );
   return res_db;
 }
+//-----------------------------------------------------------------------------
 ref<ResourceDatabase> STLLoader::loadSTL(VirtualFile* file)
 {
   file->open(OM_ReadOnly);
@@ -175,17 +177,17 @@ ref<ResourceDatabase> STLLoader::loadSTL(VirtualFile* file)
 
   file->read(header,5);
   ref<ResourceDatabase> res_db;
-  if (strcmp((char*)header,"solid") == 0)
+  if ( strcmp( (char*)header, "solid" ) == 0 )
   {
     // ascii
     file->seekSet(0);
-    res_db = loadAscii(file);
+    res_db = loadAscii( file );
   }
   else
   {
     // binary
     file->seekSet(0);
-    res_db = loadBinary(file);
+    res_db = loadBinary( file );
   }
 
   file->close();
