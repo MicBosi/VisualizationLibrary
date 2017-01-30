@@ -467,6 +467,24 @@ void GLFWWindow::setMousePosition(int x, int y)
 
 vl::EKey GLFWWindow::translateKey(int key, int scancode, int mods)
 {
+  // Other keys depending on keyboard layout
+  //  vl::Key_Exclam
+  //  vl::Key_QuoteDbl
+  //  vl::Key_Hash
+  //  vl::Key_Dollar
+  //  vl::Key_Ampersand
+  //  vl::Key_LeftParen
+  //  vl::Key_RightParen
+  //  vl::Key_Asterisk
+  //  vl::Key_Plus
+  //  vl::Key_Colon
+  //  vl::Key_Less
+  //  vl::Key_Greater
+  //  vl::Key_Question
+  //  vl::Key_At
+  //  vl::Key_Caret
+  //  vl::Key_Underscore
+
   switch( key ) {
     default: return vl::Key_Unknown;
     case GLFW_KEY_UNKNOWN: return vl::Key_Unknown;
