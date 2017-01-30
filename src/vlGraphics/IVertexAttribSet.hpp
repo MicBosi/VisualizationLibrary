@@ -32,7 +32,7 @@
 #ifndef IVertexAttribSet_INCLUDE_ONCE
 #define IVertexAttribSet_INCLUDE_ONCE
 
-#include <vlGraphics/VertexAttribInfo.hpp>
+#include <vlGraphics/Array.hpp>
 #include <vlCore/Collection.hpp>
 
 namespace vl
@@ -87,11 +87,11 @@ namespace vl
     virtual ArrayAbstract* texCoordArray(int tex_unit) = 0;
 
     /** Binds a generic vertex attribute. */
-    virtual void setVertexAttribArray(int attrib_location, const VertexAttribInfo& info) = 0;
+    virtual void setVertexAttribArray(int attrib_location, const ArrayAbstract* info) = 0;
     /** Returns a generic vertex attribute's info. */
-    virtual const VertexAttribInfo& vertexAttribArray(int attrib_location) const = 0;
+    virtual const ArrayAbstract* vertexAttribArray(int attrib_location) const = 0;
     /** Returns a generic vertex attribute's info. */
-    virtual VertexAttribInfo& vertexAttribArray(int attrib_location) = 0;
+    virtual ArrayAbstract* vertexAttribArray(int attrib_location) = 0;
   };
 }
 

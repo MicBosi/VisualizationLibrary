@@ -67,6 +67,8 @@ namespace vl
       mBufferObject = new BufferObject;
       mBufferObjectDirty = true;
       mBufferObjectUsage = vl::BU_STATIC_DRAW;
+      mInterpretation = VAI_NORMAL;
+      mNormalize = false;
     }
 
     //! Copies only the local data and not the BufferObject related fields
@@ -76,6 +78,8 @@ namespace vl
       mBufferObject = new BufferObject;
       mBufferObjectDirty = true;
       mBufferObjectUsage = vl::BU_STATIC_DRAW;
+      mInterpretation = VAI_NORMAL;
+      mNormalize = false;
       operator=(other);
     }
 
@@ -84,6 +88,8 @@ namespace vl
     {
       bufferObject()->resize( other.bufferObject()->bytesUsed() );
       memcpy( ptr(), other.ptr(), bytesUsed() );
+      mInterpretation = other.mInterpretation;
+      mNormalize = other.mNormalize;
     }
 
     virtual ref<ArrayAbstract> clone() const = 0;
@@ -159,10 +165,28 @@ namespace vl
       setBufferObjectDirty(false);
     }
 
+    //! The 'normalized' parameter as used with glVertexAttribPointer()
+    //! \sa
+    //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
+    void setNormalize(bool normalize) { mNormalize = normalize; }
+
+    //! The 'normalized' parameter as used with glVertexAttribPointer()
+    //! \sa
+    //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
+    bool normalize() const { return mNormalize; }
+
+    //! How the data is interpreted by the OpenGL, see EVertexAttribInterpretation.
+    void setInterpretation(EVertexAttribInterpretation behavior) { mInterpretation = behavior; }
+
+    //! How the data is interpreted by the OpenGL, see EVertexAttribInterpretation.
+    EVertexAttribInterpretation interpretation() const { return mInterpretation; }
+
   protected:
     ref<BufferObject> mBufferObject;
     EBufferObjectUsage mBufferObjectUsage;
     bool mBufferObjectDirty;
+    EVertexAttribInterpretation mInterpretation;
+    bool mNormalize;
   };
 //-----------------------------------------------------------------------------
 // Array

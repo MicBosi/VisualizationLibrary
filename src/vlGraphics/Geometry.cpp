@@ -108,12 +108,10 @@ Geometry& Geometry::deepCopyFrom(const Geometry& other)
   // clone generic vertex attribs
   for(int i=0; i<VA_MaxAttribCount; ++i)
   {
-    if ( other.mVertexAttribArrays[i].data() ) {
-      mVertexAttribArrays[i].setNormalize( other.mVertexAttribArrays[i].normalize() );
-      mVertexAttribArrays[i].setInterpretation( other.mVertexAttribArrays[i].interpretation() );
-      mVertexAttribArrays[i].setData( other.mVertexAttribArrays[i].data()->clone().get() );
+    if ( other.mVertexAttribArrays[i].get() ) {
+      mVertexAttribArrays[i] = other.mVertexAttribArrays[i]->clone().get();
     } else {
-      mVertexAttribArrays[i] = VertexAttribInfo();
+      mVertexAttribArrays[i] = NULL;
     }
   }
 
@@ -144,12 +142,10 @@ Geometry& Geometry::shallowCopyFrom(const Geometry& other)
   // copy generic vertex attribs
   for(int i=0; i<VA_MaxAttribCount; ++i)
   {
-    if ( other.mVertexAttribArrays[i].data() ) {
-      mVertexAttribArrays[i].setNormalize( other.mVertexAttribArrays[i].normalize() );
-      mVertexAttribArrays[i].setInterpretation( other.mVertexAttribArrays[i].interpretation() );
-      mVertexAttribArrays[i].setData( const_cast<ArrayAbstract*>( other.mVertexAttribArrays[i].data() ) );
+    if ( other.mVertexAttribArrays[i].get() ) {
+      mVertexAttribArrays[i] = const_cast<ArrayAbstract*>( other.mVertexAttribArrays[i].get() );
     } else {
-      mVertexAttribArrays[i] = VertexAttribInfo();
+      mVertexAttribArrays[i] = NULL;
     }
   }
 
@@ -162,7 +158,7 @@ void Geometry::setVertexArray(ArrayAbstract* data)
   // to see what "size" and "type" are allowed for glVertexPointer
   VL_CHECK( !data || (data->glSize() >=2 && data->glSize()<=4) )
 
-  mVertexAttribArrays[VA_Position] = VertexAttribInfo(data);
+  mVertexAttribArrays[VA_Position] = data;
 }
 //-----------------------------------------------------------------------------
 void Geometry::setNormalArray(ArrayAbstract* data)
@@ -176,7 +172,7 @@ void Geometry::setNormalArray(ArrayAbstract* data)
                       data->glType() == GL_FLOAT ||
                       data->glType() == GL_DOUBLE) );
 
-  mVertexAttribArrays[VA_Normal] = VertexAttribInfo(data);
+  mVertexAttribArrays[VA_Normal] = data;
 }
 //-----------------------------------------------------------------------------
 void Geometry::setColorArray(ArrayAbstract* data)
@@ -193,7 +189,7 @@ void Geometry::setColorArray(ArrayAbstract* data)
                       data->glType() == GL_FLOAT ||
                       data->glType() == GL_DOUBLE) );
 
-  mVertexAttribArrays[VA_Color] = VertexAttribInfo(data);
+  mVertexAttribArrays[VA_Color] = data;
 }
 //-----------------------------------------------------------------------------
 void Geometry::setSecondaryColorArray(ArrayAbstract* data)
@@ -210,7 +206,7 @@ void Geometry::setSecondaryColorArray(ArrayAbstract* data)
                       data->glType() == GL_FLOAT ||
                       data->glType() == GL_DOUBLE) );
 
-  mVertexAttribArrays[VA_SecondaryColor] = VertexAttribInfo(data);
+  mVertexAttribArrays[VA_SecondaryColor] = data;
 }
 //-----------------------------------------------------------------------------
 void Geometry::setFogCoordArray(ArrayAbstract* data)
@@ -220,7 +216,7 @@ void Geometry::setFogCoordArray(ArrayAbstract* data)
   VL_CHECK( !data || (data->glSize() == 1) )
   VL_CHECK( !data || (data->glType() == GL_FLOAT || data->glType() == GL_DOUBLE) );
 
-  mVertexAttribArrays[VA_FogCoord] = VertexAttribInfo(data);
+  mVertexAttribArrays[VA_FogCoord] = data;
 }
 //-----------------------------------------------------------------------------
 void Geometry::setTexCoordArray(int tex_unit, ArrayAbstract* data)
@@ -235,7 +231,7 @@ void Geometry::setTexCoordArray(int tex_unit, ArrayAbstract* data)
 
   VL_CHECK( tex_unit < VA_MaxTexCoordCount );
 
-  mVertexAttribArrays[VA_TexCoord0 + tex_unit] = VertexAttribInfo(data);
+  mVertexAttribArrays[VA_TexCoord0 + tex_unit] = data;
 }
 //-----------------------------------------------------------------------------
 void Geometry::clearArrays(bool clear_draw_calls)
@@ -247,7 +243,7 @@ void Geometry::clearArrays(bool clear_draw_calls)
   }
 
   for(int i=0; i<VA_MaxAttribCount; ++i) {
-    mVertexAttribArrays[i] = VertexAttribInfo();
+    mVertexAttribArrays[i] = NULL;
   }
 }
 //-----------------------------------------------------------------------------
@@ -357,8 +353,8 @@ void Geometry::deleteBufferObject()
   }
 
   for(int i=0; i<VA_MaxAttribCount; ++i) {
-    if ( mVertexAttribArrays[i].data()->bufferObject() ) {
-      mVertexAttribArrays[i].data()->bufferObject()->deleteBufferObject();
+    if ( mVertexAttribArrays[i]->bufferObject() ) {
+      mVertexAttribArrays[i]->bufferObject()->deleteBufferObject();
     }
   }
 }
@@ -371,8 +367,8 @@ void Geometry::updateDirtyBufferObject(EBufferObjectUpdateMode mode)
   bool force_update = (mode & BUF_ForceUpdate) != 0;
 
   for(int i=0; i<VA_MaxAttribCount; ++i) {
-    if ( mVertexAttribArrays[i].data() && mVertexAttribArrays[i].data()->bufferObject() && (mVertexAttribArrays[i].data()->isBufferObjectDirty() || force_update) ) {
-      mVertexAttribArrays[i].data()->updateBufferObject(mode);
+    if ( mVertexAttribArrays[i].get() && mVertexAttribArrays[i]->bufferObject() && (mVertexAttribArrays[i]->isBufferObjectDirty() || force_update) ) {
+      mVertexAttribArrays[i]->updateBufferObject(mode);
     }
   }
 
@@ -416,19 +412,19 @@ void Geometry::transform(const mat4& m, bool normalize)
   }
 }
 //-----------------------------------------------------------------------------
-void Geometry::setVertexAttribArray(int attrib_location, const VertexAttribInfo& info)
+void Geometry::setVertexAttribArray(int attrib_location, const ArrayAbstract* info)
 {
   mVertexAttribArrays[attrib_location] = info;
 }
 //-----------------------------------------------------------------------------
-const VertexAttribInfo& Geometry::vertexAttribArray(int attrib_location) const
+const ArrayAbstract* Geometry::vertexAttribArray(int attrib_location) const
 {
-  return mVertexAttribArrays[attrib_location];
+  return mVertexAttribArrays[attrib_location].get();
 }
 //-----------------------------------------------------------------------------
-VertexAttribInfo& Geometry::vertexAttribArray(int attrib_location)
+ArrayAbstract* Geometry::vertexAttribArray(int attrib_location)
 {
-  return mVertexAttribArrays[attrib_location];
+  return mVertexAttribArrays[attrib_location].get();
 }
 //-----------------------------------------------------------------------------
 DrawCall* Geometry::mergeTriangleStrips()
@@ -763,7 +759,7 @@ void Geometry::regenerateVertices(const std::vector<u32>& map_new_to_old)
   VertexMapper mapper;
 
   for(int i=0; i<VA_MaxAttribCount; ++i) {
-    vertexAttribArray(i).setData( mapper.regenerate(vertexAttribArray(i).data(), map_new_to_old ).get() );
+    setVertexAttribArray(i, mapper.regenerate( vertexAttribArray(i), map_new_to_old ).get() );
   }
 }
 //-----------------------------------------------------------------------------

@@ -1539,9 +1539,9 @@ void OpenGLContext::bindVAS_Attribs(const IVertexAttribSet* vas, bool use_bo) {
 
   for(int idx=0; idx<vertexAttribCount(); ++idx)
   {
-    const VertexAttribInfo& info = vas->vertexAttribArray(idx);
+    const ArrayAbstract* arr = vas->vertexAttribArray(idx);
 
-    if ( ! info.data() )
+    if ( ! arr )
     {
       // --- disable ---
 
@@ -1573,15 +1573,15 @@ void OpenGLContext::bindVAS_Attribs(const IVertexAttribSet* vas, bool use_bo) {
         glGetVertexAttribiv( idx, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled); VL_CHECK(enabled);
       #endif
 
-      if ( use_bo && info.data()->bufferObject()->handle() )
+      if ( use_bo && arr->bufferObject()->handle() )
       {
-        buf_obj = info.data()->bufferObject()->handle();
+        buf_obj = arr->bufferObject()->handle();
         ptr = 0;
       }
       else
       {
         buf_obj = 0;
-        ptr = info.data()->bufferObject()->ptr();
+        ptr = arr->bufferObject()->ptr();
       }
       if ( mVertexAttrib[idx].mPtr != ptr || mVertexAttrib[idx].mBufferObject != buf_obj )
       {
@@ -1589,19 +1589,19 @@ void OpenGLContext::bindVAS_Attribs(const IVertexAttribSet* vas, bool use_bo) {
         mVertexAttrib[idx].mBufferObject = buf_obj;
         VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
 
-        if ( info.interpretation() == VAI_NORMAL )
+        if ( arr->interpretation() == VAI_NORMAL )
         {
-          VL_glVertexAttribPointer( idx, (int)info.data()->glSize(), info.data()->glType(), info.normalize(), /*stride*/0, ptr ); VL_CHECK_OGL();
+          VL_glVertexAttribPointer( idx, (int)arr->glSize(), arr->glType(), arr->normalize(), /*stride*/0, ptr ); VL_CHECK_OGL();
         }
         else
-        if ( info.interpretation() == VAI_INTEGER )
+        if ( arr->interpretation() == VAI_INTEGER )
         {
-          VL_glVertexAttribIPointer( idx, (int)info.data()->glSize(), info.data()->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
+          VL_glVertexAttribIPointer( idx, (int)arr->glSize(), arr->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
         }
         else
-        if ( info.interpretation() == VAI_DOUBLE )
+        if ( arr->interpretation() == VAI_DOUBLE )
         {
-          VL_glVertexAttribLPointer( idx, (int)info.data()->glSize(), info.data()->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
+          VL_glVertexAttribLPointer( idx, (int)arr->glSize(), arr->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
         }
       }
     }

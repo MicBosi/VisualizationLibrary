@@ -94,9 +94,6 @@ namespace
     // Geometry serializer
     defVLXRegistry()->registerClassWrapper( Geometry::Type(), new VLXClassWrapper_Geometry );
 
-    // VertexAttribInfo
-    defVLXRegistry()->registerClassWrapper( VertexAttribInfo::Type(), new VLXClassWrapper_VertexAttribInfo );
-
     // BezierSurface
     defVLXRegistry()->registerClassWrapper( BezierSurface::Type(), new VLXClassWrapper_Geometry );
 
