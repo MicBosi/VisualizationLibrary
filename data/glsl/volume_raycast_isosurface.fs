@@ -56,7 +56,6 @@ vec3 blinn( vec3 N, vec3 V, vec3 L, int light, vec3 diffuse )
 vec4 computeFragColor( vec3 iso_pos )
 {
 	// compute lighting at isosurface point
-	float val = texture3D( volume_texunit, iso_pos ).r;
 
 	// compute the gradient and lighting only if the pixel is visible "enough"
 	vec3 N;
@@ -79,7 +78,7 @@ vec4 computeFragColor( vec3 iso_pos )
 	}
 
 	vec3 V  = normalize( eye_position - frag_position );
-	vec4 diffuse = texture1D( trfunc_texunit, val );
+	vec4 diffuse = texture1D( trfunc_texunit, val_threshold );
 	vec3 final_color = vec3( 0, 0, 0 );
 	for( int i = 0; i < 4; i++ )
 	{
