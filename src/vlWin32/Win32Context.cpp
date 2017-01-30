@@ -347,8 +347,7 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
   }
 
   // init GL context and makes it current
-  // mic fixme: check this also on all the other GUI bindings.
-  if( !initGLContext() )
+  if( ! initGLContext() )
     return contract.mOK = false;
 
   if (fmt.multisample() && !Has_GL_ARB_multisample)

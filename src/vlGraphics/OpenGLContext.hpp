@@ -67,7 +67,8 @@ namespace vl
       mStereo(false),
       mFullscreen(false),
       mVSync(false),
-      mContextClientVersion(1) {}
+      mContextClientVersion(1),
+      mProfile(GLP_Default) {}
 
     void setRGBABits(int r, int g, int b, int a) { mRGBABits = ivec4(r,g,b,a); }
     void setAccumRGBABits(int r, int g, int b, int a) { mAccumRGBABits = ivec4(r,g,b,a); }
@@ -98,6 +99,9 @@ namespace vl
     //! Returns rgbaBits().r() + rgbaBits().g() + rgbaBits().b() + rgbaBits().a()
     int bitsPerPixel() const { return rgbaBits().r() + rgbaBits().g() + rgbaBits().b() + rgbaBits().a(); }
 
+    void setOpenGLProfile(EOpenGLProfile p) { mProfile = p; }
+    EOpenGLProfile openGLProfile() const { return mProfile; }
+
   protected:
     ivec4 mRGBABits;
     ivec4 mAccumRGBABits;
@@ -110,6 +114,7 @@ namespace vl
     bool mFullscreen;
     bool mVSync;
     int mContextClientVersion;
+    EOpenGLProfile mProfile;
   };
   //-----------------------------------------------------------------------------
   // OpenGLContext

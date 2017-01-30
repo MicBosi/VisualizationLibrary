@@ -253,9 +253,6 @@ void MorphingCallback::blendFrames(int a, int b, float t)
 
   if (mGeometry->isBufferObjectEnabled() && Has_BufferObject)
   {
-    // mic fixme:
-    // Come si vede qui' sta nomenclatura non e' chiara:
-    // sembra che stiamo semplicemente cambiano un po di flags invece stiamo updatando tutto il BufferObject!!!
     mVertices->bufferObject()->setBufferData(BU_DYNAMIC_DRAW, false);
     mNormals ->bufferObject()->setBufferData(BU_DYNAMIC_DRAW, false);
   }

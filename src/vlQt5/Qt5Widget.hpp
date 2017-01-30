@@ -111,16 +111,18 @@ namespace vlQt5
       QGLContext* glctx = new QGLContext(context()->format(), this);
       QGLFormat fmt = context()->format();
 
-      // Switch to compatiblity profile by default.
-      // Options: QGLFormat::NoProfile, QGLFormat::CoreProfile, QGLFormat::CompatibilityProfile
-
-      // MIC FIXME
-#if 1
-      fmt.setProfile(QGLFormat::CompatibilityProfile);
-#else
-      fmt.setProfile(QGLFormat::CoreProfile);
-      fmt.setVersion(3, 2);
-#endif
+      switch( info.openGLProfile() )
+      {
+      case vl::GLP_Compatibility:
+        fmt.setProfile( QGLFormat::CompatibilityProfile );
+        break;
+      case vl::GLP_Core:
+        fmt.setProfile( QGLFormat::CoreProfile );
+        break;
+      case vl::GLP_Default:
+        // Don't care
+        break;
+      }
 
       // double buffer
       fmt.setDoubleBuffer( info.doubleBuffer() );
