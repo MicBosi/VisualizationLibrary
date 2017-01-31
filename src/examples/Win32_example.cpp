@@ -57,33 +57,33 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   /* create the applet to be run */
   ref<Applet> applet = new App_RotatingCube;
   applet->initialize();
-  
+
   /* create a native Win32 window */
   ref<vlWin32::Win32Window> win32_window = new vlWin32::Win32Window;
 
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   win32_window->addEventListener(applet.get());
-  
+
   /* target the window so we can render on it */
   applet->rendering()->as<Rendering>()->renderer()->setFramebuffer( win32_window->framebuffer() );
-  
+
   /* black background */
   applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
-  
+
   /* define the camera position and orientation */
   vec3 eye    = vec3(0,10,35); // camera position
   vec3 center = vec3(0,0,0);   // point the camera is looking at
   vec3 up     = vec3(0,1,0);   // up direction
   mat4 view_mat = mat4::getLookAt(eye, center, up);
   applet->rendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
-  
+
   /* Initialize the OpenGL context and window properties */
   int x = 0;
   int y = 0;
   int width = 512;
   int height= 512;
   win32_window->initWin32GLWindow(NULL, NULL, "Visualization Library on Win32 - Rotating Cube", format, x, y, width, height );
-  
+
   /* show the window */
   win32_window->show();
 
@@ -96,6 +96,6 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   /* shutdown Visualization Library */
   VisualizationLibrary::shutdown();
 
-  return res; 
+  return res;
 }
 // Have fun!

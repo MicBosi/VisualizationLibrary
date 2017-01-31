@@ -90,8 +90,6 @@ namespace vlGLUT
 
     void setWindowTitle(const vl::String& title) ;
 
-    int handle() const { return mHandle; }
-
     void setPosition(int x, int y) ;
 
     void setSize(int w, int h) ;
@@ -105,6 +103,10 @@ namespace vlGLUT
     void hide();
 
     void getFocus();
+
+    // ---
+
+    int handle() const { return mHandle; }
 
   protected:
     void destroyWindow();

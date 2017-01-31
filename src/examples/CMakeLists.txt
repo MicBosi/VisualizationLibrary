@@ -64,6 +64,20 @@ if(VL_GUI_QT4_EXAMPLES OR VL_GUI_QT5_EXAMPLES OR VL_GUI_MFC_EXAMPLES OR VL_GUI_W
       VL_INSTALL_TARGET(vlGLUT_tests)
   endif()
 
+  if(VL_GUI_GLFW_EXAMPLES)
+      include_directories(${GLFW_INCLUDE_DIR})
+
+      # Example
+      add_executable(vlGLFW_example GLFW_example.cpp Applets/App_RotatingCube.hpp)
+      target_link_libraries(vlGLFW_example VLGLFW ${VL_LIBS_EXAMPLE} ${GLFW_LIBRARIES})
+      VL_INSTALL_TARGET(vlGLFW_example)
+
+      # Tests
+      add_executable(vlGLFW_tests GLFW_tests.cpp)
+      target_link_libraries(vlGLFW_tests VLApplets VLGLFW ${VL_LIBS_TESTS} ${GLFW_LIBRARIES})
+      VL_INSTALL_TARGET(vlGLFW_tests)
+  endif()
+
   if(VL_GUI_QT4_EXAMPLES)
   	include(${QT_USE_FILE})
 

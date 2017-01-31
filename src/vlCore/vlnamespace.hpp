@@ -1149,8 +1149,6 @@ namespace vl
   {
     Key_None = 0,
 
-    // unicode keys
-
     Key_0,
     Key_1,
     Key_2,
