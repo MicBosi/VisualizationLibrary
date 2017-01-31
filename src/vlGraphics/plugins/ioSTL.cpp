@@ -67,7 +67,7 @@ ref<ResourceDatabase> STLLoader::loadBinary(VirtualFile* file)
 {
   // skip header
   char header[80];
-  file->read(header,80);
+  file->read( header,80 );
   unsigned int tri_count = file->readUInt32();
 
   ref<ArrayFloat3>  verts   = new ArrayFloat3;
@@ -80,30 +80,29 @@ ref<ResourceDatabase> STLLoader::loadBinary(VirtualFile* file)
   geom->setVertexArray(verts.get());
   geom->setNormalArray(normals.get());
 
+  struct STriangle {
+    fvec3 n;
+    fvec3 v0;
+    fvec3 v1;
+    fvec3 v2;
+    vl::u16 abc; // attribute byte count
+  } tri;
+
+  std::vector<u8> tris;
+  tris.resize( tri_count * 50 );
+  file->read( &tris[0], tri_count * 50 );
+
   // read triangles
   for(unsigned int i=0; i<tri_count; ++i)
   {
-    fvec3 n,v1,v2,v0;
-    n.x() = file->readFloat();
-    n.y() = file->readFloat();
-    n.z() = file->readFloat();
-    v0.x() = file->readFloat();
-    v0.y() = file->readFloat();
-    v0.z() = file->readFloat();
-    v1.x() = file->readFloat();
-    v1.y() = file->readFloat();
-    v1.z() = file->readFloat();
-    v2.x() = file->readFloat();
-    v2.y() = file->readFloat();
-    v2.z() = file->readFloat();
-    // skip the 2 bytes
-    file->readUInt16();
-    normals->at(i*3+0) = n;
-    verts->at(i*3+0) = v0;
-    normals->at(i*3+1) = n;
-    verts->at(i*3+1) = v1;
-    normals->at(i*3+2) = n;
-    verts->at(i*3+2) = v2;
+    STriangle& tri = *((STriangle*)&tris[ i * 50 ]);
+
+    normals->at(i*3+0) = tri.n;
+    normals->at(i*3+1) = tri.n;
+    normals->at(i*3+2) = tri.n;
+    verts->at(i*3+0) = tri.v0;
+    verts->at(i*3+1) = tri.v1;
+    verts->at(i*3+2) = tri.v2;
   }
 
   ref<ResourceDatabase> res_db = new ResourceDatabase;

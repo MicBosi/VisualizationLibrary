@@ -156,9 +156,11 @@ bool LoadWriterManager::writeResource(VirtualFile* file, ResourceDatabase* resou
 const ResourceLoadWriter* LoadWriterManager::findLoader(const String& path) const
 {
   String ext = path.extractFileExtension(false).toLowerCase();
-  for(size_t i=0; i<loadWriters().size(); ++i)
-    if (loadWriters()[i]->canLoad(ext))
-      return loadWriters()[i].get();
+  for(size_t i=0; i<loadWriters().size(); ++i) {
+    const ResourceLoadWriter* lw = loadWriters()[i].get();
+    if ( lw->canLoad(ext) )
+      return lw;
+  }
 
   return NULL;
 }
