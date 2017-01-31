@@ -1,25 +1,76 @@
-<hr size="1">
-
-<div align="right" style="padding: 1em; line-height: 2.0;">
-    $projectname $projectnumber Reference Documentation<br>
-    Copyright <a href="https://michelebosi.com">Michele Bosi</a>. All rights reserved.<br>
-    Updated on $datetime. <!-- by <a target=_blank href="http://www.doxygen.org/index.html">Doxygen</a> $doxygenversion --> <br>
-    Permission is granted to use this page to write and publish articles regarding Visualization Library.<br>
-    <br>
+<!-- HTML footer for doxygen 1.8.13-->
+<!-- start footer part -->
+<!--BEGIN GENERATE_TREEVIEW-->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    $navpath
+    <li class="footer">$generatedby
+    <a href="http://www.doxygen.org/index.html">
+    <img class="footer" src="$relpath^doxygen.png" alt="doxygen"/></a> $doxygenversion </li>
+  </ul>
 </div>
-
-<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-
-<script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+<!--END GENERATE_TREEVIEW-->
+<!--BEGIN !GENERATE_TREEVIEW-->
+<hr class="footer"/>
+<address class="footer">
+  <small>
+    <p>$projectname $projectnumber Reference Documentation</p>
+    <p>Updated on $datetime.</p>
+    <p>&copy; Copyright <a href="https://michelebosi.com">Michele Bosi</a>. All rights reserved.</p>
+  </small>
+</address>
+<!--END !GENERATE_TREEVIEW-->
 
 <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-1058203-6', 'auto');
-    ga('send', 'pageview');
+ga('create', 'UA-1058203-6', 'auto');
+ga('send', 'pageview');
 </script>
-</body> 
-</html> 
+
+<!-- Highslide image gallery -->
+<script type="text/javascript" src="../highslide/highslide-full.js"></script>
+<link rel="stylesheet" type="text/css" href="../highslide/highslide.css" />
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="highslide/highslide-ie6.css" />
+<![endif]-->
+
+<script type="text/javascript">
+//<![CDATA[
+hs.registerOverlay({
+    html: '<div class="closebutton" onclick="return hs.close(this)" title="Close"></div>',
+    position: 'top right',
+    fade: 2 // fading the semi-transparent overlay looks bad in IE
+});
+
+hs.graphicsDir = '../highslide/graphics/';
+//hs.wrapperClassName = 'borderless';
+hs.align = 'center';
+hs.transitions = ['expand', 'crossfade'];
+hs.outlineType = 'rounded-white';
+hs.fadeInOut = false;
+hs.dimmingOpacity = 0.66;
+
+// Add the controlbar
+hs.addSlideshow({
+    //slideshowGroup: 'group1',
+    interval: 3000,
+    repeat: false,
+    useControls: true,
+    fixedControls: 'fit',
+    overlayOptions: {
+        opacity: .75,
+        position: 'bottom center',
+        hideOnMouseOut: true
+    }
+});
+
+//]]>
+</script>
+<!-- End Highslide -->
+
+</body>
+</html>

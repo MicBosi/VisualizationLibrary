@@ -57,7 +57,7 @@ namespace vl
 
 	- \a Boundary edges are those edges that belong to a single triangle or quad.
 
-  <img src="pics/pagGuideWireframe_edges.jpg">
+  <img src="../pics/pagGuideWireframe_edges.jpg">
 
   \par Usage
   - Extract the edges from one or more Geometry objects using one of the extractEdges() methods.

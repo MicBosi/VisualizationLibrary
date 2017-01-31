@@ -2,7 +2,7 @@
 
 \page pagDownload Download
 
-You can review the \subpage pagChangelog "changelog here".
+\subpage pagChangelog "You can review the changelog here."
 
 Remember to set the <code>VL_DATA_PATH</code> environment variable to the directory containing the sample data in order to run the demos and tests included in VL.
 
@@ -10,11 +10,24 @@ Run the tests using any supported backend plus the test number as the first argu
 
 <div class="featuretitle">Releases</div>
 
-<a href="https://api.github.com/repos/MicBosi/visualizationlibrary/tarball/v1.0.2">Visualization Library v1.0.2 (.tgz)</a>
+<div id="vl-releases">
+Loading...
+</div>
 
-<a href="https://api.github.com/repos/MicBosi/visualizationlibrary/zipball/v1.0.2">Visualization Library v1.0.2 (.zip)</a>
-
-<!-- https://api.github.com/repos/MicBosi/visualizationlibrary/releases -->
+@htmlonly
+<script>
+$.ajax({
+  url: "https://api.github.com/repos/MicBosi/VisualizationLibrary/releases",
+  success: function(releases){
+    var html = ''
+    releases.forEach(function(release) {
+      html += '<p><a href="' + release.html_url + '">' + release.name + '</a> <small>(' + new Date(release.published_at).toLocaleString() + ')</small></p>';
+    });
+    $('#vl-releases').html( html );
+  }
+});
+</script>
+@endhtmlonly
 
 All releases:
 

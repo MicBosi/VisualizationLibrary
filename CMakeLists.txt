@@ -13,10 +13,12 @@
 ################################################################################
 
 # Current Version
-set(VL_VERSION_MAJOR "1")
-set(VL_VERSION_MINOR "1")
-set(VL_VERSION_PATCH "0")
+set(VL_VERSION_MAJOR "2")
+set(VL_VERSION_MINOR "0")
+set(VL_VERSION_PATCH "0-β2")
 set(VL_VERSION "${VL_VERSION_MAJOR}.${VL_VERSION_MINOR}")
+set(VL_VERSION_FULL "${VL_VERSION_MAJOR}.${VL_VERSION_MINOR}.${VL_VERSION_PATCH}")
+
 
 ################################################################################
 # Initialization
@@ -42,7 +44,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	set(VL_PLATFORM_LINUX 1)
 	option(VL_UNIX_INSTALL_MODE "Set to ON to install VL into default UNIX path structure." OFF)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set(VL_PLATFORM_WINDOWS 1) 
+	set(VL_PLATFORM_WINDOWS 1)
 else()
 	message(FATAL_ERROR "Unable to detect platform!")
 endif()

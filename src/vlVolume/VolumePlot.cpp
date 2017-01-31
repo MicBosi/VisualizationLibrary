@@ -39,7 +39,7 @@
 using namespace vl;
 
 /** \class vl::VolumePlot
-  <img src="pics/pagGuideMarchingCubes_1.jpg">
+  <img src="../pics/pagGuideMarchingCubes_1.jpg">
 
 Example:
 \code

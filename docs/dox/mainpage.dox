@@ -1,21 +1,20 @@
 /**
     \mainpage Visualization Library Reference Documentation
 
-    <table width=1000 border=0 style="border: 0px solid #EEEEEE"><tr><td>
+    <table border=0 style="width: 1000px; margin: auto 0;"><tr><td>
 
-    <div class="featuretitle">Basic Information</div>
+    <div class="featuretitle"><b>Basic Information</b></div>
 
     - \subpage pagIntro "Introduction"
     - \subpage pagKeyFeatures "Features Overview"
     - \subpage pagGallery "Gallery"
 
-    <div class="featuretitle">Download</div>
+    <div class="featuretitle"><b>Download</b></div>
 
     - <a href="pag_download.html"><b>Download Page</b></a>
-    - <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=M925YZK6ARN82" title="Become a Visualization Library Angel">Donate</a>
     - \subpage pagChangelog
 
-    <div class="featuretitle">Getting Started</div>
+    <div class="featuretitle"><b>Getting Started</b></div>
 
     - \subpage pagInstall "Compiling and Installing VL"
     - \subpage pagKnowledgeBase "Knowledge Base"
@@ -24,28 +23,27 @@
     - \subpage pagOpenGL "OpenGL to VL Mapping"
     - \subpage pagGuides "Tutorials"
 
-    <div class="featuretitle">Community</div>
+    <div class="featuretitle"><b>Community</b></div>
 
-    - <a target=_blank href="https://github.com/MicBosi/visualizationlibrary">Visualization Library on GitHub</a>
-    - <a target=_blank href="https://groups.google.com/forum/#!forum/visualization-library">Visualization Library Google Group</a>
-    - <a target=_blank href="https://github.com/MicBosi/visualizationlibrary/issues">Issue tracker on GitHub</a>
-    - <a target=_blank href="http://visualizationlibrary.org/forum">Forums</a> (legacy)
+    - <a target=_blank href="https://github.com/MicBosi/visualizationlibrary"><b>Visualization Library on GitHub</b></a>
+    - <a target=_blank href="https://groups.google.com/forum/#!forum/visualization-library"><b>Visualization Library Google Group</b></a>
+    - <a target=_blank href="https://github.com/MicBosi/visualizationlibrary/issues"><b>Issue tracker on GitHub</b></a>
+    - <a target=_blank href="http://visualizationlibrary.org/forum"><b>Forums</b></a> (legacy)
     - \subpage pagContributing "Contributing"
-    - <a target=_blank href="http://www.twitter.com/VizLibrary">Twitter</a>
+    - <a target=_blank href="http://www.twitter.com/VizLibrary"><b>Twitter</b></a>
 
-    <div class="featuretitle">API Documentation</div>
+    <div class="featuretitle"><b>API Documentation</b></div>
 
     - \subpage pagMainClasses "Grouped Classes and Functions"
-    - <a href="annotated.html">Annotated Class List</a>
-    - <a href="classes.html">  Alphabetical Class List</a>
-    - <a href="hierarchy.html">Class Hierarchy</a>
+    - <a href="annotated.html"><b>Annotated Class List</b></a>
+    - <a href="classes.html"><b>Alphabetical Class List</b></a>
+    - <a href="hierarchy.html"><b>Class Hierarchy</b></a>
 
-    <div class="featuretitle">Licensing, Credits and Contacts</div>
+    <div class="featuretitle"><b>Licensing, Credits and Contacts</b></div>
 
     - \subpage pagLicensing "Licensing"
     - \subpage pagCredits "Credits"
     - \subpage pagContacts "Contacts"
 
     </td></tr></table>
-    </center>
 */

@@ -18,6 +18,7 @@
 project(DATA)
 
 option(VL_INSTALL_DATA "Install sample data" OFF)
+
 if(VL_INSTALL_DATA)
 	if(VL_UNIX_INSTALL_MODE)
 		install(DIRECTORY 3rdparty font glsl images models text volume mol DESTINATION "share/vl/data/")

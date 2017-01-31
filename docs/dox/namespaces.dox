@@ -1,9 +1,13 @@
 /**
- * \namespace vl Visualization Library namespace.
+ * \namespace vl Visualization Library main namespace.
 */
 
 /**
  * \namespace vlQt4 The Qt4 bindings namespace.
+*/
+
+/**
+ * \namespace vlQt5 The Qt5 bindings namespace.
 */
 
 /**
@@ -23,6 +27,18 @@
 */
 
 /**
+ * \namespace vlGLFW The GLFW bindings namespace.
+*/
+
+/**
  * \namespace vlWX The wxWidgets bindings namespace.
+*/
+
+/**
+ * \namespace vlEGL The experimental EGL bindings namespace.
+*/
+
+/**
+ * \namespace vl::Dae The COLLADA namespace
 */
 
