@@ -86,7 +86,7 @@ bool GLFWWindow::initGLFWWindow(const vl::String& title, const vl::OpenGLContext
 
   glfwWindowHint( GLFW_STEREO, info.stereo() );
 
-  glfwWindowHint( GLFW_SAMPLES, info.multisample() && info.multisampleSamples() > 0 ? info.multisampleSamples() : GLFW_DONT_CARE );
+  glfwWindowHint( GLFW_SAMPLES, info.multisample() ? info.multisampleSamples() : 0 );
 
   glfwWindowHint( GLFW_SRGB_CAPABLE, GLFW_DONT_CARE );
 
