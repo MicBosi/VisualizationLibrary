@@ -100,9 +100,20 @@ bool GLFWWindow::initGLFWWindow(const vl::String& title, const vl::OpenGLContext
   //glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR );
   //glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT ); // Only for OpenGL 3.0 or above
   //glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT );
-  //glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE|GLFW_OPENGL_COMPAT_PROFILE|GLFW_OPENGL_ANY_PROFILE ); // If requesting an OpenGL version below 3.2, GLFW_OPENGL_ANY_PROFILE must be used
-
   //glfwWindowHint( GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION|GLFW_LOSE_CONTEXT_ON_RESET|GLFW_NO_ROBUSTNESS);
+
+  switch( info.openGLProfile() )
+  {
+  case vl::GLP_Compatibility:
+    glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE );
+    break;
+  case vl::GLP_Core:
+    glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+    break;
+  case vl::GLP_Default:
+    glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE );
+    break;
+  }
 
   mFullscreen = info.fullscreen();
   if ( info.fullscreen() ) {

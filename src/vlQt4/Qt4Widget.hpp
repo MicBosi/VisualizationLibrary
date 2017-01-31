@@ -111,9 +111,18 @@ namespace vlQt4
       QGLFormat fmt = context()->format();
 
       #if QT_VERSION >= 0x040700
-        // Switch to compatiblity profile by default.
-        // Options: QGLFormat::NoProfile, QGLFormat::CoreProfile, QGLFormat::CompatibilityProfile
-        fmt.setProfile(QGLFormat::CompatibilityProfile);
+        switch( info.openGLProfile() )
+        {
+        case vl::GLP_Compatibility:
+          fmt.setProfile( QGLFormat::CompatibilityProfile );
+          break;
+        case vl::GLP_Core:
+          fmt.setProfile( QGLFormat::CoreProfile );
+          break;
+        case vl::GLP_Default:
+          // Don't care
+          break;
+        }
       #endif
 
       // double buffer

@@ -523,14 +523,6 @@ void GLSLProgram::preLink()
 
   // Automatically binds the specified attributes to the desired values
 
-  //======================================================================================
-  // MIC FIXME
-  // Test with float and matrix attribute types, how does it work, what errors do you get?
-  // Ex. this should give an error:
-  // mat4 vl_VertexTexCoord0;
-  // mat4 vl_VertexTexCoord1;
-  //======================================================================================
-
   glBindAttribLocation( handle(), vl::VA_Position, "vl_VertexPosition" ); VL_CHECK_OGL();
   glBindAttribLocation( handle(), vl::VA_Normal, "vl_VertexNormal" ); VL_CHECK_OGL();
   glBindAttribLocation( handle(), vl::VA_Color, "vl_VertexColor" ); VL_CHECK_OGL();

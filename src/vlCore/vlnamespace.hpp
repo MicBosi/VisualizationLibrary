@@ -1544,6 +1544,12 @@ namespace vl
     RCS_RenderingStarted,
     RCS_RenderingFinished
   } EResetContextStates;
+
+  typedef enum {
+    GLP_Default,
+    GLP_Compatibility,
+    GLP_Core
+  } EOpenGLProfile;
 }
 
 
