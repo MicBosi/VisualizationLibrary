@@ -34,6 +34,7 @@
 #include <cstdio>
 
 using namespace vlGLFW;
+using namespace vl;
 
 //-----------------------------------------------------------------------------
 GLFWWindow::WinMapType GLFWWindow::mWinMap;
@@ -145,6 +146,7 @@ bool GLFWWindow::initGLFWWindow(const vl::String& title, const vl::OpenGLContext
   glfwSetCursorPosCallback( mHandle, glfw_cursor_pos_callback );
   glfwSetMouseButtonCallback( mHandle, glfw_mouse_button_callback );
   glfwSetScrollCallback( mHandle, glfw_scroll_callback );
+  glfwSetDropCallback( mHandle, glfw_drop_callback );
 
   return true;
 }
@@ -332,6 +334,19 @@ void GLFWWindow::glfw_scroll_callback(GLFWwindow* window, double dx, double dy)
     int x = floor(dx);
     int y = floor(dy);
     vlwin->dispatchMouseWheelEvent( x );
+  }
+}
+
+void GLFWWindow::glfw_drop_callback(GLFWwindow * window, int count, const char** df)
+{
+  WinMapType::iterator it = mWinMap.find( window );
+  GLFWWindow* vlwin = it != mWinMap.end() ? it->second : NULL;
+  if ( vlwin ) {
+    std::vector<String> files;
+    for(int i=0; i<count; ++i) {
+      files.push_back( df[ i ] );
+    }
+    vlwin->dispatchFileDroppedEvent( files );
   }
 }
 
