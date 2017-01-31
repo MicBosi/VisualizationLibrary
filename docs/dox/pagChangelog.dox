@@ -2,6 +2,10 @@
 
 \page pagChangelog Changelog
 
+<div class="featuretitle">Visualization Library 2.0</div>
+
+- work in progress
+
 <div class="featuretitle">Visualization Library 1.0.2</div>
 
 - vl::makeGrid() new "center=true" option to optionally disable centering of geometry.
@@ -28,7 +32,7 @@
 - Updated Khronos OpenGL header files to latest versions.
 - Bug: fixed instrumentation classes when used outside vl:: namespace.
 - Bug: fixed Viewport::activate(): restore the original color, depth and stencil masks after utilization.
-- Bug: fixed DepthSortCallback VLX importer. 
+- Bug: fixed DepthSortCallback VLX importer.
 - Bug: fixed other compilation warnings and errors.
 
 <div class="featuretitle">Visualization Library 2011.09.1166</div>
@@ -124,12 +128,12 @@
 - Several VL classes can now be saved and restored to VLT (text) and VLB (binary) files, including: vl::Actor, vl::Shader, vl::Effect, vl::Transform, vl::GLSLProgram and vertex/fragment/geometry/tess-evaluation/tess-control shaders, vl::Uniform, vl::Light, vl::Material, vl::Texture, vl::Camera, vl::DepthSortCallback, vl::PixelLODEvaluator and vl::DistanceLODEvaluator, all draw calls and vl::Array subclasses and several others.
 - The framework allows the user to add or subclass a class wrapper for serialization following a few simple steps.
 - The VLX framework is a sort of XML designed to efficiently represent numerical data and complex networks of objects referencing each other. It can be used to represent any type of data also besides VL classes. The VLX is much less verbose than XML and at the same time more efficient than JSON to store numerical data. It also allows the embedding of GLSL shaders (or any programming language bascally) with virtually no modification or encoding. This means that you can edit 99.99% of GLSL shader code directly in a VLT file as is, which is impossible in XML and JSON due to the encoding rules they use. References to objects are also automatically resolved when loading or saving VLX files and you can even link multiple VLX files togeter, i.e. a VLX file can refer to an object defined in a separate VLX file and then linked together.
-- VLT and VLB are just representations of a VLX hierarchy. Adding new representations is surprisingly simple actually. For example one could create an XML representation to take advantage of XML validation. There is no VLX validator at the moment. 
+- VLT and VLB are just representations of a VLX hierarchy. Adding new representations is surprisingly simple actually. For example one could create an XML representation to take advantage of XML validation. There is no VLX validator at the moment.
 - In the future it will be possible to embed binary blobs in both VLT and VLB representations and the number of wrapped classes will grow to include the missing render states, scene managers, and all the objects necessary to setup rendering pipelines.
 - <b>COLLADA</b>: added support for importing .dae files: geometry, basic materials and lights.
 - vl::PolygonSimplifier: allows also non-ArrayFloat3 input. Now can output multiple mesh resolutions of the same mesh in 1 single run i.e in a fraction of the time previously required.
 - vl::DoubleVertexRemover speed improvements and code cleaning.
-- vl::Geometry updates: 
+- vl::Geometry updates:
 - Geometry copy methods policy made coherent with vl::Shader and vl::Effect copy methods.
 - Implemented completely generic vl::Geometry::shrinkDrawCalls() and vl::Geometry::triangulateDrawCalls().
 - Added vl::Geometry::fixTriangleWinding().
@@ -149,13 +153,13 @@
 - vl::TexParameter can now be specified also at the vl::TextureSampler level to allow easy COLLADA/DirectX-like effects specification. Essentially this allows a vl::Texture to use more than one vl::TexParameter which might be required in particular use cases.
 - Automatic tracking of previous render states and enables.
 - <b>New indexed render states management</b>:
-- Till now indexed render states such as lights, clipping planes and texture unit related render states had their binding index hardwired in the render state class making it impossible to share the same indexed render states among different shaders with a different index. Now it is possible for a light, a clipping plane etc. to be bound to the same or a different shader with the same or different binding point, maximizing render states reusability and simplifying the code necessary to their management.	
+- Till now indexed render states such as lights, clipping planes and texture unit related render states had their binding index hardwired in the render state class making it impossible to share the same indexed render states among different shaders with a different index. Now it is possible for a light, a clipping plane etc. to be bound to the same or a different shader with the same or different binding point, maximizing render states reusability and simplifying the code necessary to their management.
 - Currently indexed render states are: vl::ClipPlane, vl::Light, vl::TexEnv, vl::TexGen, vl::TextureMatrix, vl::TextureSampler, vl::VertexAttrib.
 - Render states management updated to allow \a future support to indexed blending states and enables and later maybe also indexed viewports, depth-range and scissoring at some point...
-- <b>New constant attributes render states to be used in vl::Shader:</b> 
+- <b>New constant attributes render states to be used in vl::Shader:</b>
 - vl::VertexAttrib indexed render state: wraps the constant generic vertex attributes.
 - vl::Color, vl::SecondaryColor and vl::Normal: their use can potentially minimize the use of dummy arrays for geometries with attributes whose value does not change across the vertices and allowing the same geometry to be rendered with several different solid colors (which was nearly impossible before).
-- vl::Transform: 
+- vl::Transform:
 - Refactored to its original simpler form.
 - Update children local matrix to their world matrix when orphaning.
 - Added vl::Transform::preMultiply() and vl::Transform::postMultiply() methods.
@@ -184,7 +188,7 @@
 - TriangleIterator::isEnd() changed to vl::TriangleIterator::hasNext() and IndexIterator::isEnd() to vl::IndexIterator::hasNext() for better similarity with other APIs (such as Java iterators etc.).
 - FBO API made coherent with other GL resources:
 - create() -> createFBO() and createFBORenderTarget()
-- destroy() -> deleteFBO() and deleteRenderBuffer()		
+- destroy() -> deleteFBO() and deleteRenderBuffer()
 - <b>Legacy GPUBuffer / GLBufferObject / VBO language have been completely replaced with the more correct 'BufferObject' language</b>:
 - GLBufferObject renamed vl::BufferObject
 - gpuBuffer() renamed bufferObject()
@@ -352,11 +356,11 @@
 - vl::VisualizationLibrary::fileSystem() renamed vl::defFileSystem().
 - vl::VisualizationLibrary::loadWriterManager() renamed vl::defLoadWriterManager().
 - <b>vl::VisualizationLibrary::rendering() REMOVED</b> (not needed and generated more confusion than anything else)
-- UIEventListener revisited: 
+- UIEventListener revisited:
 - events have pure virtual functions
 - <b>runEvent() renamed updateEvent()</b>
 - addedListenerEvent() removedListenerEvent() substitute openglContextBoundEvent()
-- enableEvent(bool) substitute prepareToReconnect()	
+- enableEvent(bool) substitute prepareToReconnect()
 - Removed deprecated Cocoa bindings.
 - <b>Raycast volume rendering: added vl::RaycastVolume class and App_VolumeRaycast.cpp demo and tutorial.</b>
 - Added new tutorial on basic rendering application (Win32_direct.cpp)
@@ -394,14 +398,14 @@
 - New \p half class to manipulate half precision floating point data.
 - OpenGL 4.x:
 - Double precision uniforms.
-- Texture and color buffer formats		
+- Texture and color buffer formats
 - <b>API CHANGES</b>
-- Streamlined array naming convention: ArrayFloat,ArrayFVec2/3/4 renamed 
+- Streamlined array naming convention: ArrayFloat,ArrayFVec2/3/4 renamed
 ArrayFloat1/2/3/4, the same goes with all the other base types.
-- Reworked matrix and quaternion classes for better performances and more 
+- Reworked matrix and quaternion classes for better performances and more
 coherent API.
 - Updated to GLEW 1.5.7
-- Blind tests solidified in App_BlindTests.cpp: matrix & quaternions, signal/slots framework, virtual 
+- Blind tests solidified in App_BlindTests.cpp: matrix & quaternions, signal/slots framework, virtual
 filesystem, unique ID generation, half float scalar vector and matrices.
 - Deferred display list and VBO creation and update.
 - Enhanced renderable bounds update policy.
@@ -421,15 +425,13 @@ filesystem, unique ID generation, half float scalar vector and matrices.
 - Updated to Freetype 2.4.4.
 - Several other minor bug fixes, enhacements, code cleanup and documentation updates.
 
-\page pagChangelog Changelog
-
 <div class="featuretitle">Visualization Library 2010.11.1125</div>
 
-- <b>Vertex Attrib Set</b> new mechanics for lazy binding of vertex attribute arrays. Mesured around 5% rendering 
+- <b>Vertex Attrib Set</b> new mechanics for lazy binding of vertex attribute arrays. Mesured around 5% rendering
 speedup for complex scenes with several geometries shared by several other actors.
-- <b>Greatly improved vl::Texture</b>: immediate and lazy empty texture creation, better texture format/size 
+- <b>Greatly improved vl::Texture</b>: immediate and lazy empty texture creation, better texture format/size
 combination support check, each mipmap layer can be manipulated individually, updated documentation.
-- <b>New animation system</b> for vl::Shader and vl::Actor. Removed deprecated virtual method "update()" in 
+- <b>New animation system</b> for vl::Shader and vl::Actor. Removed deprecated virtual method "update()" in
 favor of vl::ShaderAnimator and vl::ActorEventCallback. This way one does not need anymore to subclass vl::Actor or vl::Shader
 to implement a specific animation and allows one to change the animation bound to an vl::Actor or vl::Shader very easily.
 - <b>RenderEventCallback</b> new class to intercept Renderer and Rendering related events. Much more robust rendering event
@@ -455,7 +457,7 @@ triggering and well defined environment contract.
 - Improved pre-post condition satisfaction during rendering.
 - <b>API CHANGES</b>
 - Updated texture format naming to reflect latest OpenGL headers.
-- Matrix4/3/2 new methods: transpose(), getTransposed(), getTransposed(M), invert(), getInverse(), getInverse(M), normalize(len), diff(), fill(); scalar_type typedef; 
+- Matrix4/3/2 new methods: transpose(), getTransposed(), getTransposed(M), invert(), getInverse(), getInverse(M), normalize(len), diff(), fill(); scalar_type typedef;
 
 <div class="featuretitle">Visualization Library 2010.11.1121</div>
 
@@ -660,10 +662,10 @@ triggering and well defined environment contract.
 
 - \b Direct \b volume \b rendering via vlVolume::SlicedVolume, supporting gradient, lighting and transfer function pre-computation,
 realtime GLSL-based Blinn-Phong lighting and transfer function computation.
-- New \b App_VolumeRendering.hpp demo demonstrating various volume rendering techniques based on the vlVolume::SlicedVolume class, 
+- New \b App_VolumeRendering.hpp demo demonstrating various volume rendering techniques based on the vlVolume::SlicedVolume class,
 see the <a href="pagguides.html">tutorial section</a> for more information.
 - \b Isosurface \b extraction with the new vlVolume::MarchingCubes class!
-- New \b App_MarchingCubes.hpp demo demonstrating various techniques using marching cubes, including multiple volume rendering, 
+- New \b App_MarchingCubes.hpp demo demonstrating various techniques using marching cubes, including multiple volume rendering,
 transparency management, volume color via texturing and vertex color, 3D plots and even two animated metaballs demos! See the <a href="pagguides.html">tutorial section</a> for more information.
 - \b DICOM file format support (read/write).
 - New vlVolume::VolumePlot class to generate annotated \b 3D \b plots from volume data.
@@ -699,7 +701,7 @@ transparency management, volume color via texturing and vertex color, 3D plots a
 - Fixed potential font deallocation problem.
 - Image::copySubImage() function to copy a rectangular sub-area of an image, supports all the most common image formats and types.
 
-<div class="featuretitle">Visualization Library Alpha 3.0.291</div>   
+<div class="featuretitle">Visualization Library Alpha 3.0.291</div>
 
 - Automatic compilation of PNG, JPG, ZLib and FreeType libraries.
 - New template-based ResourceDatabase implementation: simpler and more flexible.
@@ -707,53 +709,53 @@ transparency management, volume color via texturing and vertex color, 3D plots a
 - Fixed permission settings in tgz and tar.bz2 files.
 - ZippedFile now supports the seek() operation.
 
-<div class="featuretitle">Visualization Library Alpha 3.0.290</div>   
+<div class="featuretitle">Visualization Library Alpha 3.0.290</div>
 
 - \b Mac \b OS \b X platform support plus experimental Cocoa GUI bindings! A huge thanks goes to Brent Fulgham
 for his help and feedback!
 - \b MFC \b GUI bindings! Again, thanks to Brent Fulgham for his help and feedback!
 Includes support to fullscreen windows, multisampling, keyboard and mouse
-management, file drag&drop, OpenGL resource sharing, child and top windows 
+management, file drag&drop, OpenGL resource sharing, child and top windows
 support etc.
-- \b VectorGraphics and \b VectorGraphicsScene classes to perform advanced 
+- \b VectorGraphics and \b VectorGraphicsScene classes to perform advanced
 OpenGL hardware-accelerated 2D rendering.
-- \b Terrain \b scene \b manager: implements a simple, kdtree/chunk-based, GPU accelerated (if available), 
+- \b Terrain \b scene \b manager: implements a simple, kdtree/chunk-based, GPU accelerated (if available),
 highly memory efficient terrain rendering system (no LOD yet). The system lets you use very large
-height-maps and texture maps that exceed the GPU's maximum texture size. If the host supports OpenGL Shading Language 
+height-maps and texture maps that exceed the GPU's maximum texture size. If the host supports OpenGL Shading Language
 the scene manager keeps on the GPU memory only the heightmap and generates all the geometry on the fly, thus allowing
 very large/detailed terrains.
 - \b Extensible \b resource \b IO \b system (see below)
 - \b ShaderNode class to conveniently managed complex hierarchies of Shaders.
-- \b Progressive \b OpenGL \b extension \b management: if the same functionality is 
+- \b Progressive \b OpenGL \b extension \b management: if the same functionality is
 supported via multiple extensions now VL selects and uses the best
-available: first checks direct support by the OpenGL implementation, 
+available: first checks direct support by the OpenGL implementation,
 then checks ARB extensions, then checks EXT extensions.
 - \b Broader \b video \b card \b compatibility including support to integrated ATI and Intel chipsets.
-- \b TrackballManipulator new controls and more precise: now you can 
+- \b TrackballManipulator new controls and more precise: now you can
 zoom in/out with the right mouse button, pan the camera up/down
 left/right with the middle button and rotate with the left button.
-- \b Near/far \b clipping \b plane \b optimizations. The camera can now optionally 
+- \b Near/far \b clipping \b plane \b optimizations. The camera can now optionally
 optimize the near/far clipping planes based on the visible objects
 enhancing the everall rendering quality, minimizing z-fighting.
 
-\par  RESOURCE IO 
+\par  RESOURCE IO
 
 - \b JPG file format support for both load and save.
 - \b PNG file format support for both load and save.
 - Plug-in based ResourceLoaderWriter system. Now you can load and write
-any resource including 3d files and images using the methods 
+any resource including 3d files and images using the methods
 LoaderWriterManager::loadResource()/writeResource(). The appropriate
 ResourceLoaderWriter will be picked up and used for the specified
 file type. You can register your own ResourceLoaderWriter to support
 more file formats or to overried existing ResourceLoaderWriter too!
 - Image: new methods convertType() and convertFormat() to convert images
 from/to all the OpenGL 1.1 type/format combinations! For example you
-can convert an IT_FLOAT/IF_RGBA to a IT_UNSIGNED_SHORT/IF_LUMINANCE 
-image! In this case the image is also automatically converted from 
+can convert an IT_FLOAT/IF_RGBA to a IT_UNSIGNED_SHORT/IF_LUMINANCE
+image! In this case the image is also automatically converted from
 rgb to gray scale! The alpha channel is also retained when possible.
 - Image: new methods sampleLinear() and sample() to perform nearest-point
 or bilinear filtering sampling of an image. This functions support all
-the OpenGL 1.1 standard image type/format combinations too. This 
+the OpenGL 1.1 standard image type/format combinations too. This
 functions can be used to retrieve the color of a pixel, the height
 of a heightmap or to perform collision detection on a heightmap.
 - Image: new method subImage() returns a new image containing the specified
@@ -765,32 +767,32 @@ specified color spectrum.
 substituteColorGreenKey() to substitute colors and colorize an Image.
 - All file loaders and writers now use the VirtualFile interface
 - Added write support to DiskFile class.
-- Image loader/writers divided into their own modules: vlPNG, vlJPG, 
+- Image loader/writers divided into their own modules: vlPNG, vlJPG,
 vlTIFF, vlTGA, vlBMP, vlDDS, vlDAT.
-- 3D file loader/writers divided into their own modules: io3DS, ioOBJ, 
+- 3D file loader/writers divided into their own modules: io3DS, ioOBJ,
 ioAC3D, ioPLY, ioMD2.
 - Autodesk 3DS loader class cleaned and exposed in the vl3DS module to be
 directly used or enhanced by the user.
-- Simplified/unified render states management: RenderStates, ClipPlanes, 
+- Simplified/unified render states management: RenderStates, ClipPlanes,
 Light, TextureUnit.
 - New more flexible texture render states: TexGen, TexEnv, TextureMatrix.
-- Lazy allocation of RenderStateSet, EnableSet, UniformSet: uses less 
+- Lazy allocation of RenderStateSet, EnableSet, UniformSet: uses less
 memory and object creation/deletion is much quicker.
 
-\par  GEOMETRY 
+\par  GEOMETRY
 
-- GPUBufferInterfaceAbstract new methods: computeBoundingBox(), 
+- GPUBufferInterfaceAbstract new methods: computeBoundingBox(),
 computeBoundingSphere(), transform() and normalize(). Now you can perform
 all this operations in a GPU-buffer-type-and-layout agnostic way!
-- Geometry primitives quality updates: uses quads instead of triangles when 
+- Geometry primitives quality updates: uses quads instead of triangles when
 possible, topological fixes for better normal computation.
 - Geometry primitives: draw elements commands minimized and optimized.
 - Geometry::computeNormals() now supports all vertex formats and layouts!
-- Geometry::computeNormals() now supports all the main primitive types: 
+- Geometry::computeNormals() now supports all the main primitive types:
 triangles, triangle fan, polygon, quads, tri strips, quad strips!
 - Geometry::shrinkDrawElements() bug fixes.
 
-\par  DEMOS/TESTS 
+\par  DEMOS/TESTS
 
 - New demo App_VectorGraphics showing how to use VectorGraphics and VectorGraphicsScene.
 - New demo App_Terrain using the Terrain scene manager.
@@ -803,7 +805,7 @@ image processing effects.
 - New demo App_Deformer: shows how to implement a 2D application
 that loads an image and let the user interactively deform it!
 - New demo App_Fractals: a GPU accelerated interactive fractal navigator!
-- App_ModelViewer demo enhanced: massive code cleanup; camera centers the 
+- App_ModelViewer demo enhanced: massive code cleanup; camera centers the
 view to the model; automatic near/far clipping planes adjustment,
 nicer trackball panning and zooming.
 - New App_VertexFormat: shows several ways to layout vertex data and.
@@ -816,7 +818,7 @@ and bilinear sampling, loading and saving in JPG, PNG, TGA, TIFF formats.
 1D texture arrays, 2D texture arrays, texture rectangle, cubemap environment
 mapping, sphere mapping.
 
-\par  MISC 
+\par  MISC
 
 - CMake building: many optional modules to minimize compilation time and library size.
 - Support to the GL_ATI_texture_float extension for backwards compatibility.
@@ -825,12 +827,12 @@ mapping, sphere mapping.
 - GLSLProgram now can also have its own "static" Uniforms.
 - VL containers use the "at()" semantics to stay closer to the STL look'n'feel.
 - Bounding sphere and bounding box management: simplified, enhanced, bug fixes.
-- Scene managers bounding sphere, bounding box, and culling: now the 
+- Scene managers bounding sphere, bounding box, and culling: now the
 rendering is able to optionally cull whole scene managers.
 - Current-lod property made a render-time transient variable.
 - Better definition and splitting of non-const and const rendering operations.
 - get/goc semantics for Shaders and Uniforms: a method starting with "get"
-will never create the object requested, methods starting with "goc" 
+will never create the object requested, methods starting with "goc"
 (= get-or-create) will create the resource if it doesn't exist.
 - Qt4, SDL, Win32 keyboard management fixes when pressing keys like CTRL.
 - Text: fix when rendering empty lines.
@@ -842,12 +844,12 @@ in front or behind the other 3D objects.
 - Added support to glStencilMaskSeparate().
 - Added the new Clear class (Renderable) to clear buffers during the rendering.
 - Removed deprecated camara/viewport binding to OpenGLContext.
-- New Scissor class: scissor clipping support for Actors, Effects and vector graphics. 
-The Scissor class lets you define a rectangular aread clipped against the Viewport 
+- New Scissor class: scissor clipping support for Actors, Effects and vector graphics.
+The Scissor class lets you define a rectangular aread clipped against the Viewport
 within which the rendering will be performed.
 - New RectI and RectF classes to manipulate rectangular regions.
 - Framebuffer Objects fixes and improvements.
-- New Collection class: managing groups of objects is more robust and closer to 
+- New Collection class: managing groups of objects is more robust and closer to
 the C++ STL spirit.
 - New object oriented battery test framework
 - GLUT, WIN32, SDL, QT4 examples updated
@@ -859,12 +861,12 @@ the C++ STL spirit.
 - TextStream reads UTF8 encoded strings
 - String::trim() functions improved
 - String::replace() functions improved
-- OpenGL extensions management greatly improved: wider compatibility, optimal 
+- OpenGL extensions management greatly improved: wider compatibility, optimal
 use of the available extensions
 - Win32 GUI bindings: better support for fullscreen mode, support for top and child windows, many fixes and improvements.
 
 
-<div class="featuretitle">Visualization Library Alpha 2.1</div>   
+<div class="featuretitle">Visualization Library Alpha 2.1</div>
 
 - VBO usage and creation bug fixes.
 - GLSLProgram and GLSLShader documentation and pointers to the reference manual.
@@ -884,7 +886,7 @@ use of the available extensions
 - texture SetupParams more flexible and documented.
 - removed deprecated math classes and tests.
 
-<div class="featuretitle">Visualization Library Alpha 2</div>   
+<div class="featuretitle">Visualization Library Alpha 2</div>
 
 - faster and lighter rendering architecture (deprecated scene-graph system).
 - Unicode String class.

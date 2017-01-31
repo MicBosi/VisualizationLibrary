@@ -1,19 +1,19 @@
 /**
 
-	\page pagLicensing Visualization Library License
+\page pagLicensing Visualization Library License
 
-  Visualization Library is distributed under the OSI approved Simplified BSD License specified below.
-  See http://www.opensource.org/licenses/bsd-license.php for more info.
+Visualization Library is distributed under the OSI approved Simplified BSD License specified below.
+See http://www.opensource.org/licenses/bsd-license.php for more info.
 
- Inquiries regarding licensing terms or professional support should be
- addressed to: michele &lt;at&gt; visualizationlibrary &lt;dot&gt; org
+Inquiries regarding licensing terms or professional support should be
+addressed to: michele &lt;at&gt; visualizationlibrary &lt;dot&gt; org
 
- Enojy!
+Enojy!
 
- Michele
+Michele
 
-	<table width=1% border=0 style="border: 0px solid #EEE"><tr><td>
-	<pre>
+<table width=1% border=0 style="border: 0px solid #EEE"><tr><td>
+<pre>
 \verbatim
 
 Visualization Library
@@ -44,7 +44,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 \endverbatim
-	</pre>
-	</td></tr></table>
+</pre>
+</td></tr></table>
 
 */
