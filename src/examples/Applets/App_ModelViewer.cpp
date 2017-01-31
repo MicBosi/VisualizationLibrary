@@ -53,6 +53,10 @@ public:
     vl::Log::notify(appletInfo());
     openglContext()->setContinuousUpdate(false);
     rendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(true);
+
+    std::vector<String> files;
+    files.push_back( "/models/3ds/monkey.3ds" );
+    loadModel( files );
   }
 
   void loadModel(const std::vector<String>& files)
@@ -60,15 +64,11 @@ public:
     sceneManager()->tree()->actors()->clear();
 
     // default effects
-
-    ref<Light> camera_light = new Light;
-    ref<Effect> fx_lit = new Effect;
-    fx_lit->shader()->enable(EN_DEPTH_TEST);
-    fx_lit->shader()->enable(EN_LIGHTING);
-    fx_lit->shader()->setRenderState(camera_light.get(), 0);
-
-    ref<Effect> fx_solid = new Effect;
-    fx_solid->shader()->enable(EN_DEPTH_TEST);
+    ref<Effect> def_fx = new Effect;
+    def_fx->shader()->enable(EN_DEPTH_TEST);
+    def_fx->shader()->enable(EN_LIGHTING);
+    def_fx->shader()->setRenderState( new Light, 0 );
+    def_fx->shader()->gocLightModel()->setTwoSide( true );
 
     mEffects.clear();
 
@@ -76,7 +76,7 @@ public:
     {
       ref<ResourceDatabase> resource_db = loadResource(files[i], false);
 
-      if (!resource_db || resource_db->count<Actor>() == 0)
+      if ( ! resource_db || resource_db->count<Actor>() == 0 )
       {
         VL_LOG_ERROR << "No data found.\n";
         continue;
@@ -94,11 +94,18 @@ public:
       {
         Actor* act = resource_db->resources()[i]->as<Actor>();
 
-        if (!act)
+        if ( ! act )
           continue;
 
-        if (act->effect() == NULL)
-          act->setEffect(fx_lit.get());
+        if ( act->effect() == NULL ) {
+          act->setEffect( def_fx.get() );
+        } else {
+          Effect* fx = act->effect();
+          fx->shader()->enable(EN_DEPTH_TEST);
+          fx->shader()->enable(EN_LIGHTING);
+          fx->shader()->setRenderState( def_fx->shader()->renderState( vl::RS_Light, 0 ), 0 );
+          fx->shader()->gocLightModel()->setTwoSide(true);
+        }
 
         Geometry* geom = act->lod(0)->as<Geometry>();
         geom->computeNormals();
@@ -115,9 +122,6 @@ public:
         {
           act->effect()->shader()->disable(EN_LIGHTING);
         }
-
-        if ( act->effect()->shader()->isEnabled(EN_LIGHTING) && !act->effect()->shader()->getLight(0) )
-          act->effect()->shader()->setRenderState(camera_light.get(), 0);
 
         VL_CHECK(act);
         VL_CHECK(act->effect());
@@ -175,10 +179,10 @@ public:
 
   void fileDroppedEvent(const std::vector<String>& files)
   {
-    if (!loadShaders(files))
+    if ( ! loadShaders( files ) )
     {
-      loadModel(files);
-      loadShaders(mLastShaders);
+      loadModel( files );
+      loadShaders( mLastShaders );
     }
 
     // update the rendering
@@ -223,4 +227,4 @@ protected:
 
 // Have fun!
 
-BaseDemo* Create_App_ModelProfiler() { return new App_ModelProfiler; }
+BaseDemo* Create_App_ModelViewer() { return new App_ModelProfiler; }

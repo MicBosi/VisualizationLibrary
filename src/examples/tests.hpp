@@ -50,7 +50,7 @@ BaseDemo* Create_App_GLSLImageProcessing();
 BaseDemo* Create_App_Lights();
 BaseDemo* Create_App_Fractals();
 BaseDemo* Create_App_MiniEarth();
-BaseDemo* Create_App_ModelProfiler();
+BaseDemo* Create_App_ModelViewer();
 BaseDemo* Create_App_MorphAnimation();
 BaseDemo* Create_App_MultipleCameras();
 BaseDemo* Create_App_PointSplatting();
@@ -179,7 +179,7 @@ public:
       { "vector_graphics", Create_App_VectorGraphics(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,0,10), vl::vec3(0,0,0) },
       { "culling", Create_App_CullingBenchmark(), 10,10, 512, 512, vl::black, vl::vec3(0,500,-250), vl::vec3(0,500,-250-1) },
       { "kdtree", Create_App_KdTreeView(), 10,10, 512, 512, vl::black, vl::vec3(10,10,-10), vl::vec3(0,0,0) },
-      { "model_profiler", Create_App_ModelProfiler(), 10,10, 512, 512, vl::black, vl::vec3(0,0,0), vl::vec3(0,0,-1) },
+      { "model_viewer", Create_App_ModelViewer(), 10,10, 512, 512, vl::black, vl::vec3(0,0,0), vl::vec3(0,0,-1) },
       { "deformer", Create_App_Deformer(), 10,10, 512, 512, vl::black, vl::vec3(0,0,35), vl::vec3(0,0,0) },
       { "volume_point_splat", Create_App_PointSplatting(), 10,10, 512, 512, vl::black, vl::vec3(0,10,35), vl::vec3(0,0,0) },
       { "volume_sliced", Create_App_VolumeSliced(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,10,35), vl::vec3(0,0,0) },
