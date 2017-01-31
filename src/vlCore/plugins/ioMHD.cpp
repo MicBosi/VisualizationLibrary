@@ -184,6 +184,6 @@ ref<Image> vl::loadMHD(VirtualFile* file)
 bool vl::isMHD(VirtualFile* file)
 {
   // Simplistic way to determine if it's an MHD file
-  return file->path().toLowerCase().endsWith('.mhd');
+  return file->path().toLowerCase().endsWith(".mhd");
 }
 //-----------------------------------------------------------------------------
