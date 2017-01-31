@@ -108,7 +108,7 @@ void QtDirectory::listSubDirs(std::vector<String>& dirs_out, bool append) const
   }
 
   const char* p = path().toStdString().c_str();
-  QStringList subdirs = QDir(QString(p)).entryList( QDir::Filter::Dirs | QDir::NoDotAndDotDot );
+  QStringList subdirs = QDir(QString(p)).entryList( QDir::Dirs | QDir::NoDotAndDotDot );
 
   for (int i = 0; i < subdirs.size(); ++i) {
     vl::String name = vl::String::fromStdString( subdirs.at(i).toStdString() );
@@ -144,7 +144,7 @@ void QtDirectory::listFiles(std::vector<String>& files_out, bool append) const
   }
 
   const char* p = path().toStdString().c_str();
-  QStringList files = QDir(QString(p)).entryList( QDir::Filter::Files );
+  QStringList files = QDir(QString(p)).entryList( QDir::Files );
 
   for (int i = 0; i < files.size(); ++i) {
     vl::String name = vl::String::fromStdString( files.at(i).toStdString() );
