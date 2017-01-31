@@ -354,6 +354,22 @@ public:
       if ( files[0].endsWith( ".dat" ) || files[0].endsWith( ".dds" ) || files[0].endsWith( ".mhd" ) )
       {
         mVolumeImage = loadImage( files[0] );
+
+        // If image format is SHORT we assume it contains Hounsfield units so we rescale its values for
+        // optimal visibility. Note that you can do this in the shader as well.
+        if ( mVolumeImage->type() == vl::IT_SHORT ) {
+          mVolumeImage->setType(vl::IT_UNSIGNED_SHORT);
+          float h_start = -1000;
+          float h_end   = +1500;
+          vl::i16* ival = (vl::i16*)mVolumeImage->pixels();
+          vl::u16* uval = (vl::u16*)mVolumeImage->pixels();
+          for(int i=0; i<mVolumeImage->width() * mVolumeImage->height() * mVolumeImage->depth(); ++i, ++ival, ++uval) {
+            float t = ( (*ival) - h_start ) / ( h_end - h_start );
+            t = vl::clamp( t, 0.0f, 1.0f );
+            *uval = (u16)( t * 65535 );
+          }
+        }
+
         if ( mVolumeImage ) {
           setupVolume();
         }

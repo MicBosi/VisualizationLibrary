@@ -333,7 +333,7 @@ void GLFWWindow::glfw_scroll_callback(GLFWwindow* window, double dx, double dy)
   if ( vlwin ) {
     int x = floor(dx);
     int y = floor(dy);
-    vlwin->dispatchMouseWheelEvent( x );
+    vlwin->dispatchMouseWheelEvent( y );
   }
 }
 
