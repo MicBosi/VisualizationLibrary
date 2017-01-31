@@ -60,6 +60,9 @@ using namespace vl;
 #if defined(VL_IO_2D_DAT)
   #include "plugins/ioDAT.hpp"
 #endif
+#if defined(VL_IO_2D_MHD)
+  #include "plugins/ioMHD.hpp"
+#endif
 #if defined(VL_IO_2D_DDS)
   #include "plugins/ioDDS.hpp"
 #endif
@@ -239,6 +242,9 @@ void VisualizationLibrary::initCore(bool log_info)
   #endif
   #if defined(VL_IO_2D_DAT)
     registerLoadWriter(new LoadWriterDAT);
+  #endif
+  #if defined(VL_IO_2D_MHD)
+    registerLoadWriter(new LoadWriterMHD);
   #endif
   #if defined(VL_IO_2D_DICOM)
     registerLoadWriter(new LoadWriterDICOM);
