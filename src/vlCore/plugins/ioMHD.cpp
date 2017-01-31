@@ -37,11 +37,8 @@
 #include <vlCore/VirtualFile.hpp>
 #include <vlCore/Image.hpp>
 #include <vlCore/TextStream.hpp>
-#include <stdio.h>
 
 using namespace vl;
-
-#include <vlCore/ImageTools.hpp>
 
 //-----------------------------------------------------------------------------
 ref<Image> vl::loadMHD( const String& path )

@@ -87,7 +87,7 @@ int main(void)
   glfw_window->initGLFWWindow( "Visualization Library on GLFW - Rotating Cube", format, width, height );
 
   /* run GLFW message loop */
-  while ( glfw_window->handle() )
+  while ( glfw_window->windows().size() )
   {
     if ( glfw_window->continuousUpdate() ) {
       glfw_window->update();

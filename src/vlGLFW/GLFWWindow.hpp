@@ -50,6 +50,9 @@ namespace vlGLFW
   class VLGLFW_EXPORT GLFWWindow: public vl::OpenGLContext
   {
   public:
+    typedef std::map< ::GLFWwindow*, vlGLFW::GLFWWindow* > WinMapType;
+
+  public:
     GLFWWindow();
 
     //! Initializes and shows a GLFW window.
@@ -115,6 +118,8 @@ namespace vlGLFW
 
     void destroyWindow();
 
+    static const WinMapType& windows() { return mWinMap; }
+
   protected:
     static void glfw_size_callback(GLFWwindow* window, int w, int h);
 
@@ -147,7 +152,6 @@ namespace vlGLFW
     static void glfw_drop_callback(GLFWwindow *, int, const char**);
 
   protected:
-    typedef std::map< ::GLFWwindow*, vlGLFW::GLFWWindow* > WinMapType;
     static WinMapType mWinMap;
     unsigned short mUnicodeChar;
     GLFWwindow* mHandle;
