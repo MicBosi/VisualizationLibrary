@@ -759,18 +759,19 @@ namespace vl
         }
       }
 
-      // MIC FIXME: VertexAttribInfo should go away
-      for(size_t i=0; i<VA_MaxAttribCount; ++i)
-      {
-        if (geom->vertexAttribArray(i).data())
-        {
-          std::string vertex_attrib_array = String::printf("VertexAttribArray%d", i).toStdString();
-          *vlx << vertex_attrib_array.c_str() << s.exportVLX(&geom->vertexAttribArray(i));
-        }
-      }
+      // MIC FIXME: unify with above
+      //for(size_t i=0; i<VA_MaxAttribCount; ++i)
+      //{
+      //  if (geom->vertexAttribArray(i))
+      //  {
+      //    std::string vertex_attrib_array = String::printf("VertexAttribArray%d", i).toStdString();
+      //    *vlx << vertex_attrib_array.c_str() << s.exportVLX(geom->vertexAttribArray(i));
+      //  }
+      //}
 
-      for(int i=0; i<geom->drawCalls().size(); ++i)
+      for(int i=0; i<geom->drawCalls().size(); ++i) {
         *vlx << "DrawCall" << s.exportVLX(geom->drawCalls().at(i));
+      }
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
@@ -780,73 +781,6 @@ namespace vl
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportGeometry(s, cast_obj, vlx.get());
-      return vlx;
-    }
-  };
-
-  //---------------------------------------------------------------------------
-
-  /** VLX wrapper of vl::VertexAttribInfo */
-  struct VLXClassWrapper_VertexAttribInfo: public VLXClassWrapper
-  {
-    virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* vlx)
-    {
-      if (vlx->tag() != "<vl::VertexAttribInfo>")
-      {
-        Log::error( Say("Line %n : <vl::VertexAttribInfo> expected.\n") << vlx->lineNumber() );
-        return NULL;
-      }
-
-      // link the VLX to the VL object
-      ref<VertexAttribInfo> info = new VertexAttribInfo;
-      // register imported structure asap
-      s.registerImportedStructure(vlx, info.get());
-
-      for(size_t i=0; i<vlx->value().size(); ++i)
-      {
-        const std::string& key = vlx->value()[i].key();
-        const VLXValue& value = vlx->value()[i].value();
-
-        if (key == "Data")
-        {
-          VLX_IMPORT_CHECK_RETURN_NULL(value.type() == VLXValue::Structure, value)
-          ArrayAbstract* arr = s.importVLX( value.getStructure() )->as<ArrayAbstract>();
-          if(arr)
-            info->setData(arr);
-          else
-            s.signalImportError( Say("Line %n : import error.\n") << value.lineNumber() );
-        }
-        else
-        if (key == "Normalize")
-        {
-          VLX_IMPORT_CHECK_RETURN_NULL(value.type() == VLXValue::Bool, value)
-          info->setNormalize( value.getBool() );
-        }
-        else
-        if (key == "Interpretation")
-        {
-          VLX_IMPORT_CHECK_RETURN_NULL(value.type() == VLXValue::Identifier, value)
-          info->setInterpretation( vlx_EVertexAttribInterpretation(value, s) );
-        }
-      }
-
-      return info.get();
-    }
-
-    void exportVertexAttribInfo(VLXSerializer& s, const VertexAttribInfo* info, VLXStructure* vlx)
-    {
-      *vlx << "Data" << s.exportVLX(info->data());
-      *vlx << "Normalize" << info->normalize();
-      *vlx << "Interpretation" << vlx_Identifier(vlx_EVertexAttribInterpretation(info->interpretation()));
-    }
-
-    virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
-    {
-      const VertexAttribInfo* cast_obj = obj->as<VertexAttribInfo>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(vlx_makeTag(obj).c_str(), s.generateID("vertattrinfo_"));
-      // register exported object asap
-      s.registerExportedObject(obj, vlx.get());
-      exportVertexAttribInfo(s, cast_obj, vlx.get());
       return vlx;
     }
   };

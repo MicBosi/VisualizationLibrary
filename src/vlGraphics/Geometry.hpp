@@ -44,7 +44,6 @@
 #include <vlGraphics/DrawElements.hpp>
 #include <vlGraphics/DrawArrays.hpp>
 #include <vlCore/Collection.hpp>
-#include <vlGraphics/VertexAttribInfo.hpp>
 
 namespace vl
 {
@@ -246,49 +245,45 @@ namespace vl
 
     void setVertexArray(ArrayAbstract* data);
 
-    const ArrayAbstract* vertexArray() const { return mVertexAttribArrays[VA_Position].data(); }
+    const ArrayAbstract* vertexArray() const { return mVertexAttribArrays[VA_Position].get(); }
 
-    ArrayAbstract* vertexArray() { return mVertexAttribArrays[VA_Position].data(); }
+    ArrayAbstract* vertexArray() { return mVertexAttribArrays[VA_Position].get(); }
 
     void setNormalArray(ArrayAbstract* data);
 
-    const ArrayAbstract* normalArray() const { return mVertexAttribArrays[VA_Normal].data(); }
+    const ArrayAbstract* normalArray() const { return mVertexAttribArrays[VA_Normal].get(); }
 
-    ArrayAbstract* normalArray() { return mVertexAttribArrays[VA_Normal].data(); }
+    ArrayAbstract* normalArray() { return mVertexAttribArrays[VA_Normal].get(); }
 
     void setColorArray(ArrayAbstract* data);
 
-    const ArrayAbstract* colorArray() const { return mVertexAttribArrays[VA_Color].data(); }
+    const ArrayAbstract* colorArray() const { return mVertexAttribArrays[VA_Color].get(); }
 
-    ArrayAbstract* colorArray() { return mVertexAttribArrays[VA_Color].data(); }
+    ArrayAbstract* colorArray() { return mVertexAttribArrays[VA_Color].get(); }
 
     void setSecondaryColorArray(ArrayAbstract* data);
 
-    const ArrayAbstract* secondaryColorArray() const { return mVertexAttribArrays[VA_SecondaryColor].data(); }
+    const ArrayAbstract* secondaryColorArray() const { return mVertexAttribArrays[VA_SecondaryColor].get(); }
 
-    ArrayAbstract* secondaryColorArray() { return mVertexAttribArrays[VA_SecondaryColor].data(); }
+    ArrayAbstract* secondaryColorArray() { return mVertexAttribArrays[VA_SecondaryColor].get(); }
 
     void setFogCoordArray(ArrayAbstract* data);
 
-    const ArrayAbstract* fogCoordArray() const { return mVertexAttribArrays[VA_FogCoord].data(); }
+    const ArrayAbstract* fogCoordArray() const { return mVertexAttribArrays[VA_FogCoord].get(); }
 
-    ArrayAbstract* fogCoordArray() { return mVertexAttribArrays[VA_FogCoord].data(); }
+    ArrayAbstract* fogCoordArray() { return mVertexAttribArrays[VA_FogCoord].get(); }
 
     void setTexCoordArray(int tex_unit, ArrayAbstract* data);
 
-    const ArrayAbstract* texCoordArray(int tex_unit) const { return mVertexAttribArrays[VA_TexCoord0 + tex_unit].data(); }
+    const ArrayAbstract* texCoordArray(int tex_unit) const { return mVertexAttribArrays[VA_TexCoord0 + tex_unit].get(); }
 
-    ArrayAbstract* texCoordArray(int tex_unit) { return mVertexAttribArrays[VA_TexCoord0 + tex_unit].data(); }
+    ArrayAbstract* texCoordArray(int tex_unit) { return mVertexAttribArrays[VA_TexCoord0 + tex_unit].get(); }
 
-    void setVertexAttribArray(int attrib_location, ArrayAbstract* data, bool normalize=true, EVertexAttribInterpretation data_behav=VAI_NORMAL) {
-      setVertexAttribArray( attrib_location, VertexAttribInfo(data, data_behav, normalize) );
-    }
+    void setVertexAttribArray(int attrib_location, const ArrayAbstract* info);
 
-    void setVertexAttribArray(int attrib_location, const VertexAttribInfo& info);
+    const ArrayAbstract* vertexAttribArray(int attrib_location) const;
 
-    const VertexAttribInfo& vertexAttribArray(int attrib_location) const;
-
-    VertexAttribInfo& vertexAttribArray(int attrib_location);
+    ArrayAbstract* vertexAttribArray(int attrib_location);
 
   protected:
     virtual void computeBounds_Implementation();
@@ -299,7 +294,7 @@ namespace vl
     Collection<DrawCall> mDrawCalls;
 
     // vertex attributes
-    VertexAttribInfo mVertexAttribArrays[VA_MaxAttribCount];
+    ref<ArrayAbstract> mVertexAttribArrays[VA_MaxAttribCount];
   };
   //------------------------------------------------------------------------------
 }
