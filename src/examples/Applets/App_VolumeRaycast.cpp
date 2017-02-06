@@ -507,6 +507,16 @@ public:
     setupScene();
   }
 
+  virtual void destroyEvent() {
+    BaseDemo::destroyEvent();
+    // We need to release objects containing OpenGL objects before the OpenGL context is destroyed.
+    mRaycastVolume = NULL;
+    mVolumeAct = NULL;
+    mGLSL = NULL;
+    mLight0 = mLight1 = mLight2 = NULL;
+    mValThreshold = NULL;
+  }
+
   private:
     ref<Transform> mVolumeTr;
     ref<Transform> mLight0Tr;
