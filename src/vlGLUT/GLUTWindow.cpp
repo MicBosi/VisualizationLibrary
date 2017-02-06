@@ -78,6 +78,22 @@ bool GLUTWindow::initGLUTWindow(const vl::String& title, const vl::OpenGLContext
     }
   #endif
   mFullscreen = info.fullscreen();
+
+  switch( info.openGLProfile() )
+  {
+  case vl::GLP_Compatibility:
+    glutInitContextProfile ( GLUT_COMPATIBILITY_PROFILE );
+    glutInitContextVersion( info.majVersion(), info.minVersion() );
+    break;
+  case vl::GLP_Core:
+    glutInitContextProfile ( GLUT_CORE_PROFILE );
+    glutInitContextVersion( info.majVersion(), info.minVersion() );
+    break;
+  case vl::GLP_Default:
+    // do nothing
+    break;
+  }
+
   glutInitDisplayMode( flags );
   glutInitWindowSize( width, height );
   glutInitWindowPosition( x, y );
