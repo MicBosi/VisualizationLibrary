@@ -109,7 +109,7 @@ public:
   App_VolumeRaycast()
   {
     SAMPLE_STEP         = 512.0f;
-    MODE                = Isosurface_Transp_Mode;
+    MODE                = Isosurface_Mode;
     DYNAMIC_LIGHTS      = false;
     COLORED_LIGHTS      = false;
     PRECOMPUTE_GRADIENT = false;
@@ -159,6 +159,9 @@ public:
 
   void setupScene()
   {
+    mRaycastVolume = new vl::RaycastVolume;
+    mVolumeAct = new Actor;
+
     // scrap previous scene
     sceneManager()->tree()->eraseAllChildren();
     sceneManager()->tree()->actors()->clear();
@@ -181,7 +184,7 @@ public:
       volume_fx->shader()->gocCullFace()->set( vl::PF_FRONT );
     }
 
-    volume_fx->shader()->setRenderState( mLight0.get(), 0 );
+    mRaycastVolume->lights().push_back( mLight0 );
 
     // light bulbs
     if ( DYNAMIC_LIGHTS )
@@ -198,8 +201,8 @@ public:
       }
 
       // add the other two lights
-      volume_fx->shader()->setRenderState( mLight1.get(), 1 );
-      volume_fx->shader()->setRenderState( mLight2.get(), 2 );
+      mRaycastVolume->lights().push_back( mLight1 );
+      mRaycastVolume->lights().push_back( mLight2 );
 
       // animate the three lights
       mLight0->bindTransform( mLight0Tr.get() );
@@ -245,7 +248,6 @@ public:
     trackball()->setTransform( mVolumeTr.get() );
 
     // volume actor
-    mVolumeAct = new Actor;
     mVolumeAct->setEffect( volume_fx.get() );
     mVolumeAct->setTransform( mVolumeTr.get() );
     sceneManager()->tree()->addActor( mVolumeAct.get() );
@@ -254,7 +256,6 @@ public:
 
     // RaycastVolume will generate the actual actor's geometry upon setBox() invocation.
     // The geometry generated is actually a simple box with 3D texture coordinates.
-    mRaycastVolume = new vl::RaycastVolume;
     mRaycastVolume->bindActor( mVolumeAct.get() );
     AABB volume_box( vec3( -10,-10,-10 ), vec3( +10,+10,+10 ) );
     mRaycastVolume->setBox( volume_box );
@@ -271,8 +272,11 @@ public:
     mValThresholdText->setColor( vl::white );
     ref<Effect> effect = new Effect;
     effect->shader()->enable( EN_BLEND );
-    sceneManager()->tree()->addActor( mValThresholdText.get(), effect.get() );
     updateText();
+    // Don't add text in GL core profile - not supported yet.
+    if ( Has_Fixed_Function_Pipeline ) {
+      sceneManager()->tree()->addActor( mValThresholdText.get(), effect.get() );
+    }
 
     // let's visualize the volume!
     setupVolume();
@@ -297,7 +301,7 @@ public:
     Log::debug( Say("Volume: %n %n %n\n") << mVolumeImage->width() << mVolumeImage->height() << mVolumeImage->depth() );
 
     // volume image textue must be on sampler #0
-    vl::ref< vl::Texture > vol_tex = new vl::Texture( mVolumeImage.get(), TF_LUMINANCE8, false, false );
+    vl::ref< vl::Texture > vol_tex = new vl::Texture( mVolumeImage.get(), TF_RED, false, false );
     volume_fx->shader()->gocTextureSampler( 0 )->setTexture( vol_tex.get() );
     vol_tex->getTexParameter()->setMagFilter( vl::TPF_LINEAR );
     vol_tex->getTexParameter()->setMinFilter( vl::TPF_LINEAR );

@@ -83,11 +83,15 @@ namespace vl
     \param img_size Size in texels of the volume texture. */
     void generateTextureCoordinates( const ivec3& img_size );
 
+    const std::vector< ref<Light> >& lights() const { return mLights; }
+    std::vector< ref<Light> >& lights() { return mLights; }
+
   protected:
     ref<Geometry> mGeometry;
     AABB mBox;
     ref<ArrayFloat3> mTexCoord;
     ref<ArrayFloat3> mVertCoord;
+    std::vector< ref<Light> > mLights;
   };
 }
 

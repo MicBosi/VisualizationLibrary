@@ -11,17 +11,21 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#version 150 compatibility
+#version 330 core
 
 // Simply passes the vertex frag_position and texture coordinate to the fragment shader.
 // It also passes the vertex coord in object space to perform per-pixel lighting.
 
+#pragma VL include /glsl/std/uniforms.glsl
+#pragma VL include /glsl/std/vertex_attribs.glsl
+
 out vec3 frag_position; // in object space
+out vec4 tex_coord;
 
 void main(void)
 {
-    gl_Position = ftransform();
-    gl_TexCoord[0] = gl_MultiTexCoord0;
-    frag_position = gl_Vertex.xyz;
+    gl_Position = vl_ModelViewProjectionMatrix * vl_VertexPosition;
+    tex_coord = vl_VertexTexCoord0;
+    frag_position = vl_VertexPosition.xyz;
 }
 // Have fun!
