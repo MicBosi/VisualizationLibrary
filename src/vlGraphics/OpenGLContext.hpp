@@ -221,6 +221,9 @@ namespace vl
     //! Removes all FramebufferObjects belonging to an OpenGLContext.
     void destroyAllFramebufferObjects();
 
+    //! Removes all OpenGL resources handled by the OpenGLContext.
+    void destroyAllOpenGLResources();
+
     //! Asks to the windowing system that is managing the OpenGLContext to quit the application.
     virtual void quitApplication() {}
 
@@ -397,7 +400,7 @@ namespace vl
     }
 
     //! Dispatches the UIEventListener::destroyEvent() notification to the subscribed UIEventListener(s),
-    //! calls destroyAllFramebufferObjects() and eraseAllEventListeners()
+    //! calls destroyAllOpenGLResources() and eraseAllEventListeners()
     //! This event must be issued just before the actual GL context is destroyed.
     void dispatchDestroyEvent()
     {
@@ -406,7 +409,7 @@ namespace vl
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
           temp_clients[i]->destroyEvent();
-      destroyAllFramebufferObjects();
+      destroyAllOpenGLResources();
       eraseAllEventListeners();
     }
 

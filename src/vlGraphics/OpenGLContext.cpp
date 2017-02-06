@@ -91,23 +91,11 @@ OpenGLContext::OpenGLContext(int w, int h)
 //-----------------------------------------------------------------------------
 OpenGLContext::~OpenGLContext()
 {
-  if (mFramebufferObject.size() || mEventListeners.size())
-    Log::warning("~OpenGLContext(): you should have called dispatchDestroyEvent() before destroying the OpenGLContext!\nNow it's too late to cleanup things!\n");
-
-  // invalidate the left and right framebuffers
-  mLeftFramebuffer->mOpenGLContext = NULL;
-  mRightFramebuffer->mOpenGLContext = NULL;
-
-  // invalidate FBOs
-  for(unsigned i=0; i<mFramebufferObject.size(); ++i)
+  if ( mLeftFramebuffer || mRightFramebuffer || mFramebufferObject.size() || mEventListeners.size() )
   {
-    // note, we can't destroy the FBOs here because it's too late to call makeCurrent().
-    // mFramebufferObject[i]->destroy();
-    mFramebufferObject[i]->mOpenGLContext = NULL;
+    Log::warning("~OpenGLContext() called before dispatchDestroyEvent(), your application will likely crash.\n");
+    VL_TRAP();
   }
-
-  // remove all the event listeners
-  eraseAllEventListeners();
 }
 //-----------------------------------------------------------------------------
 ref<FramebufferObject> OpenGLContext::createFramebufferObject(int width, int height, EReadDrawBuffer draw_buffer, EReadDrawBuffer read_buffer)
@@ -129,6 +117,32 @@ void OpenGLContext::destroyFramebufferObject(FramebufferObject* fbort)
       mFramebufferObject[i]->mOpenGLContext = NULL;
       mFramebufferObject.erase(mFramebufferObject.begin()+i);
       return;
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+void OpenGLContext::destroyAllOpenGLResources()
+{
+  if ( mIsInitialized ) {
+    mIsInitialized = false;
+    makeCurrent();
+    destroyAllFramebufferObjects();
+    mLeftFramebuffer->mOpenGLContext = NULL;
+    mRightFramebuffer->mOpenGLContext = NULL;
+    mLeftFramebuffer = NULL;
+    mRightFramebuffer = NULL;
+    for( int i=0; i<RS_RenderStateCount; ++i )
+    {
+      mDefaultRenderStates[i].mRS = NULL;
+    }
+    mCurrentEnableSet = NULL;
+    mNewEnableSet = NULL;
+    mCurrentRenderStateSet = NULL;
+    mNewRenderStateSet = NULL;
+    mGLSLProgram = NULL;
+    for( int i=0; i<VL_MAX_TEXTURE_IMAGE_UNITS; ++i )
+    {
+      mTexUnitBinding[ i ] = vl::TD_TEXTURE_UNKNOWN;
     }
   }
 }
