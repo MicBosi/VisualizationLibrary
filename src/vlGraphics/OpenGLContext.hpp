@@ -63,6 +63,8 @@ namespace vl
       mStencilBufferBits(8),
       mMultisampleSamples(16),
       mContextClientVersion(1),
+      mMajVersion(3),
+      mMinVersion(3),
       mHasDoubleBuffer(true),
       mHasMultisample(false),
       mStereo(false),
@@ -99,8 +101,15 @@ namespace vl
     //! Returns rgbaBits().r() + rgbaBits().g() + rgbaBits().b() + rgbaBits().a()
     int bitsPerPixel() const { return rgbaBits().r() + rgbaBits().g() + rgbaBits().b() + rgbaBits().a(); }
 
+    //! The OpenGL profile you'd like to access.
+    //! When using vl::GLP_Compatibility or vl::GLP_Core you must also specify a min/maj version using setVersion() which defaults to 3.3 or a compatible higher version.
     void setOpenGLProfile(EOpenGLProfile p) { mProfile = p; }
     EOpenGLProfile openGLProfile() const { return mProfile; }
+
+    //! Sets the OpenGL version you want to access when using vl::GLP_Compatibility or vl::GLP_Core profiles (default is 3.3 which will yield also any compatible higher version).
+    void setVersion( int majv, int minv ) { mMajVersion = majv; mMinVersion = minv; }
+    int majVersion() const { return mMajVersion; }
+    int minVersion() const { return mMinVersion; }
 
   protected:
     ivec4 mRGBABits;
@@ -109,6 +118,8 @@ namespace vl
     int mStencilBufferBits;
     int mMultisampleSamples;
     int mContextClientVersion;
+    int mMajVersion;
+    int mMinVersion;
     bool mHasDoubleBuffer;
     bool mHasMultisample;
     bool mStereo;

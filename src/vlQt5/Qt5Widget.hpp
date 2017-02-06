@@ -115,9 +115,11 @@ namespace vlQt5
       {
       case vl::GLP_Compatibility:
         fmt.setProfile( QGLFormat::CompatibilityProfile );
+        fmt.setVersion( info.majVersion(), info.minVersion() );
         break;
       case vl::GLP_Core:
         fmt.setProfile( QGLFormat::CoreProfile );
+        fmt.setVersion( info.majVersion(), info.minVersion() );
         break;
       case vl::GLP_Default:
         // Don't care
