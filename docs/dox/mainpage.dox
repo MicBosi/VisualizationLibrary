@@ -8,11 +8,11 @@
 
       - \subpage pagIntro "Introduction"
       - \subpage pagKeyFeatures "Features Overview"
-      - \subpage pagGallery "Gallery"
+      - <a target=_blank href="http://VisualizationLibrary.org/gallery"><b>Gallery</b></a>
 
       <div class="featuretitle"><b>Download</b></div>
 
-      - <a href="pag_download.html"><b>Download Page</b></a>
+      - <a target=_blank href="http://VisualizationLibrary.org/download"><b>Download Page</b></a>
       - \subpage pagChangelog
 
       <div class="featuretitle"><b>Getting Started</b></div>
@@ -29,7 +29,7 @@
       - \subpage pagContributing "Contributing"
       - <a target=_blank href="https://github.com/MicBosi/VisualizationLibrary"><b>VL on GitHub</b></a>
       - <a target=_blank href="https://groups.google.com/forum/#!forum/visualization-library"><b>VL Google Group</b></a>
-      - <a target=_blank href="http://visualizationlibrary.org/forum"><b>Forums</b></a> (legacy)
+      - <a target=_blank href="http://VisualizationLibrary.org/forum"><b>Forums</b></a> (legacy)
       - <a target=_blank href="http://www.twitter.com/VizLibrary"><b>\@VizLibrary on Twitter</b></a>
 
       <div class="featuretitle"><b>API Documentation</b></div>
