@@ -36,7 +36,7 @@
 
 using namespace vl;
 
-static void error_callback(int error, const char* description)
+static void error_callback(int /*error*/, const char* description)
 {
   fputs( description, stderr );
 }
@@ -63,6 +63,8 @@ int main(void)
   format.setMultisampleSamples(16);
   format.setMultisample(false);
   format.setFullscreen(false);
+  //format.setOpenGLProfile( GLP_Core );
+  //format.setVersion( 3, 3 );
 
   /* create the applet to be run */
   ref<Applet> applet = new App_RotatingCube;
