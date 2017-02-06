@@ -26,7 +26,7 @@
 
       <div class="featuretitle"><b>Community</b></div>
 
-      - \subpage pagContributing "Contributing"
+      - <a target=_blank href="https://github.com/MicBosi/VisualizationLibrary/blob/master/CONTRIBUTING.md"><b>Contributing</b></a>
       - <a target=_blank href="https://github.com/MicBosi/VisualizationLibrary"><b>VL on GitHub</b></a>
       - <a target=_blank href="https://groups.google.com/forum/#!forum/visualization-library"><b>VL Google Group</b></a>
       - <a target=_blank href="http://VisualizationLibrary.org/forum"><b>Forums</b></a> (legacy)
