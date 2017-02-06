@@ -7,12 +7,11 @@
 
     - \subpage pagIntro "Introduction"
     - \subpage pagKeyFeatures "Features Overview"
-    - \subpage pagGallery "Gallery"
+    - <a target=_blank href="http://VisualizationLibrary.org/gallery"><b>Gallery</b></a>
 
     <div class="featuretitle">Download</div>
 
-    - <a href="pag_download.html"><b>Download Page</b></a>
-    - <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=M925YZK6ARN82" title="Become a Visualization Library Angel">Donate</a>
+    - <a target=_blank href="http://VisualizationLibrary.org/download"><b>Download Page</b></a>
     - \subpage pagChangelog
 
     <div class="featuretitle">Getting Started</div>
@@ -26,11 +25,11 @@
 
     <div class="featuretitle">Community</div>
 
+    - <a target=_blank href="https://github.com/MicBosi/VisualizationLibrary/blob/master/CONTRIBUTING.md"><b>Contributing</b></a>
     - <a target=_blank href="https://github.com/MicBosi/visualizationlibrary">Visualization Library on GitHub</a>
     - <a target=_blank href="https://groups.google.com/forum/#!forum/visualization-library">Visualization Library Google Group</a>
     - <a target=_blank href="https://github.com/MicBosi/visualizationlibrary/issues">Issue tracker on GitHub</a>
     - <a target=_blank href="http://visualizationlibrary.org/forum">Forums</a> (legacy)
-    - \subpage pagContributing "Contributing"
     - <a target=_blank href="http://www.twitter.com/VizLibrary">Twitter</a>
 
     <div class="featuretitle">API Documentation</div>
@@ -46,6 +45,11 @@
     - \subpage pagCredits "Credits"
     - \subpage pagContacts "Contacts"
 
+    <div class="featuretitle"><b>Docs Versions</b></div>
+
+    - <a href="/docs/2.0/"><b>VL 2.0 Docs</b></a>
+    - <a href="/docs/1.0/"><b>VL 1.0 Docs</b></a>
+      
     </td></tr></table>
     </center>
 */

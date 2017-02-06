@@ -2,6 +2,10 @@
 
 \page pagChangelog Changelog
 
+<div class="featuretitle">Visualization Library 1.0.3</div>
+
+- Minor docs updates.
+
 <div class="featuretitle">Visualization Library 1.0.2</div>
 
 - vl::makeGrid() new "center=true" option to optionally disable centering of geometry.
@@ -420,8 +424,6 @@ filesystem, unique ID generation, half float scalar vector and matrices.
 - New framebuffer objects test and tutorial (\p App_Famebuffer_Object.cpp).
 - Updated to Freetype 2.4.4.
 - Several other minor bug fixes, enhacements, code cleanup and documentation updates.
-
-\page pagChangelog Changelog
 
 <div class="featuretitle">Visualization Library 2010.11.1125</div>
 
