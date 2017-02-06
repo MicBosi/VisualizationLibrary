@@ -75,7 +75,6 @@ namespace vlGLFW
 
     //! Attempts to quits the program by destroying all windows
     void quitApplication() {
-      eraseAllEventListeners();
       WinMapType windows = mWinMap;
       for( WinMapType::iterator it = windows.begin(); it != windows.end(); ++it ) {
         it->second->destroyWindow();

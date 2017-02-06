@@ -50,7 +50,10 @@ public:
     setupApplet(applet, glfw_window.get(), bk_color, eye, center);
 
     /* Initialize the OpenGL context and window properties */
-    glfw_window->initGLFWWindow( title, format, width, height );
+    if ( ! glfw_window->initGLFWWindow( title, format, width, height ) ) {
+      Log::error("GLFWWindow::initGLFWWindow() failed.\n");
+      exit(1);
+    }
     glfw_window->setPosition(x, y);
 
     /* run GLFW message loop */
@@ -72,7 +75,7 @@ public:
   }
 };
 
-static void error_callback(int error, const char* description)
+static void error_callback(int /*error*/, const char* description)
 {
   fputs( description, stderr );
 }

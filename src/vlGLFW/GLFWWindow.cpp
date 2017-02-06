@@ -226,7 +226,6 @@ void GLFWWindow::glfw_close_callback(GLFWwindow* window)
     WinMapType::iterator it = mWinMap.find( window );
     GLFWWindow* vlwin = it != mWinMap.end() ? it->second : NULL;
     if ( vlwin ) {
-      vlwin->dispatchDestroyEvent();
       vlwin->destroyWindow();
     }
   }
