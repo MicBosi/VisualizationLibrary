@@ -45,7 +45,7 @@ namespace vlut
 
 namespace vlSDL
 {
-  void messageLoop();
+  VLSDL_EXPORT void messageLoop();
 
 //-----------------------------------------------------------------------------
 // SDLWindow
