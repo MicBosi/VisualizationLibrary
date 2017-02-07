@@ -26,7 +26,7 @@ QT4_WRAP_CPP(MOC_SOURCES Qt4Widget.hpp)
 add_library(VLQt4 ${VL_SHARED_OR_STATIC} ${VLQt4_SRC} ${VLQt4_INC} ${MOC_SOURCES})
 VL_DEFAULT_TARGET_PROPERTIES(VLQt4)
 
-target_link_libraries(VLQt4 VLCore VLGraphics ${QT_LIBRARIES})
+target_link_libraries(VLQt4 VLMain ${QT_LIBRARIES})
 
 ################################################################################
 # Install Rules

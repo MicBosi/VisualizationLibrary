@@ -26,7 +26,7 @@ file(GLOB VLWX_INC "*.hpp")
 add_library(VLWX ${VL_SHARED_OR_STATIC} ${VLWX_SRC} ${VLWX_INC})
 VL_DEFAULT_TARGET_PROPERTIES(VLWX)
 
-target_link_libraries(VLWX VLCore VLGraphics  ${wxWidgets_LIBRARIES})
+target_link_libraries(VLWX VLMain ${wxWidgets_LIBRARIES})
 
 ################################################################################
 # Install Rules

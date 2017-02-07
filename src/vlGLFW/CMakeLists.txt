@@ -25,7 +25,7 @@ include_directories(${GLFW_INCLUDE_DIR})
 add_library(VLGLFW ${VL_SHARED_OR_STATIC} ${VLGLFW_SRC} ${VLGLFW_INC})
 VL_DEFAULT_TARGET_PROPERTIES(VLGLFW)
 
-target_link_libraries(VLGLFW VLCore VLGraphics ${GLFW_glfw3dll_LIB})
+target_link_libraries(VLGLFW VLMain ${GLFW_glfw3dll_LIB})
 
 ################################################################################
 # Install Rules

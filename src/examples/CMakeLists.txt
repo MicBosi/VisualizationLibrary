@@ -13,7 +13,15 @@
 
 project(EXAMPLES)
 
-if(VL_GUI_QT4_EXAMPLES OR VL_GUI_QT5_EXAMPLES OR VL_GUI_MFC_EXAMPLES OR VL_GUI_WIN32_EXAMPLES OR VL_GUI_WXWIDGETS_EXAMPLES OR VL_GLES_EXAMPLES)
+if( VL_GUI_QT4_EXAMPLES OR
+    VL_GUI_QT5_EXAMPLES OR
+    VL_GUI_MFC_EXAMPLES OR
+    VL_GUI_WIN32_EXAMPLES OR
+    VL_GUI_WXWIDGETS_EXAMPLES OR
+    VL_GUI_GLES_EXAMPLES OR
+    VL_GUI_GLEW_EXAMPLES OR
+    VL_GUI_GLUT_EXAMPLES OR
+    VL_GUI_SDL_EXAMPLES )
 
   ################################################################################
   # Compile all Applets
@@ -28,8 +36,8 @@ if(VL_GUI_QT4_EXAMPLES OR VL_GUI_QT5_EXAMPLES OR VL_GUI_MFC_EXAMPLES OR VL_GUI_W
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
   # Common libraries
-  set(VL_LIBS_EXAMPLE VLGraphics VLCore)
-  set(VL_LIBS_TESTS VLMolecule VLVG VLVolume VLGraphics VLCore)
+  set(VL_LIBS_EXAMPLE VLMain)
+  set(VL_LIBS_TESTS VLMolecule VLVG VLVolume VLMain)
 
   if(VL_GUI_SDL_EXAMPLES)
       # Darwin
@@ -161,7 +169,7 @@ if(VL_GUI_QT4_EXAMPLES OR VL_GUI_QT5_EXAMPLES OR VL_GUI_MFC_EXAMPLES OR VL_GUI_W
       VL_INSTALL_TARGET(vlWX_tests)
   endif()
 
-  if (VL_GLES_EXAMPLES AND VL_OPENGL_ES1)
+  if (VL_GUI_GLES_EXAMPLES AND VL_OPENGL_ES1)
   	# Example
   	add_executable(vlGLES1_example GLES1_example.cpp)
   	target_link_libraries(vlGLES1_example VLEGL ${VL_LIBS_EXAMPLE})
@@ -173,7 +181,7 @@ if(VL_GUI_QT4_EXAMPLES OR VL_GUI_QT5_EXAMPLES OR VL_GUI_MFC_EXAMPLES OR VL_GUI_W
   	VL_INSTALL_TARGET(vlGLES1_tests)
   endif()
 
-  if (VL_GLES_EXAMPLES AND VL_OPENGL_ES2)
+  if (VL_GUI_GLES_EXAMPLES AND VL_OPENGL_ES2)
   	# Example
   	add_executable(vlGLES2_example GLES2_example.cpp)
   	target_link_libraries(vlGLES2_example VLEGL ${VL_LIBS_EXAMPLE})

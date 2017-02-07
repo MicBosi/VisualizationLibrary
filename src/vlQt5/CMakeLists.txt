@@ -24,7 +24,7 @@ file(GLOB VLQt5_INC "*.hpp")
 add_library(VLQt5 ${VL_SHARED_OR_STATIC} ${VLQt5_SRC} ${VLQt5_INC})
 VL_DEFAULT_TARGET_PROPERTIES(VLQt5)
 
-target_link_libraries(VLQt5 VLCore VLGraphics Qt5::Widgets Qt5::OpenGL)
+target_link_libraries(VLQt5 VLMain Qt5::Widgets Qt5::OpenGL)
 
 ################################################################################
 # Install Rules

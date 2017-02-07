@@ -43,8 +43,8 @@ include_directories(${_INCLUDE_DIRS})
 # Khronos OpenGL headers
 set(KHRONOS_DIR "${3RDPARTY_DIR}/Khronos")
 set(KHRONOS_INC ${KHRONOS_DIR}/GL/mesa_gl.h
-				${KHRONOS_DIR}/GL/khronos_glext.h 
-				${KHRONOS_DIR}/GL/khronos_wglext.h 				
+				${KHRONOS_DIR}/GL/khronos_glext.h
+				${KHRONOS_DIR}/GL/khronos_wglext.h
 				${KHRONOS_DIR}/GLES/gles_extra_defines.h
 				${KHRONOS_DIR}/GLES/khronos_gl.h
 				${KHRONOS_DIR}/GLES/khronos_glext.h

@@ -33,10 +33,10 @@
 #define VisualizationLibrary_INCLUDE_ONCE
 
 #include <vlCore/config.hpp>
+#include <vlMain/link_config.hpp>
 #include <vlCore/link_config.hpp>
-#include <vlGraphics/link_config.hpp>
 
-// TODO: it would be nice not to have this VLGRAPHICS/VLCORE_EXPORT mix and not to include <vlGraphics/link_config.hpp> here.
+// TODO: it would be nice not to have this VLGRAPHICS/VLMAIN_EXPORT mix and not to include <vlGraphics/link_config.hpp> here.
 
 namespace vl
 {
@@ -46,36 +46,33 @@ namespace vl
   public:
     //! Initializes VLCore and VLGraphics libraries.
     //! Call initCore() instead of init() when using only VLCore.
-    VLGRAPHICS_EXPORT static void init(bool log_info=true);
+    VLMAIN_EXPORT static void init(bool log_info=true);
 
     //! Releases all the resources acquired by VLCore and VLGraphics.
     //! Call shutdownCore() instead of shutdown() when using only VLCore.
-    VLGRAPHICS_EXPORT static void shutdown();
-
-    //! Initializes only VLCore library.
-    //! Call initCore() instead of init() ONLY when using VLCore alone.
-    VLCORE_EXPORT static void initCore(bool log_info=true);
-
-    //! Releases all the resources acquired by Visualization Library Core
-    //! Call shutdownCore() instead of shutdown() ONLY when using VLCore alone.
-    VLCORE_EXPORT static void shutdownCore();
+    VLMAIN_EXPORT static void shutdown();
 
     //! Returns true if VLCore library is initialized and shutdown has not been called.
-    VLCORE_EXPORT static bool isCoreInitialized();
+    VLMAIN_EXPORT static bool isCoreInitialized();
 
     //! Returns true if VLGraphics library is initialized and shutdown has not been called.
-    VLGRAPHICS_EXPORT static bool isGraphicsInitialized();
-
-    //! Returns the Visualization Library's version string.
-    VLCORE_EXPORT static const char* versionString();
+    VLMAIN_EXPORT static bool isGraphicsInitialized();
 
   private:
-    VLGRAPHICS_EXPORT static void initGraphics();
-    VLGRAPHICS_EXPORT static void shutdownGraphics();
+    VLMAIN_EXPORT static void initCore(bool log_info=true);
+    VLMAIN_EXPORT static void shutdownCore();
+    VLMAIN_EXPORT static void initGraphics();
+    VLMAIN_EXPORT static void shutdownGraphics();
   };
 
+  //! Returns the Visualization Library's version string.
+  VLCORE_EXPORT extern const char* versionString();
+
+  //! Logs VL and system information.
+  VLCORE_EXPORT extern void logSystemInfo();
+
   //! Shows a console window that displays the standard output. This function is meant to be used only under Windows only.
-  VLCORE_EXPORT void showWin32Console();
+  VLCORE_EXPORT extern void showWin32Console();
 }
 
 #endif

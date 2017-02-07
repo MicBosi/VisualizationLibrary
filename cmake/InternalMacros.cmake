@@ -62,18 +62,18 @@ endmacro(VL_DEFAULT_TARGET_PROPERTIES)
 macro(VL_PROCESS_PROJECT_PLUGINS projectName prefix installDir)
 	foreach(pluginName ${ARGN})
 		set(prefixedName ${prefix}${pluginName})
-		if(NOT DEFINED ${prefixedName}_OPTION)
-			set(${prefixedName}_OPTION "Enable ${pluginName} support" ON)
-		endif()
-		option(${prefixedName} ${${prefixedName}_OPTION})
+		#if(NOT DEFINED ${prefixedName})
+	  #	set(${prefixedName} ON CACHE BOOL "Enable ${pluginName} support")
+		#endif()
+		# option(${prefixedName} ${${prefixedName}_OPTION} ON)
 		if(${prefixedName})
 			VL_PROJECT_ADD(${projectName}
-				DEFINITIONS "-D${prefixedName}"
+				# DEFINITIONS "-D${prefixedName}"
 				SOURCES
 					"${CMAKE_CURRENT_SOURCE_DIR}/io${pluginName}.hpp"
 					"${CMAKE_CURRENT_SOURCE_DIR}/io${pluginName}.cpp"
 			)
-		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/io${pluginName}.hpp" DESTINATION ${installDir})
+		  install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/io${pluginName}.hpp" DESTINATION ${installDir})
 		endif()
 	endforeach()
 endmacro(VL_PROCESS_PROJECT_PLUGINS)

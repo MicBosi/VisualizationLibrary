@@ -12,6 +12,29 @@
 ################################################################################
 
 ################################################################################
+# 2D/3D IO Plugins (we need these to be visible from VLMain)
+################################################################################
+
+set(VLCORE_PLUGINS "BMP" "DAT" "MHD" "DDS" "DICOM" "JPG" "PNG" "TGA" "TIFF")
+set(VLGRAPHICS_PLUGINS "3DS" "AC3D" "MD2" "OBJ" "PLY" "STL")
+
+set(VL_IO_2D_DICOM OFF CACHE BOOL "Enable DICOM support (requires GDCM)")
+
+foreach(pluginName ${VLCORE_PLUGINS})
+  set(prefixedName VL_IO_2D_${pluginName})
+  if(NOT DEFINED ${prefixedName})
+    set(${prefixedName} ON CACHE BOOL "Enable ${pluginName} support")
+  endif()
+endforeach()
+
+foreach(pluginName ${VLGRAPHICS_PLUGINS})
+  set(prefixedName VL_IO_3D_${pluginName})
+  if(NOT DEFINED ${prefixedName})
+    set(${prefixedName} ON CACHE BOOL "Enable ${pluginName} support")
+  endif()
+endforeach()
+
+################################################################################
 # Modules
 ################################################################################
 
@@ -20,6 +43,9 @@ add_subdirectory("vlCore")
 
 # VLGraphics
 add_subdirectory("vlGraphics")
+
+# VLX
+add_subdirectory("vlX")
 
 # VLVG
 add_subdirectory("vlVG")
@@ -32,6 +58,9 @@ add_subdirectory("vlVolume")
 
 # tools
 add_subdirectory("tools")
+
+# VLMain
+add_subdirectory("vlMain")
 
 ################################################################################
 # GUI Modules (automatically enabled when their requirements are met)
@@ -135,7 +164,7 @@ cmake_dependent_option(VL_GUI_MFC_EXAMPLES "Build MFC examples" ON "VL_GUI_MFC_S
 cmake_dependent_option(VL_GUI_WIN32_EXAMPLES "Build win32 examples" ON "VL_GUI_WIN32_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_SDL_EXAMPLES "Build SDL examples" ON "VL_GUI_SDL_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_WXWIDGETS_EXAMPLES "Build wxWidgets examples" ON "VL_GUI_WXWIDGETS_SUPPORT" OFF)
-cmake_dependent_option(VL_GLES_EXAMPLES "Build OpenGL ES examples" ON "VL_GUI_EGL_SUPPORT" OFF)
+cmake_dependent_option(VL_GUI_GLES_EXAMPLES "Build OpenGL ES examples" ON "VL_GUI_EGL_SUPPORT" OFF)
 #cmake_dependent_option(VL_GUI_COCOA_EXAMPLES "Build Cocoa examples" ON "VL_GUI_COCOA_SUPPORT" OFF)
 
 add_subdirectory("examples")

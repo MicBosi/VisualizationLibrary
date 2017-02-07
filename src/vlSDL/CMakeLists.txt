@@ -26,7 +26,7 @@ include_directories(${SDL_INCLUDE_DIR})
 add_library(VLSDL ${VL_SHARED_OR_STATIC} ${VLSDL_SRC} ${VLSDL_INC})
 VL_DEFAULT_TARGET_PROPERTIES(VLSDL)
 
-target_link_libraries(VLSDL VLCore VLGraphics ${SDL_LIBRARY})
+target_link_libraries(VLSDL VLMain ${SDL_LIBRARY})
 
 ################################################################################
 # Install Rules

@@ -20,7 +20,7 @@ project(TOOLS)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Common libraries
-set(VL_LIBS_BASE VLGraphics VLCore)
+set(VL_LIBS_BASE VLMain)
 
 # vlxtool
 add_executable(vlxtool vlxtool.cpp)

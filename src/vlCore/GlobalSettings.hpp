@@ -82,6 +82,9 @@ namespace vl
 
   //! Returns VisulizationLibrary's global settings.
   VLCORE_EXPORT GlobalSettings* globalSettings();
+
+  //! Sets VisulizationLibrary's global settings.
+  VLCORE_EXPORT void setGlobalSettings(GlobalSettings*);
 }
 
 #endif

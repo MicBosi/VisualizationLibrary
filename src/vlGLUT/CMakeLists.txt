@@ -25,7 +25,7 @@ include_directories(${GLUT_INCLUDE_DIR})
 add_library(VLGLUT ${VL_SHARED_OR_STATIC} ${VLGLUT_SRC} ${VLGLUT_INC})
 VL_DEFAULT_TARGET_PROPERTIES(VLGLUT)
 
-target_link_libraries(VLGLUT VLCore VLGraphics ${GLUT_LIBRARIES})
+target_link_libraries(VLGLUT VLMain ${GLUT_LIBRARIES})
 
 ################################################################################
 # Install Rules

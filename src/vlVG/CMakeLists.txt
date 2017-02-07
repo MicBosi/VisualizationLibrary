@@ -24,7 +24,7 @@ file(GLOB VLVG_INC "*.hpp")
 add_library(VLVG ${VL_SHARED_OR_STATIC} ${VLVG_SRC} ${VLVG_INC})
 VL_DEFAULT_TARGET_PROPERTIES(VLVG)
 
-target_link_libraries(VLVG VLCore VLGraphics)
+target_link_libraries(VLVG VLMain)
 
 ################################################################################
 # Install Rules

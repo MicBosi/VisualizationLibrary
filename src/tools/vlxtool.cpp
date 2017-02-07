@@ -8,7 +8,7 @@
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/Time.hpp>
 #include <vlCore/ResourceDatabase.hpp>
-#include <vlGraphics/plugins/ioVLX.hpp>
+#include <vlX/ioVLX.hpp>
 #include <vlGraphics/expandResourceDatabase.hpp>
 
 using namespace vl;
@@ -80,7 +80,7 @@ int main(int argc, const char* argv[])
   {
     if (in_files.empty())
       printf("Missing input file list.\n");
-    
+
     if (out_file.empty())
       printf("Missing output file.\n");
 

@@ -29,7 +29,6 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/VisualizationLibrary.hpp>
 #include <vlGraphics/FramebufferObject.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 #include <vlCore/GlobalSettings.hpp>
@@ -312,8 +311,6 @@ void FramebufferObject::removeAttachment( FBOAbstractAttachment* attachment )
 //-----------------------------------------------------------------------------
 void FramebufferObject::removeAttachment( EAttachmentPoint attach_point )
 {
-  VL_CHECK( vl::VisualizationLibrary::isGraphicsInitialized() )
-
   VL_CHECK_OGL();
   VL_CHECK(openglContext());
   openglContext()->makeCurrent(); VL_CHECK_OGL();

@@ -41,7 +41,7 @@
 #include <vlGraphics/TriangleStripGenerator.hpp>
 #include <vlGraphics/DoubleVertexRemover.hpp>
 #include <vlGraphics/FontManager.hpp>
-#include <vlGraphics/plugins/ioVLX.hpp>
+#include <vlX/ioVLX.hpp>
 
 using namespace vl;
 

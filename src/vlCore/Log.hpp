@@ -199,9 +199,6 @@ namespace vl
       * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_ERROR */
     static void bug(const String& message);
 
-    //! Logs VL and system information.
-    static void logSystemInfo();
-
   private:
     static IMutex* mLogMutex;
   };
