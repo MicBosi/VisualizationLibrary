@@ -271,8 +271,6 @@ public:
     // Textures
     fx->shader()->gocTextureSampler(0)->setTexture( new Texture );
     fx->shader()->gocTextureSampler(0)->texture()->prepareTexture2D( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN );
-    // TextureSampler can override a Texture's TexParameter with this.
-    fx->shader()->gocTextureSampler(0)->setTexParameter( new TexParameter );
     ref<Texture> tex;
     tex = new Texture; tex->prepareTexture1D( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
     tex = new Texture; tex->prepareTexture1D( 10, TF_RGBA ); res_db->resources().push_back( tex.get() );

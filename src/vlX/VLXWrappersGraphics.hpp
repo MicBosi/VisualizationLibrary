@@ -3512,15 +3512,6 @@ namespace vl
         VLX_IMPORT_CHECK_RETURN( texture != NULL , *vlx_texture);
         obj->setTexture(texture);
       }
-
-      const VLXValue* vlx_texp = vlx->getValue("TexParameter");
-      if (vlx_texp)
-      {
-        VLX_IMPORT_CHECK_RETURN(vlx_texp->type() == VLXValue::Structure, *vlx_texp);
-        TexParameter* texp = s.importVLX(vlx_texp->getStructure())->as<TexParameter>();
-        VLX_IMPORT_CHECK_RETURN( texp != NULL , *vlx_texp);
-        obj->setTexParameter(texp);
-      }
     }
 
     virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* vlx)
@@ -3536,8 +3527,6 @@ namespace vl
     {
       if (tex_sampler->texture())
         *vlx << "Texture" << s.exportVLX(tex_sampler->texture());
-      if (tex_sampler->getTexParameter())
-        *vlx << "TexParameter" << s.exportVLX(tex_sampler->getTexParameter());
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
