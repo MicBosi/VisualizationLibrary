@@ -38,21 +38,6 @@
 #include <vlX/VLXValue.hpp>
 #include <vlX/vlxutils.hpp>
 #include <vlCore/LoadWriterManager.hpp>
-#include <vlGraphics/Actor.hpp>
-#include <vlGraphics/Effect.hpp>
-#include <vlGraphics/Shader.hpp>
-#include <vlGraphics/Geometry.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/ClipPlane.hpp>
-#include <vlGraphics/Camera.hpp>
-#include <vlGraphics/DrawElements.hpp>
-#include <vlGraphics/MultiDrawElements.hpp>
-#include <vlGraphics/DrawArrays.hpp>
-#include <vlGraphics/SceneManagerActorTree.hpp>
-#include <vlGraphics/DistanceLODEvaluator.hpp>
-#include <vlGraphics/PixelLODEvaluator.hpp>
-#include <vlGraphics/DepthSortCallback.hpp>
-#include <vlGraphics/GLSL.hpp>
 #include <vlCore/ResourceDatabase.hpp>
 #include <vlCore/DiskFile.hpp>
 

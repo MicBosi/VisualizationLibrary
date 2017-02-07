@@ -43,7 +43,12 @@
 #include <vlCore/MersenneTwister.hpp>
 #include <cassert>
 
+static void registerVLXCoreWrappers();
+
 using namespace vl;
+
+#include <vlX/VLXWrappersCore.hpp>
+#include <vlX/ioVLX.hpp>
 
 #if defined(VL_IO_2D_JPG)
   #include <vlCore/plugins/ioJPG.hpp>
@@ -72,8 +77,8 @@ using namespace vl;
 #if defined(VL_IO_2D_DICOM)
   #include <vlCore/plugins/ioDICOM.hpp>
 #endif
-
 // ------------------------------------------------------------------------------
+/*
 VL_COMPILE_TIME_CHECK( sizeof(double)    == 8 )
 VL_COMPILE_TIME_CHECK( sizeof(float)     == 4 )
 VL_COMPILE_TIME_CHECK( sizeof(long long) == 8 )
@@ -90,12 +95,10 @@ VL_COMPILE_TIME_CHECK( sizeof(mat4)      == sizeof(real)*4*4 )
 VL_COMPILE_TIME_CHECK( sizeof(quat)      == sizeof(real)*4 )
 VL_COMPILE_TIME_CHECK( sizeof(AABB)      == sizeof(real)*6 )
 VL_COMPILE_TIME_CHECK( sizeof(Sphere)    == sizeof(real)*4 )
-//// ------------------------------------------------------------------------------
-//// VL misc
-//// ------------------------------------------------------------------------------
+*/
+// ------------------------------------------------------------------------------
 namespace
 {
-  //std::string gVersionString = String( Say("%n.%n.%s") << VL_Major << VL_Minor << VL_Patch ).toStdString();
   bool gInitializedCore = false;
 };
 // ------------------------------------------------------------------------------
@@ -103,14 +106,11 @@ bool VisualizationLibrary::isCoreInitialized() { return gInitializedCore; }
 // ------------------------------------------------------------------------------
 void VisualizationLibrary::initCore(bool log_info)
 {
-  VL_CHECK(!gInitializedCore);
-  if (gInitializedCore)
-  {
+  VL_CHECK( ! gInitializedCore );
+  if (gInitializedCore) {
     Log::bug("VisualizationLibrary::initCore(): Visualization Library Core is already initialized!\n");
     return;
   }
-
-  // --- Init Core ---
 
   // Install globabl settings
   vl::setGlobalSettings( new GlobalSettings );
@@ -127,13 +127,20 @@ void VisualizationLibrary::initCore(bool log_info)
   vl::setDefFileSystem( new FileSystem );
   vl::defFileSystem()->directories().push_back( new DiskDirectory( globalSettings()->defaultDataPath() ) );
 
-  // Install default VLXRegistry
-  vl::setDefVLXRegistry( new VLXRegistry );
-
   // Install default MersenneTwister (seed done automatically)
   vl::setDefMersenneTwister( new MersenneTwister );
 
-  // Register 2D modules
+  // Install default VLXRegistry
+  vl::setDefVLXRegistry( new VLXRegistry );
+
+  // Register VLCore classes to VLX
+  registerVLXCoreWrappers();
+
+  // Register VLCore modules
+
+  // This is always present
+  registerLoadWriter(new LoadWriterVLX);
+
   #if defined(VL_IO_2D_JPG)
     registerLoadWriter(new LoadWriterJPG);
   #endif
@@ -163,19 +170,21 @@ void VisualizationLibrary::initCore(bool log_info)
   #endif
 
   // Log VL and system information.
-  if (globalSettings()->verbosityLevel() && log_info)
+  if (globalSettings()->verbosityLevel() && log_info) {
     logSystemInfo();
+  }
 
-  // Initialized = on
   gInitializedCore = true;
 }
 //------------------------------------------------------------------------------
 void VisualizationLibrary::shutdownCore()
 {
-  // Initialized = off
-  gInitializedCore = false;
+  if ( ! gInitializedCore ) {
+    Log::debug("VisualizationLibrary::shutdownCore(): VL Core not initialized.\n");
+    return;
+  }
 
-  // --- Dispose Core ---
+  gInitializedCore = false;
 
   // Dispose default MersenneTwister
   vl::setDefMersenneTwister( NULL );
@@ -194,14 +203,17 @@ void VisualizationLibrary::shutdownCore()
   setDefFileSystem( NULL );
 
   // Dispose default logger
-  if (globalSettings()->verbosityLevel())
-  {
-    Log::print("Visualization Library shutdown.\n");
-  }
+  Log::debug("VisualizationLibrary::shutdownCore().\n");
+
   // we keep the logger alive as much as we can.
   // setDefLogger( NULL );
 
   // keep global settings (used by logger)
   // gSettings = NULL;
+}
+//------------------------------------------------------------------------------
+void registerVLXCoreWrappers()
+{
+  // None yet.
 }
 //------------------------------------------------------------------------------

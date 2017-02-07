@@ -33,6 +33,7 @@
 #include <vlGraphics/GeometryPrimitives.hpp>
 #include <vlGraphics/DistanceLODEvaluator.hpp>
 #include <vlGraphics/BezierSurface.hpp>
+#include <vlGraphics/DepthSortCallback.hpp>
 #include <vlX/ioVLX.hpp>
 #include <vlCore/ZippedFile.hpp>
 #include <vlCore/GlobalSettings.hpp>
