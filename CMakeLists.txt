@@ -166,10 +166,12 @@ add_subdirectory("src")
 # Install Rules
 ################################################################################
 
+file(GLOB VL_MK_FILES "*.md")
+
 if(VL_UNIX_INSTALL_MODE)
-	install(FILES "LICENSE.TXT" "README.md" DESTINATION "share/vl")
+  install(FILES ${VL_MK_FILES} DESTINATION "share/vl")
 	install(FILES "cmake/FindVL.cmake" DESTINATION "share/cmake/Modules")
 else()
-	install(FILES "LICENSE.TXT" "README.md" DESTINATION ".")
+	install(FILES ${VL_MK_FILES} DESTINATION ".")
 	install(FILES "cmake/FindVL.cmake" DESTINATION "cmake")
 endif()
