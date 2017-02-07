@@ -29,9 +29,9 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "../3rdparty/tristripper/tri_stripper.cpp"
-#include "../3rdparty/tristripper/policy.cpp"
-#include "../3rdparty/tristripper/connectivity_graph.cpp"
+#include "../external/tristripper/tri_stripper.cpp"
+#include "../external/tristripper/policy.cpp"
+#include "../external/tristripper/connectivity_graph.cpp"
 
 using namespace triangle_stripper;
 

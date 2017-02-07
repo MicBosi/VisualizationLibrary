@@ -15,11 +15,11 @@
 # Compile-time Plugins for VLCore
 ################################################################################
 
-include_directories("../src/3rdparty/freetype")
-include_directories("../src/3rdparty/jpeg-6b")
-include_directories("../src/3rdparty/libpng")
-include_directories("../src/3rdparty/libtiff")
-include_directories("../src/3rdparty/zlib")
+include_directories("../src/external/freetype")
+include_directories("../src/external/jpeg-6b")
+include_directories("../src/external/libpng")
+include_directories("../src/external/libtiff")
+include_directories("../src/external/zlib")
 
 # List of "2D IO" plugins
 # set(VLCORE_PLUGINS "BMP" "DAT" "MHD" "DDS" "DICOM" "JPG" "PNG" "TGA" "TIFF")
@@ -50,8 +50,8 @@ endif()
 if(VL_IO_2D_DICOM)
 	FIND_PACKAGE(GDCM REQUIRED)
 
-        MESSAGE(STATUS ${GDCM_INCLUDE_DIRS})
-        MESSAGE(STATUS ${GDCM_LIBRARY_DIRS})
+        # MESSAGE(STATUS ${GDCM_INCLUDE_DIRS})
+        # MESSAGE(STATUS ${GDCM_LIBRARY_DIRS})
 
         if(WIN32)
             file(GLOB _gdcm_libs "${GDCM_LIBRARY_DIRS}/gdcm*.lib")
@@ -59,7 +59,7 @@ if(VL_IO_2D_DICOM)
             file(GLOB _gdcm_libs "${GDCM_LIBRARY_DIRS}/libgdcm*.so*")
         endif()
 
-        MESSAGE(STATUS ${_gdcm_libs})
+        # MESSAGE(STATUS ${_gdcm_libs})
 
         set(VL_IO_2D_GDCM_LIB_DIR ${GDCM_LIBRARY_DIRS} CACHE PATH "GDCM library directory")
 	set(VL_IO_2D_GDCM_LIBRARIES ${_gdcm_libs} CACHE LIST "GDCM libraries (semicolon separated)")

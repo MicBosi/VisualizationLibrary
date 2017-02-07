@@ -79,7 +79,7 @@ endif()
 
 # Common Dirs
 set(VL_DATA_DIR "${CMAKE_SOURCE_DIR}/data")
-set(3RDPARTY_DIR "${CMAKE_SOURCE_DIR}/src/3rdparty")
+set(3RDPARTY_DIR "${CMAKE_SOURCE_DIR}/src/external")
 
 # Header Install Dir
 if(VL_UNIX_INSTALL_MODE)
@@ -101,7 +101,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib")
 
 # Shared include paths for all subprojects
-include_directories( "src" "${CMAKE_BINARY_DIR}/src" "${3RDPARTY_DIR}/Khronos" )
+include_directories( "src" "src/gui" "${CMAKE_BINARY_DIR}/src" "${3RDPARTY_DIR}/Khronos" )
 
 # High Warning Level
 if(MSVC10)

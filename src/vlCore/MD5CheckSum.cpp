@@ -34,7 +34,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include "3rdparty/md5/md5.c"
+#include "external/md5/md5.c"
 
 using namespace vl;
 
