@@ -31,7 +31,7 @@
 
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/GlobalSettings.hpp>
-#include <vlX/VLXRegistry.hpp>
+#include <vlX/Registry.hpp>
 #include <vlCore/FileSystem.hpp>
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/Log.hpp>

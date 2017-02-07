@@ -32,20 +32,20 @@
 #ifndef VLXVisitorExportToVLB_INCLUDE_ONCE
 #define VLXVisitorExportToVLB_INCLUDE_ONCE
 
-#include <vlX/VLXVisitor.hpp>
-#include <vlX/VLXValue.hpp>
-#include <vlX/VLXBinaryDefs.hpp>
+#include <vlX/Visitor.hpp>
+#include <vlX/Value.hpp>
+#include <vlX/BinaryDefs.hpp>
 #include <vlCore/VirtualFile.hpp>
 
-namespace vl
+namespace vlX
 {
   /** Translates a VLX hierarchy into VLB format writing to the provided VirtualFile. */
-  class VLXVisitorExportToVLB: public VLXVisitor
+  class VisitorExportToVLB: public Visitor
   {
-    VL_INSTRUMENT_CLASS(vl::VLXVisitorExportToVLB, VLXVisitor)
+    VL_INSTRUMENT_CLASS(vlX::VisitorExportToVLB, Visitor)
 
   public:
-    VLXVisitorExportToVLB(VirtualFile* file = NULL)
+    VisitorExportToVLB(vl::VirtualFile* file = NULL)
     {
       mIDSet = NULL;
       setOutputFile(file);
@@ -194,7 +194,7 @@ namespace vl
       // this should happen only if the user manually creates loops
       if (isVisited(list))
       {
-        Log::warning("VLXVisitorExportToVLT: cycle detected on VLXList.\n");
+        vl::Log::warning("VisitorExportToVLT: cycle detected on VLXList.\n");
         return;
       }
 
@@ -298,7 +298,7 @@ namespace vl
       unsigned char vlx_identifier[] = { 0xAB, 'V', 'L', 'X', 0xBB, 0x0D, 0x0A, 0x1A, 0x0A };
 
       mOutputFile->write(vlx_identifier, sizeof(vlx_identifier));
-      mOutputFile->writeUInt16(100);    // "version" (16 bits uint)
+      mOutputFile->writeUInt16(VL_SERIALIZER_VERSION);    // "version" (16 bits uint)
       mOutputFile->write("ascii", 5+1); // "encoding" (zero terminated string)
       mOutputFile->writeUInt32(0);      // "flags" (reserved for the future)
     }
@@ -373,23 +373,23 @@ namespace vl
 
     const std::map< std::string, int >* uidSet() const { return mIDSet; }
 
-    void setOutputFile(VirtualFile* file)
+    void setOutputFile(vl::VirtualFile* file)
     {
       mOutputFile = file;
       if (file)
       {
         file->close();
-        file->open(OM_WriteOnly);
+        file->open(vl::OM_WriteOnly);
       }
     }
 
-    VirtualFile* outputFile() { return mOutputFile.get(); }
+    vl::VirtualFile* outputFile() { return mOutputFile.get(); }
 
-    const VirtualFile* outputFile() const { return mOutputFile.get(); }
+    const vl::VirtualFile* outputFile() const { return mOutputFile.get(); }
 
   private:
     std::map< std::string, int >* mIDSet;
-    ref<VirtualFile> mOutputFile;
+    vl::ref<vl::VirtualFile> mOutputFile;
   };
 }
 

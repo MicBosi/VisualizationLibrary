@@ -35,6 +35,7 @@
 #include <ctime>
 
 using namespace vl;
+using namespace vlX;
 
 bool VLTTokenizer::getToken(VLTToken& token)
 {

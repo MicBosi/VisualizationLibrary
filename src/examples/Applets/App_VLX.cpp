@@ -77,7 +77,7 @@ public:
     glsl->attachShader( new GLSLVertexShader("/glsl/perpixellight.vs") );
     glsl->attachShader( new GLSLFragmentShader("/glsl/perpixellight.fs") );
 
-    VLXSerializer vlx_serializer;
+    vlX::VLXSerializer vlx_serializer;
     String vlt_path;
     String vlb_path;
 
@@ -200,15 +200,15 @@ public:
     {
       GLSLProgram* glsl = fx->shader()->gocGLSLProgram();
       glsl->setObjectName("glsl shader name");
-      glsl->attachShader( new GLSLVertexShader        ("/glsl/smooth_triangle.vs") );
-      glsl->attachShader( new GLSLFragmentShader      ("/glsl/perpixellight.fs") );
+      glsl->attachShader( new GLSLVertexShader("/glsl/smooth_triangle.vs") );
+      glsl->attachShader( new GLSLFragmentShader("/glsl/perpixellight.fs") );
       if (vl::Has_GL_ARB_tessellation_shader)
       {
-        glsl->attachShader( new GLSLTessControlShader   ("/glsl/smooth_triangle.tcs") );
+        glsl->attachShader( new GLSLTessControlShader("/glsl/smooth_triangle.tcs") );
         glsl->attachShader( new GLSLTessEvaluationShader("/glsl/smooth_triangle.tes") );
       }
       if (vl::Has_Geometry_Shader)
-        glsl->attachShader( new GLSLGeometryShader      ("/glsl/smooth_triangle.gs") );
+        glsl->attachShader( new GLSLGeometryShader("/glsl/smooth_triangle.gs") );
   #if 0
       glsl->shader(0)->setPath(""); glsl->shader(0)->setSource("");
       glsl->shader(1)->setPath(""); glsl->shader(1)->setSource("");

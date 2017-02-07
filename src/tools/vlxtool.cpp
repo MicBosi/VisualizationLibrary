@@ -114,7 +114,7 @@ int main(int argc, const char* argv[])
   {
     printf("Saving VLT...\n");
     printf("\t%s ", out_file.toStdString().c_str());
-    vl::saveVLT(out_file, db.get());
+    vlX::saveVLT(out_file, db.get());
     printf("\t... %.2fs\n", timer.elapsed());
   }
   else
@@ -122,7 +122,7 @@ int main(int argc, const char* argv[])
   {
     printf("Saving VLB...\n");
     printf("\t%s ", out_file.toStdString().c_str());
-    vl::saveVLB(out_file, db.get());
+    vlX::saveVLB(out_file, db.get());
     printf("\t... %.2fs\n", timer.elapsed());
   }
   else

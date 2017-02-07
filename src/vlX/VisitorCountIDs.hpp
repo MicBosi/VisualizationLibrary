@@ -29,69 +29,48 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLXVisitorLinkMapper_INCLUDE_ONCE
-#define VLXVisitorLinkMapper_INCLUDE_ONCE
+#ifndef VLXVisitorCountIDs_INCLUDE_ONCE
+#define VLXVisitorCountIDs_INCLUDE_ONCE
 
-#include <vlX/VLXVisitor.hpp>
+#include <vlX/Visitor.hpp>
+#include <vlX/Value.hpp>
+#include <vlCore/Log.hpp>
+#include <vlCore/Say.hpp>
 
-namespace vl
+namespace vlX
 {
-  /** Compiles the link-map which associates a VLXStructure to it's ID, to be used later by other visitors. Can be called multiple times. */
-  class VLXVisitorLinkMapper: public VLXVisitor
+  /** Counts the number of occurrencies of each ID. If an ID is occurring more than 1 it means that belongs to a VLXStructure which is referenced by somebody. */
+  class VisitorIDCounter: public Visitor
   {
-    VL_INSTRUMENT_CLASS(vl::VLXVisitorLinkMapper, VLXVisitor)
+    VL_INSTRUMENT_CLASS(vlX::VisitorCountIDs, Visitor)
 
   public:
-    typedef enum
-    {
-      NoError,
-      DuplicateID
-    } EError;
-
-  public:
-    VLXVisitorLinkMapper(std::map< std::string, ref<VLXStructure> >* map=NULL)
-    {
-      mLinkMap = map;
-      mError = NoError;
-    }
-
-    void setLinkMap(std::map< std::string, ref<VLXStructure> >* map)
-    {
-      mLinkMap = map;
-    }
-
-    void declareID(VLXStructure* obj)
-    {
-      if (obj->uid() != "#NULL")
-      {
-        const std::map< std::string, ref<VLXStructure> >::const_iterator it = mLinkMap->find(obj->uid());
-        if (it == mLinkMap->end())
-          (*mLinkMap)[obj->uid()] = obj;
-        else
-        {
-          if ( it->second != obj )
-          {
-            mError = DuplicateID;
-            Log::error( Say("ID '%s' used by '%s' is already assigned to another node '%s'!\n") << obj->uid() << obj->tag() << it->second->tag() );
-          }
-        }
-      }
-    }
+    VisitorIDCounter(): mIDSet(NULL) {}
 
     virtual void visitStructure(VLXStructure* obj)
     {
+      if(!obj->uid().empty() && obj->uid() != "#NULL")
+        (*mIDSet)[obj->uid()]++;
+
       if (isVisited(obj))
         return;
 
-      declareID(obj);
-
       for(size_t i=0; i<obj->value().size(); ++i)
       {
-        if (obj->value()[i].value().type() == VLXValue::Structure)
-          obj->value()[i].value().getStructure()->acceptVisitor(this);
+        VLXStructure::KeyValue& keyval = obj->value()[i];
+        if (keyval.value().type() == VLXValue::Structure)
+          keyval.value().getStructure()->acceptVisitor(this);
         else
-        if (obj->value()[i].value().type() == VLXValue::List)
-          obj->value()[i].value().getList()->acceptVisitor(this);
+        if (keyval.value().type() == VLXValue::List)
+          keyval.value().getList()->acceptVisitor(this);
+        else
+        /*
+        if (keyval.value().type() == VLXValue::ArrayID)
+          keyval.value().getArrayID()->acceptVisitor(this);
+        else
+        */
+        if (keyval.value().type() == VLXValue::ID)
+          (*mIDSet)[keyval.value().getID()]++;
       }
     }
 
@@ -100,7 +79,7 @@ namespace vl
       // this should happen only if the user manually creates loops
       if (isVisited(list))
       {
-        Log::warning("VLXVisitorLinkMapper: cycle detected on VLXList.\n");
+        vl::Log::warning("VisitorIDCounter: cycle detected on VLXList.\n");
         return;
       }
 
@@ -108,31 +87,44 @@ namespace vl
       {
         if (list->value()[i].type() == VLXValue::Structure)
           list->value()[i].getStructure()->acceptVisitor(this);
-        else
         if (list->value()[i].type() == VLXValue::List)
           list->value()[i].getList()->acceptVisitor(this);
+        else
+        /*
+        if (list->value()[i].type() == VLXValue::ArrayID)
+          list->value()[i].getArrayID()->acceptVisitor(this);
+        else
+        */
+        if (list->value()[i].type() == VLXValue::ID)
+          (*mIDSet)[list->value()[i].getID()]++;
       }
     }
 
     /*
     virtual void visitArray(VLXArrayString*)  {}
 
-    virtual void visitArray(VLXArrayIdentifier*) {}
+    virtual void visitArray(VLXArrayID* arr)
+    {
+      // retrieves the assigned Structure
+      for(size_t i=0 ;i<arr->value().size(); ++i)
+        (*mIDSet)[arr->value()[i].uid()]++;
+    }
 
-    virtual void visitArray(VLXArrayID*) {}
+    virtual void visitArray(VLXArrayIdentifier*) {}
     */
 
     virtual void visitArray(VLXArrayInteger*)  {}
 
     virtual void visitArray(VLXArrayReal*)  {}
 
-    EError error() const { return mError; }
+    void setIDSet(std::map< std::string, int >* uids) { mIDSet = uids; }
 
-    void setError(EError err) { mError = err; }
+    std::map< std::string, int >* uidSet() { return mIDSet; }
+
+    const std::map< std::string, int >* uidSet() const { return mIDSet; }
 
   private:
-    std::map< std::string, ref<VLXStructure> >* mLinkMap;
-    EError mError;
+    std::map< std::string, int >* mIDSet;
   };
 }
 

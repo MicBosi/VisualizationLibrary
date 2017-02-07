@@ -29,52 +29,75 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLXLinker_INCLUDE_ONCE
-#define VLXLinker_INCLUDE_ONCE
+#ifndef VLXParser_INCLUDE_ONCE
+#define VLXParser_INCLUDE_ONCE
 
-#include <vlX/VLXVisitorLinker.hpp>
-#include <vlX/VLXVisitorLinkMapper.hpp>
+#include <vlCore/BufferedStream.hpp>
+#include <vlX/Linker.hpp>
 
-namespace vl
+namespace vlX
 {
-  /** Links several VLX hierachies also resolving IDs across them. */
-  class VLXLinker
+  /** Base class for VLX parsers. */
+  class Parser: public vl::Object
   {
-  public:
-    void add(VLXTaggedValue* module)
-    {
-      mModules.push_back(module);
-    }
+    VL_INSTRUMENT_ABSTRACT_CLASS(vlX::Parser, vl::Object)
 
+  public:
+
+    virtual bool parseHeader() = 0;
+
+    virtual bool parse() = 0;
+
+    //! Links the
     bool link()
     {
-      std::map< std::string, ref<VLXStructure> > link_map;
+      Linker linker;
 
-      // map all the IDs to the appropriate VLXStructures
-      VLXVisitorLinkMapper link_mapper(&link_map);
-      for(size_t i=0; i<mModules.size(); ++i)
-        mModules[i]->acceptVisitor(&link_mapper);
+      for(size_t i=0; i<mStructures.size(); ++i)
+        linker.add(mStructures[i].get());
 
-      if (link_mapper.error())
-        return false;
-
-      // link all the IDs to the associated VLXStructure
-      VLXVisitorLinker linker(&link_map);
-      for(size_t i=0; i<mModules.size(); ++i)
-        mModules[i]->acceptVisitor(&linker);
-
-      if (linker.error())
-        return false;
-
-      return true;
+      return linker.link();
     }
 
-    std::vector< ref<VLXTaggedValue> >& modules() { return mModules; }
+    //! Moves the <Metadata> key/value pairs in the Metadata map for quick and easy access and removes the <Metadata> structure.
+    void parseMetadata()
+    {
+      mMetadata.clear();
 
-    const std::vector< ref<VLXTaggedValue> >& modules() const { return mModules; }
+      for(size_t i=0; i<mStructures.size(); ++i)
+      {
+        if (mStructures[i]->tag() == "<Metadata>")
+        {
+          const VLXStructure* st = mStructures[i].get();
 
-  public:
-    std::vector< ref<VLXTaggedValue> > mModules;
+          for(size_t ikey=0; ikey<st->value().size(); ++ikey)
+            mMetadata[st->value()[ikey].key()] = st->value()[ikey].value();
+
+          mStructures.erase( mStructures.begin() + i );
+        }
+      }
+    }
+
+    //! The imported structures.
+    std::vector< vl::ref<VLXStructure> >& structures() { return mStructures; }
+
+    //! The imported structures.
+    const std::vector< vl::ref<VLXStructure> >& structures() const { return mStructures; }
+
+    //! The imported metadata.
+    const std::map< std::string, VLXValue >& metadata() const { return mMetadata; }
+
+    //! The encoding used to encode strings.
+    const std::string& encoding() const { return mEncoding; }
+
+    //! The VLX language version.
+    unsigned short version() const { return mVersion;}
+
+  protected:
+    std::string mEncoding;
+    unsigned short mVersion;
+    std::vector< vl::ref<VLXStructure> > mStructures;
+    std::map< std::string, VLXValue > mMetadata;
   };
 }
 

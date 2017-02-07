@@ -32,23 +32,24 @@
 #ifndef VLXParserVLT_INCLUDE_ONCE
 #define VLXParserVLT_INCLUDE_ONCE
 
-#include <vlX/VLXParser.hpp>
+#include <vlX/Parser.hpp>
 #include <vlX/VLTTokenizer.hpp>
+#include <vlX/defines.hpp>
 #include <cstdlib>
 
 #ifdef _MSC_VER
   #define atoll _atoi64
 #endif
 
-namespace vl
+namespace vlX
 {
   /** Parses a VLT file translating it into a VLX hierarchy. */
-  class VLXParserVLT: public VLXParser
+  class ParserVLT: public Parser
   {
-    VL_INSTRUMENT_CLASS(vl::VLXParserVLT, VLXParser)
+    VL_INSTRUMENT_CLASS(vlX::ParserVLT, Parser)
 
   public:
-    VLXParserVLT()
+    ParserVLT()
     {
       mTokenizer = new VLTTokenizer;
       mVersion = 0;
@@ -64,7 +65,7 @@ namespace vl
       // VLX
       if (!getToken(mToken) || mToken.mType != VLTToken::Identifier || mToken.mString != "VLX")
       {
-        Log::error("'VLX' header not found!\n");
+        vl::Log::error("'VLX' header not found!\n");
         return false;
       }
 
@@ -75,7 +76,7 @@ namespace vl
       if (!getToken(mToken) || mToken.mType != VLTToken::Equals)
         return false;
 
-      if (!getToken(mToken) || mToken.mType != VLTToken::Integer || mToken.mString != "100")
+      if (!getToken(mToken) || mToken.mType != VLTToken::Integer)
         return false;
       else
         mVersion = (unsigned short)atoi( mToken.mString.c_str() );
@@ -100,14 +101,14 @@ namespace vl
       class CloseFileClass
       {
       public:
-        CloseFileClass(VirtualFile* f): mFile(f) {}
+        CloseFileClass(vl::VirtualFile* f): mFile(f) {}
         ~CloseFileClass()
         {
           if (mFile)
             mFile->close();
         }
       private:
-        ref<VirtualFile> mFile;
+        vl::ref<vl::VirtualFile> mFile;
       } CloseFile(tokenizer()->inputFile());
 
       // clear metadata
@@ -116,19 +117,19 @@ namespace vl
       // read version and encoding
       if (!parseHeader())
       {
-        Log::error( Say("Line %n : error parsing VLT header at '%s'.\n") << tokenizer()->lineNumber() << mToken.mString );
+        vl::Log::error( vl::Say("Line %n : error parsing VLT header at '%s'.\n") << tokenizer()->lineNumber() << mToken.mString );
         return false;
       }
 
-      if (mVersion != 100)
+      if (mVersion != VL_SERIALIZER_VERSION)
       {
-        Log::error("VLX version not supported.\n");
+        vl::Log::error("VLX version not supported.\n");
         return false;
       }
 
       if (mEncoding != "ascii")
       {
-        Log::error("Encoding not supported.\n");
+        vl::Log::error("Encoding not supported.\n");
         return false;
       }
 
@@ -140,15 +141,15 @@ namespace vl
 
           if(getToken(mToken) && mToken.mType == VLTToken::LeftCurlyBracket)
           {
-            ref<VLXStructure> st = new VLXStructure;
+            vl::ref<VLXStructure> st = new VLXStructure;
             st->setLineNumber( tokenizer()->lineNumber() );
 
             if (!parseStructure(st.get()))
             {
               if (mToken.mString.length())
-                Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
+                vl::Log::error( vl::Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
               else
-                Log::error( Say("Line %n : parse error.\n") << mTokenizer->lineNumber() );
+                vl::Log::error( vl::Say("Line %n : parse error.\n") << mTokenizer->lineNumber() );
               return false;
             }
 
@@ -156,13 +157,13 @@ namespace vl
           }
           else
           {
-            Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
+            vl::Log::error( vl::Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
             return false;
           }
         }
         else
         {
-          Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
+          vl::Log::error( vl::Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
           return false;
         }
       }
@@ -199,7 +200,7 @@ namespace vl
               // Check if ID has already been set
               if (!object->uid().empty() && object->uid() != "#NULL")
               {
-                Log::error("ID already set.\n");
+                vl::Log::error("ID already set.\n");
                 return false;
               }
 
@@ -223,8 +224,8 @@ namespace vl
           }
 
           // non-ID key-values
-          object->value().push_back( VLXStructure::Value() );
-          VLXStructure::Value& name_value = object->value().back();
+          object->value().push_back( VLXStructure::KeyValue() );
+          VLXStructure::KeyValue& name_value = object->value().back();
 
           // Key
           name_value.setKey( mToken.mString.c_str() );
@@ -254,7 +255,7 @@ namespace vl
             // A new { Structure }
             if (mToken.mType == VLTToken::LeftCurlyBracket)
             {
-              ref<VLXStructure> object = new VLXStructure;
+              vl::ref<VLXStructure> object = new VLXStructure;
               object->setLineNumber( tokenizer()->lineNumber() );
               name_value.value().setStructure(object.get());
               if (!parseStructure( object.get() ) )
@@ -264,7 +265,7 @@ namespace vl
             // An [ list ]
             if (mToken.mType == VLTToken::LeftSquareBracket)
             {
-              ref<VLXList> list = new VLXList;
+              vl::ref<VLXList> list = new VLXList;
               list->setLineNumber( tokenizer()->lineNumber() );
               name_value.value().setList(list.get());
               if ( !parseList( list.get() ) )
@@ -274,7 +275,7 @@ namespace vl
             // An ( array )
             if (mToken.mType == VLTToken::LeftRoundBracket)
             {
-              ref<VLXArray> arr;
+              vl::ref<VLXArray> arr;
               if ( parseArray( arr ) )
                 name_value.value().setArray(arr.get());
               else
@@ -383,7 +384,7 @@ namespace vl
             // object
             case VLTToken::LeftCurlyBracket:
               {
-                ref<VLXStructure> object = new VLXStructure;
+                vl::ref<VLXStructure> object = new VLXStructure;
                 object->setLineNumber( tokenizer()->lineNumber() );
                 if ( parseStructure( object.get() ) )
                 {
@@ -398,7 +399,7 @@ namespace vl
             // list
             case VLTToken::LeftSquareBracket:
               {
-                ref<VLXList> sub_list = new VLXList;
+                vl::ref<VLXList> sub_list = new VLXList;
                 sub_list->setLineNumber( tokenizer()->lineNumber() );
                 if ( parseList( sub_list.get() ) )
                 {
@@ -413,7 +414,7 @@ namespace vl
             // array
             case VLTToken::LeftRoundBracket:
               {
-                ref<VLXArray> arr;
+                vl::ref<VLXArray> arr;
                 if (parseArray(arr))
                 {
                   value.setArray(arr.get());
@@ -491,12 +492,12 @@ namespace vl
       return false;
     }
 
-    bool parseArray(ref<VLXArray>& arr)
+    bool parseArray(vl::ref<VLXArray>& arr)
     {
       // consume last tag if there was one
       struct struct_consume_tag
       {
-        struct_consume_tag(ref<VLXArray>* p1, std::string* p2): p_arr(p1), p_tag(p2) {}
+        struct_consume_tag(vl::ref<VLXArray>* p1, std::string* p2): p_arr(p1), p_tag(p2) {}
 
        ~struct_consume_tag()
         {
@@ -507,7 +508,7 @@ namespace vl
           }
         }
 
-        ref<VLXArray>* p_arr;
+        vl::ref<VLXArray>* p_arr;
         std::string* p_tag;
       } consume_tag(&arr, &mLastTag);
 
@@ -525,7 +526,7 @@ namespace vl
         else
         if (mToken.mType == VLTToken::String)
         {
-          ref<VLXArrayString> arr_string;
+          vl::ref<VLXArrayString> arr_string;
           arr = arr_string = new VLXArrayString;
           do
             arr_string->mValue.push_back(mToken.mString);
@@ -535,7 +536,7 @@ namespace vl
         else
         if (mToken.mType == VLTToken::Identifier)
         {
-          ref<VLXArrayIdentifier> arr_identifier;
+          vl::ref<VLXArrayIdentifier> arr_identifier;
           arr = arr_identifier = new VLXArrayIdentifier;
           do
             arr_identifier->mValue.push_back(mToken.mString);
@@ -545,7 +546,7 @@ namespace vl
         else
         if (mToken.mType == VLTToken::ID)
         {
-          ref<VLXArrayID> arr_uid;
+          vl::ref<VLXArrayID> arr_uid;
           arr = arr_uid = new VLXArrayID;
           do
             arr_uid->mValue.push_back(mToken.mString.c_str());
@@ -556,7 +557,7 @@ namespace vl
         else
         if (mToken.mType == VLTToken::Integer)
         {
-          ref<VLXArrayInteger> arr_integer;
+          vl::ref<VLXArrayInteger> arr_integer;
           arr = arr_integer = new VLXArrayInteger;
           do
           {
@@ -574,7 +575,7 @@ namespace vl
         else
         if (mToken.mType == VLTToken::real)
         {
-          ref<VLXArrayReal> arr_floating;
+          vl::ref<VLXArrayReal> arr_floating;
           arr = arr_floating = new VLXArrayReal;
           arr_floating->value().reserve(1024);
           // mic fixme:
@@ -646,7 +647,7 @@ namespace vl
 
   private:
     std::string mLastTag;
-    ref<VLTTokenizer> mTokenizer;
+    vl::ref<VLTTokenizer> mTokenizer;
     VLTToken mToken;
   };
 }

@@ -29,17 +29,18 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlX/VLXSerializer.hpp>
-#include <vlX/VLXVisitorCountIDs.hpp>
-#include <vlX/VLXVisitorLinker.hpp>
-#include <vlX/VLXParserVLT.hpp>
-#include <vlX/VLXParserVLB.hpp>
-#include <vlX/VLXVisitorExportToVLT.hpp>
-#include <vlX/VLXVisitorExportToVLB.hpp>
+#include <vlX/Serializer.hpp>
+#include <vlX/VisitorCountIDs.hpp>
+#include <vlX/VisitorLinker.hpp>
+#include <vlX/ParserVLT.hpp>
+#include <vlX/ParserVLB.hpp>
+#include <vlX/VisitorExportToVLT.hpp>
+#include <vlX/VisitorExportToVLB.hpp>
 #include <vlCore/DiskFile.hpp>
 #include <ctime>
 
 using namespace vl;
+using namespace vlX;
 
 #if _MSC_VER
   #define snprintf _snprintf
@@ -58,10 +59,10 @@ Object* VLXSerializer::importVLX(const VLXStructure* st)
     return obj;
   else
   {
-    std::map< std::string, ref<VLXClassWrapper> >::iterator it = registry()->importRegistry().find(st->tag());
+    std::map< std::string, ref<ClassWrapper> >::iterator it = registry()->importRegistry().find(st->tag());
     if (it != registry()->importRegistry().end())
     {
-      VLXClassWrapper* serializer = it->second.get_writable();
+      ClassWrapper* serializer = it->second.get_writable();
       VL_CHECK(serializer);
       // import structure
       ref<Object> obj = serializer->importVLX(*this, st);
@@ -83,7 +84,7 @@ Object* VLXSerializer::importVLX(const VLXStructure* st)
   }
 }
 //-----------------------------------------------------------------------------
-VLXStructure* VLXSerializer::exportVLX(const Object* obj)
+VLXStructure* VLXSerializer::exportVLX(const vl::Object* obj)
 {
   VL_CHECK(obj)
 
@@ -95,10 +96,10 @@ VLXStructure* VLXSerializer::exportVLX(const Object* obj)
     return st;
   else
   {
-    std::map< TypeInfo, ref<VLXClassWrapper> >::iterator it = registry()->exportRegistry().find(obj->classType());
+    std::map< TypeInfo, ref<ClassWrapper> >::iterator it = registry()->exportRegistry().find(obj->classType());
     if (it != registry()->exportRegistry().end())
     {
-      VLXClassWrapper* serializer = it->second.get_writable();
+      ClassWrapper* serializer = it->second.get_writable();
       VL_CHECK(serializer);
       // export object
       ref<VLXStructure> st = serializer->exportVLX(*this, obj);
@@ -120,7 +121,7 @@ VLXStructure* VLXSerializer::exportVLX(const Object* obj)
   }
 }
 //-----------------------------------------------------------------------------
-bool VLXSerializer::canExport(const Object* obj) const
+bool VLXSerializer::canExport(const vl::Object* obj) const
 {
   if (!registry())
     return false;
@@ -142,7 +143,7 @@ void VLXSerializer::registerImportedStructure(const VLXStructure* st, Object* ob
   mImportedStructures[st] = obj;
 }
 //-----------------------------------------------------------------------------
-void VLXSerializer::registerExportedObject(const Object* obj, VLXStructure* st)
+void VLXSerializer::registerExportedObject(const vl::Object* obj, VLXStructure* st)
 {
   VL_CHECK(mExportedObjects.find(obj) == mExportedObjects.end())
   mExportedObjects[obj] = st;
@@ -160,7 +161,7 @@ Object* VLXSerializer::getImportedStructure(const VLXStructure* st)
   }
 }
 //-----------------------------------------------------------------------------
-VLXStructure* VLXSerializer::getExportedObject(const Object* obj)
+VLXStructure* VLXSerializer::getExportedObject(const vl::Object* obj)
 {
   std::map< ref<Object>, ref<VLXStructure> >::iterator it = mExportedObjects.find(obj);
   if (it == mExportedObjects.end())
@@ -199,13 +200,13 @@ std::string VLXSerializer::generateID(const char* prefix)
   return std::string("#") + prefix + "id" + number;
 }
 //-----------------------------------------------------------------------------
-bool VLXSerializer::saveVLT(const String& path, const Object* obj, bool start_fresh)
+bool VLXSerializer::saveVLT(const String& path, const vl::Object* obj, bool start_fresh)
 {
   ref<DiskFile> file = new DiskFile(path);
   return saveVLT(file.get(), obj, start_fresh);
 }
 //-----------------------------------------------------------------------------
-bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fresh)
+bool VLXSerializer::saveVLT(vl::VirtualFile* file, const vl::Object* obj, bool start_fresh)
 {
   if (start_fresh)
     reset();
@@ -225,7 +226,7 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
       continue;
     if (it->first == "Creation_Date")
       continue;
-    meta->value().push_back( VLXStructure::Value(it->first.c_str(), it->second) );
+    meta->value().push_back( VLXStructure::KeyValue(it->first.c_str(), it->second) );
   }
 
   // add VL metadata
@@ -239,18 +240,18 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
   str.resize(str.size()-1); // remove the trailing \n
   *meta << "Creation_Date" << VLXValue( str.c_str(), VLXValue::String );
 
-  *meta << "VL_Serializer_Version" << VLXValue( (long long) 100 );
+  *meta << "VL_Serializer_Version" << VLXValue( (long long) VL_SERIALIZER_VERSION );
 
   ref<VLXStructure> st = exportVLX( obj );
   if (st)
   {
     std::map< std::string, int > uid_set;
-    VLXVisitorCountIDs uid_collector;
+    VisitorIDCounter uid_collector;
     uid_collector.setIDSet(&uid_set);
     meta->acceptVisitor(&uid_collector);
     st->acceptVisitor(&uid_collector);
 
-    VLXVisitorExportToVLT text_export_visitor;
+    VisitorExportToVLT text_export_visitor;
     text_export_visitor.setIDSet(&uid_set);
     text_export_visitor.writeHeader();
     meta->acceptVisitor(&text_export_visitor);
@@ -270,13 +271,13 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
     return false;
 }
 //-----------------------------------------------------------------------------
-bool VLXSerializer::saveVLB(const String& path, const Object* obj, bool start_fresh)
+bool VLXSerializer::saveVLB(const String& path, const vl::Object* obj, bool start_fresh)
 {
   ref<DiskFile> file = new DiskFile(path);
   return saveVLB(file.get(), obj, start_fresh);
 }
 //-----------------------------------------------------------------------------
-bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fresh)
+bool VLXSerializer::saveVLB(vl::VirtualFile* file, const vl::Object* obj, bool start_fresh)
 {
   if (start_fresh)
     reset();
@@ -296,7 +297,7 @@ bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fre
       continue;
     if (it->first == "Creation_Date")
       continue;
-    meta->value().push_back( VLXStructure::Value(it->first.c_str(), it->second) );
+    meta->value().push_back( VLXStructure::KeyValue(it->first.c_str(), it->second) );
   }
 
   // add VL metadata
@@ -310,18 +311,18 @@ bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fre
   str.resize(str.size()-1); // remove the trailing \n
   *meta << "Creation_Date" << VLXValue( str.c_str(), VLXValue::String );
 
-  *meta << "VL_Serializer_Version" << VLXValue( (long long) 100 );
+  *meta << "VL_Serializer_Version" << VLXValue( (long long) VL_SERIALIZER_VERSION );
 
   ref<VLXStructure> st = exportVLX( obj );
   if (st)
   {
     std::map< std::string, int > uid_set;
-    VLXVisitorCountIDs uid_collector;
+    VisitorIDCounter uid_collector;
     uid_collector.setIDSet(&uid_set);
     meta->acceptVisitor(&uid_collector);
     st->acceptVisitor(&uid_collector);
 
-    VLXVisitorExportToVLB bin_export_visitor(file);
+    VisitorExportToVLB bin_export_visitor(file);
     bin_export_visitor.setIDSet(&uid_set);
     bin_export_visitor.writeHeader();
     meta->acceptVisitor(&bin_export_visitor);
@@ -334,13 +335,13 @@ bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fre
     return false;
 }
 //-----------------------------------------------------------------------------
-ref<Object> VLXSerializer::loadVLT(const String& path, bool start_fresh)
+vl::ref<vl::Object> VLXSerializer::loadVLT(const vl::String& path, bool start_fresh)
 {
-  ref<VirtualFile> file = vl::locateFile(path);
+  vl::ref<vl::VirtualFile> file = vl::locateFile(path);
   return loadVLT(file.get(), start_fresh);
 }
 //-----------------------------------------------------------------------------
-ref<Object> VLXSerializer::loadVLT(VirtualFile* file, bool start_fresh)
+vl::ref<vl::Object> VLXSerializer::loadVLT(vl::VirtualFile* file, bool start_fresh)
 {
   if (start_fresh)
     reset();
@@ -351,7 +352,7 @@ ref<Object> VLXSerializer::loadVLT(VirtualFile* file, bool start_fresh)
   // set the base document URL to resolve document-relative paths
   setDocumentURL( file->path() );
 
-  VLXParserVLT parser;
+  ParserVLT parser;
   parser.tokenizer()->setInputFile( file );
 
   bool ok = parser.parse();
@@ -378,13 +379,13 @@ ref<Object> VLXSerializer::loadVLT(VirtualFile* file, bool start_fresh)
     return importVLX( parser.structures()[0].get() ); // note that we ignore the other structures
 }
 //-----------------------------------------------------------------------------
-ref<Object> VLXSerializer::loadVLB(const String& path, bool start_fresh)
+vl::ref<vl::Object> VLXSerializer::loadVLB(const vl::String& path, bool start_fresh)
 {
-  ref<VirtualFile> file = vl::locateFile(path);
+  vl::ref<vl::VirtualFile> file = vl::locateFile(path);
   return loadVLB(file.get(), start_fresh);
 }
 //-----------------------------------------------------------------------------
-ref<Object> VLXSerializer::loadVLB(VirtualFile* file, bool start_fresh)
+ref<Object> VLXSerializer::loadVLB(vl::VirtualFile* file, bool start_fresh)
 {
   if (start_fresh)
     reset();
@@ -395,7 +396,7 @@ ref<Object> VLXSerializer::loadVLB(VirtualFile* file, bool start_fresh)
   // set the base document URL to resolve document-relative paths
   setDocumentURL( file->path() );
 
-  VLXParserVLB parser;
+  ParserVLB parser;
   parser.setInputFile( file );
 
   bool ok = parser.parse();

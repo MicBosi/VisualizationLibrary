@@ -29,30 +29,60 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLXBinaryDefs_INCLUDE_ONCE
-#define VLXBinaryDefs_INCLUDE_ONCE
+#ifndef VLXVisitor_INCLUDE_ONCE
+#define VLXVisitor_INCLUDE_ONCE
 
-namespace vl
+#include <vlCore/Object.hpp>
+#include <set>
+
+namespace vlX
 {
-  bool compress(const void* data, size_t size, std::vector<unsigned char>& out, int level);
-
-  bool decompress(const void* cdata, size_t csize, void* data_out);
-
-  typedef enum
+  class VLXStructure;
+  class VLXList;
+  class VLXRawtextBlock;
+  class VLXArray;
+  class VLXArrayInteger;
+  class VLXArrayReal;
+  /*
+  class VLXArrayString;
+  class VLXArrayIdentifier;
+  class VLXArrayID;
+  */
+  //-----------------------------------------------------------------------------
+  /** Base class for all visitors visiting a VLX hierarchy. */
+  class Visitor: public vl::Object
   {
-    VLB_ChunkStructure = 1,
-    VLB_ChunkList,
-    VLB_ChunkArrayRealDouble,
-    VLB_ChunkArrayRealFloat,
-    VLB_ChunkArrayInteger,
-    VLB_ChunkRawtext,
-    VLB_ChunkString,
-    VLB_ChunkIdentifier,
-    VLB_ChunkID,
-    VLB_ChunkRealDouble,
-    VLB_ChunkInteger,
-    VLB_ChunkBool
-  } EVLBChunkType;
+    VL_INSTRUMENT_CLASS(vlX::Visitor, vl::Object)
+
+  public:
+    virtual void visitStructure(VLXStructure*) {}
+    virtual void visitList(VLXList*) {}
+    virtual void visitRawtextBlock(VLXRawtextBlock*) {}
+    virtual void visitArray(VLXArrayInteger*) {}
+    virtual void visitArray(VLXArrayReal*) {}
+    /*
+    virtual void visitArray(VLXArrayString*) {}
+    virtual void visitArray(VLXArrayIdentifier*) {}
+    virtual void visitArray(VLXArrayID*) {}
+    */
+
+    bool isVisited(void* node)
+    {
+      std::set< void* >::iterator it = mVisited.find(node);
+      if (it == mVisited.end())
+      {
+        mVisited.insert(node);
+        return false;
+      }
+      else
+        return true;
+    }
+
+    void resetVisitedNodes() { mVisited.clear(); };
+
+  private:
+    std::set< void* > mVisited;
+  };
 }
 
 #endif

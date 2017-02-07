@@ -32,19 +32,19 @@
 #ifndef VLXVisitorExportToVLT_INCLUDE_ONCE
 #define VLXVisitorExportToVLT_INCLUDE_ONCE
 
-#include <vlX/VLXVisitor.hpp>
-#include <vlX/VLXValue.hpp>
+#include <vlX/Visitor.hpp>
+#include <vlX/Value.hpp>
 #include <cstdarg>
 
-namespace vl
+namespace vlX
 {
   /** Translates a VLX hierarchy into VLT notation. */
-  class VLXVisitorExportToVLT: public VLXVisitor
+  class VisitorExportToVLT: public Visitor
   {
-    VL_INSTRUMENT_CLASS(vl::VLXVisitorExportToVLT, VLXVisitor)
+    VL_INSTRUMENT_CLASS(vlX::VisitorExportToVLT, Visitor)
 
   public:
-    VLXVisitorExportToVLT()
+    VisitorExportToVLT()
     {
       mIndent = 0;
       mAssign = false;
@@ -224,7 +224,7 @@ namespace vl
       // this should happen only if the user manually creates loops
       if (isVisited(list))
       {
-        Log::warning("VLXVisitorExportToVLT: cycle detected on VLXList.\n");
+        vl::Log::warning("VisitorExportToVLT: cycle detected on VLXList.\n");
         return;
       }
 
@@ -388,7 +388,7 @@ namespace vl
 
     void writeHeader()
     {
-      mText = "VLX version=100 encoding=ascii\n\n";
+      mText = vl::String::printf("VLX version=%d encoding=ascii\n\n", VL_SERIALIZER_VERSION).toStdString();
     }
 
     void setIDSet(std::map< std::string, int >* uids) { mIDSet = uids; }

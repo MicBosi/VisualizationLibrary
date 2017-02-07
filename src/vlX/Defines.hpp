@@ -29,67 +29,9 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLTTokenizer_INCLUDE_ONCE
-#define VLTTokenizer_INCLUDE_ONCE
+#ifndef VLXDefines_INCLUDE_ONCE
+#define VLXDefines_INCLUDE_ONCE
 
-#include <vlX/link_config.hpp>
-#include <vlCore/BufferedStream.hpp>
-
-namespace vlX
-{
-  /** A token of information as defined by VLT specification. */
-  class VLTToken
-  {
-  public:
-    typedef enum
-    {
-      TOKEN_ERROR,
-      TOKEN_EOF,
-
-      LeftRoundBracket,   //  (
-      RightRoundBracket,  //  )
-      LeftSquareBracket,  //  [
-      RightSquareBracket, //  ]
-      LeftCurlyBracket,   //  {
-      RightCurlyBracket,  //  }
-      LeftFancyBracket,   //  {<
-      RightFancyBracket,  //  >}
-      Equals,             //  =
-      String,             //  "nel mezzo del cammin di nostra vita\n"
-      ID,                 //  #unique_id123
-      Identifier,         //  Identifier_123
-      Boolean,            //  true | false
-      Integer,            //  +123
-      real,               //  +123.456e+10
-      TagHeader,          //  <TagHeader>
-      RawtextBlock,         // {< blabla >}
-
-    } EType;
-
-    VLTToken(): mType(TOKEN_ERROR) {}
-
-    std::string mString;
-    EType mType;
-  };
-  //-----------------------------------------------------------------------------
-  /** Tokenizer used to parse VLT files. */
-  class VLTTokenizer: public vl::BufferedStream<char, 128*1024>
-  {
-    VL_INSTRUMENT_CLASS(vl::VLTTokenizer, VL_GROUP(vl::BufferedStream<char, 128*1024>))
-
-  public:
-    VLTTokenizer(): mLineNumber(1), mRawtextBlock(false) {}
-
-    VLX_EXPORT bool getToken(VLTToken& token);
-
-    VLX_EXPORT bool getRawtextBlock(VLTToken& token);
-
-    int lineNumber() const { return mLineNumber; }
-
-  private:
-    int mLineNumber;
-    bool mRawtextBlock;
-  };
-}
+#define VL_SERIALIZER_VERSION 101
 
 #endif

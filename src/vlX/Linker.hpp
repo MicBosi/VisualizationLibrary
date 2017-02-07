@@ -29,29 +29,53 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLXIO_INCLUDE_ONCE
-#define VLXIO_INCLUDE_ONCE
+#ifndef VLXLinker_INCLUDE_ONCE
+#define VLXLinker_INCLUDE_ONCE
 
-#include <vlCore/Object.hpp>
-#include <string>
+#include <vlX/VisitorLinker.hpp>
+#include <vlX/VisitorLinkMapper.hpp>
 
-namespace vl
+namespace vlX
 {
-  //---------------------------------------------------------------------------
-  class VLXSerializer;
-  class VLXStructure;
-  //---------------------------------------------------------------------------
-  /** Base cass for all class wrappers implementing the translation to/from its VLX representation. */
-  class VLXClassWrapper: public Object
+  /** Links several VLX hierachies also resolving IDs across them. */
+  class Linker
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::VLXClassWrapper, Object)
+  public:
+    void add(VLXTaggedValue* module)
+    {
+      mModules.push_back(module);
+    }
+
+    bool link()
+    {
+      std::map< std::string, vl::ref<VLXStructure> > link_map;
+
+      // map all the IDs to the appropriate VLXStructures
+      VisitorLinkMapper link_mapper(&link_map);
+      for(size_t i=0; i<mModules.size(); ++i)
+        mModules[i]->acceptVisitor(&link_mapper);
+
+      if (link_mapper.error())
+        return false;
+
+      // link all the IDs to the associated VLXStructure
+      VisitorLinker linker(&link_map);
+      for(size_t i=0; i<mModules.size(); ++i)
+        mModules[i]->acceptVisitor(&linker);
+
+      if (linker.error())
+        return false;
+
+      return true;
+    }
+
+    std::vector< vl::ref<VLXTaggedValue> >& modules() { return mModules; }
+
+    const std::vector< vl::ref<VLXTaggedValue> >& modules() const { return mModules; }
 
   public:
-    virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* st) = 0;
-
-    virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj) = 0;
+    std::vector< vl::ref<VLXTaggedValue> > mModules;
   };
-  //---------------------------------------------------------------------------
 }
 
 #endif

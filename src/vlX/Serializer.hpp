@@ -32,19 +32,19 @@
 #ifndef VLXSerializer_INCLUDE_ONCE
 #define VLXSerializer_INCLUDE_ONCE
 
-#include <vlX/VLXRegistry.hpp>
-#include <vlX/VLXValue.hpp>
+#include <vlX/Registry.hpp>
+#include <vlX/Value.hpp>
 #include <vlCore/String.hpp>
 #include <string>
 #include <map>
 
-namespace vl
+namespace vlX
 {
   class VirtualFile;
   /** Translates an arbitrary set of vl::Object (and subclasses) into VLB and VLT format. */
-  class VLX_EXPORT VLXSerializer: public Object
+  class VLX_EXPORT VLXSerializer: public vl::Object
   {
-    VL_INSTRUMENT_CLASS(vl::VLXSerializer, Object)
+    VL_INSTRUMENT_CLASS(vlX::Serializer, vl::Object)
 
   public:
     typedef enum { NoError, ImportError, ExportError, ReadError, WriteError } EError;
@@ -57,46 +57,46 @@ namespace vl
 
     const char* errorString() const;
 
-    bool saveVLT(const String& path, const Object* obj, bool start_fresh=true);
+    bool saveVLT(const vl::String& path, const vl::Object* obj, bool start_fresh=true);
 
-    bool saveVLT(VirtualFile* file, const Object* obj, bool start_fresh=true);
+    bool saveVLT(vl::VirtualFile* file, const vl::Object* obj, bool start_fresh=true);
 
-    bool saveVLB(const String& path, const Object* obj, bool start_fresh=true);
+    bool saveVLB(const vl::String& path, const vl::Object* obj, bool start_fresh=true);
 
-    bool saveVLB(VirtualFile* file, const Object* obj, bool start_fresh=true);
+    bool saveVLB(vl::VirtualFile* file, const vl::Object* obj, bool start_fresh=true);
 
-    ref<Object> loadVLT(const String& path, bool start_fresh=true);
+    vl::ref<vl::Object> loadVLT(const vl::String& path, bool start_fresh=true);
 
-    ref<Object> loadVLT(VirtualFile* file, bool start_fresh=true);
+    vl::ref<vl::Object> loadVLT(vl::VirtualFile* file, bool start_fresh=true);
 
-    ref<Object> loadVLB(const String& path, bool start_fresh=true);
+    vl::ref<vl::Object> loadVLB(const vl::String& path, bool start_fresh=true);
 
-    ref<Object> loadVLB(VirtualFile* file, bool start_fresh=true);
+    vl::ref<vl::Object> loadVLB(vl::VirtualFile* file, bool start_fresh=true);
 
-    Object* importVLX(const VLXStructure* st);
+    vl::Object* importVLX(const VLXStructure* st);
 
-    VLXStructure* exportVLX(const Object* obj);
+    VLXStructure* exportVLX(const vl::Object* obj);
 
-    bool canExport(const Object* obj) const;
+    bool canExport(const vl::Object* obj) const;
 
     bool canImport(const VLXStructure* st) const;
 
     void registerImportedStructure(const VLXStructure* st, Object* obj);
 
-    void registerExportedObject(const Object* obj, VLXStructure* st);
+    void registerExportedObject(const vl::Object* obj, VLXStructure* st);
 
-    Object* getImportedStructure(const VLXStructure* st);
+    vl::Object* getImportedStructure(const VLXStructure* st);
 
-    VLXStructure* getExportedObject(const Object* obj);
+    VLXStructure* getExportedObject(const vl::Object* obj);
 
-    //! The VLXRegistry used by the serializer, by default set to vl::defVLXRegistry().
-    VLXRegistry* registry() { return mRegistry.get(); }
+    //! The Registry used by the serializer, by default set to vl::defVLXRegistry().
+    Registry* registry() { return mRegistry.get(); }
 
-    //! The VLXRegistry used by the serializer, by default set to vl::defVLXRegistry().
-    const VLXRegistry* registry() const { return mRegistry.get(); }
+    //! The Registry used by the serializer, by default set to vl::defVLXRegistry().
+    const Registry* registry() const { return mRegistry.get(); }
 
-    //! The VLXRegistry used by the serializer, by default set to vl::defVLXRegistry().
-    void setRegistry(const VLXRegistry* registry) { mRegistry = registry; }
+    //! The Registry used by the serializer, by default set to vl::defVLXRegistry().
+    void setRegistry(const Registry* registry) { mRegistry = registry; }
 
     //! The metadata to be imported or exported.
     std::map< std::string, VLXValue >& metadata() { return mMetadata; }
@@ -140,21 +140,21 @@ namespace vl
     //! The last signaled error
     EError error() const { return mError; }
 
-    void signalImportError(const String& str);
+    void signalImportError(const vl::String& str);
 
-    void signalExportError(const String& str);
-
-    //! The URL of the document used to resolve document-relative file paths
-    void setDocumentURL(const String& location) { mDocumentURL = location; }
+    void signalExportError(const vl::String& str);
 
     //! The URL of the document used to resolve document-relative file paths
-    const String& documentURL() const { return mDocumentURL; }
+    void setDocumentURL(const vl::String& location) { mDocumentURL = location; }
+
+    //! The URL of the document used to resolve document-relative file paths
+    const vl::String& documentURL() const { return mDocumentURL; }
 
     //! If the given path starts with "this:" then the "this:" prefix is replaced with the documentURL(), otherwise the path is left unchanged.
     void resolvePath(std::string& path);
 
-    //! Sets a serialization directive that can be used by VLXClassWrapper objects to program the serialization process.
-    //! Directives are essentially a way to pass options to VLXClassWrapper objects, which can read them from the VLXSerializer they are using.
+    //! Sets a serialization directive that can be used by ClassWrapper objects to program the serialization process.
+    //! Directives are essentially a way to pass options to ClassWrapper objects, which can read them from the VLXSerializer they are using.
     void setDirective(const char* directive, const char* value) { mDirectives[directive] = value; }
 
     //! Removes a serialization directive.
@@ -178,14 +178,14 @@ namespace vl
     void eraseAllDirectives() { mDirectives.clear(); }
 
   private:
-    String mDocumentURL;
+    vl::String mDocumentURL;
     std::map<std::string, std::string> mDirectives;
     EError mError;
     int mIDCounter;
-    std::map< ref<VLXStructure>, ref<Object> > mImportedStructures; // structure --> object
-    std::map< ref<Object>, ref<VLXStructure> > mExportedObjects;    // object --> structure
+    std::map< vl::ref<VLXStructure>, vl::ref<vl::Object> > mImportedStructures; // structure --> object
+    std::map< vl::ref<vl::Object>, vl::ref<VLXStructure> > mExportedObjects;    // object --> structure
     std::map< std::string, VLXValue > mMetadata; // metadata to import or to export
-    ref<VLXRegistry> mRegistry;
+    vl::ref<Registry> mRegistry;
   };
 }
 

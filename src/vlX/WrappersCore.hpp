@@ -32,31 +32,30 @@
 #ifndef VLXWrapper_Core_INCLUDE_ONCE
 #define VLXWrapper_Core_INCLUDE_ONCE
 
-#include <vlX/VLXClassWrapper.hpp>
-#include <vlX/VLXRegistry.hpp>
-#include <vlX/VLXSerializer.hpp>
-#include <vlX/VLXValue.hpp>
+#include <vlX/ClassWrapper.hpp>
+#include <vlX/Registry.hpp>
+#include <vlX/Serializer.hpp>
+#include <vlX/Value.hpp>
 #include <vlX/vlxutils.hpp>
-
-#define VL_SERIALIZER_VERSION 100
+#include <vlX/defines.hpp>
 
 #define VLX_IMPORT_CHECK_RETURN(Condition, Obj)                                                          \
   if (!(Condition))                                                                                      \
   {                                                                                                      \
-    s.signalImportError( Say("Line %n : condition failed : %s\n\tsee %s : %n\n") << (Obj).lineNumber() << #Condition <<  __FILE__ << __LINE__ ); \
+    s.signalImportError( vl::Say("Line %n : condition failed : %s\n\tsee %s : %n\n") << (Obj).lineNumber() << #Condition <<  __FILE__ << __LINE__ ); \
     return;                                                                                              \
   }
 
 #define VLX_IMPORT_CHECK_RETURN_NULL(Condition, Obj)                                                     \
   if (!(Condition))                                                                                      \
   {                                                                                                      \
-    s.signalImportError( Say("Line %n : condition failed : %s\n\tsee %s : %n\n") << (Obj).lineNumber() << #Condition <<  __FILE__ << __LINE__ ); \
+    s.signalImportError( vl::Say("Line %n : condition failed : %s\n\tsee %s : %n\n") << (Obj).lineNumber() << #Condition <<  __FILE__ << __LINE__ ); \
     return NULL;                                                                                         \
   }
 
-namespace vl
+namespace vlX
 {
-  inline VLXValue export_AABB(const AABB& aabb)
+  inline VLXValue export_AABB(const vl::AABB& aabb)
   {
     VLXValue value ( new VLXStructure("<vl::AABB>") );
     *value.getStructure() << "MinCorner" << vlx_toValue(aabb.minCorner());
@@ -64,9 +63,9 @@ namespace vl
     return value;
   }
 
-  inline AABB import_AABB(const VLXStructure* vlx)
+  inline vl::AABB import_AABB(const VLXStructure* vlx)
   {
-    AABB aabb;
+    vl::AABB aabb;
 
     VL_CHECK( vlx->tag() == "<vl::AABB>" )
 
@@ -90,7 +89,7 @@ namespace vl
     return aabb;
   }
 
-  inline VLXValue export_Sphere(const Sphere& sphere)
+  inline VLXValue export_Sphere(const vl::Sphere& sphere)
   {
     VLXValue value ( new VLXStructure("<vl::Sphere>") );
     *value.getStructure() << "Center" << vlx_toValue(sphere.center());
@@ -98,9 +97,9 @@ namespace vl
     return value;
   }
 
-  inline Sphere import_Sphere(const VLXStructure* vlx)
+  inline vl::Sphere import_Sphere(const VLXStructure* vlx)
   {
-    Sphere sphere;
+    vl::Sphere sphere;
 
     VL_CHECK( vlx->tag() == "<vl::Sphere>" )
 
@@ -117,7 +116,7 @@ namespace vl
       if (key == "Radius")
       {
         VL_CHECK(value.type() == VLXValue::Real)
-        sphere.setRadius( (real)value.getReal() );
+        sphere.setRadius( (vl::real)value.getReal() );
       }
     }
 

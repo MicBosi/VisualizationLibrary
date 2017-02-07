@@ -35,20 +35,20 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadVLT(const String& path)
+ref<ResourceDatabase> vlX::loadVLT(const String& path)
 {
-  ref<VirtualFile> file = vl::locateFile(path);
+  vl::ref<vl::VirtualFile> file = vl::locateFile(path);
   return loadVLT(file.get());
 }
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadVLT(VirtualFile* file)
+ref<ResourceDatabase> vlX::loadVLT(vl::VirtualFile* file)
 {
-  VLXSerializer serializer;
+  vlX::VLXSerializer serializer;
 
   ref<Object> obj = serializer.loadVLT(file);
 
   if (serializer.error())
-    Log::error( Say("vl::loadVLT : VLXSerializer reported: %s.\n") << serializer.errorString() );
+    Log::error( Say("vl::loadVLT : vlX::VLXSerializer reported: %s.\n") << serializer.errorString() );
 
   if (!obj)
     return NULL;
@@ -58,20 +58,20 @@ ref<ResourceDatabase> vl::loadVLT(VirtualFile* file)
   return res_db;
 }
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadVLB(const String& path)
+ref<ResourceDatabase> vlX::loadVLB(const String& path)
 {
-  ref<VirtualFile> file = vl::locateFile(path);
+  vl::ref<vl::VirtualFile> file = vl::locateFile(path);
   return loadVLB(file.get());
 }
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadVLB(VirtualFile* file)
+ref<ResourceDatabase> vlX::loadVLB(vl::VirtualFile* file)
 {
-  VLXSerializer serializer;
+  vlX::VLXSerializer serializer;
 
   ref<Object> obj = serializer.loadVLB(file);
 
   if (serializer.error())
-    Log::error( Say("vl::loadVLB : VLXSerializer reported: %s.\n") << serializer.errorString() );
+    Log::error( Say("vl::loadVLB : vlX::VLXSerializer reported: %s.\n") << serializer.errorString() );
 
   if (!obj)
     return NULL;
@@ -81,55 +81,55 @@ ref<ResourceDatabase> vl::loadVLB(VirtualFile* file)
   return res_db;
 }
 //-----------------------------------------------------------------------------
-bool vl::saveVLT(const String& path, const ResourceDatabase* res_db)
+bool vlX::saveVLT(const String& path, const ResourceDatabase* res_db)
 {
   ref<DiskFile> file = new DiskFile(path);
   return saveVLT(file.get(), res_db);
 }
 //-----------------------------------------------------------------------------
-bool vl::saveVLT(VirtualFile* file, const ResourceDatabase* res_db)
+bool vlX::saveVLT(vl::VirtualFile* file, const ResourceDatabase* res_db)
 {
   VL_CHECK(res_db);
   if (!res_db)
     return false;
 
-  VLXSerializer serializer;
+  vlX::VLXSerializer serializer;
   serializer.saveVLT( file, res_db );
 
   if (serializer.error())
-    Log::error( Say("vl::saveVLT : VLXSerializer reported: %s.\n") << serializer.errorString() );
+    Log::error( Say("vlX::saveVLT : vlX::VLXSerializer reported: %s.\n") << serializer.errorString() );
 
-  return serializer.error() == VLXSerializer::NoError;
+  return serializer.error() == vlX::VLXSerializer::NoError;
 }
 //-----------------------------------------------------------------------------
-bool vl::saveVLB(const String& path, const ResourceDatabase* res_db)
+bool vlX::saveVLB(const String& path, const ResourceDatabase* res_db)
 {
   ref<DiskFile> file = new DiskFile(path);
   return saveVLB(file.get(), res_db);
 }
 //-----------------------------------------------------------------------------
-bool vl::saveVLB(VirtualFile* file, const ResourceDatabase* res_db)
+bool vlX::saveVLB(vl::VirtualFile* file, const ResourceDatabase* res_db)
 {
   VL_CHECK(res_db);
   if (!res_db)
     return false;
 
-  VLXSerializer serializer;
+  vlX::VLXSerializer serializer;
   serializer.saveVLB( file, res_db );
 
   if (serializer.error())
-    Log::error( Say("vl::saveVLB : VLXSerializer reported: %s.\n") << serializer.errorString() );
+    Log::error( Say("vlX::saveVLB : vlX::VLXSerializer reported: %s.\n") << serializer.errorString() );
 
-  return serializer.error() == VLXSerializer::NoError;
+  return serializer.error() == vlX::VLXSerializer::NoError;
 }
 //-----------------------------------------------------------------------------
-bool vl::isVLT(const String& path)
+bool vlX::isVLT(const vl::String& path)
 {
-  ref<VirtualFile> file = vl::locateFile(path);
+  vl::ref<vl::VirtualFile> file = vl::locateFile(path);
   return isVLT(file.get());
 }
 //-----------------------------------------------------------------------------
-bool vl::isVLT(VirtualFile* file)
+bool vlX::isVLT(vl::VirtualFile* file)
 {
   if (!file)
     return false;
@@ -142,13 +142,13 @@ bool vl::isVLT(VirtualFile* file)
   return memcmp(vlx, "VLX version=", sizeof(vlx)) == 0;
 }
 //-----------------------------------------------------------------------------
-bool vl::isVLB(const String& path)
+bool vlX::isVLB(const vl::String& path)
 {
-  ref<VirtualFile> file = vl::locateFile(path);
+  vl::ref<vl::VirtualFile> file = vl::locateFile(path);
   return isVLT(file.get());
 }
 //-----------------------------------------------------------------------------
-bool vl::isVLB(VirtualFile* file)
+bool vlX::isVLB(vl::VirtualFile* file)
 {
   if (!file)
     return false;

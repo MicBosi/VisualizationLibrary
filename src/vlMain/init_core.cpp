@@ -31,7 +31,7 @@
 
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/GlobalSettings.hpp>
-#include <vlX/VLXRegistry.hpp>
+#include <vlX/Registry.hpp>
 #include <vlCore/FileSystem.hpp>
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/Log.hpp>
@@ -47,7 +47,7 @@ static void registerVLXCoreWrappers();
 
 using namespace vl;
 
-#include <vlX/VLXWrappersCore.hpp>
+#include <vlX/WrappersCore.hpp>
 #include <vlX/ioVLX.hpp>
 
 #if defined(VL_IO_2D_JPG)
@@ -131,7 +131,7 @@ void VisualizationLibrary::initCore(bool log_info)
   vl::setDefMersenneTwister( new MersenneTwister );
 
   // Install default VLXRegistry
-  vl::setDefVLXRegistry( new VLXRegistry );
+  vlX::setDefVLXRegistry( new vlX::Registry );
 
   // Register VLCore classes to VLX
   registerVLXCoreWrappers();
@@ -139,7 +139,7 @@ void VisualizationLibrary::initCore(bool log_info)
   // Register VLCore modules
 
   // This is always present
-  registerLoadWriter(new LoadWriterVLX);
+  registerLoadWriter(new vlX::LoadWriterVLX);
 
   #if defined(VL_IO_2D_JPG)
     registerLoadWriter(new LoadWriterJPG);
@@ -190,7 +190,7 @@ void VisualizationLibrary::shutdownCore()
   vl::setDefMersenneTwister( NULL );
 
   // Dispose default VLXRegistry
-  setDefVLXRegistry( NULL );
+  vlX::setDefVLXRegistry( NULL );
 
   // Dispose default LoadWriterManager
   defLoadWriterManager()->loadCallbacks().clear();

@@ -33,15 +33,15 @@
 #define VLXValue_INCLUDE_ONCE
 
 #include <vlX/link_config.hpp>
-#include <vlX/VLXVisitor.hpp>
+#include <vlX/Visitor.hpp>
 #include <vector>
 
-namespace vl
+namespace vlX
 {
   /** Base class for VLX values with a tag. */
-  class VLXTaggedValue: public Object
+  class VLXTaggedValue: public vl::Object
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::VLXTaggedValue, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vlX::TaggedValue, vl::Object)
 
   public:
     VLXTaggedValue(const char* tag=NULL): mLineNumber(0)
@@ -56,7 +56,7 @@ namespace vl
 
     void setLineNumber(int line) { mLineNumber = line; }
 
-    virtual void acceptVisitor(VLXVisitor*) = 0;
+    virtual void acceptVisitor(Visitor*) = 0;
 
     void setTag(const char* tag) { mTag = tag; }
 
@@ -70,7 +70,7 @@ namespace vl
   /** A block of raw text. */
   class VLXRawtextBlock: public VLXTaggedValue
   {
-    VL_INSTRUMENT_CLASS(vl::VLXRawtextBlock, VLXTaggedValue)
+    VL_INSTRUMENT_CLASS(vlX::RawtextBlock, VLXTaggedValue)
 
   public:
     VLXRawtextBlock(const char* tag=NULL, const char* value=NULL): VLXTaggedValue(tag)
@@ -79,7 +79,7 @@ namespace vl
         mValue = value;
     }
 
-    virtual void acceptVisitor(VLXVisitor* v) { v->visitRawtextBlock(this); }
+    virtual void acceptVisitor(Visitor* v) { v->visitRawtextBlock(this); }
 
     std::string& value() { return mValue; }
 
@@ -94,7 +94,7 @@ namespace vl
   /** Base class for all arrays of VLX values. */
   class VLXArray: public VLXTaggedValue
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::VLXArray, VLXTaggedValue)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vlX::Array, VLXTaggedValue)
 
   public:
     VLXArray(const char* tag=NULL): VLXTaggedValue(tag) {}
@@ -105,7 +105,7 @@ namespace vl
   template<typename T>
   class VLXArrayTemplate: public VLXArray
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::VLXArrayTemplate<T>, VLXArray)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vlX::ArrayTemplate<T>, VLXArray)
 
   public:
     typedef T scalar_type;
@@ -132,34 +132,34 @@ namespace vl
   /** An array of 64 bits integers, can also have a tag. */
   class VLXArrayInteger: public VLXArrayTemplate<long long>
   {
-    VL_INSTRUMENT_CLASS(vl::VLXArrayInteger, VLXArrayTemplate<long long>)
+    VL_INSTRUMENT_CLASS(vlX::ArrayInteger, VLXArrayTemplate<long long>)
 
   public:
     VLXArrayInteger(const char* tag=NULL): VLXArrayTemplate<long long>(tag) { }
 
-    virtual void acceptVisitor(VLXVisitor* v) { v->visitArray(this); }
+    virtual void acceptVisitor(Visitor* v) { v->visitArray(this); }
   };
   //-----------------------------------------------------------------------------
   /** An array of 64 bits floating point numbers, can also have a tag. */
   class VLXArrayReal: public VLXArrayTemplate<double>
   {
-    VL_INSTRUMENT_CLASS(vl::VLXArrayReal, VLXArrayTemplate<double>)
+    VL_INSTRUMENT_CLASS(vlX::ArrayReal, VLXArrayTemplate<double>)
 
   public:
     VLXArrayReal(const char* tag=NULL): VLXArrayTemplate<double>(tag) { }
 
-    virtual void acceptVisitor(VLXVisitor* v) { v->visitArray(this); }
+    virtual void acceptVisitor(Visitor* v) { v->visitArray(this); }
   };
   //-----------------------------------------------------------------------------
   /*
   class VLXArrayString: public VLXArray
   {
-    VL_INSTRUMENT_CLASS(vl::VLXArrayString, VLXArray)
+    VL_INSTRUMENT_CLASS(vlX::ArrayString, VLXArray)
 
   public:
     VLXArrayString(const char* tag=NULL): VLXArray(tag) { }
 
-    virtual void acceptVisitor(VLXVisitor* v) { v->visitArray(this); }
+    virtual void acceptVisitor(Visitor* v) { v->visitArray(this); }
 
     std::vector<std::string>& value() { return mValue; }
 
@@ -175,12 +175,12 @@ namespace vl
   //-----------------------------------------------------------------------------
   class VLXArrayIdentifier: public VLXArray
   {
-    VL_INSTRUMENT_CLASS(vl::VLXArrayIdentifier, VLXArray)
+    VL_INSTRUMENT_CLASS(vlX::ArrayIdentifier, VLXArray)
 
   public:
     VLXArrayIdentifier(const char* tag=NULL): VLXArray(tag) { }
 
-    virtual void acceptVisitor(VLXVisitor* v) { v->visitArray(this); }
+    virtual void acceptVisitor(Visitor* v) { v->visitArray(this); }
 
     std::vector<std::string>& value() { return mValue; }
 
@@ -196,17 +196,17 @@ namespace vl
   //-----------------------------------------------------------------------------
   class VLXArrayID: public VLXArray
   {
-    VL_INSTRUMENT_CLASS(vl::VLXArrayID, VLXArray)
+    VL_INSTRUMENT_CLASS(vlX::ArrayID, VLXArray)
 
   public:
     VLXArrayID(const char* tag=NULL): VLXArray(tag) { }
 
-    virtual void acceptVisitor(VLXVisitor* v) { v->visitArray(this); }
+    virtual void acceptVisitor(Visitor* v) { v->visitArray(this); }
 
-    class Value
+    class VLXValue
     {
     public:
-      Value(const char* uid): mID(uid) {}
+      VLXValue(const char* uid): mID(uid) {}
 
       void setID(const char* uid) { mID = uid; }
 
@@ -223,16 +223,16 @@ namespace vl
       ref<VLXStructure> mObj; // the linked object
     };
 
-    std::vector<Value>& value() { return mValue; }
+    std::vector<VLXValue>& value() { return mValue; }
 
-    const std::vector<Value>& value() const { return mValue; }
+    const std::vector<VLXValue>& value() const { return mValue; }
 
-    Value* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    VLXValue* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
-    const Value* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    const VLXValue* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
   public:
-    std::vector<Value> mValue;
+    std::vector<VLXValue> mValue;
   };
   */
   //-----------------------------------------------------------------------------
@@ -540,7 +540,7 @@ namespace vl
   /** A list of key/VLXValue pairs, can also have a tag. */
   class VLXStructure: public VLXTaggedValue
   {
-    VL_INSTRUMENT_CLASS(vl::VLXStructure, VLXTaggedValue)
+    VL_INSTRUMENT_CLASS(vlX::Structure, VLXTaggedValue)
 
   public:
     VLXStructure()
@@ -563,7 +563,7 @@ namespace vl
       setTag(tag);
     }
 
-    virtual void acceptVisitor(VLXVisitor* v) { v->visitStructure(this); }
+    virtual void acceptVisitor(Visitor* v) { v->visitStructure(this); }
 
     VLXStructure& operator<<(const char* str)
     {
@@ -572,44 +572,44 @@ namespace vl
       return *this;
     }
 
-    VLXStructure& operator<<(const VLXValue& val)
+    VLXStructure& operator<<(const vlX::VLXValue& val)
     {
       value().back().setValue(val);
       return *this;
     }
 
     /** Key/value pair used by VLXStructure. */
-    class Value
+    class KeyValue
     {
       friend class VLXStructure;
 
     public:
-      Value() {}
-      Value(const char* key, VLXValue value): mKey(key), mValue(value) {}
+      KeyValue() {}
+      KeyValue(const char* key, vlX::VLXValue value): mKey(key), mValue(value) {}
 
       std::string& key() { return mKey; }
       const std::string& key() const { return mKey; }
       void setKey(const char* key) { mKey = key; }
 
-      VLXValue& value() { return mValue; }
-      const VLXValue& value() const { return mValue; }
-      void setValue(const VLXValue& value) { mValue = value; }
+      vlX::VLXValue& value() { return mValue; }
+      const vlX::VLXValue& value() const { return mValue; }
+      void setValue(const vlX::VLXValue& value) { mValue = value; }
 
     private:
       std::string mKey;
-      VLXValue mValue;
+      vlX::VLXValue mValue;
     };
 
     void setID(const char* uid) { mID = uid; }
 
     const std::string& uid() const { return mID; }
 
-    std::vector<Value>& value() { return mKeyValue; }
+    std::vector<KeyValue>& value() { return mKeyValue; }
 
-    const std::vector<Value>& value() const { return mKeyValue; }
+    const std::vector<KeyValue>& value() const { return mKeyValue; }
 
     // mic fixme: we can speed this guys up with multimaps if we really want
-    VLXValue* getValue(const char* key)
+    vlX::VLXValue* getValue(const char* key)
     {
       for(size_t i=0; i<mKeyValue.size(); ++i)
         if (mKeyValue[i].key() == key)
@@ -617,7 +617,7 @@ namespace vl
       return NULL;
     }
 
-    const VLXValue* getValue(const char* key) const
+    const vlX::VLXValue* getValue(const char* key) const
     {
       for(size_t i=0; i<mKeyValue.size(); ++i)
         if (mKeyValue[i].key() == key)
@@ -627,13 +627,13 @@ namespace vl
 
   private:
     std::string mID;
-    std::vector<Value> mKeyValue;
+    std::vector<KeyValue> mKeyValue;
   };
   //-----------------------------------------------------------------------------
   /** A simple sequence of VLXValue objects, can also have a tag. */
   class VLXList: public VLXTaggedValue
   {
-    VL_INSTRUMENT_CLASS(vl::VLXList, VLXTaggedValue)
+    VL_INSTRUMENT_CLASS(vlX::List, VLXTaggedValue)
 
   public:
     VLXList(const char* tag=NULL): VLXTaggedValue(tag)
@@ -647,7 +647,7 @@ namespace vl
       return *this;
     }
 
-    virtual void acceptVisitor(VLXVisitor* v) { v->visitList(this); }
+    virtual void acceptVisitor(Visitor* v) { v->visitList(this); }
 
     std::vector< VLXValue >& value() { return mValue; }
 

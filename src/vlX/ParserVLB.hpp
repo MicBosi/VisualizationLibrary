@@ -32,18 +32,19 @@
 #ifndef VLXParserVLB_INCLUDE_ONCE
 #define VLXParserVLB_INCLUDE_ONCE
 
-#include <vlX/VLXParser.hpp>
-#include <vlX/VLXBinaryDefs.hpp>
+#include <vlX/Parser.hpp>
+#include <vlX/BinaryDefs.hpp>
+#include <vlX/defines.hpp>
 
-namespace vl
+namespace vlX
 {
   /** Parses a VLT file translating it into a VLX hierarchy. */
-  class VLXParserVLB: public VLXParser
+  class ParserVLB: public Parser
   {
-    VL_INSTRUMENT_CLASS(vl::VLXParserVLB, VLXParser)
+    VL_INSTRUMENT_CLASS(vlX::ParserVLB, Parser)
 
   public:
-    VLXParserVLB()
+    ParserVLB()
     {
       mVersion = 0;
     }
@@ -149,18 +150,18 @@ namespace vl
       class CloseFileClass
       {
       public:
-        CloseFileClass(VirtualFile* f): mFile(f) {}
+        CloseFileClass(vl::VirtualFile* f): mFile(f) {}
         ~CloseFileClass()
         {
           if (mFile)
             mFile->close();
         }
       private:
-        ref<VirtualFile> mFile;
+        vl::ref<vl::VirtualFile> mFile;
       } CloseFile(inputFile());
 
       inputFile()->close();
-      inputFile()->open(OM_ReadOnly);
+      inputFile()->open(vl::OM_ReadOnly);
 
       // clear metadata
       mMetadata.clear();
@@ -171,19 +172,19 @@ namespace vl
 
       if (!parseHeader())
       {
-        Log::error("VLXParserVLB : error parsing VLB header.\n");
+        vl::Log::error("ParserVLB : error parsing VLB header.\n");
         return false;
       }
 
-      if (mVersion != 100)
+      if (mVersion != VL_SERIALIZER_VERSION)
       {
-        Log::error("VLX version not supported.\n");
+        vl::Log::error("VLX version not supported.\n");
         return false;
       }
 
       if (mEncoding != "ascii")
       {
-        Log::error("Encoding not supported.\n");
+        vl::Log::error("Encoding not supported.\n");
         return false;
       }
 
@@ -194,11 +195,11 @@ namespace vl
       {
         if(chunk == VLB_ChunkStructure)
         {
-          ref<VLXStructure> st = new VLXStructure;
+          vl::ref<VLXStructure> st = new VLXStructure;
 
           if (!parseStructure(st.get()))
           {
-            Log::error( Say("Error parsing binary file at offset %n.\n") << inputFile()->position() );
+            vl::Log::error( vl::Say("Error parsing binary file at offset %n.\n") << inputFile()->position() );
             return false;
           }
 
@@ -206,7 +207,7 @@ namespace vl
         }
         else
         {
-          Log::error( Say("Error parsing binary file at offset %n. Expected chunk structure.\n") << inputFile()->position() );
+          vl::Log::error( vl::Say("Error parsing binary file at offset %n. Expected chunk structure.\n") << inputFile()->position() );
           return false;
         }
       }
@@ -238,7 +239,7 @@ namespace vl
       // values
       for(int i=0; i<count; ++i)
       {
-        VLXStructure::Value val;
+        VLXStructure::KeyValue val;
 
         // key
         if (!readString(str))
@@ -494,15 +495,15 @@ namespace vl
       }
     }
 
-    void setInputFile(VirtualFile* file) { mInputFile = file; }
+    void setInputFile(vl::VirtualFile* file) { mInputFile = file; }
 
-    VirtualFile* inputFile() { return mInputFile.get(); }
+    vl::VirtualFile* inputFile() { return mInputFile.get(); }
 
-    const VirtualFile* inputFile() const { return mInputFile.get(); }
+    const vl::VirtualFile* inputFile() const { return mInputFile.get(); }
 
   private:
     unsigned int mFlags;
-    ref<VirtualFile> mInputFile;
+    vl::ref<vl::VirtualFile> mInputFile;
   };
 }
 

@@ -29,22 +29,22 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlX/VLXRegistry.hpp>
+#include <vlX/Registry.hpp>
 
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-// Default VLXRegistry
+// Default Registry
 //-----------------------------------------------------------------------------
 namespace
 {
- ref<VLXRegistry> gDefaultVLXRegistry = NULL;
+ ref<vlX::Registry> gDefaultVLXRegistry = NULL;
 }
-VLXRegistry* vl::defVLXRegistry()
+vlX::Registry* vlX::defVLXRegistry()
 {
  return gDefaultVLXRegistry.get();
 }
-void vl::setDefVLXRegistry(VLXRegistry* reg)
+void vlX::setDefVLXRegistry(vlX::Registry* reg)
 {
  gDefaultVLXRegistry = reg;
 }

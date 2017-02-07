@@ -29,76 +29,42 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLXParser_INCLUDE_ONCE
-#define VLXParser_INCLUDE_ONCE
+#ifndef VLXRegistry_INCLUDE_ONCE
+#define VLXRegistry_INCLUDE_ONCE
 
-#include <vlCore/BufferedStream.hpp>
-#include <vlX/VLXLinker.hpp>
+#include <vlX/link_config.hpp>
+#include <vlX/ClassWrapper.hpp>
+#include <string>
+#include <map>
 
-namespace vl
+namespace vlX
 {
-  /** Base class for VLX parsers. */
-  class VLXParser: public Object
+  /** Registry of vl::ClassWrapper objects, used by vl::VLXSerializer, see also vl::defVLXRegistry(). */
+  class Registry: public vl::Object
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::VLXParser, Object)
+    VL_INSTRUMENT_CLASS(vlX::Registry, vl::Object)
 
   public:
-
-    virtual bool parseHeader() = 0;
-
-    virtual bool parse() = 0;
-
-    //! Links the
-    bool link()
+    void registerClassWrapper(const vl::TypeInfo& type, ClassWrapper* wrapper)
     {
-      VLXLinker linker;
-
-      for(size_t i=0; i<mStructures.size(); ++i)
-        linker.add(mStructures[i].get());
-
-      return linker.link();
+      std::string tag = std::string("<") + type.name() + ">";
+      mExportRegistry[type] = wrapper;
+      mImportRegistry[tag]  = wrapper;
     }
 
-    //! Moves the <Metadata> key/value pairs in the Metadata map for quick and easy access and removes the <Metadata> structure.
-    void parseMetadata()
-    {
-      mMetadata.clear();
+    std::map< std::string, vl::ref<ClassWrapper> >& importRegistry() { return mImportRegistry; }
+    std::map< vl::TypeInfo, vl::ref<ClassWrapper> >& exportRegistry() { return mExportRegistry; }
 
-      for(size_t i=0; i<mStructures.size(); ++i)
-      {
-        if (mStructures[i]->tag() == "<Metadata>")
-        {
-          const VLXStructure* st = mStructures[i].get();
+    const std::map< std::string, vl::ref<ClassWrapper> >& importRegistry() const { return mImportRegistry; }
+    const std::map< vl::TypeInfo, vl::ref<ClassWrapper> >& exportRegistry() const { return mExportRegistry; }
 
-          for(size_t ikey=0; ikey<st->value().size(); ++ikey)
-            mMetadata[st->value()[ikey].key()] = st->value()[ikey].value();
-
-          mStructures.erase( mStructures.begin() + i );
-        }
-      }
-    }
-
-    //! The imported structures.
-    std::vector< ref<VLXStructure> >& structures() { return mStructures; }
-
-    //! The imported structures.
-    const std::vector< ref<VLXStructure> >& structures() const { return mStructures; }
-
-    //! The imported metadata.
-    const std::map< std::string, VLXValue >& metadata() const { return mMetadata; }
-
-    //! The encoding used to encode strings.
-    const std::string& encoding() const { return mEncoding; }
-
-    //! The VLX language version.
-    unsigned short version() const { return mVersion;}
-
-  protected:
-    std::string mEncoding;
-    unsigned short mVersion;
-    std::vector< ref<VLXStructure> > mStructures;
-    std::map< std::string, VLXValue > mMetadata;
+  private:
+    std::map< std::string, vl::ref<ClassWrapper> > mImportRegistry;     // <tag> --> ClassWrapper
+    std::map< vl::TypeInfo, vl::ref<ClassWrapper> > mExportRegistry; // TypeInfo --> ClassWrapper
   };
+
+  VLX_EXPORT extern Registry* defVLXRegistry();
+  VLX_EXPORT extern void setDefVLXRegistry(Registry* reg);
 }
 
 #endif

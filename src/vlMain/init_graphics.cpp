@@ -35,7 +35,7 @@
 #include <vlGraphics/BezierSurface.hpp>
 #include <vlGraphics/FontManager.hpp>
 
-#include <vlX/VLXWrappersGraphics.hpp>
+#include <vlX/WrappersGraphics.hpp>
 
 #if defined(VL_IO_3D_3DS)
   #include <vlGraphics/plugins/io3DS.hpp>
@@ -143,142 +143,142 @@ bool VisualizationLibrary::isGraphicsInitialized() { return gInitializedGraphics
 void registerVLXGraphicsWrappers()
 {
   // Geometry serializer
-  defVLXRegistry()->registerClassWrapper( Geometry::Type(), new VLXClassWrapper_Geometry );
+  vlX::defVLXRegistry()->registerClassWrapper( Geometry::Type(), new vlX::VLXClassWrapper_Geometry );
 
   // BezierSurface
-  defVLXRegistry()->registerClassWrapper( BezierSurface::Type(), new VLXClassWrapper_Geometry );
+  vlX::defVLXRegistry()->registerClassWrapper( BezierSurface::Type(), new vlX::VLXClassWrapper_Geometry );
 
   // PatchParameter
-  defVLXRegistry()->registerClassWrapper( PatchParameter::Type(), new VLXClassWrapper_PatchParameter );
+  vlX::defVLXRegistry()->registerClassWrapper( PatchParameter::Type(), new vlX::VLXClassWrapper_PatchParameter );
 
   // DrawCall
-  ref<VLXClassWrapper_DrawCall> drawcall_serializer = new VLXClassWrapper_DrawCall;
-  defVLXRegistry()->registerClassWrapper( DrawArrays::Type(), drawcall_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( DrawElementsUInt::Type(), drawcall_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( DrawElementsUShort::Type(), drawcall_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( DrawElementsUByte::Type(), drawcall_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( MultiDrawElementsUInt::Type(), drawcall_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( MultiDrawElementsUShort::Type(), drawcall_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( MultiDrawElementsUByte::Type(), drawcall_serializer.get() );
+  ref<vlX::VLXClassWrapper_DrawCall> drawcall_serializer = new vlX::VLXClassWrapper_DrawCall;
+  vlX::defVLXRegistry()->registerClassWrapper( DrawArrays::Type(), drawcall_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( DrawElementsUInt::Type(), drawcall_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( DrawElementsUShort::Type(), drawcall_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( DrawElementsUByte::Type(), drawcall_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( MultiDrawElementsUInt::Type(), drawcall_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( MultiDrawElementsUShort::Type(), drawcall_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( MultiDrawElementsUByte::Type(), drawcall_serializer.get() );
 
   // ResourceDatabase
-  defVLXRegistry()->registerClassWrapper( ResourceDatabase::Type(), new VLXClassWrapper_ResourceDatabase );
+  vlX::defVLXRegistry()->registerClassWrapper( ResourceDatabase::Type(), new vlX::VLXClassWrapper_ResourceDatabase );
 
   // Uniform
-  defVLXRegistry()->registerClassWrapper( Uniform::Type(), new VLXClassWrapper_Uniform );
+  vlX::defVLXRegistry()->registerClassWrapper( Uniform::Type(), new vlX::VLXClassWrapper_Uniform );
 
   // LODEvaluator
-  defVLXRegistry()->registerClassWrapper( LODEvaluator::Type(), new VLXClassWrapper_LODEvaluator );
+  vlX::defVLXRegistry()->registerClassWrapper( LODEvaluator::Type(), new vlX::VLXClassWrapper_LODEvaluator );
 
   // Transform
-  defVLXRegistry()->registerClassWrapper( Transform::Type(), new VLXClassWrapper_Transform );
+  vlX::defVLXRegistry()->registerClassWrapper( Transform::Type(), new vlX::VLXClassWrapper_Transform );
 
   // Material
-  defVLXRegistry()->registerClassWrapper( Material::Type(), new VLXClassWrapper_Material );
+  vlX::defVLXRegistry()->registerClassWrapper( Material::Type(), new vlX::VLXClassWrapper_Material );
 
   // Texture
-  defVLXRegistry()->registerClassWrapper( Texture::Type(), new VLXClassWrapper_Texture );
+  vlX::defVLXRegistry()->registerClassWrapper( Texture::Type(), new vlX::VLXClassWrapper_Texture );
 
   // TextureSampler
-  defVLXRegistry()->registerClassWrapper( TextureSampler::Type(), new VLXClassWrapper_TextureSampler );
+  vlX::defVLXRegistry()->registerClassWrapper( TextureSampler::Type(), new vlX::VLXClassWrapper_TextureSampler );
 
   // TexParameter
-  defVLXRegistry()->registerClassWrapper( TexParameter::Type(), new VLXClassWrapper_TexParameter );
+  vlX::defVLXRegistry()->registerClassWrapper( TexParameter::Type(), new vlX::VLXClassWrapper_TexParameter );
 
   // ActorEventCallback
-  defVLXRegistry()->registerClassWrapper( DepthSortCallback::Type(), new VLXClassWrapper_ActorEventCallback );
+  vlX::defVLXRegistry()->registerClassWrapper( DepthSortCallback::Type(), new vlX::VLXClassWrapper_ActorEventCallback );
 
   // LODEvaluator
-  ref<VLXClassWrapper_LODEvaluator> lod_evaluator = new VLXClassWrapper_LODEvaluator;
-  defVLXRegistry()->registerClassWrapper( PixelLODEvaluator::Type(), lod_evaluator.get() );
-  defVLXRegistry()->registerClassWrapper( DistanceLODEvaluator::Type(), lod_evaluator.get() );
+  ref<vlX::VLXClassWrapper_LODEvaluator> lod_evaluator = new vlX::VLXClassWrapper_LODEvaluator;
+  vlX::defVLXRegistry()->registerClassWrapper( PixelLODEvaluator::Type(), lod_evaluator.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( DistanceLODEvaluator::Type(), lod_evaluator.get() );
 
   // Actor
-  defVLXRegistry()->registerClassWrapper( Actor::Type(), new VLXClassWrapper_Actor );
+  vlX::defVLXRegistry()->registerClassWrapper( Actor::Type(), new vlX::VLXClassWrapper_Actor );
 
   // Effect
-  defVLXRegistry()->registerClassWrapper( Effect::Type(), new VLXClassWrapper_Effect );
+  vlX::defVLXRegistry()->registerClassWrapper( Effect::Type(), new vlX::VLXClassWrapper_Effect );
 
   // Shader
-  defVLXRegistry()->registerClassWrapper( Shader::Type(), new VLXClassWrapper_Shader );
+  vlX::defVLXRegistry()->registerClassWrapper( Shader::Type(), new vlX::VLXClassWrapper_Shader );
 
   // Camera
-  defVLXRegistry()->registerClassWrapper( Camera::Type(), new VLXClassWrapper_Camera );
+  vlX::defVLXRegistry()->registerClassWrapper( Camera::Type(), new vlX::VLXClassWrapper_Camera );
 
   // Light
-  defVLXRegistry()->registerClassWrapper( Light::Type(), new VLXClassWrapper_Light );
+  vlX::defVLXRegistry()->registerClassWrapper( Light::Type(), new vlX::VLXClassWrapper_Light );
 
   // ClipPlane
-  defVLXRegistry()->registerClassWrapper( ClipPlane::Type(), new VLXClassWrapper_ClipPlane );
+  vlX::defVLXRegistry()->registerClassWrapper( ClipPlane::Type(), new vlX::VLXClassWrapper_ClipPlane );
 
   // Color
-  defVLXRegistry()->registerClassWrapper( Color::Type(), new VLXClassWrapper_Color );
+  vlX::defVLXRegistry()->registerClassWrapper( Color::Type(), new vlX::VLXClassWrapper_Color );
 
   // SecondaryColor
-  defVLXRegistry()->registerClassWrapper( SecondaryColor::Type(), new VLXClassWrapper_SecondaryColor );
+  vlX::defVLXRegistry()->registerClassWrapper( SecondaryColor::Type(), new vlX::VLXClassWrapper_SecondaryColor );
 
   // Normal
-  defVLXRegistry()->registerClassWrapper( Normal::Type(), new VLXClassWrapper_Normal );
+  vlX::defVLXRegistry()->registerClassWrapper( Normal::Type(), new vlX::VLXClassWrapper_Normal );
 
   // VertexAttrib
-  defVLXRegistry()->registerClassWrapper( VertexAttrib::Type(), new VLXClassWrapper_VertexAttrib );
+  vlX::defVLXRegistry()->registerClassWrapper( VertexAttrib::Type(), new vlX::VLXClassWrapper_VertexAttrib );
 
   // Viewport
-  defVLXRegistry()->registerClassWrapper( Viewport::Type(), new VLXClassWrapper_Viewport );
+  vlX::defVLXRegistry()->registerClassWrapper( Viewport::Type(), new vlX::VLXClassWrapper_Viewport );
 
   // GLSL
-  defVLXRegistry()->registerClassWrapper( GLSLProgram::Type(), new VLXClassWrapper_GLSLProgram );
-  ref<VLXClassWrapper_GLSLShader> sh_serializer = new VLXClassWrapper_GLSLShader;
-  defVLXRegistry()->registerClassWrapper( GLSLVertexShader::Type(), sh_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( GLSLFragmentShader::Type(), sh_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( GLSLGeometryShader::Type(), sh_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( GLSLTessControlShader::Type(), sh_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( GLSLTessEvaluationShader::Type(), sh_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( GLSLProgram::Type(), new vlX::VLXClassWrapper_GLSLProgram );
+  ref<vlX::VLXClassWrapper_GLSLShader> sh_serializer = new vlX::VLXClassWrapper_GLSLShader;
+  vlX::defVLXRegistry()->registerClassWrapper( GLSLVertexShader::Type(), sh_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( GLSLFragmentShader::Type(), sh_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( GLSLGeometryShader::Type(), sh_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( GLSLTessControlShader::Type(), sh_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( GLSLTessEvaluationShader::Type(), sh_serializer.get() );
 
   // GLSLShader
-  defVLXRegistry()->registerClassWrapper( GLSLShader::Type(), new VLXClassWrapper_GLSLShader );
+  vlX::defVLXRegistry()->registerClassWrapper( GLSLShader::Type(), new vlX::VLXClassWrapper_GLSLShader );
 
   // Array serializer
-  ref<VLXClassWrapper_Array> array_serializer = new VLXClassWrapper_Array;
+  ref<vlX::VLXClassWrapper_Array> array_serializer = new vlX::VLXClassWrapper_Array;
 
-  defVLXRegistry()->registerClassWrapper( ArrayFloat1::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayFloat2::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayFloat3::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayFloat4::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayFloat1::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayFloat2::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayFloat3::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayFloat4::Type(), array_serializer.get() );
 
-  defVLXRegistry()->registerClassWrapper( ArrayDouble1::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayDouble2::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayDouble3::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayDouble4::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayDouble1::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayDouble2::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayDouble3::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayDouble4::Type(), array_serializer.get() );
 
-  defVLXRegistry()->registerClassWrapper( ArrayInt1::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayInt2::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayInt3::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayInt4::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayInt1::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayInt2::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayInt3::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayInt4::Type(), array_serializer.get() );
 
-  defVLXRegistry()->registerClassWrapper( ArrayUInt1::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayUInt2::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayUInt3::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayUInt4::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayUInt1::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayUInt2::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayUInt3::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayUInt4::Type(), array_serializer.get() );
 
-  defVLXRegistry()->registerClassWrapper( ArrayShort1::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayShort2::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayShort3::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayShort4::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayShort1::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayShort2::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayShort3::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayShort4::Type(), array_serializer.get() );
 
-  defVLXRegistry()->registerClassWrapper( ArrayUShort1::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayUShort2::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayUShort3::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayUShort4::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayUShort1::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayUShort2::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayUShort3::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayUShort4::Type(), array_serializer.get() );
 
-  defVLXRegistry()->registerClassWrapper( ArrayByte1::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayByte2::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayByte3::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayByte4::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayByte1::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayByte2::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayByte3::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayByte4::Type(), array_serializer.get() );
 
-  defVLXRegistry()->registerClassWrapper( ArrayUByte1::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayUByte2::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayUByte3::Type(), array_serializer.get() );
-  defVLXRegistry()->registerClassWrapper( ArrayUByte4::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayUByte1::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayUByte2::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayUByte3::Type(), array_serializer.get() );
+  vlX::defVLXRegistry()->registerClassWrapper( ArrayUByte4::Type(), array_serializer.get() );
 }
 //------------------------------------------------------------------------------

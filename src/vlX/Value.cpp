@@ -29,9 +29,10 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlX/VLXValue.hpp>
+#include <vlX/Value.hpp>
 
 using namespace vl;
+using namespace vlX;
 
 //-----------------------------------------------------------------------------
 void VLXValue::release()

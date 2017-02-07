@@ -29,42 +29,29 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLXRegistry_INCLUDE_ONCE
-#define VLXRegistry_INCLUDE_ONCE
+#ifndef VLXIO_INCLUDE_ONCE
+#define VLXIO_INCLUDE_ONCE
 
-#include <vlX/link_config.hpp>
-#include <vlX/VLXClassWrapper.hpp>
+#include <vlCore/Object.hpp>
 #include <string>
-#include <map>
 
-namespace vl
+namespace vlX
 {
-  /** Registry of vl::VLXClassWrapper objects, used by vl::VLXSerializer, see also vl::defVLXRegistry(). */
-  class VLXRegistry: public Object
+  //---------------------------------------------------------------------------
+  class VLXSerializer;
+  class VLXStructure;
+  //---------------------------------------------------------------------------
+  /** Base cass for all class wrappers implementing the translation to/from its VLX representation. */
+  class ClassWrapper: public vl::Object
   {
-    VL_INSTRUMENT_CLASS(vl::VLXRegistry, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vlX::ClassWrapper, vl::Object)
 
   public:
-    void registerClassWrapper(const TypeInfo& type, VLXClassWrapper* wrapper)
-    {
-      std::string tag = std::string("<") + type.name() + ">";
-      mExportRegistry[type] = wrapper;
-      mImportRegistry[tag]  = wrapper;
-    }
+    virtual vl::ref<vl::Object> importVLX(VLXSerializer& s, const VLXStructure* st) = 0;
 
-    std::map< std::string, ref<VLXClassWrapper> >& importRegistry() { return mImportRegistry; }
-    std::map< TypeInfo, ref<VLXClassWrapper> >& exportRegistry() { return mExportRegistry; }
-
-    const std::map< std::string, ref<VLXClassWrapper> >& importRegistry() const { return mImportRegistry; }
-    const std::map< TypeInfo, ref<VLXClassWrapper> >& exportRegistry() const { return mExportRegistry; }
-
-  private:
-    std::map< std::string, ref<VLXClassWrapper> > mImportRegistry;     // <tag> --> VLXClassWrapper
-    std::map< TypeInfo, ref<VLXClassWrapper> > mExportRegistry; // TypeInfo --> VLXClassWrapper
+    virtual vl::ref<VLXStructure> exportVLX(VLXSerializer& s, const vl::Object* obj) = 0;
   };
-
-  VLX_EXPORT extern VLXRegistry* defVLXRegistry();
-  VLX_EXPORT extern void setDefVLXRegistry(VLXRegistry* reg);
+  //---------------------------------------------------------------------------
 }
 
 #endif

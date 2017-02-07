@@ -32,15 +32,15 @@
 #ifndef VLXVisitorLinker_INCLUDE_ONCE
 #define VLXVisitorLinker_INCLUDE_ONCE
 
-#include <vlX/VLXVisitor.hpp>
-#include <vlX/VLXValue.hpp>
+#include <vlX/Visitor.hpp>
+#include <vlX/Value.hpp>
 
-namespace vl
+namespace vlX
 {
   /** Substitutes IDs into VLXStructures using the provided link map.*/
-  class VLXVisitorLinker: public VLXVisitor
+  class VisitorLinker: public Visitor
   {
-    VL_INSTRUMENT_CLASS(vl::VLXVisitorLinker, VLXVisitor)
+    VL_INSTRUMENT_CLASS(vlX::VisitorLinker, Visitor)
 
   public:
     typedef enum
@@ -50,13 +50,13 @@ namespace vl
     } EError;
 
   public:
-    VLXVisitorLinker(const std::map< std::string, ref<VLXStructure> >* map=NULL)
+    VisitorLinker(const std::map< std::string, vl::ref<VLXStructure> >* map=NULL)
     {
       mLinkMap = map;
       mError = NoError;
     }
 
-    void setLinkMap(const std::map< std::string, ref<VLXStructure> >* map)
+    void setLinkMap(const std::map< std::string, vl::ref<VLXStructure> >* map)
     {
       mLinkMap = map;
     }
@@ -65,13 +65,13 @@ namespace vl
     {
       VL_CHECK(mLinkMap)
       VL_CHECK(!uid.empty())
-      std::map< std::string, ref<VLXStructure> >::const_iterator it = mLinkMap->find(uid);
+      std::map< std::string, vl::ref<VLXStructure> >::const_iterator it = mLinkMap->find(uid);
       if( it != mLinkMap->end() )
       {
         // this should never happen
         VL_CHECK(uid != "#NULL")
 
-        /* Log::debug( Say("- ID '%s' linked to '%s'.\n") << uid << it->second->tag() ); */
+        /* vl::Log::debug( Say("- ID '%s' linked to '%s'.\n") << uid << it->second->tag() ); */
         return it->second.get_writable();
       }
       else
@@ -79,7 +79,7 @@ namespace vl
         if (uid != "#NULL")
         {
           mError = UnresolvedID;
-          Log::error( Say("Could not link ID '%s' to anything!\n") << uid );
+          vl::Log::error( vl::Say("Could not link ID '%s' to anything!\n") << uid );
         }
         return NULL;
       }
@@ -117,7 +117,7 @@ namespace vl
       // this should happen only if the user manually creates loops
       if (isVisited(list))
       {
-        Log::warning("VLXVisitorLinker: cycle detected on VLXList.\n");
+        vl::Log::warning("VisitorLinker: cycle detected on VLXList.\n");
         return;
       }
 
@@ -164,7 +164,7 @@ namespace vl
     void setError(EError err) { mError = err; }
 
   private:
-    const std::map< std::string, ref<VLXStructure> >* mLinkMap;
+    const std::map< std::string, vl::ref<VLXStructure> >* mLinkMap;
     EError mError;
   };
 }

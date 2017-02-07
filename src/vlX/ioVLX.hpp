@@ -32,46 +32,46 @@
 #ifndef LoadWriterVLX_INCLUDE_ONCE
 #define LoadWriterVLX_INCLUDE_ONCE
 
-#include <vlX/VLXClassWrapper.hpp>
-#include <vlX/VLXRegistry.hpp>
-#include <vlX/VLXSerializer.hpp>
-#include <vlX/VLXValue.hpp>
+#include <vlX/ClassWrapper.hpp>
+#include <vlX/Registry.hpp>
+#include <vlX/Serializer.hpp>
+#include <vlX/Value.hpp>
 #include <vlX/vlxutils.hpp>
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/ResourceDatabase.hpp>
 #include <vlCore/DiskFile.hpp>
 
-namespace vl
+namespace vlX
 {
   //-----------------------------------------------------------------------------
 
-  VLX_EXPORT ref<ResourceDatabase> loadVLT(VirtualFile* file);
-  VLX_EXPORT ref<ResourceDatabase> loadVLT(const String& path);
-  VLX_EXPORT ref<ResourceDatabase> loadVLB(VirtualFile* file);
-  VLX_EXPORT ref<ResourceDatabase> loadVLB(const String& path);
-  VLX_EXPORT bool saveVLT(VirtualFile* file, const ResourceDatabase*);
-  VLX_EXPORT bool saveVLT(const String& file, const ResourceDatabase*);
-  VLX_EXPORT bool saveVLB(VirtualFile* file, const ResourceDatabase*);
-  VLX_EXPORT bool saveVLB(const String& file, const ResourceDatabase*);
-  VLX_EXPORT bool isVLT(VirtualFile* file);
-  VLX_EXPORT bool isVLT(const String& file);
-  VLX_EXPORT bool isVLB(VirtualFile* file);
-  VLX_EXPORT bool isVLB(const String& file);
+  VLX_EXPORT vl::ref<vl::ResourceDatabase> loadVLT(vl::VirtualFile* file);
+  VLX_EXPORT vl::ref<vl::ResourceDatabase> loadVLT(const vl::String& path);
+  VLX_EXPORT vl::ref<vl::ResourceDatabase> loadVLB(vl::VirtualFile* file);
+  VLX_EXPORT vl::ref<vl::ResourceDatabase> loadVLB(const vl::String& path);
+  VLX_EXPORT bool saveVLT(vl::VirtualFile* file, const vl::ResourceDatabase*);
+  VLX_EXPORT bool saveVLT(const vl::String& file, const vl::ResourceDatabase*);
+  VLX_EXPORT bool saveVLB(vl::VirtualFile* file, const vl::ResourceDatabase*);
+  VLX_EXPORT bool saveVLB(const vl::String& file, const vl::ResourceDatabase*);
+  VLX_EXPORT bool isVLT(vl::VirtualFile* file);
+  VLX_EXPORT bool isVLT(const vl::String& file);
+  VLX_EXPORT bool isVLB(vl::VirtualFile* file);
+  VLX_EXPORT bool isVLB(const vl::String& file);
 
   //---------------------------------------------------------------------------
   // LoadWriterVLX
   //---------------------------------------------------------------------------
   /**
-   * A ResourceLoadWriter capable of reading Visualization Library's VLT and VLB files.
+   * A vl::ResourceLoadWriter capable of reading Visualization Library's VLT and VLB files.
    */
-  class LoadWriterVLX: public ResourceLoadWriter
+  class LoadWriterVLX: public vl::ResourceLoadWriter
   {
-    VL_INSTRUMENT_CLASS(vl::LoadWriterVLX, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterVLX, vl::ResourceLoadWriter)
 
   public:
-    LoadWriterVLX(): ResourceLoadWriter("|vlt|vlb|", "|vlt|vlb|") {}
+    LoadWriterVLX(): vl::ResourceLoadWriter("|vlt|vlb|", "|vlt|vlb|") {}
 
-    ref<ResourceDatabase> loadResource(const String& path) const
+    vl::ref<vl::ResourceDatabase> loadResource(const vl::String& path) const
     {
       if (isVLT(path))
         return loadVLT(path);
@@ -82,7 +82,7 @@ namespace vl
         return NULL;
     }
 
-    ref<ResourceDatabase> loadResource(VirtualFile* file) const
+    vl::ref<vl::ResourceDatabase> loadResource(vl::VirtualFile* file) const
     {
       if (isVLT(file))
         return loadVLT(file);
@@ -93,7 +93,7 @@ namespace vl
         return NULL;
     }
 
-    bool writeResource(const String& path, ResourceDatabase* res_db) const
+    bool writeResource(const vl::String& path, vl::ResourceDatabase* res_db) const
     {
       if (path.extractFileExtension().toLowerCase() == "vlt")
         return saveVLT(path, res_db);
@@ -104,7 +104,7 @@ namespace vl
         return false;
     }
 
-    bool writeResource(VirtualFile* file, ResourceDatabase* res_db) const
+    bool writeResource(vl::VirtualFile* file, vl::ResourceDatabase* res_db) const
     {
       if (file->path().extractFileExtension().toLowerCase() == "vlt")
         return saveVLT(file, res_db);
