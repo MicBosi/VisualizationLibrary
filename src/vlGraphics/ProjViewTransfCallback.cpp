@@ -106,7 +106,7 @@ void ProjViewTransfCallback::updateMatrices(bool cam_changed, bool transf_change
 #if VL_PIPELINE_PRECISION == 1
         glUniformMatrix3fv( glsl_program->vl_NormalMatrix(), 1, GL_FALSE, normalmtx.ptr() ); VL_CHECK_OGL();
 #elif VL_PIPELINE_PRECISION == 2
-        glUniformMatrix3fv( glsl_program->vl_NormalMatrix(), 1, GL_FALSE, ((fmat4)normalmtx).ptr() ); VL_CHECK_OGL();
+        glUniformMatrix3fv( glsl_program->vl_NormalMatrix(), 1, GL_FALSE, ((fmat3)normalmtx).ptr() ); VL_CHECK_OGL();
 #endif
       }
 

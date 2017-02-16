@@ -217,7 +217,7 @@ vl::ref<vl::Geometry> makeScales(bool X, bool Y, bool Z, int numArmTicks, float 
     if(Y)//transfer the Y ruler into the main array
     {
         //rotate the generic ruler around Z axis to create the Y ruler
-        points->transform(vl::fmat4::getRotation(90, 0, 0, 1));
+        points->transform(vl::mat4::getRotation(90, 0, 0, 1));
 
         //copy the Y ruler into the scales array
         for(size_t p=0; p < points->size(); i++, p++)
@@ -228,8 +228,8 @@ vl::ref<vl::Geometry> makeScales(bool X, bool Y, bool Z, int numArmTicks, float 
     if(Z)//transfer the Z ruler into the main array
     {
         //rotate the ruler based on the last rotation
-        vl::fvec3 rotaxis = Y ? vl::fvec3(1,0,0) : vl::fvec3(0,1,0);
-        points->transform(vl::fmat4::getRotation(90,rotaxis));
+        vl::vec3 rotaxis = Y ? vl::vec3(1,0,0) : vl::vec3(0,1,0);
+        points->transform(vl::mat4::getRotation(90,rotaxis));
 
         //copy the Y ruler into the scales array
         for(size_t p=0; p < points->size(); i++, p++)
