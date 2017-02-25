@@ -59,15 +59,18 @@ namespace vl
     OpenGLContextFormat():
       mRGBABits(ivec4(8,8,8,0)),
       mAccumRGBABits(ivec4(0,0,0,0)),
-      mHasDoubleBuffer(true),
       mZBufferBits(24),
       mStencilBufferBits(8),
-      mHasMultisample(false),
       mMultisampleSamples(16),
+      mContextClientVersion(1),
+      mMajVersion(3),
+      mMinVersion(3),
+      mHasDoubleBuffer(true),
+      mHasMultisample(false),
       mStereo(false),
       mFullscreen(false),
       mVSync(false),
-      mContextClientVersion(1) {}
+      mProfile(GLP_Compatibility) {}
 
     void setRGBABits(int r, int g, int b, int a) { mRGBABits = ivec4(r,g,b,a); }
     void setAccumRGBABits(int r, int g, int b, int a) { mAccumRGBABits = ivec4(r,g,b,a); }
@@ -98,18 +101,31 @@ namespace vl
     //! Returns rgbaBits().r() + rgbaBits().g() + rgbaBits().b() + rgbaBits().a()
     int bitsPerPixel() const { return rgbaBits().r() + rgbaBits().g() + rgbaBits().b() + rgbaBits().a(); }
 
+    //! The OpenGL profile you'd like to access.
+    //! When using vl::GLP_Compatibility or vl::GLP_Core you must also specify a min/maj version using setVersion() which defaults to 3.3 or a compatible higher version.
+    void setOpenGLProfile(EOpenGLProfile p) { mProfile = p; }
+    EOpenGLProfile openGLProfile() const { return mProfile; }
+
+    //! Sets the OpenGL version you want to access when using vl::GLP_Compatibility or vl::GLP_Core profiles (default is 3.3 which will yield also any compatible higher version).
+    void setVersion( int majv, int minv ) { mMajVersion = majv; mMinVersion = minv; }
+    int majVersion() const { return mMajVersion; }
+    int minVersion() const { return mMinVersion; }
+
   protected:
     ivec4 mRGBABits;
     ivec4 mAccumRGBABits;
-    bool mHasDoubleBuffer;
     int mZBufferBits;
     int mStencilBufferBits;
-    bool mHasMultisample;
     int mMultisampleSamples;
+    int mContextClientVersion;
+    int mMajVersion;
+    int mMinVersion;
+    bool mHasDoubleBuffer;
+    bool mHasMultisample;
     bool mStereo;
     bool mFullscreen;
     bool mVSync;
-    int mContextClientVersion;
+    EOpenGLProfile mProfile;
   };
   //-----------------------------------------------------------------------------
   // OpenGLContext
@@ -204,6 +220,9 @@ namespace vl
 
     //! Removes all FramebufferObjects belonging to an OpenGLContext.
     void destroyAllFramebufferObjects();
+
+    //! Removes all OpenGL resources handled by the OpenGLContext.
+    void destroyAllOpenGLResources();
 
     //! Asks to the windowing system that is managing the OpenGLContext to quit the application.
     virtual void quitApplication() {}
@@ -381,7 +400,7 @@ namespace vl
     }
 
     //! Dispatches the UIEventListener::destroyEvent() notification to the subscribed UIEventListener(s),
-    //! calls destroyAllFramebufferObjects() and eraseAllEventListeners()
+    //! calls destroyAllOpenGLResources() and eraseAllEventListeners()
     //! This event must be issued just before the actual GL context is destroyed.
     void dispatchDestroyEvent()
     {
@@ -390,7 +409,7 @@ namespace vl
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
           temp_clients[i]->destroyEvent();
-      destroyAllFramebufferObjects();
+      destroyAllOpenGLResources();
       eraseAllEventListeners();
     }
 

@@ -79,7 +79,7 @@ void PolygonSimplifier::simplify()
   #ifndef NDEBUG
     bool problem = false;
     for( int i = VA_Position + 1; i < VA_MaxAttribCount; ++i )
-      problem |= mInput->vertexAttribArray(i).data() != NULL;
+      problem |= mInput->vertexAttribArray(i) != NULL;
     if (problem)
       Log::warning("PolygonSimplifier::simplify() simplifies only the position array of a Geometry, the other attibutes will be discarded.\n");
   #endif

@@ -24,7 +24,7 @@ file(GLOB VLMOLECULE_INC "*.hpp")
 add_library(VLMolecule ${VL_SHARED_OR_STATIC} ${VLMOLECULE_SRC} ${VLMOLECULE_INC})
 VL_DEFAULT_TARGET_PROPERTIES(VLMolecule)
 
-target_link_libraries(VLMolecule VLCore VLGraphics ${OPENGL_glu_LIBRARY})
+target_link_libraries(VLMolecule VLMain ${OPENGL_glu_LIBRARY})
 
 ################################################################################
 # Install Rules

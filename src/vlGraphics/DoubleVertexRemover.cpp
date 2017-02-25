@@ -42,8 +42,8 @@ namespace
     LessCompare(const Geometry* geom)
     {
       for(int i=0; i<VA_MaxAttribCount; ++i)
-        if (geom->vertexAttribArray(i).data())
-          mAttribs.push_back(geom->vertexAttribArray(i).data());
+        if (geom->vertexAttribArray(i))
+          mAttribs.push_back(geom->vertexAttribArray(i));
     }
 
     bool operator()(u32 a, u32 b) const
@@ -67,8 +67,8 @@ namespace
     EqualsCompare(const Geometry* geom)
     {
       for(int i=0; i<VA_MaxAttribCount; ++i)
-        if (geom->vertexAttribArray(i).data())
-          mAttribs.push_back(geom->vertexAttribArray(i).data());
+        if (geom->vertexAttribArray(i))
+          mAttribs.push_back(geom->vertexAttribArray(i));
     }
 
     bool operator()(u32 a, u32 b) const

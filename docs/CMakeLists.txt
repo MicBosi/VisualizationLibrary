@@ -17,20 +17,37 @@
 
 project(DOCS)
 
-file(GLOB VL_DOX_FILES "dox/*.dox")
+option(VL_BUILD_DOCS "Build VL documentation" OFF)
 
-VL_GENERATE_DOXYGEN(doxygen "Doxyfile" SOURCES ${VL_DOX_FILES})
+if (VL_BUILD_DOCS)
+    set(DOXYGEN_SKIP_DOT TRUE)
+    find_package(Doxygen)
 
-source_group("dox" FILES ${VL_DOX_FILES})
+    if (DOXYGEN_FOUND)
+      set( DOXYFILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile" )
+      configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in" "${DOXYFILE_PATH}" @ONLY )
 
-option(VL_INSTALL_DOCS "Install API Documentation (drastically increases package size)" OFF)
+      ADD_CUSTOM_TARGET(Docs
+        COMMENT "Generating API documentation with Doxygen..."
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        COMMAND "${DOXYGEN_EXECUTABLE}" "${DOXYFILE_PATH}"
+      )
 
-if(VL_INSTALL_DOCS)
-	if(VL_UNIX_INSTALL_MODE)
-		install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/html-in/" DESTINATION "share/vl/docs/html")
-		install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html-out/" DESTINATION "share/vl/docs/html")
-	else()
-		install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/html-in/" DESTINATION "docs/html")
-		install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html-out/" DESTINATION "docs/html")
-	endif()
+      # Does not work
+      # set_property( DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "html-out/html" )
+
+      option(VL_INSTALL_DOCS "Install VL documentation" OFF)
+      if(VL_INSTALL_DOCS)
+        if(VL_UNIX_INSTALL_MODE)
+          # install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/html-in/" DESTINATION "share/vl/docs/")
+          # install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html-out/" DESTINATION "share/vl/docs/html")
+          install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/html-out/" DESTINATION "share/vl/docs/")
+        else()
+          # install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/html-in/" DESTINATION "docs/")
+          # install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html-out/" DESTINATION "docs/html")
+          install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/html-out/" DESTINATION "docs/")
+        endif()
+      endif()
+    endif()
 endif()
+

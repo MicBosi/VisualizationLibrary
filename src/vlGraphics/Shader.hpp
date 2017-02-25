@@ -1770,16 +1770,6 @@ namespace vl
     //! The texture sampler by a texture unit.
     const Texture* texture() const { return mTexture.get(); }
 
-    //! The TexParameter used by the sampler used to override the one specified by the bound Texture.
-    //! @note Using this method some performance penalty might incur as the Texture's TexParameter might need to be setup and restored several times during the rendering.
-    void setTexParameter(TexParameter* tex_param) { mTexParameter = tex_param; }
-
-    //! The TexParameter used by the sampler used to override the one specified by the bound Texture.
-    TexParameter* getTexParameter() { return mTexParameter.get(); }
-
-    //! The TexParameter used by the sampler used to override the one specified by the bound Texture.
-    const TexParameter* getTexParameter() const { return mTexParameter.get(); }
-
     bool hasTexture() const;
 
     virtual ref<RenderState> clone() const
@@ -1791,7 +1781,6 @@ namespace vl
 
   protected:
     ref<Texture> mTexture;
-    ref<TexParameter> mTexParameter;
   };
   //------------------------------------------------------------------------------
   // ShaderAnimator

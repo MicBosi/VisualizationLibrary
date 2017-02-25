@@ -61,7 +61,7 @@ namespace
     {
       // restore the color
       HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-      SetConsoleTextAttribute(hConsole,screen_info.wAttributes);  
+      SetConsoleTextAttribute(hConsole,screen_info.wAttributes);
     }
   };
   #define SET_TEXT_COLOR_YELLOW() ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_INTENSITY);
@@ -99,8 +99,8 @@ namespace
       //22 set normal intensity
       //25 blink off
       //27 reverse video off
-      
-      // example: 
+
+      // example:
       // "\033[34mThis is blue.\033[0m"
       // "\033[45;37mGrey on purple.\033[0m"
 
@@ -122,127 +122,63 @@ namespace
 //-----------------------------------------------------------------------------
 // Log
 //-----------------------------------------------------------------------------
-void Log::notify(const String& log) 
-{ 
+void Log::notify(const String& log)
+{
   //! Synchronize log across threads.
   ScopedMutex mutex(Log::logMutex());
 
   SET_TEXT_COLOR_GREEN()
   if(defLogger() && globalSettings()->verbosityLevel() != vl::VEL_VERBOSITY_SILENT)
-    defLogger()->printImplementation(LL_LogNotify, log); 
+    defLogger()->printImplementation(LL_LogNotify, log);
 }
 //-----------------------------------------------------------------------------
-void Log::print(const String& log) 
-{ 
+void Log::print(const String& log)
+{
   //! Synchronize log across threads.
   ScopedMutex mutex(Log::logMutex());
 
   if(defLogger() && globalSettings()->verbosityLevel() != vl::VEL_VERBOSITY_SILENT)
-    defLogger()->printImplementation(LL_LogPrint, log); 
+    defLogger()->printImplementation(LL_LogPrint, log);
 }
 //-----------------------------------------------------------------------------
-void Log::debug(const String& log) 
-{ 
+void Log::debug(const String& log)
+{
   //! Synchronize log across threads.
   ScopedMutex mutex(Log::logMutex());
 
   SET_TEXT_COLOR_BLUE()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_DEBUG)
-    defLogger()->printImplementation(LL_LogDebug, log); 
+    defLogger()->printImplementation(LL_LogDebug, log);
 }
 //-----------------------------------------------------------------------------
-void Log::warning(const String& log) 
-{ 
+void Log::warning(const String& log)
+{
   //! Synchronize log across threads.
   ScopedMutex mutex(Log::logMutex());
 
   SET_TEXT_COLOR_YELLOW()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
-    defLogger()->printImplementation(LL_LogWarning, log); 
+    defLogger()->printImplementation(LL_LogWarning, log);
 }
 //-----------------------------------------------------------------------------
-void Log::error(const String& log) 
-{ 
+void Log::error(const String& log)
+{
   //! Synchronize log across threads.
   ScopedMutex mutex(Log::logMutex());
 
   SET_TEXT_COLOR_RED()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
-    defLogger()->printImplementation(LL_LogError, log); 
+    defLogger()->printImplementation(LL_LogError, log);
 }
 //-----------------------------------------------------------------------------
-void Log::bug(const String& log) 
+void Log::bug(const String& log)
 {
   //! Synchronize log across threads.
   ScopedMutex mutex(Log::logMutex());
 
   SET_TEXT_COLOR_PURPLE()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
-    defLogger()->printImplementation(LL_LogBug, log); 
-}
-//------------------------------------------------------------------------------
-void Log::logSystemInfo()
-{
-  #if defined(_MSC_VER)
-    const char* compiler = "MSVC";
-  #elif defined(__GNUG__)
-    const char* compiler = "GCC";
-  #else
-    const char* compiler = "UNKNOWN";
-  #endif
-
-  #if defined(DEBUG) || !defined(NDEBUG)
-    const char* build_type = "DEBUG";
-  #else
-    const char* build_type = "RELEASE";
-  #endif
-
-  print( Say("Visualization Library v%s [%s]\n%s - %s - %s compiler [%s] [%s]\n") 
-	<< VisualizationLibrary::versionString()
-    << (sizeof(vec3) == sizeof(fvec3) ? "f32" : "f64")
-    << __DATE__ << __TIME__ << compiler << build_type 
-    << (sizeof(void*) == 4 ? "x32" : "x64") );
-
-  print("\n --- Environment ---\n");
-  const char* val = getenv("VL_LOGFILE_PATH");
-  if (val)
-    print( Say("VL_LOGFILE_PATH = %s\n") << val );
-  else
-    print("VL_LOGFILE_PATH <not present>\n");
-
-  val = getenv("VL_DATA_PATH");
-  if (val)
-    print( Say("VL_DATA_PATH = %s\n") << val );
-  else
-    print("VL_DATA_PATH <not present>\n");
-
-  val = getenv("VL_VERBOSITY_LEVEL");
-  if (val)
-    print( Say("VL_VERBOSITY_LEVEL = %s\n") << val );
-  else
-    print("VL_VERBOSITY_LEVEL <not present>\n");
-
-  val = getenv("VL_CHECK_GL_STATES");
-  if (val)
-    print( Say("VL_CHECK_GL_STATES = %s\n") << val );
-  else
-    print("VL_CHECK_GL_STATES <not present>\n");
-
-  print("\n --- Global Settings --- \n");
-  print( Say("Log file  = %s\n") << globalSettings()->defaultLogPath() );
-  print( Say("Data path = %s\n") << globalSettings()->defaultDataPath() );
-  print("Verbosity level = ");
-  switch(globalSettings()->verbosityLevel())
-  {
-    /*case vl::VEL_VERBOSITY_SILENT: print("SILENT\n"); break;*/
-    case vl::VEL_VERBOSITY_ERROR:  print("ERROR\n"); break;
-    case vl::VEL_VERBOSITY_NORMAL: print("NORMAL\n"); break;
-    case vl::VEL_VERBOSITY_DEBUG:  print("DEBUG\n"); break;
-    default: break;
-  }
-  print( Say("Check OpenGL States = %s\n") << (globalSettings()->checkOpenGLStates()?"YES":"NO") );
-
-  print("\n");
+    defLogger()->printImplementation(LL_LogBug, log);
 }
 //------------------------------------------------------------------------------
 void vl::log_failed_check(const char* expr, const char* file, int line)
@@ -263,9 +199,9 @@ IMutex* Log::mLogMutex = NULL;
 //-----------------------------------------------------------------------------
 // StandardLog
 //-----------------------------------------------------------------------------
-void StandardLog::setLogFile(const String& file) 
-{ 
-  mLogFile = file; 
+void StandardLog::setLogFile(const String& file)
+{
+  mLogFile = file;
 
   if (mFile.is_open())
     mFile.close();

@@ -53,7 +53,7 @@ public:
     if ( mFPSTimer.elapsed() > 1 )
     {
       mFPSTimer.start();
-      openglContext()->setWindowTitle( vl::Say("[%.1n] %s") << fps() << appletName()  + " - " + vl::String("VL ") + vl::VisualizationLibrary::versionString() );
+      openglContext()->setWindowTitle( vl::Say("[%.1n] %s") << fps() << appletName()  + " - " + vl::String("VL ") + vl::versionString() );
       vl::Log::print( vl::Say("FPS=%.1n\n") << fps() );
     }
   }

@@ -91,23 +91,11 @@ OpenGLContext::OpenGLContext(int w, int h)
 //-----------------------------------------------------------------------------
 OpenGLContext::~OpenGLContext()
 {
-  if (mFramebufferObject.size() || mEventListeners.size())
-    Log::warning("~OpenGLContext(): you should have called dispatchDestroyEvent() before destroying the OpenGLContext!\nNow it's too late to cleanup things!\n");
-
-  // invalidate the left and right framebuffers
-  mLeftFramebuffer->mOpenGLContext = NULL;
-  mRightFramebuffer->mOpenGLContext = NULL;
-
-  // invalidate FBOs
-  for(unsigned i=0; i<mFramebufferObject.size(); ++i)
+  if ( mLeftFramebuffer || mRightFramebuffer || mFramebufferObject.size() || mEventListeners.size() )
   {
-    // note, we can't destroy the FBOs here because it's too late to call makeCurrent().
-    // mFramebufferObject[i]->destroy();
-    mFramebufferObject[i]->mOpenGLContext = NULL;
+    Log::warning("~OpenGLContext() called before dispatchDestroyEvent(), your application will likely crash.\n");
+    VL_TRAP();
   }
-
-  // remove all the event listeners
-  eraseAllEventListeners();
 }
 //-----------------------------------------------------------------------------
 ref<FramebufferObject> OpenGLContext::createFramebufferObject(int width, int height, EReadDrawBuffer draw_buffer, EReadDrawBuffer read_buffer)
@@ -129,6 +117,32 @@ void OpenGLContext::destroyFramebufferObject(FramebufferObject* fbort)
       mFramebufferObject[i]->mOpenGLContext = NULL;
       mFramebufferObject.erase(mFramebufferObject.begin()+i);
       return;
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+void OpenGLContext::destroyAllOpenGLResources()
+{
+  if ( mIsInitialized ) {
+    mIsInitialized = false;
+    makeCurrent();
+    destroyAllFramebufferObjects();
+    mLeftFramebuffer->mOpenGLContext = NULL;
+    mRightFramebuffer->mOpenGLContext = NULL;
+    mLeftFramebuffer = NULL;
+    mRightFramebuffer = NULL;
+    for( int i=0; i<RS_RenderStateCount; ++i )
+    {
+      mDefaultRenderStates[i].mRS = NULL;
+    }
+    mCurrentEnableSet = NULL;
+    mNewEnableSet = NULL;
+    mCurrentRenderStateSet = NULL;
+    mNewRenderStateSet = NULL;
+    mGLSLProgram = NULL;
+    for( int i=0; i<VL_MAX_TEXTURE_IMAGE_UNITS; ++i )
+    {
+      mTexUnitBinding[ i ] = vl::TD_TEXTURE_UNKNOWN;
     }
   }
 }
@@ -1539,9 +1553,9 @@ void OpenGLContext::bindVAS_Attribs(const IVertexAttribSet* vas, bool use_bo) {
 
   for(int idx=0; idx<vertexAttribCount(); ++idx)
   {
-    const VertexAttribInfo& info = vas->vertexAttribArray(idx);
+    const ArrayAbstract* arr = vas->vertexAttribArray(idx);
 
-    if ( ! info.data() )
+    if ( ! arr )
     {
       // --- disable ---
 
@@ -1573,15 +1587,15 @@ void OpenGLContext::bindVAS_Attribs(const IVertexAttribSet* vas, bool use_bo) {
         glGetVertexAttribiv( idx, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled); VL_CHECK(enabled);
       #endif
 
-      if ( use_bo && info.data()->bufferObject()->handle() )
+      if ( use_bo && arr->bufferObject()->handle() )
       {
-        buf_obj = info.data()->bufferObject()->handle();
+        buf_obj = arr->bufferObject()->handle();
         ptr = 0;
       }
       else
       {
         buf_obj = 0;
-        ptr = info.data()->bufferObject()->ptr();
+        ptr = arr->bufferObject()->ptr();
       }
       if ( mVertexAttrib[idx].mPtr != ptr || mVertexAttrib[idx].mBufferObject != buf_obj )
       {
@@ -1589,19 +1603,19 @@ void OpenGLContext::bindVAS_Attribs(const IVertexAttribSet* vas, bool use_bo) {
         mVertexAttrib[idx].mBufferObject = buf_obj;
         VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
 
-        if ( info.interpretation() == VAI_NORMAL )
+        if ( arr->interpretation() == VAI_NORMAL )
         {
-          VL_glVertexAttribPointer( idx, (int)info.data()->glSize(), info.data()->glType(), info.normalize(), /*stride*/0, ptr ); VL_CHECK_OGL();
+          VL_glVertexAttribPointer( idx, (int)arr->glSize(), arr->glType(), arr->normalize(), /*stride*/0, ptr ); VL_CHECK_OGL();
         }
         else
-        if ( info.interpretation() == VAI_INTEGER )
+        if ( arr->interpretation() == VAI_INTEGER )
         {
-          VL_glVertexAttribIPointer( idx, (int)info.data()->glSize(), info.data()->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
+          VL_glVertexAttribIPointer( idx, (int)arr->glSize(), arr->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
         }
         else
-        if ( info.interpretation() == VAI_DOUBLE )
+        if ( arr->interpretation() == VAI_DOUBLE )
         {
-          VL_glVertexAttribLPointer( idx, (int)info.data()->glSize(), info.data()->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
+          VL_glVertexAttribLPointer( idx, (int)arr->glSize(), arr->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
         }
       }
     }

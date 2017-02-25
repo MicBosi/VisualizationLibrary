@@ -109,7 +109,7 @@ public:
   App_VolumeRaycast()
   {
     SAMPLE_STEP         = 512.0f;
-    MODE                = Isosurface_Transp_Mode;
+    MODE                = Isosurface_Mode;
     DYNAMIC_LIGHTS      = false;
     COLORED_LIGHTS      = false;
     PRECOMPUTE_GRADIENT = false;
@@ -159,6 +159,9 @@ public:
 
   void setupScene()
   {
+    mRaycastVolume = new vl::RaycastVolume;
+    mVolumeAct = new Actor;
+
     // scrap previous scene
     sceneManager()->tree()->eraseAllChildren();
     sceneManager()->tree()->actors()->clear();
@@ -181,7 +184,7 @@ public:
       volume_fx->shader()->gocCullFace()->set( vl::PF_FRONT );
     }
 
-    volume_fx->shader()->setRenderState( mLight0.get(), 0 );
+    mRaycastVolume->lights().push_back( mLight0 );
 
     // light bulbs
     if ( DYNAMIC_LIGHTS )
@@ -198,8 +201,8 @@ public:
       }
 
       // add the other two lights
-      volume_fx->shader()->setRenderState( mLight1.get(), 1 );
-      volume_fx->shader()->setRenderState( mLight2.get(), 2 );
+      mRaycastVolume->lights().push_back( mLight1 );
+      mRaycastVolume->lights().push_back( mLight2 );
 
       // animate the three lights
       mLight0->bindTransform( mLight0Tr.get() );
@@ -245,7 +248,6 @@ public:
     trackball()->setTransform( mVolumeTr.get() );
 
     // volume actor
-    mVolumeAct = new Actor;
     mVolumeAct->setEffect( volume_fx.get() );
     mVolumeAct->setTransform( mVolumeTr.get() );
     sceneManager()->tree()->addActor( mVolumeAct.get() );
@@ -254,7 +256,6 @@ public:
 
     // RaycastVolume will generate the actual actor's geometry upon setBox() invocation.
     // The geometry generated is actually a simple box with 3D texture coordinates.
-    mRaycastVolume = new vl::RaycastVolume;
     mRaycastVolume->bindActor( mVolumeAct.get() );
     AABB volume_box( vec3( -10,-10,-10 ), vec3( +10,+10,+10 ) );
     mRaycastVolume->setBox( volume_box );
@@ -271,8 +272,11 @@ public:
     mValThresholdText->setColor( vl::white );
     ref<Effect> effect = new Effect;
     effect->shader()->enable( EN_BLEND );
-    sceneManager()->tree()->addActor( mValThresholdText.get(), effect.get() );
     updateText();
+    // Don't add text in GL core profile - not supported yet.
+    if ( Has_Fixed_Function_Pipeline ) {
+      sceneManager()->tree()->addActor( mValThresholdText.get(), effect.get() );
+    }
 
     // let's visualize the volume!
     setupVolume();
@@ -297,7 +301,7 @@ public:
     Log::debug( Say("Volume: %n %n %n\n") << mVolumeImage->width() << mVolumeImage->height() << mVolumeImage->depth() );
 
     // volume image textue must be on sampler #0
-    vl::ref< vl::Texture > vol_tex = new vl::Texture( mVolumeImage.get(), TF_LUMINANCE8, false, false );
+    vl::ref< vl::Texture > vol_tex = new vl::Texture( mVolumeImage.get(), TF_RED, false, false );
     volume_fx->shader()->gocTextureSampler( 0 )->setTexture( vol_tex.get() );
     vol_tex->getTexParameter()->setMagFilter( vl::TPF_LINEAR );
     vol_tex->getTexParameter()->setMinFilter( vl::TPF_LINEAR );
@@ -351,9 +355,32 @@ public:
 
     if( files.size() == 1 ) // if there is one file load it directly
     {
-      if ( files[0].endsWith( ".dat" ) || files[0].endsWith( ".dds" ) )
+      if ( files[0].endsWith( ".dat" ) || files[0].endsWith( ".dds" ) || files[0].endsWith( ".mhd" ) )
       {
         mVolumeImage = loadImage( files[0] );
+
+        // CT volumes are often in Hounsfield units saved as signed 16 bits ints ranging from -1000 to +3000.
+        // You can keep the values as they are but keep in mind that when OpenGL converts that image to a texture
+        // the values are mapped to a 0 ... 1 range following the OpenGL rules defined in the manual, so to render
+        // them properly you'll need to do an appropriate scaling operation in the GLSL shader.
+        // In the example below we prefer to scale/contrast the image values directly so we can reuse the usual
+        // shaders.
+
+        // If image format is SHORT we assume it contains Hounsfield units so we rescale its values for
+        // optimal visibility. Note that you can do this in the shader as well.
+        if ( mVolumeImage->type() == vl::IT_SHORT ) {
+          mVolumeImage->setType(vl::IT_UNSIGNED_SHORT);
+          float h_start = -1000;
+          float h_end   = +1500;
+          vl::i16* ival = (vl::i16*)mVolumeImage->pixels();
+          vl::u16* uval = (vl::u16*)mVolumeImage->pixels();
+          for(int i=0; i<mVolumeImage->width() * mVolumeImage->height() * mVolumeImage->depth(); ++i, ++ival, ++uval) {
+            float t = ( (*ival) - h_start ) / ( h_end - h_start );
+            t = vl::clamp( t, 0.0f, 1.0f );
+            *uval = (u16)( t * 65535 );
+          }
+        }
+
         if ( mVolumeImage ) {
           setupVolume();
         }
@@ -482,6 +509,16 @@ public:
     }
 
     setupScene();
+  }
+
+  virtual void destroyEvent() {
+    BaseDemo::destroyEvent();
+    // We need to release objects containing OpenGL objects before the OpenGL context is destroyed.
+    mRaycastVolume = NULL;
+    mVolumeAct = NULL;
+    mGLSL = NULL;
+    mLight0 = mLight1 = mLight2 = NULL;
+    mValThreshold = NULL;
   }
 
   private:

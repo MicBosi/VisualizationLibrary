@@ -45,8 +45,8 @@ namespace vl
 namespace vl
 {
 //-----------------------------------------------------------------------------
-  ref<ResourceDatabase> loadPLY(VirtualFile* file);
-  ref<ResourceDatabase> loadPLY(const String& path);
+  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadPLY(VirtualFile* file);
+  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadPLY(const String& path);
 //---------------------------------------------------------------------------
 // LoadWriterPLY
 //---------------------------------------------------------------------------

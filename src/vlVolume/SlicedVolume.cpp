@@ -43,14 +43,14 @@ using namespace vl;
  * <center>
  * <table border=0 cellspacing=0 cellpadding=5>
  * <tr>
- * 	<td> <img src="pics/pagGuideSlicedVolume_1.jpg"> </td>
- * 	<td> <img src="pics/pagGuideSlicedVolume_2.jpg"> </td>
- * 	<td> <img src="pics/pagGuideSlicedVolume_4.jpg"> </td>
+ * 	<td> <img src="../pics/pagGuideSlicedVolume_1.jpg"> </td>
+ * 	<td> <img src="../pics/pagGuideSlicedVolume_2.jpg"> </td>
+ * 	<td> <img src="../pics/pagGuideSlicedVolume_4.jpg"> </td>
  * </tr>
  * <tr>
- * 	<td> <img src="pics/pagGuideSlicedVolume_5.jpg"> </td>
- * 	<td> <img src="pics/pagGuideSlicedVolume_6.jpg"> </td>
- * 	<td> <img src="pics/pagGuideSlicedVolume_7.jpg"> </td>
+ * 	<td> <img src="../pics/pagGuideSlicedVolume_5.jpg"> </td>
+ * 	<td> <img src="../pics/pagGuideSlicedVolume_6.jpg"> </td>
+ * 	<td> <img src="../pics/pagGuideSlicedVolume_7.jpg"> </td>
  * </tr>
  * </table>
  * </center>

@@ -1196,20 +1196,6 @@ void TextureSampler::apply(int index, const Camera*, OpenGLContext* ctx) const
     ctx->setTexUnitBinding( index, texture()->dimension() );
 
     // texture parameters
-    // TexParameter overridden by the TextureSampler
-    if ( getTexParameter() )
-    {
-      if( texture()->getTexParameterOverride() != getTexParameter() )
-      {
-        // schedule restore of original TexParameter once no override is used.
-        texture()->getTexParameter()->setDirty(true);
-        // install the TexParameter override and apply it
-        texture()->mTexParameterOverride = getTexParameter();
-        getTexParameter()->apply( texture()->dimension(), ctx );
-      }
-    }
-    else
-    // Regular TexParameter
     if ( texture()->getTexParameter()->dirty() )
       texture()->getTexParameter()->apply( texture()->dimension(), ctx );
   }

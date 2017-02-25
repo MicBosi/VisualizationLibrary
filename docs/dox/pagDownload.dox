@@ -2,7 +2,7 @@
 
 \page pagDownload Download
 
-You can review the \subpage pagChangelog "changelog here".
+\subpage pagChangelog "You can review the changelog here."
 
 Remember to set the <code>VL_DATA_PATH</code> environment variable to the directory containing the sample data in order to run the demos and tests included in VL.
 
@@ -10,34 +10,44 @@ Run the tests using any supported backend plus the test number as the first argu
 
 <div class="featuretitle">Releases</div>
 
-<a href="https://api.github.com/repos/MicBosi/visualizationlibrary/tarball/v1.0.2">Visualization Library v1.0.2 (.tgz)</a>
+<div id="vl-releases">
+Loading...
+</div>
 
-<a href="https://api.github.com/repos/MicBosi/visualizationlibrary/zipball/v1.0.2">Visualization Library v1.0.2 (.zip)</a>
-
-<!-- https://api.github.com/repos/MicBosi/visualizationlibrary/releases -->
+\htmlonly
+<script>
+$.ajax({
+  url: "https://api.github.com/repos/MicBosi/VisualizationLibrary/releases",
+  success: function(releases){
+    var html = ''
+    releases.forEach(function(release) {
+      html += '<p><a href="' + release.html_url + '">' + release.name + '</a> <small>(' + new Date(release.published_at).toLocaleString() + ')</small></p>';
+    });
+    $('#vl-releases').html( html );
+  }
+});
+</script>
+\endhtmlonly
 
 All releases:
 
-<a href="https://github.com/MicBosi/visualizationlibrary/releases">github.com/MicBosi/visualizationlibrary/releases</a>
+<a href="https://github.com/MicBosi/VisualizationLibrary/releases">github.com/MicBosi/VisualizationLibrary/releases</a>
 
 <div class="featuretitle">GitHub Repository</div>
 
-VL official repo is <a href="https://github.com/MicBosi/visualizationlibrary">github.com/MicBosi/visualizationlibrary</a>
+VL official repo is <a href="https://github.com/MicBosi/VisualizationLibrary">github.com/MicBosi/VisualizationLibrary</a>
 
-Clone VL repo:
+Clone VL repo: <code>git clone https://github.com/MicBosi/VisualizationLibrary.git</code>
 
-<code>git clone https://github.com/MicBosi/visualizationlibrary.git</code>
+Download .zip file: <a href="https://github.com/MicBosi/VisualizationLibrary/archive/master.zip">github.com/MicBosi/VisualizationLibrary/archive/master.zip</a>
 
-Download VL master branch source as a zip file here:
-
-<a href="https://github.com/MicBosi/visualizationlibrary/archive/master.zip">github.com/MicBosi/visualizationlibrary/archive/master.zip</a>
+Download .tar.gz file: <a href="https://github.com/MicBosi/VisualizationLibrary/archive/master.tar.gz">github.com/MicBosi/VisualizationLibrary/archive/master.tar.gz</a>
 
 <div class="featuretitle">Compiling Visualization Library</div>
 
 Visualization Library uses CMake as its building system and can target several environments and compilers. At the moment we officially support the following platforms:
 
-- Windows: Visual Studio (all versions supported by CMake)
-- Windows: MinGW
+- Windows: Visual Studio &amp; MinGW
 - Linux: GNU make/GCC
 - Mac OS X: Xcode
 

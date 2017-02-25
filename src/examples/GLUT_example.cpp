@@ -53,9 +53,11 @@ int main ( int argc, char *argv[] )
   format.setRGBABits( 8,8,8,0 );
   format.setDepthBufferBits(24);
   format.setStencilBufferBits(8);
+  format.setMultisampleSamples(16);
+  format.setMultisample(false);
   format.setFullscreen(false);
-  //format.setMultisampleSamples(16);
-  //format.setMultisample(true);
+  //format.setOpenGLProfile( GLP_Core );
+  //format.setVersion( 3, 3 );
 
   /* create the applet to be run */
   ref<Applet> applet = new App_RotatingCube;

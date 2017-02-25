@@ -177,8 +177,14 @@ void Applet::addedListenerEvent(OpenGLContext* ogl_context)
 //-----------------------------------------------------------------------------
 void Applet::removedListenerEvent(OpenGLContext* ogl_context)
 {
-  ogl_context->removeEventListener( mTrackball.get() );
-  ogl_context->removeEventListener( mFly.get() );
+  if ( mTrackball ) {
+    ogl_context->removeEventListener( mTrackball.get() );
+  }
+
+  if ( mFly ) {
+    ogl_context->removeEventListener( mFly.get() );
+  }
+
 }
 //-----------------------------------------------------------------------------
 void Applet::destroyEvent()
@@ -187,5 +193,11 @@ void Applet::destroyEvent()
   mTrackball->setCamera(NULL);
   mTrackball->setTransform(NULL);
   mRendering = NULL;
+  mSceneManagerActorTree = NULL;
+  openglContext()->removeEventListener( mFly.get() );
+  openglContext()->removeEventListener( mTrackball.get() );
+  mFly = NULL;
+  mTrackball = NULL;
+  mReadPixels = NULL;
 }
 //-----------------------------------------------------------------------------

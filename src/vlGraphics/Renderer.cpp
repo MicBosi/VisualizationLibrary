@@ -70,7 +70,7 @@ namespace
       if ( mGLSLProgUniformSet != other.mGLSLProgUniformSet )
         return mGLSLProgUniformSet < other.mGLSLProgUniformSet;
       else
-      if ( mShaderUniformSet != other.mShaderUniformSet ) 
+      if ( mShaderUniformSet != other.mShaderUniformSet )
         return mShaderUniformSet < other.mShaderUniformSet;
       else
         return mActorUniformSet < other.mActorUniformSet;
@@ -119,9 +119,11 @@ const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* 
 
     // --------------- Actor's scissor ---------------
 
-    // mic fixme:this kind of scissor management is not particularly elegant.
-    // It is required mainly for convenience for the vector graphics that allow the specification of a clipping rectangular area at any point in the rendering.
-    // We must also find a good general solution to support indexed scissoring and viewport.
+    // MIC FIXME:
+    // this kind of scissor management is not particularly elegant.
+    // It is required mainly for convenience for the vector graphics that allow the specification of a clipping
+    // rectangular area at any point in the rendering. We must also find a good general solution to support
+    // indexed scissoring and viewport.
 
     const Scissor* scissor = actor->scissor() ? actor->scissor() : tok->mShader->scissor();
     if (cur_scissor != scissor)
@@ -150,8 +152,8 @@ const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* 
 
       // shader override: select the first that matches
 
-      for( std::map< unsigned int, ref<Shader> >::const_iterator eom_it = mShaderOverrideMask.begin(); 
-           eom_it != mShaderOverrideMask.end(); 
+      for( std::map< unsigned int, ref<Shader> >::const_iterator eom_it = mShaderOverrideMask.begin();
+           eom_it != mShaderOverrideMask.end();
            ++eom_it )
       {
         if ( eom_it->first & actor->enableMask() )
@@ -200,7 +202,7 @@ const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* 
       VL_CHECK_OGL()
 
       // current transform
-      const Transform*   cur_transform             = actor->transform(); 
+      const Transform*   cur_transform             = actor->transform();
       const GLSLProgram* cur_glsl_program          = NULL; // NULL == fixed function pipeline
       const UniformSet*  cur_glsl_prog_uniform_set = NULL;
       const UniformSet*  cur_shader_uniform_set    = NULL;
@@ -217,10 +219,10 @@ const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* 
 
         if (shader->getUniformSet() && !shader->getUniformSet()->uniforms().empty())
           cur_shader_uniform_set = shader->getUniformSet();
-        
+
         if (actor->getUniformSet() && !actor->getUniformSet()->uniforms().empty())
           cur_actor_uniform_set = actor->getUniformSet();
-      } 
+      }
 
       bool update_cm = false; // update camera
       bool update_tr = false; // update transform
@@ -231,7 +233,7 @@ const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* 
 
       // retrieve the state of this GLSLProgram (including the NULL one)
       std::map<const GLSLProgram*, GLSLProgState>::iterator glsl_state_it = glslprogram_map.find(cur_glsl_program);
-      
+
       if ( glsl_state_it == glslprogram_map.end() )
       {
         //
@@ -371,7 +373,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
   // enter/exit behavior contract
 
-  class InOutContract 
+  class InOutContract
   {
     Renderer* mRenderer;
     std::vector<RenderStateSlot> mOriginalDefaultRS;

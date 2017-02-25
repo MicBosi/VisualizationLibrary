@@ -8,7 +8,7 @@
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/Time.hpp>
 #include <vlCore/ResourceDatabase.hpp>
-#include <vlGraphics/plugins/ioVLX.hpp>
+#include <vlX/ioVLX.hpp>
 #include <vlGraphics/expandResourceDatabase.hpp>
 
 using namespace vl;
@@ -80,7 +80,7 @@ int main(int argc, const char* argv[])
   {
     if (in_files.empty())
       printf("Missing input file list.\n");
-    
+
     if (out_file.empty())
       printf("Missing output file.\n");
 
@@ -114,7 +114,7 @@ int main(int argc, const char* argv[])
   {
     printf("Saving VLT...\n");
     printf("\t%s ", out_file.toStdString().c_str());
-    vl::saveVLT(out_file, db.get());
+    vlX::saveVLT(out_file, db.get());
     printf("\t... %.2fs\n", timer.elapsed());
   }
   else
@@ -122,7 +122,7 @@ int main(int argc, const char* argv[])
   {
     printf("Saving VLB...\n");
     printf("\t%s ", out_file.toStdString().c_str());
-    vl::saveVLB(out_file, db.get());
+    vlX::saveVLB(out_file, db.get());
     printf("\t... %.2fs\n", timer.elapsed());
   }
   else

@@ -44,14 +44,14 @@ using namespace vl;
  * <center>
  * <table border=0 cellspacing=0 cellpadding=5>
  * <tr>
- * 	<td> <img src="pics/pagGuideRaycastVolume_1.jpg"> </td>
- * 	<td> <img src="pics/pagGuideRaycastVolume_2.jpg"> </td>
- * 	<td> <img src="pics/pagGuideRaycastVolume_3.jpg"> </td>
+ * 	<td> <img src="../pics/pagGuideRaycastVolume_1.jpg"> </td>
+ * 	<td> <img src="../pics/pagGuideRaycastVolume_2.jpg"> </td>
+ * 	<td> <img src="../pics/pagGuideRaycastVolume_3.jpg"> </td>
  * </tr>
  * <tr>
- * 	<td> <img src="pics/pagGuideRaycastVolume_4.jpg"> </td>
- * 	<td> <img src="pics/pagGuideRaycastVolume_5.jpg"> </td>
- * 	<td> <img src="pics/pagGuideRaycastVolume_6.jpg"> </td>
+ * 	<td> <img src="../pics/pagGuideRaycastVolume_4.jpg"> </td>
+ * 	<td> <img src="../pics/pagGuideRaycastVolume_5.jpg"> </td>
+ * 	<td> <img src="../pics/pagGuideRaycastVolume_6.jpg"> </td>
  * </tr>
  * </table>
  * </center>
@@ -79,13 +79,13 @@ RaycastVolume::RaycastVolume()
   mGeometry->setTexCoordArray( 0, mTexCoord.get() );
 
   // install index array
-  ref<DrawElementsUInt> de = new DrawElementsUInt( PT_QUADS );
+  ref<DrawElementsUInt> de = new DrawElementsUInt( PT_TRIANGLES );
   mGeometry->drawCalls().push_back( de.get() );
   unsigned int de_indices[] =
   {
-    0,1,2,3, 1,5,6,2, 5,4,7,6, 4,0,3,7, 3,2,6,7, 4,5,1,0
+    0,1,2, 0,2,3, 1,5,6, 1,6,2, 5,4,7, 5,7,6, 4,0,3, 4,3,7, 3,2,6, 3,6,7, 4,5,1, 4,1,0
   };
-  de->indexBuffer()->resize( 4*6 );
+  de->indexBuffer()->resize( 6 * 6 );
   memcpy( de->indexBuffer()->ptr(), de_indices, sizeof( de_indices ) );
 
   // generate default texture coordinates
@@ -101,10 +101,8 @@ RaycastVolume::RaycastVolume()
 }
 //-----------------------------------------------------------------------------
 /** Reimplement this method to update the uniform variables of your GLSL program before the volume is rendered.
- * - By default updateUniforms() updates the position of up to 4 lights in object space. Such positions are stored in the
- *   \p "uniform vec3 light_position[4]" variable. The updateUniforms() method also fills the
- *   \p "uniform bool light_enable[4]" variable with a flag marking if the Nth light is active or not.
- *   These light values are computed based on the lights bound to the current Shader.
+ * - By default updateUniforms() updates the position of up to 4 lights in object space.
+ *   These light values are computed based on the lights stored in RaycastVolume::lights().
  * - The \p "uniform vec3 eye_position" variable contains the camera position in object space, useful to compute
  *   specular highlights, raycast direction etc.
  * - The \p "uniform vec3 eye_look" variable contains the camera look vector in object space. */
@@ -118,34 +116,41 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera*
   if (actor->transform())
     inv_mat = ( fmat4 )actor->transform()->worldMatrix().getInverse();
 
-  if ( glsl->getUniformLocation( "light_position[0]" ) != -1 && glsl->getUniformLocation( "light_enable[0]" ) != -1 )
+  if ( glsl->getUniformLocation( "lights[0].position" ) != -1 && glsl->getUniformLocation( "lights[0].enabled" ) != -1 )
   {
     // computes up to 4 light positions ( in object space ) and enables
+    fvec4 light_position;
 
-    int light_enable[4] = { 0,0,0,0 };
-    fvec3 light_position[4];
-
-    for( int i=0; i<4; ++i )
+    int ilight = 0;
+    for( ; ilight < 4 && ilight < mLights.size(); ++ilight )
     {
-      const vl::Light* light = shader->getLight( i );
-      light_enable[i] = light != NULL;
+      const vl::Light* light = mLights[ilight].get();
+      VL_CHECK( light );
+      actor->gocUniform( String::printf("lights[%d].enabled", ilight).toStdString().c_str() )->setUniformI( true );
       if ( light )
       {
         // light position following transform
         if ( light->boundTransform() )
-          light_position[i] = ( fmat4 )light->boundTransform()->worldMatrix() * light->position().xyz();
+          light_position = ( fmat4 )light->boundTransform()->worldMatrix() * light->position();
         // light position following camera
         else
-          light_position[i] = ( ( fmat4 )camera->modelingMatrix() * light->position() ).xyz();
+          light_position = ( ( fmat4 )camera->modelingMatrix() * light->position() );
 
         // light position in object space
         if ( actor->transform() )
-          light_position[i] = inv_mat * light_position[i];
+          light_position = inv_mat * light_position;
+
+        actor->gocUniform( String::printf("lights[%d].position", ilight).toStdString().c_str() )->setUniform( light_position );
+        actor->gocUniform( String::printf("lights[%d].diffuse", ilight).toStdString().c_str() )->setUniform( light->diffuse() );
+        actor->gocUniform( String::printf("lights[%d].specular", ilight).toStdString().c_str() )->setUniform( light->specular() );
+        actor->gocUniform( String::printf("lights[%d].ambient", ilight).toStdString().c_str() )->setUniform( light->ambient() );
       }
     }
 
-    actor->gocUniform( "light_position" )->setUniform( 4, light_position );
-    actor->gocUniform( "light_enable" )->setUniform1i( 4, light_enable );
+    // Disable remaining lights
+    for( ; ilight < 4; ++ilight ) {
+      actor->gocUniform( String::printf("lights[%d].enabled", ilight).toStdString().c_str() )->setUniformI( false );
+    }
   }
 
   if ( glsl->getUniformLocation( "eye_position" ) != -1 )
@@ -178,9 +183,9 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera*
   // Normalized x/y/z offeset required to center on a texel
   const Texture* tex = shader->getTextureSampler( 0 )->texture();
   fvec3 centering = fvec3(
-    0.5 / tex->width(),
-    0.5 / tex->height(),
-    0.5 / tex->depth()
+    0.5f / tex->width(),
+    0.5f / tex->height(),
+    0.5f / tex->depth()
   );
   actor->gocUniform( "texel_centering" )->setUniform( centering );
 

@@ -1,21 +1,20 @@
 /**
+\page pagGuideStereo Stereo Rendering With Anaglyphs
 
-	\page pagGuideStereo Stereo Rendering With Anaglyphs
+This tutorial demonstrates how simple it is to setup a stereo rendering using red/cyan anaglyphs with Visualization Library.
 
-	This tutorial demonstrates how simple it is to setup a stereo rendering using red/cyan anaglyphs with Visualization Library.
-	
-	<center>
-	<table border=0 cellspacing=0 cellpadding=5>
-	<tr>
-		<td> <img src="pics/pagGuideStereo_1.jpg"> </td>
-		<td> <img src="pics/pagGuideStereo_2.jpg"> </td>
-	</tr>
-	</table>
-	</center>
-	
-	[From \p App_Stereo.cpp]
-	\dontinclude App_Stereo.cpp
-	\skip #include
-	\until // Have fun!
+<center>
+<table border=0 cellspacing=0 cellpadding=5>
+<tr>
+	<td> <img src="../pics/pagGuideStereo_1.jpg"> </td>
+	<td> <img src="../pics/pagGuideStereo_2.jpg"> </td>
+</tr>
+</table>
+</center>
+
+[From \p App_Stereo.cpp]
+\dontinclude App_Stereo.cpp
+\skip #include
+\until // Have fun!
 
 */

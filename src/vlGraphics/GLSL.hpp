@@ -219,9 +219,6 @@ namespace vl
    * \remarks
    * A Uniform must be setup using <i>one and only one</i> of the 5 previously mentioned methods.
    *
-   * \par Attribute Location Bindings
-   * MIC FIXME: WRITE THIS SECTION
-   *
    * Note that for option #1 and #2 you need to relink the GLSLProgram in order for the changes to take effect (linkProgram(force_relink=true)).
    * Option #2 and #3 automatically schedule a re-link of the GLSL program. See also http://www.opengl.org/sdk/docs/man/xhtml/glBindAttribLocation.xml
    *

@@ -59,7 +59,7 @@ namespace vl
    * - Atom
    * - Bond
    *
-   * <img src="pics/pagGuideMolecule.png">
+   * <img src="../pics/pagGuideMolecule.png">
    */
   class VLMOLECULE_EXPORT Molecule: public Object
   {

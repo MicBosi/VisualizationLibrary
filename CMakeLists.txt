@@ -13,10 +13,12 @@
 ################################################################################
 
 # Current Version
-set(VL_VERSION_MAJOR "1")
-set(VL_VERSION_MINOR "1")
-set(VL_VERSION_PATCH "0")
+set(VL_VERSION_MAJOR "2")
+set(VL_VERSION_MINOR "0")
+set(VL_VERSION_PATCH "0-b4")
 set(VL_VERSION "${VL_VERSION_MAJOR}.${VL_VERSION_MINOR}")
+set(VL_VERSION_FULL "${VL_VERSION_MAJOR}.${VL_VERSION_MINOR}.${VL_VERSION_PATCH}")
+
 
 ################################################################################
 # Initialization
@@ -42,7 +44,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	set(VL_PLATFORM_LINUX 1)
 	option(VL_UNIX_INSTALL_MODE "Set to ON to install VL into default UNIX path structure." OFF)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set(VL_PLATFORM_WINDOWS 1) 
+	set(VL_PLATFORM_WINDOWS 1)
 else()
 	message(FATAL_ERROR "Unable to detect platform!")
 endif()
@@ -77,7 +79,7 @@ endif()
 
 # Common Dirs
 set(VL_DATA_DIR "${CMAKE_SOURCE_DIR}/data")
-set(3RDPARTY_DIR "${CMAKE_SOURCE_DIR}/src/3rdparty")
+set(3RDPARTY_DIR "${CMAKE_SOURCE_DIR}/src/external")
 
 # Header Install Dir
 if(VL_UNIX_INSTALL_MODE)
@@ -99,7 +101,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib")
 
 # Shared include paths for all subprojects
-include_directories( "src" "${CMAKE_BINARY_DIR}/src" "${3RDPARTY_DIR}/Khronos" )
+include_directories( "src" "src/gui" "${CMAKE_BINARY_DIR}/src" "${3RDPARTY_DIR}/Khronos" )
 
 # High Warning Level
 if(MSVC10)
@@ -164,10 +166,12 @@ add_subdirectory("src")
 # Install Rules
 ################################################################################
 
+file(GLOB VL_MK_FILES "*.md")
+
 if(VL_UNIX_INSTALL_MODE)
-	install(FILES "LICENSE.TXT" "README.md" DESTINATION "share/vl")
+  install(FILES ${VL_MK_FILES} DESTINATION "share/vl")
 	install(FILES "cmake/FindVL.cmake" DESTINATION "share/cmake/Modules")
 else()
-	install(FILES "LICENSE.TXT" "README.md" DESTINATION ".")
+	install(FILES ${VL_MK_FILES} DESTINATION ".")
 	install(FILES "cmake/FindVL.cmake" DESTINATION "cmake")
 endif()

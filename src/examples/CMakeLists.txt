@@ -13,7 +13,15 @@
 
 project(EXAMPLES)
 
-if(VL_GUI_QT4_EXAMPLES OR VL_GUI_QT5_EXAMPLES OR VL_GUI_MFC_EXAMPLES OR VL_GUI_WIN32_EXAMPLES OR VL_GUI_WXWIDGETS_EXAMPLES OR VL_GLES_EXAMPLES)
+if( VL_GUI_QT4_EXAMPLES OR
+    VL_GUI_QT5_EXAMPLES OR
+    VL_GUI_MFC_EXAMPLES OR
+    VL_GUI_WIN32_EXAMPLES OR
+    VL_GUI_WXWIDGETS_EXAMPLES OR
+    VL_GUI_GLES_EXAMPLES OR
+    VL_GUI_GLEW_EXAMPLES OR
+    VL_GUI_GLUT_EXAMPLES OR
+    VL_GUI_SDL_EXAMPLES )
 
   ################################################################################
   # Compile all Applets
@@ -28,8 +36,8 @@ if(VL_GUI_QT4_EXAMPLES OR VL_GUI_QT5_EXAMPLES OR VL_GUI_MFC_EXAMPLES OR VL_GUI_W
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
   # Common libraries
-  set(VL_LIBS_EXAMPLE VLGraphics VLCore)
-  set(VL_LIBS_TESTS VLMolecule VLVG VLVolume VLGraphics VLCore)
+  set(VL_LIBS_EXAMPLE VLMain)
+  set(VL_LIBS_TESTS VLMolecule VLVG VLVolume VLMain)
 
   if(VL_GUI_SDL_EXAMPLES)
       # Darwin
@@ -62,6 +70,20 @@ if(VL_GUI_QT4_EXAMPLES OR VL_GUI_QT5_EXAMPLES OR VL_GUI_MFC_EXAMPLES OR VL_GUI_W
       add_executable(vlGLUT_tests GLUT_tests.cpp)
       target_link_libraries(vlGLUT_tests VLApplets VLGLUT ${VL_LIBS_TESTS} ${GLUT_LIBRARIES})
       VL_INSTALL_TARGET(vlGLUT_tests)
+  endif()
+
+  if(VL_GUI_GLFW_EXAMPLES)
+      include_directories(${GLFW_INCLUDE_DIR})
+
+      # Example
+      add_executable(vlGLFW_example GLFW_example.cpp Applets/App_RotatingCube.hpp)
+      target_link_libraries(vlGLFW_example VLGLFW ${VL_LIBS_EXAMPLE} ${GLFW_LIBRARIES})
+      VL_INSTALL_TARGET(vlGLFW_example)
+
+      # Tests
+      add_executable(vlGLFW_tests GLFW_tests.cpp)
+      target_link_libraries(vlGLFW_tests VLApplets VLGLFW ${VL_LIBS_TESTS} ${GLFW_LIBRARIES})
+      VL_INSTALL_TARGET(vlGLFW_tests)
   endif()
 
   if(VL_GUI_QT4_EXAMPLES)
@@ -147,7 +169,7 @@ if(VL_GUI_QT4_EXAMPLES OR VL_GUI_QT5_EXAMPLES OR VL_GUI_MFC_EXAMPLES OR VL_GUI_W
       VL_INSTALL_TARGET(vlWX_tests)
   endif()
 
-  if (VL_GLES_EXAMPLES AND VL_OPENGL_ES1)
+  if (VL_GUI_GLES_EXAMPLES AND VL_OPENGL_ES1)
   	# Example
   	add_executable(vlGLES1_example GLES1_example.cpp)
   	target_link_libraries(vlGLES1_example VLEGL ${VL_LIBS_EXAMPLE})
@@ -159,7 +181,7 @@ if(VL_GUI_QT4_EXAMPLES OR VL_GUI_QT5_EXAMPLES OR VL_GUI_MFC_EXAMPLES OR VL_GUI_W
   	VL_INSTALL_TARGET(vlGLES1_tests)
   endif()
 
-  if (VL_GLES_EXAMPLES AND VL_OPENGL_ES2)
+  if (VL_GUI_GLES_EXAMPLES AND VL_OPENGL_ES2)
   	# Example
   	add_executable(vlGLES2_example GLES2_example.cpp)
   	target_link_libraries(vlGLES2_example VLEGL ${VL_LIBS_EXAMPLE})
