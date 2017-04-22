@@ -34,7 +34,7 @@
 
 #include <vlX/Parser.hpp>
 #include <vlX/BinaryDefs.hpp>
-#include <vlX/defines.hpp>
+#include <vlX/Defines.hpp>
 
 namespace vlX
 {
