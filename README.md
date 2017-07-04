@@ -21,7 +21,7 @@ Visualization Library is a C++ middleware for high-performance 2D and 3D graphic
 
 ## Licensing
 
-Visualization Library is released under the OSI approved Simplified BSD License ([LICENSE.MD](LICENSE.MD)).
+Visualization Library is released under the OSI approved Simplified BSD License ([LICENSE.md](LICENSE.md)).
 
 ## Resources
 
