@@ -1,17 +1,10 @@
 # Visualization Library
 
-<img src="http://visualizationlibrary.org/docs/2.0/gallery/tess04.jpg" width=128>
-<img src="http://visualizationlibrary.org/docs/2.0/pics/pagGuideStereo_1.jpg" width=128>
-<img src="http://visualizationlibrary.org/docs/2.0/gallery/raycast01.jpg" width=128>
-<img src="http://visualizationlibrary.org/docs/2.0/gallery/mandel04.jpg" width=128 height=128>
-<img src="http://visualizationlibrary.org/docs/2.0/gallery/mol02.jpg" width=128>
-<img src="http://visualizationlibrary.org/docs/2.0/gallery/bezier01.jpg" width=128>
-<img src="http://visualizationlibrary.org/docs/2.0/gallery/edge04.jpg" width=128>
-<img src="http://visualizationlibrary.org/docs/2.0/gallery/extrude02.jpg" width=128>
-<img src="http://visualizationlibrary.org/docs/2.0/gallery/glsl16.jpg" width=128>
-<img src="http://visualizationlibrary.org/docs/2.0/gallery/glsl07.jpg" width=128>
-<img src="http://visualizationlibrary.org/docs/2.0/gallery/raycast04.jpg" width=128>
-<img src="http://visualizationlibrary.org/docs/2.0/gallery/marching-plot.jpg" width=128>
+|<img src="http://visualizationlibrary.org/docs/2.0/gallery/tess04.jpg" width=128>|<img src="http://visualizationlibrary.org/docs/2.0/pics/pagGuideStereo_1.jpg" width=128>|<img src="http://visualizationlibrary.org/docs/2.0/gallery/raycast01.jpg" width=128>|<img src="http://visualizationlibrary.org/docs/2.0/gallery/mandel04.jpg" width=128 height=128>
+
+|<img src="http://visualizationlibrary.org/docs/2.0/gallery/mol02.jpg" width=128>|<img src="http://visualizationlibrary.org/docs/2.0/gallery/bezier01.jpg" width=128>|<img src="http://visualizationlibrary.org/docs/2.0/gallery/edge04.jpg" width=128>|<img src="http://visualizationlibrary.org/docs/2.0/gallery/extrude02.jpg" width=128>|
+
+|<img src="http://visualizationlibrary.org/docs/2.0/gallery/glsl16.jpg" width=128>|<img src="http://visualizationlibrary.org/docs/2.0/gallery/glsl07.jpg" width=128>|<img src="http://visualizationlibrary.org/docs/2.0/gallery/raycast04.jpg" width=128>|<img src="http://visualizationlibrary.org/docs/2.0/gallery/marching-plot.jpg" width=128>|
 
 [More Pictures](http://VisualizationLibrary.org/gallery)
 
