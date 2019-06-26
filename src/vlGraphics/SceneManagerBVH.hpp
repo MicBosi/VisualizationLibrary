@@ -52,7 +52,7 @@ namespace vl
    * - SceneManagerPortals
    */
   template<class T>
-  class VLGRAPHICS_EXPORT SceneManagerBVH: public SceneManager
+  class SceneManagerBVH: public SceneManager
   {
     VL_INSTRUMENT_CLASS(vl::SceneManagerBVH<T>, SceneManager)
 
