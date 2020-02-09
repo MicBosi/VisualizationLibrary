@@ -65,12 +65,16 @@ public:
   }
 };
 //-----------------------------------------------------------------------------
-int main(int argc, char* args[])
+int main(int argc, char* argv[])
 {
   /* parse command line arguments */
-  int   test = 0;
-  if (argc>=2)
-    test = atoi(args[1]);
+  int test = -1;
+  std::string test_str;
+  if ( argc >= 2 )
+  {
+      test = atoi( argv[ 1 ] );
+      test_str = argv[ 1 ];
+  }
 
   /* setup the OpenGL context format */
   vl::OpenGLContextFormat format;
@@ -83,7 +87,7 @@ int main(int argc, char* args[])
   //format.setMultisample(true);
 
   TestBatterySDL test_battery;
-  test_battery.run(test, args[1], format);
+  test_battery.run(test, test_str, format);
 
   return 0;
 }

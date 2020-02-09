@@ -253,7 +253,7 @@ public:
       printf("\tvlWin32_tests N - runs test #N using the Win32 gui bindings.\n");
       printf("\tvlWin32_tests test_name - runs \"test_name\" using the Win32 gui bindings.\n");
       #if _WIN32
-        MessageBox(NULL, L"Please specify a test number.", L"Please specify a test number.", MB_OK | MB_ICONASTERISK);
+        MessageBox(NULL, L"Please specify a test number or test name.\n\nSee console output for a complete list.", L"Missing test name or number.", MB_OK | MB_ICONASTERISK);
       #endif
       exit(1);
     }

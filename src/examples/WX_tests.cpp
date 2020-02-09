@@ -127,18 +127,22 @@ IMPLEMENT_APP(MyApp)
 //-----------------------------------------------------------------------------
 bool MyApp::OnInit()
 {
-  int   test = 0;
-
   int      argc = GetInstance()->argc;
   wxChar** argv = GetInstance()->argv;
 
-  // convert from wxChar to std::string
-  std::string arg1 = vl::String(argv[1]).toStdString();
-  if (argc >= 2)
-    test = atoi(arg1.c_str());
+  /* parse command line arguments */
+  long test = -1;
+  wxString test_str;
+  if ( argc >= 2 ) 
+  {
+      test_str = argv[ 1 ];
+      if ( ! test_str.ToLong( &test ) ) {
+          test = -1;
+      }
+  }
 
   TestBatteryWX test_battery;
-  test_battery.run(test, arg1.c_str(), vl::OpenGLContextFormat()/*not used*/);
+  test_battery.run(test, test_str.ToStdString(), vl::OpenGLContextFormat()/*not used*/);
 
   return true;
 }
