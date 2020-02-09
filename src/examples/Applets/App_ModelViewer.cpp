@@ -72,9 +72,9 @@ public:
 
     mEffects.clear();
 
-    for(unsigned int i=0; i<files.size(); ++i)
+    for(unsigned int ifile=0; ifile<files.size(); ++ifile)
     {
-      ref<ResourceDatabase> resource_db = loadResource(files[i], false);
+      ref<ResourceDatabase> resource_db = loadResource(files[ifile], false);
 
       if ( ! resource_db || resource_db->count<Actor>() == 0 )
       {
@@ -90,9 +90,9 @@ public:
 
       showStatistics(resource_db);
 
-      for(size_t i=0; i<resource_db->resources().size(); ++i)
+      for(size_t ires=0; ires<resource_db->resources().size(); ++ires)
       {
-        Actor* act = resource_db->resources()[i]->as<Actor>();
+        Actor* act = resource_db->resources()[ires]->as<Actor>();
 
         if ( ! act )
           continue;

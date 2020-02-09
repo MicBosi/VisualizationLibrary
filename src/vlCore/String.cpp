@@ -631,7 +631,7 @@ String& String::replace( const String& oldstr, const String& newstr, bool case_s
     positions.push_back(pos);
 
   // replace backwards to support new/old string of different sizes
-  for(unsigned i=positions.size(); i--; )
+  for(unsigned i=(unsigned)positions.size(); i--; )
     replace(positions[i], oldstr.length(), newstr);
 
   return *this;
@@ -881,7 +881,7 @@ String String::fromStdWString(const std::wstring& str)
 String String::fromStdString(const std::string& str, bool utf8)
 {
   if (utf8)
-    return fromUTF8( str.c_str(), str.length());
+    return fromUTF8( str.c_str(), (int)str.length());
   else
     return fromAscii( str.c_str() );
 }

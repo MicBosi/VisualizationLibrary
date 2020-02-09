@@ -102,7 +102,7 @@ ref<Image> vl::loadDAT(VirtualFile* file)
   file->close();
 
   // strip quotes
-  int len = strlen(filename);
+  int len = (int)strlen(filename);
   if (len > 2)
   {
     if (filename[0] == '\'' || filename[0] == '"')
@@ -198,7 +198,7 @@ bool vl::isDAT(VirtualFile* file)
   file->close();
 
   // strip quotes
-  int len = strlen(filename);
+  int len = (int)strlen(filename);
   if (len > 2)
   {
     if (filename[0] == '\'' || filename[0] == '"')

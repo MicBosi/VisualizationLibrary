@@ -809,7 +809,7 @@ ref<Geometry> vl::makePoints( const std::vector< vec3>& pos, const fvec4& color 
     col4->at(i)  = color;
   }
 
-  geom->drawCalls().push_back( new DrawArrays(PT_POINTS, 0, vert3->size() ));
+  geom->drawCalls().push_back( new DrawArrays(PT_POINTS, 0, (int)vert3->size() ));
 
 #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
   geom->makeGLESFriendly();
@@ -883,7 +883,7 @@ ref<Geometry> vl::makeCircle( vec3 origin, real radius, int slices )
     vec3 v = mat4::getRotation(t,0,1,0) * vec3(radius,0,0) + origin;
     points->at(i) = (fvec3)v;
   }
-  geom->drawCalls().push_back( new DrawArrays(PT_LINE_LOOP, 0, points->size()) );
+  geom->drawCalls().push_back( new DrawArrays(PT_LINE_LOOP, 0, (int)points->size()) );
 
 #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
   geom->makeGLESFriendly();
@@ -983,7 +983,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
   // caps
   if (top_cap == CC_FlatCap)
   {
-    int start = verts.size();
+    int start = (int)verts.size();
     for(int i=0; i<segments; ++i)
     {
       float a = (float)i/segments*fPi*2.0f;
@@ -999,7 +999,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
   }
   if (bottom_cap == CC_FlatCap)
   {
-    int start = verts.size();
+    int start = (int)verts.size();
     for(int i=0; i<segments; ++i)
     {
       float a = (float)i/segments*fPi*2.0f;
@@ -1016,7 +1016,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
   int segments2 = segments/3; if (segments2<2) segments2=2;  
   if (top_cap == CC_RoundedCap)
   {
-    int start = verts.size();
+    int start = (int)verts.size();
     for(int j=0; j<segments2; ++j)
     {
       float aj = (float)j/segments2*fPi/2.0f;
@@ -1058,7 +1058,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
   }
   if (bottom_cap == CC_RoundedCap)
   {
-    int start = verts.size();
+    int start = (int)verts.size();
     for(int j=0; j<segments2; ++j)
     {
       float aj = (float)j/segments2*fPi/2.0f;

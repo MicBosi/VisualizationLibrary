@@ -1867,14 +1867,14 @@ namespace vlX
           {
             const VLXValue& lod_shaders = lod_list->value()[ilod];
             VLX_IMPORT_CHECK_RETURN( lod_shaders.type() == VLXValue::List, lod_shaders )
-            obj->lod(ilod) = new vl::ShaderPasses;
+            obj->lod((int)ilod) = new vl::ShaderPasses;
             for( size_t ish=0; ish<lod_shaders.getList()->value().size(); ++ish)
             {
               const VLXValue& vlx_sh = lod_shaders.getList()->value()[ish];
               VLX_IMPORT_CHECK_RETURN( vlx_sh.type() == VLXValue::Structure, vlx_sh )
               vl::Shader* shader = s.importVLX( vlx_sh.getStructure() )->as<vl::Shader>();
               VLX_IMPORT_CHECK_RETURN( shader, vlx_sh )
-              obj->lod(ilod)->push_back( shader );
+              obj->lod((int)ilod)->push_back( shader );
             }
           }
         }

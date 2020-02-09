@@ -1095,7 +1095,7 @@ ref<Image> vl::makeNonUniformColorSpectrum(size_t width, size_t col_count, const
 
   ref<Image> img = new Image(width, 0, 0, 1, IF_RGBA, IT_UNSIGNED_BYTE);
   ubvec4* px = (ubvec4*)img->pixels();
-  int last = col_count-1;
+  int last = (int)col_count-1;
   for(int i=0; i<img->width(); ++i)
   {
     float t = (float)i/(img->width()-1);
@@ -1134,7 +1134,7 @@ ref<Image> vl::makeNonUniformColorSpectrum(int width, const std::vector<fvec4>& 
 ref<Image> vl::makeColorSpectrum(size_t width, const std::vector<fvec4>& colors)
 {
   ref<Image> img = new Image(width, 0, 0, 1, IF_RGBA, IT_UNSIGNED_BYTE);
-  int index = colors.size() - 1;
+  int index = (int)colors.size() - 1;
   for(int i=0; i<img->width(); ++i)
   {
     int   coli = (int)(index * (float)i/img->width());

@@ -483,7 +483,7 @@ public:
           // add other actors to the scene
           for(unsigned int i=0; i<25; ++i)
           {
-            vl::ref<vl::Transform> tr = new vl::Transform;
+            tr = new vl::Transform;
             float tx = (rand()%100) / 100.0f * room_size_in - room_size_in / 2.0f;
             float tz = (rand()%100) / 100.0f * room_size_in - room_size_in / 2.0f;
             m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(tx, 0, tz));

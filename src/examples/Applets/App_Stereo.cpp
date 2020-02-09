@@ -160,9 +160,9 @@ public:
     // resets the scene
     sceneManager()->tree()->actors()->clear();
 
-    for(unsigned int i=0; i<files.size(); ++i)
+    for(unsigned int ifile=0; ifile<files.size(); ++ifile)
     {
-      ref<ResourceDatabase> resource_db = loadResource(files[i],true);
+      ref<ResourceDatabase> resource_db = loadResource(files[ifile],true);
 
       if (!resource_db || resource_db->count<Actor>() == 0)
       {
@@ -172,9 +172,9 @@ public:
 
       std::vector< ref<Actor> > actors;
       resource_db->get<Actor>(actors);
-      for(unsigned i=0; i<actors.size(); ++i)
+      for(unsigned iact=0; iact<actors.size(); ++iact)
       {
-        ref<Actor> actor = actors[i].get();
+        ref<Actor> actor = actors[iact].get();
         // define a reasonable Shader
         actor->effect()->shader()->setRenderState( new Light, 0 );
         actor->effect()->shader()->enable(EN_DEPTH_TEST);

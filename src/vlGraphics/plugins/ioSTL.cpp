@@ -86,7 +86,7 @@ ref<ResourceDatabase> STLLoader::loadBinary(VirtualFile* file)
     fvec3 v1;
     fvec3 v2;
     vl::u16 abc; // attribute byte count
-  } tri;
+  };
 
   std::vector<u8> tris;
   tris.resize( tri_count * 50 );

@@ -69,7 +69,7 @@ public:
       return;
 
     // compute normals
-    for(unsigned i=0, count=res_db->count<Geometry>(); i<count; ++i)
+    for(size_t i=0, count=res_db->count<Geometry>(); i<count; ++i)
     {
       Geometry* geom = res_db->get<Geometry>(i);
       if (!geom->normalArray())

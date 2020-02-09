@@ -81,7 +81,7 @@ ref<VirtualFile> FileSystem::locateFile(const String& full_path, const String& a
       return disk_file;
 
     // iterate backwards
-    for( int idir=directories().size(); idir--; )
+    for( int idir=(int)directories().size(); idir--; )
     {
       // returns the first one found
       ref<VirtualFile> file  = directories()[idir]->file( paths[ipath] );
@@ -101,7 +101,7 @@ ref<VirtualDirectory> FileSystem::locateDirectory(const String& name) const
     return disk_directory;
 
   // iterate backwards
-  for( int idir=directories().size(); idir--; )
+  for( int idir=(int)directories().size(); idir--; )
   {
     // returns the first one found
     ref<VirtualDirectory> dir = directories()[idir]->subDir(name);
@@ -117,7 +117,7 @@ void FileSystem::listFilesRecursive(std::vector<String>& file_list ) const
   file_list.clear();
   std::vector<String> file_list_part;
   // iterate backwards
-  for( int idir=directories().size(); idir--; )
+  for( int idir=(int)directories().size(); idir--; )
   {
     directories()[idir]->listFilesRecursive(file_list_part);
     file_list.reserve( file_list.size() + file_list_part.size() );
@@ -131,7 +131,7 @@ void FileSystem::listFilesRecursive(std::vector<String>& file_list, const String
   file_list.clear();
   std::vector<String> file_list_part;
   // iterate backwards
-  for( int idir=directories().size(); idir--; )
+  for( int idir=(int)directories().size(); idir--; )
   {
     directories()[idir]->listFilesRecursive(file_list_part, match);
     file_list.reserve( file_list.size() + file_list_part.size() );

@@ -212,7 +212,7 @@ public:
     geom_patch->setColorArray( cols.get() );
 
     // draw call
-    vl::ref< vl::DrawArrays> da = new vl::DrawArrays(vl::PT_PATCHES, 0, verts->size());
+    vl::ref< vl::DrawArrays> da = new vl::DrawArrays(vl::PT_PATCHES, 0, (int)verts->size());
     geom_patch->drawCalls().push_back(da.get());
 
     // patch parameter associated to the draw call

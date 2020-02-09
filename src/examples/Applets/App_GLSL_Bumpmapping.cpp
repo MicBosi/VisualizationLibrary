@@ -156,7 +156,7 @@ public:
     vl::ref<vl::Geometry> NTBGeom = new vl::Geometry;
     NTBGeom->setVertexArray( ntb_verts.get() );
     NTBGeom->setColorArray( ntb_cols.get() );
-    NTBGeom->drawCalls().push_back( new vl::DrawArrays(vl::PT_LINES, 0, ntb_verts->size() ) );
+    NTBGeom->drawCalls().push_back( new vl::DrawArrays(vl::PT_LINES, 0, (int)ntb_verts->size() ) );
     sceneManager()->tree()->addActor( NTBGeom.get(), effect.get(), mTransform.get() );
   }
 

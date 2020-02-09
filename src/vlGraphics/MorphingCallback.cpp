@@ -185,7 +185,7 @@ void MorphingCallback::init(ResourceDatabase* res_db)
 
   // copy vertex frames
 
-  for(unsigned i=0, count=res_db->count<ArrayAbstract>(); i<count; ++i)
+  for(unsigned i=0, count=(unsigned)res_db->count<ArrayAbstract>(); i<count; ++i)
   {
     ArrayFloat3* buffer = cast<ArrayFloat3>(res_db->get<ArrayAbstract>(i));
     if (buffer && buffer->objectName() == "vertex_frame")
