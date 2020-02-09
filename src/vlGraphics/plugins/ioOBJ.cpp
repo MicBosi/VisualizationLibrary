@@ -315,10 +315,10 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
   }
 
   mCoords.clear();
-  // std::vector<float> mNormals;
-  // std::vector<float> mTexCoords;
-  std::map< std::string, ref<ObjMaterial> > mMaterials;
-  std::vector< ref<ObjMesh> > mMeshes;
+  mNormals.clear();
+  mTexCoords.clear();
+  mMaterials.clear();
+  mMeshes.clear();
 
   ref<ObjMaterial> cur_material;
   ref<ObjMesh> cur_mesh;
