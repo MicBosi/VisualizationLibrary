@@ -51,7 +51,7 @@ namespace vl
     unsigned int compute(const void* buf, int length)
     {
       const unsigned char* buffer = (const unsigned char*)buf;
-      unsigned int mCRC32 = 0xffffffff;
+      mCRC32 = 0xffffffff;
       while(length--)
         mCRC32 = (mCRC32 >> 8) ^ crc32_table[(mCRC32 & 0xFF) ^ *buffer++];
       return mCRC32 ^ 0xffffffff;
