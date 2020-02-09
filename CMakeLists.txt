@@ -15,10 +15,9 @@
 # Current Version
 set(VL_VERSION_MAJOR "2")
 set(VL_VERSION_MINOR "0")
-set(VL_VERSION_PATCH "0-b4")
+set(VL_VERSION_PATCH "0-b5")
 set(VL_VERSION "${VL_VERSION_MAJOR}.${VL_VERSION_MINOR}")
 set(VL_VERSION_FULL "${VL_VERSION_MAJOR}.${VL_VERSION_MINOR}.${VL_VERSION_PATCH}")
-
 
 ################################################################################
 # Initialization
