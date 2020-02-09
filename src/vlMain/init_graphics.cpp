@@ -120,8 +120,10 @@ void VisualizationLibrary::shutdownGraphics()
   gInitializedGraphics = false;
 
   // Dispose default FontManager
-  defFontManager()->releaseAllFonts();
-  setDefFontManager( NULL );
+  if ( defFontManager() ) {
+    defFontManager()->releaseAllFonts();
+    setDefFontManager( NULL );
+  }
 
   Log::debug("VisualizationLibrary::shutdownGraphics()\n");
 }

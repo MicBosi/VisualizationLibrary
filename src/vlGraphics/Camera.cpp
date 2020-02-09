@@ -156,7 +156,10 @@ void Camera::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, real 
   {
     const vec3& O = frustum.plane(i).origin() * frustum.plane(i).normal();
     const vec3& N = frustum.plane(i).normal();
-    real t = - (R + dot(O,N) - dot(C,N)) / dot(N,V);
+    real dot_n_v = dot(N,V);
+    // if this triggers adjust your parameters so it doesn't happen
+    VL_CHECK(dot_n_v);
+    real t = - (R + dot(O,N) - dot(C,N)) / dot_n_v;
     VL_CHECK(t>=0)
     if (t > max_t)
       max_t = t;

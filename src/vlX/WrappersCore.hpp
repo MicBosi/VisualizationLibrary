@@ -37,7 +37,7 @@
 #include <vlX/Serializer.hpp>
 #include <vlX/Value.hpp>
 #include <vlX/vlxutils.hpp>
-#include <vlX/defines.hpp>
+#include <vlX/Defines.hpp>
 
 #define VLX_IMPORT_CHECK_RETURN(Condition, Obj)                                                          \
   if (!(Condition))                                                                                      \

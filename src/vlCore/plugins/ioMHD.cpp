@@ -78,7 +78,7 @@ ref<Image> vl::loadMHD(VirtualFile* file)
     }
   }
 
-  int ndims = 0;
+  //int ndims = 0;
   ivec3 offset;
   fvec3 center_of_rotation;
   fvec3 element_spacing;
@@ -103,7 +103,7 @@ ref<Image> vl::loadMHD(VirtualFile* file)
         Log::error( Say("%s: NDims must be 3 ('%s').\n") << __FUNCTION__ << file->path() );
         return NULL;
       }
-      ndims = 3;
+      // ndims = 3;
     } else
     if ( key == "BinaryData" ) {
       if ( val != "True" ) {

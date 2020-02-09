@@ -122,7 +122,7 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera*
     fvec4 light_position;
 
     int ilight = 0;
-    for( ; ilight < 4 && ilight < mLights.size(); ++ilight )
+    for( ; ilight < 4 && ilight < (int)mLights.size(); ++ilight )
     {
       const vl::Light* light = mLights[ilight].get();
       VL_CHECK( light );

@@ -179,9 +179,12 @@ ref<Image> vl::loadTGA( VirtualFile* file )
 
       switch(header.BitsPerPixel)
       {
-        case 24: convertRGBToRGBA(img->pixels(), img->width(), img->height(), 0xFF); // break;
-        case 32: swapBytes32_BGRA_RGBA(img->pixels(), img->requiredMemory()); break;
-        case 16: convertA1R5G5B5ToRGBA(img->pixels(), w*h, 0xFF); break;
+        case 24: convertRGBToRGBA(img->pixels(), img->width(), img->height(), 0xFF); 
+          // break; -- ok to fallthrough
+        case 32: swapBytes32_BGRA_RGBA(img->pixels(), img->requiredMemory()); 
+          break;
+        case 16: convertA1R5G5B5ToRGBA(img->pixels(), w*h, 0xFF); 
+          break;
       }
 
     }
@@ -212,9 +215,12 @@ ref<Image> vl::loadTGA( VirtualFile* file )
       file->read(img->pixels(), w*h*pixsize);
       switch(header.BitsPerPixel)
       {
-        case 24: convertRGBToRGBA(img->pixels(), img->width(), img->height(), 0xFF); // break;
-        case 32: swapBytes32_BGRA_RGBA(img->pixels(), img->requiredMemory()); break;
-        case 16: convertA1R5G5B5ToRGBA(img->pixels(), w*h, 0xFF); break;
+        case 24: convertRGBToRGBA(img->pixels(), img->width(), img->height(), 0xFF); 
+          // break; -- ok to fallthrough
+        case 32: swapBytes32_BGRA_RGBA(img->pixels(), img->requiredMemory()); 
+          break;
+        case 16: convertA1R5G5B5ToRGBA(img->pixels(), w*h, 0xFF); 
+          break;
       }
     }
     else

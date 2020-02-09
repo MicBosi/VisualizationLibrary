@@ -47,12 +47,14 @@ void EdgeExtractor::addEdge(std::set<EdgeExtractor::Edge>& edges, const EdgeExtr
   {
     VL_CHECK(!it->normal1().isNull())
     if (mWarnNonManifold && !it->normal2().isNull())
+    {
       vl::Log::error("EdgeExtractor: non-manifold mesh detected!\n");
-      EdgeExtractor::Edge edge = e;
-      edge.setNormal1(it->normal1());
-      edge.setNormal2(n);
-      edges.erase( it );
-      edges.insert(edge);
+    }
+    EdgeExtractor::Edge edge = e;
+    edge.setNormal1(it->normal1());
+    edge.setNormal2(n);
+    edges.erase( it );
+    edges.insert(edge);
   }
   else
   {

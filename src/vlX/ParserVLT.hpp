@@ -34,7 +34,7 @@
 
 #include <vlX/Parser.hpp>
 #include <vlX/VLTTokenizer.hpp>
-#include <vlX/defines.hpp>
+#include <vlX/Defines.hpp>
 #include <cstdlib>
 
 #ifdef _MSC_VER
