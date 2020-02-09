@@ -49,7 +49,7 @@ namespace vl
    * - SceneManagerActorKdTree
    * - SceneManagerPortals
   */
-  class SceneManagerActorTree: public SceneManagerBVH<ActorTree>
+  class VLGRAPHICS_EXPORT SceneManagerActorTree: public SceneManagerBVH<ActorTree>
   {
     VL_INSTRUMENT_CLASS(vl::SceneManagerActorTree, SceneManagerBVH<ActorTree>)
 
