@@ -28,6 +28,7 @@ project(Visualization_Library_SDK)
 
 # Must be called after project!
 cmake_minimum_required(VERSION 3.0)
+add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP4>)
 
 ################################################################################
 # Global Build Settings (config.hpp.in)
