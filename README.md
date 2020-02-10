@@ -32,9 +32,43 @@ cd _BUILD
 cmake .. -G "Visual Studio 16 2019" -DVL_GUI_WIN32_SUPPORT=ON -DVL_GUI_WIN32_EXAMPLES=ON -DVL_GUI_QT5_SUPPORT=ON -DVL_GUI_QT5_EXAMPLES=ON -DVL_INSTALL_DATA=ON -DVL_BUILD_DOCS=ON -DCMAKE_INSTALL_PREFIX='C:\VisualizationLibrary\_INSTALL\'
 cmake --build . --config Debug --target INSTALL
 cmake --build . --config Debug --target Docs
-set PATH=%PATH%;C:\VisualizationLibrary\_INSTALL\bin
+set PATH=C:\VisualizationLibrary\_INSTALL\bin;%PATH%
 set VL_DATA_PATH=C:\VisualizationLibrary\_INSTALL\data
 vlQt5_tests.exe glsl
+cat log.txt
+```
+
+Use `make --build . --config Release --target INSTALL` to build `Release` mode.
+
+### Linux CLI
+
+Something similar to this should work (uses QT5 gui bindings as an example, requires Qt5 dev to be installed):
+
+```
+cd ~
+git clone git@github.com:MicBosi/VisualizationLibrary.git
+cd VisualizationLibrary
+mkdir _BUILD/Debug _BUILD/Release -p
+mkdir _INSTALL
+
+# Debug build
+cd _BUILD/Debug
+cmake ../.. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DVL_GUI_QT5_SUPPORT=ON -DVL_GUI_QT5_EXAMPLES=ON -DVL_INSTALL_DATA=ON -DVL_BUILD_DOCS=ON -DCMAKE_INSTALL_PREFIX=~/VisualizationLibrary/_INSTALL
+make -j 4
+make install
+make Docs
+vlQt5_tests glsl
+cat log.txt
+
+# Release build
+cd ../..
+cd _BUILD/Release
+cmake ../.. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DVL_GUI_QT5_SUPPORT=ON -DVL_GUI_QT5_EXAMPLES=ON -DVL_INSTALL_DATA=ON -DVL_BUILD_DOCS=ON -DCMAKE_INSTALL_PREFIX=~/VisualizationLibrary/_INSTALL
+make -j 4
+make install
+export PATH=~/VisualizationLibrary/_INSTALL/bin:$PATH
+export VL_DATA_PATH=~/VisualizationLibrary/_INSTALL/data
+vlQt5_tests glsl
 cat log.txt
 ```
 
