@@ -20,6 +20,12 @@ $.ajax({
   url: "https://api.github.com/repos/MicBosi/VisualizationLibrary/releases",
   success: function(releases){
     var html = ''
+    function mySorter(a, b) {
+        var x = a.name;
+        var y = b.name;
+        return ((x < y) ? 1 : ((x > y) ? -1 : 0));
+    }
+    releases = releases.sort(mySorter);
     releases.forEach(function(release) {
       html += '<p><a href="' + release.html_url + '">' + release.name + '</a> <small>(' + new Date(release.published_at).toLocaleString() + ')</small></p>';
     });
