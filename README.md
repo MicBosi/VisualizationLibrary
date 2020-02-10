@@ -35,6 +35,7 @@ cmake --build . --config Debug --target Docs
 set PATH=%PATH%;C:\VisualizationLibrary\_INSTALL\bin
 set VL_DATA_PATH=C:\VisualizationLibrary\_INSTALL\data
 vlQt5_tests.exe glsl
+cat log.txt
 ```
 
 ### Windows, Linux, Mac
