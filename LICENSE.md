@@ -2,7 +2,7 @@ Visualization Library
 
 http://VisualizationLibrary.org 
 
-Copyright (c) 2005-2017, Michele Bosi
+Copyright (c) 2005-2020, Michele Bosi
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, 
