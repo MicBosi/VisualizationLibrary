@@ -14,7 +14,7 @@ Visualization Library is a C++ middleware for high-performance 2D and 3D graphic
 
 ## Compilation and Installation
 
-### Windows CLI
+### Windows via CLI
 
 - Install CMake 3.x: https://cmake.org/download/
 - Install Doxygen 1.8.x: http://www.doxygen.nl/download.html (optional to build the docs, remove `-DVL_BUILD_DOCS=ON` if not interested)
@@ -40,7 +40,7 @@ cat log.txt
 
 Use `make --build . --config Release --target INSTALL` to build `Release` mode.
 
-### Linux CLI
+### Linux via CLI
 
 Something similar to this should work (uses QT5 gui bindings as an example, requires Qt5 dev to be installed):
 
@@ -72,7 +72,7 @@ vlQt5_tests glsl
 cat log.txt
 ```
 
-### Windows, Linux, Mac
+### Windows, Linux, Mac via GUI
 
 Follow the instructions here: http://visualizationlibrary.org/docs/2.0/html/pag_install.html
 
