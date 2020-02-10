@@ -1,8 +1,8 @@
 # Visualization Library
 
-![VL](https://github.com/MicBosi/VisualizationLibrary/raw/master/docs/html-out/gallery/VL.gif)
-
 [Gallery](http://VisualizationLibrary.org/gallery)
+
+![VL](https://github.com/MicBosi/VisualizationLibrary/raw/master/docs/html-out/gallery/VL.gif)
 
 ## About
 
