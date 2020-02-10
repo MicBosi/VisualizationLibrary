@@ -12,6 +12,35 @@
 
 Visualization Library is a C++ middleware for high-performance 2D and 3D graphics applications based on the industry standard OpenGL 1.x-4.x, designed to develop portable applications for the Windows, Linux and Mac OS X operating systems.
 
+## Compilation and Installation
+
+### Windows CLI
+
+- Install CMake 3.x: https://cmake.org/download/
+- Install Doxygen 1.8.x: http://www.doxygen.nl/download.html (optional to build the docs, remove `-DVL_BUILD_DOCS=ON` if not interested)
+- Install Qt5 (optional, to run the Qt5 GUI bindings, remove `-DVL_GUI_QT5_SUPPORT=ON` `-DVL_GUI_QT5_EXAMPLES=ON` if not interested)
+
+Example to build and install a `Debug` build of VL and run the `vlQt5_tests.exe glsl` test:
+
+```
+cd C:\
+git clone git@github.com:MicBosi/VisualizationLibrary.git
+cd VisualizationLibrary
+mkdir _BUILD
+mkdir _INSTALL
+cd _BUILD
+cmake .. -G "Visual Studio 16 2019" -DVL_GUI_WIN32_SUPPORT=ON -DVL_GUI_WIN32_EXAMPLES=ON -DVL_GUI_QT5_SUPPORT=ON -DVL_GUI_QT5_EXAMPLES=ON -DVL_INSTALL_DATA=ON -DVL_BUILD_DOCS=ON -DCMAKE_INSTALL_PREFIX='C:\VisualizationLibrary\_INSTALL\'
+cmake --build . --config Debug --target INSTALL
+cmake --build . --config Debug --target Docs
+set PATH=%PATH%;C:\VisualizationLibrary\_INSTALL\bin
+set VL_DATA_PATH=C:\VisualizationLibrary\_INSTALL\data
+vlQt5_tests.exe glsl
+```
+
+### Windows, Linux, Mac
+
+Follow the instructions here: http://visualizationlibrary.org/docs/2.0/html/pag_install.html
+
 ## Licensing
 
 Visualization Library is released under the OSI approved Simplified BSD License ([LICENSE.md](LICENSE.md)).
