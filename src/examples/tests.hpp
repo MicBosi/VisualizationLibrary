@@ -245,18 +245,23 @@ public:
     else
     {
       vl::showWin32Console();
+
       if (test == 0)
         printf( "Test '%s' does not exist.\n", test_name.c_str() );
       else
-        printf( "Test #%d does not exist.\n", test );
-      for(int i=0; i<test_count; ++i)
-        printf("% 2d - %s\n", i+1, tests[i].title.toStdString().c_str());
+        printf( "Test %d does not exist.\n", test );
+
       printf("\nUsage example:\n");
       printf("\tvlWin32_tests N - runs test #N using the Win32 gui bindings.\n");
-      printf("\tvlWin32_tests test_name - runs \"test_name\" using the Win32 gui bindings.\n");
+      printf("\tvlWin32_tests test_name - runs \"test_name\" using the Win32 gui bindings.\n\n");
+
+      for(int i=0; i<test_count; ++i)
+        printf("% 2d - %s\n", i+1, tests[i].title.toStdString().c_str());
+
       #if _WIN32
         MessageBox(NULL, L"Please specify a test number or test name.\n\nSee console output for a complete list.", L"Missing test name or number.", MB_OK | MB_ICONASTERISK);
       #endif
+
       exit(1);
     }
 
