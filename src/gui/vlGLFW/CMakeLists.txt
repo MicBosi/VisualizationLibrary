@@ -1,6 +1,6 @@
 ################################################################################
 #                                                                              #
-#  Copyright (c) 2005-2011, Michele Bosi, Thiago Bastos                        #
+#  Copyright (c) 2005-2020, Michele Bosi, Thiago Bastos                        #
 #  All rights reserved.                                                        #
 #                                                                              #
 #  This file is part of Visualization Library                                  #
