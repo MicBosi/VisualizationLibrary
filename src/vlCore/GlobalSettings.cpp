@@ -41,7 +41,7 @@ GlobalSettings::GlobalSettings()
   VL_DEBUG_SET_OBJECT_NAME()
 
   #ifndef NDEBUG
-    mVerbosityLevel  = vl::VEL_VERBOSITY_NORMAL;
+    mVerbosityLevel  = vl::VEL_VERBOSITY_DEBUG;
     mCheckOpenGLStates = true;
   #else
     mVerbosityLevel  = vl::VEL_VERBOSITY_ERROR;
