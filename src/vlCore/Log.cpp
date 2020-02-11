@@ -46,29 +46,30 @@ namespace
 #if defined(VL_PLATFORM_WINDOWS)
   struct ScopedColor
   {
-    CONSOLE_SCREEN_BUFFER_INFO screen_info;
-    WORD color;
-    ScopedColor(WORD c): color(c)
+    WORD wAttributes;
+    ScopedColor(WORD c)
     {
+      CONSOLE_SCREEN_BUFFER_INFO screen_info;
       HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
       GetConsoleScreenBufferInfo(
         hConsole,
         &screen_info
       );
+      wAttributes = screen_info.wAttributes;
       SetConsoleTextAttribute(hConsole, c);
     }
     ~ScopedColor()
     {
       // restore the color
       HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-      SetConsoleTextAttribute(hConsole,screen_info.wAttributes);
+      SetConsoleTextAttribute(hConsole, wAttributes );
     }
   };
-  #define SET_TEXT_COLOR_YELLOW() ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_INTENSITY);
-  #define SET_TEXT_COLOR_RED()    ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_INTENSITY);
-  #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
-  #define SET_TEXT_COLOR_GREEN() ScopedColor set_scoped_color(FOREGROUND_GREEN|FOREGROUND_INTENSITY);
-  #define SET_TEXT_COLOR_BLUE() ScopedColor set_scoped_color(FOREGROUND_BLUE|FOREGROUND_INTENSITY);
+  #define SET_TEXT_COLOR_YELLOW() ScopedColor scoped_color(FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_INTENSITY);
+  #define SET_TEXT_COLOR_RED()    ScopedColor scoped_color(FOREGROUND_RED|FOREGROUND_INTENSITY);
+  #define SET_TEXT_COLOR_PURPLE() ScopedColor scoped_color(FOREGROUND_RED|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
+  #define SET_TEXT_COLOR_GREEN() ScopedColor scoped_color(FOREGROUND_GREEN|FOREGROUND_INTENSITY);
+  #define SET_TEXT_COLOR_BLUE() ScopedColor scoped_color(FOREGROUND_BLUE|FOREGROUND_INTENSITY);
 #else
   struct ScopedColor
   {
@@ -112,11 +113,11 @@ namespace
       printf("%s", "\033[0m");
     }
   };
-  #define SET_TEXT_COLOR_YELLOW() ScopedColor set_scoped_color("\033[1;33m");
-  #define SET_TEXT_COLOR_RED()    ScopedColor set_scoped_color("\033[31m");
-  #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color("\033[1;31m");
-  #define SET_TEXT_COLOR_GREEN()  ScopedColor set_scoped_color("\033[1;32m");
-  #define SET_TEXT_COLOR_BLUE()  ScopedColor set_scoped_color("\033[1;34m");
+  #define SET_TEXT_COLOR_YELLOW() ScopedColor scoped_color("\033[1;33m");
+  #define SET_TEXT_COLOR_RED()    ScopedColor scoped_color("\033[31m");
+  #define SET_TEXT_COLOR_PURPLE() ScopedColor scoped_color("\033[1;31m");
+  #define SET_TEXT_COLOR_GREEN()  ScopedColor scoped_color("\033[1;32m");
+  #define SET_TEXT_COLOR_BLUE()  ScopedColor scoped_color("\033[1;34m");
 #endif
 }
 //-----------------------------------------------------------------------------
