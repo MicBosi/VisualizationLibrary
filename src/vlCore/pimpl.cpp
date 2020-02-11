@@ -139,19 +139,20 @@ const char* vl::versionString() { return gVersionString.c_str(); }
 void vl::showWin32Console()
 {
   #if defined(VL_PLATFORM_WINDOWS)
-    AllocConsole();
-    // stdout
-    HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
-    int hCrt = _open_osfhandle((intptr_t)handle_out, _O_TEXT);
-    FILE* hf_out = _fdopen(hCrt, "w");
-    setvbuf(hf_out, NULL, _IONBF, 1);
-    *stdout = *hf_out;
-    // stderr
-    handle_out = GetStdHandle(STD_ERROR_HANDLE);
-    hCrt = _open_osfhandle((intptr_t)handle_out, _O_TEXT);
-    hf_out = _fdopen(hCrt, "w");
-    setvbuf(hf_out, NULL, _IONBF, 1);
-    *stderr = *hf_out;
+    if (AllocConsole() == 0)
+        return;
+    FILE* f_new_stdout = nullptr;
+    FILE* f_new_stderr = nullptr;
+    FILE* f_new_stdin = nullptr;
+    ::freopen_s(&f_new_stdout, "CONOUT$", "w", stdout);
+    ::freopen_s(&f_new_stderr, "CONOUT$", "w", stderr);
+    ::freopen_s(&f_new_stdin, "CONIN$", "r", stdin);
+    std::cout.clear();
+    std::cerr.clear();
+    std::cin.clear();
+    std::wcout.clear();
+    std::wcerr.clear();
+    std::wcin.clear();
   #endif
 }
 //------------------------------------------------------------------------------
