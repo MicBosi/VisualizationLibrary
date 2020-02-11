@@ -218,14 +218,14 @@ public:
       }
     }
 
+    /* open a console so we can see the applet's output on stdout */
+    vl::showWin32Console();
+
+    /* init Visualization Library */
+    vl::VisualizationLibrary::init();
+
     if (test > 0 && test-1 < test_count)
     {
-      /* open a console so we can see the applet's output on stdout */
-      vl::showWin32Console();
-
-      /* init Visualization Library */
-      vl::VisualizationLibrary::init();
-
       /* install GeometryLoadCallback for computing normals and converting geometry to GLES friendly format */
       vl::ref<vl::GeometryLoadCallback> glc = new vl::GeometryLoadCallback;
 #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
@@ -237,33 +237,32 @@ public:
 
       /* run test */
       runGUI(tests[itest].title, tests[itest].applet.get(), format, tests[itest].x, tests[itest].y, tests[itest].width, tests[itest].height, tests[itest].bk_color, tests[itest].eye, tests[itest].center );
-
-      /* shutdown Visualization Library */
-      if(shut_down_after_run)
-        vl::VisualizationLibrary::shutdown();
     }
     else
     {
-      vl::showWin32Console();
+      vl::Log::print( "--- --- --- ---- ----\n\n" );
 
       if (test == 0)
-        printf( "Test '%s' does not exist.\n", test_name.c_str() );
+        vl::Log::print( vl::Say( "Test '%s' does not exist.\n" ) << test_name.c_str() );
       else
-        printf( "Test %d does not exist.\n", test );
+        vl::Log::print( vl::Say( "Test %n does not exist.\n") << test );
 
-      printf("\nUsage example:\n");
-      printf("\tvlWin32_tests N - runs test #N using the Win32 gui bindings.\n");
-      printf("\tvlWin32_tests test_name - runs \"test_name\" using the Win32 gui bindings.\n\n");
+      vl::Log::print("\nUsage example:\n");
+      vl::Log::print("\tvlWin32_tests N - runs test #N using the Win32 gui bindings.\n");
+      vl::Log::print("\tvlWin32_tests test_name - runs\"test_name\" using the Win32 gui bindings.\n\n");
 
       for(int i=0; i<test_count; ++i)
-        printf("% 2d - %s\n", i+1, tests[i].title.toStdString().c_str());
+        vl::Log::print( vl::Say( "% 2n - %s\n" ) << i+1 << tests[i].title.toStdString().c_str());
 
       #if _WIN32
-        MessageBox(NULL, L"Please specify a test number or test name.\n\nSee console output for a complete list.", L"Missing test name or number.", MB_OK | MB_ICONASTERISK);
+        MessageBox(NULL, L"Please specify a test number or test name.\n\nSee log.txt or console output for a complete list.", L"Missing test name or number.", MB_OK | MB_ICONASTERISK);
       #endif
 
-      exit(1);
     }
+
+    /* shutdown Visualization Library */
+    if(shut_down_after_run)
+      vl::VisualizationLibrary::shutdown();
 
 #if VL_DEBUG_LIVING_OBJECTS
     std::set< vl::Object* >* obj_database = vl::Object::debug_living_objects() ;
