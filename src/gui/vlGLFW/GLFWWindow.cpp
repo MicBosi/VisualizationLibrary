@@ -105,14 +105,22 @@ bool GLFWWindow::initGLFWWindow(const vl::String& title, const vl::OpenGLContext
   switch( info.openGLProfile() )
   {
   case vl::GLP_Compatibility:
-    glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE );
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, info.majVersion() );
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, info.minVersion() );
+    if ( info.majVersion() >= 3 && info.minVersion() >= 2 ) {
+        glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE );
+    }
+    if ( info.majVersion() ) {
+      glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, info.majVersion() );
+      glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, info.minVersion() );
+    }
     break;
   case vl::GLP_Core:
-    glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, info.majVersion() );
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, info.minVersion() );
+    if ( info.majVersion() >= 3 && info.minVersion() >= 2 ) {
+        glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+    }
+    if ( info.majVersion() ) {
+      glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, info.majVersion() );
+      glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, info.minVersion() );
+    }
     break;
   case vl::GLP_Default:
     glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE );
