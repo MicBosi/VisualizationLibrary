@@ -27,10 +27,11 @@
       <div class="featuretitle"><b>Community</b></div>
 
       - <a target=_blank href="https://github.com/MicBosi/VisualizationLibrary/blob/master/CONTRIBUTING.md"><b>Contributing</b></a>
-      - <a target=_blank href="https://github.com/MicBosi/VisualizationLibrary"><b>VL on GitHub</b></a>
-      - <a target=_blank href="https://groups.google.com/forum/#!forum/visualization-library"><b>VL Google Group</b></a>
-      - <a target=_blank href="http://VisualizationLibrary.org/forum"><b>Forums</b></a> (legacy)
-      - <a target=_blank href="http://www.twitter.com/VizLibrary"><b>\@VizLibrary on Twitter</b></a>
+      - <a target=_blank href="https://github.com/MicBosi/VisualizationLibrary"><b>GitHub VL Home</b></a>
+      - <a target=_blank href="https://github.com/MicBosi/VisualizationLibrary/issues"><b>GitHub VL Issues</b></a>
+      - <a target=_blank href="http://www.twitter.com/VizLibrary"><b>Twitter</b></a>
+      - <a target=_blank href="https://groups.google.com/forum/#!forum/visualization-library"><b>Google Group</b> (legacy)</a>
+      - <a target=_blank href="http://VisualizationLibrary.org/forum"><b>Forums</b> (legacy)</a>
 
       <div class="featuretitle"><b>API Documentation</b></div>
 
