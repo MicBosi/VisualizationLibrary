@@ -2,7 +2,7 @@
 
 [Gallery](http://VisualizationLibrary.org/gallery)
 
-![VL](https://github.com/MicBosi/VisualizationLibrary/raw/master/docs/html-out/gallery/VL.gif)
+![VL](https://michelebosi.com/VL.gif)
 
 ## About
 
