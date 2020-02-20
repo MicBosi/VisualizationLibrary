@@ -2,8 +2,6 @@
 
 [Gallery](http://VisualizationLibrary.org/gallery)
 
-![VL](https://michelebosi.com/VL.gif)
-
 ## About
 
 Visualization Library is a C++ middleware for high-performance 2D and 3D graphics applications based on the industry standard OpenGL 1.x-4.x, designed to develop portable applications for the Windows, Linux and Mac OS X operating systems.
