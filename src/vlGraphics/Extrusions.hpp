@@ -37,10 +37,11 @@
 #include <vlCore/Vector3.hpp>
 #include <vlCore/Matrix4.hpp>
 #include <vector>
+#include <vlGraphics/ExtrusionPrimitives.hpp>
 
 namespace vl
 {
-  typedef enum { SilhouetteClosed, SilhouetteOpen } ESilhouetteMode;
+
   /**
    * The Extrusion class generates a Geometry extruding a silhouette along a path.
    * \sa
