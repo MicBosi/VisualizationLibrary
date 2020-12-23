@@ -4,7 +4,110 @@
 
 <div class="featuretitle">Visualization Library 2.0</div>
 
-- work in progress
+- Excluded external sources in documentation.
+- Set default verbosity level in debug mode to vl::VEL_VERBOSITY_DEBUG (remains vl::VEL_VERBOSITY_ERROR in release mode).
+- Logs: improved Win32 console implementation.
+- Logs: improved ScopedColor implementation.
+- Request the highest compatible GL context by default (GLFW, Qt4, Qt5, GLUT).
+- Setting maj and min GL version to 0 requests the highest availalbe level.
+- Replaced printfs with vl::Log to print the list of tests.
+- Run tests @ 800x800 pixels instead of 512x512.
+- Added Linux command line interface compilation and installation instructions to README.md.
+- Added Windows command line interface compilation and installation instructions to README.md.
+- Various documentation updates and improvements.
+- README.TXT -> README.md
+- Added new Extrusions class courtesy of Fabien Mathieu to extrude multiple contours, useful for "hollow" extrusions etc.
+- Enabled 4x multi process compilation by default in Visual Studio.
+- Fixed bug in CRC32CheckSum.
+- Fixed ioOBJ vectors initialization bug.
+- Fixed compilation warnings with VS2019.
+- Replace respectively fmat and fvec with mat and vec to repect the pipeline precision settings.
+- Fixed VLGRAPHICS_EXPORT issue with template classes.
+- Fixed wrong "external" instead of "3rdparty" during build.
+- Fixed compilation issue with <vlX/Defines.hpp>
+- RaycastVolume upated to support OpenGL Core (3.3+).
+- More resilient Applet, OpenGLContext and volume examples shutdown and destruction.
+- GLFW support fixed.
+- General documentation & website update
+  - Based on Doxygen 1.8
+  - Website includes v1.0 and v2.0 docs
+  - Allow Markdown docs
+  - Several fixed and updates in the docs
+- Use compatibility GL profile by default
+- Qt4,Qt5,GLFW: allow GL profile Core or Compatibility
+- VertexAttribInfo: removed
+- Volume GLSL: improved render quality
+- Added simple MHD loader
+- STL: 10x faster binary loader
+- Added GLFW support
+- Locate GDCM using standard FIND_PACKAGE
+---
+- OpenGLContext::dispatchRunEvent() renamed dispatchUpdateEvent()
+- Added standard GLSL includes uniforms.glsl and vertex_attribs.glsl
+- Using new GLSL #pragma VL include capability
+- #version 150 compatibility is current preferred safe version for many GLSL scripts
+- mGLSLProgram->useProgram() becomes openglContext()->useGLSLProgram( mGLSLProgram.get() )
+- Legacy GLSL removed (these are taken care of from inside the GLSL script): setGeometryInputType, setGeometryOutputType, setGeometryVerticesOut
+- sceneManager()->extractActors( *intersector.actors() ) becomes sceneManager()->extractVisibleActors( *intersector.actors(), NULL )
+- Removed functions geom->convertToVertexAttribs() and glsl->addAutoAttribLocation() as not needed anymore.
+- Added Qt4 & Qt5 GUI and filesystem support: QFile and QDirectories can be used as part of VL virtual file system - including Qt compiled resurces.
+- Added CalibratedCamera class for augmented reality applications.
+- Added AdjacencyExtractor class: used to generate PT_LINES_ADJACENCY, PT_LINE_STRIP_ADJACENCY, PT_TRIANGLES_ADJACENCY, PT_TRIANGLE_STRIP_ADJACENCY primitive type for
+silhouette extraction, geometry slicing and topology manipulation in geometry shaders.
+- Updated vlVolume:
+  - Improved raycast volume rendering quality & fixed bugs.
+  - Automatic slice count computation for sliced volume rendering & fixed bugs.
+  - vl::genGradientNormals() utility function fixed.
+- Added vl::Object::setObjectName()
+- Added vl::String constructor for std::string & std::wstring
+- Vector2, Vector3 and Vector4 can be constructed from single scalar.
+- Better automatic texture unit management: user configurable VL_MAX_TEXTURE_UNITS now removed by internal VL_MAX_TEXTURE_IMAGE_UNITS and VL_MAX_LEGACY_TEXTURE_UNITS constants.
+- Fixed warnings in glsl_math.hpp
+- Improved Buffer Object documentation in Array.hpp.
+- Fixed various render states getter/setter constness in Shader.hpp.
+- TriangleIterator supports PT_TRIANGLES_ADJACENCY primitive type.
+- Scissor:
+  - Removed Viewport::enableScissorSetup()
+  - Added Viewport::setScissorEnabled(bool)
+  - Added bool Viewport::isScissorEnabled()
+  - Viewport::mSetupScissor -> mScissorEnabled
+- Improved Uniform getters/setters
+- Image:
+  - Added support to IF_RG
+  - New constructor Image(void* buffer_ptr, int buffer_bytes) allowing initializing an Image against a user/externally allocated buffer.
+- TextureSampler::reset(int index, OpenGLContext* ctx) utility function to set a texture sampler to it's default disabled state.
+- Textures: 
+  - Managed Textures: allows user to assign and manage the low level OpenGL handle with vl::Texture. Useful when you want to use a single vl::Texture object but change/recreate the underlying OpenGL texture handle at will.
+  - Destroy on create: calling Texture::createTexture() (or any function that calls this) will automatically destroy any existing texture (not if it's managed).
+- GLSL: removed UniformInfo, AttribInfo and AutoAttribLocations because not useful and superseded by new auto vertex attrib system.
+- GLSL: new #pragma VL include /path/to/file.glsl directive to include a GLSL file from another GLSL file!
+- GLSL: removed deprecated GeometryVerticesOut, GeometryInputType, GeometryOutputType logic. OpenGL 3+ uses the layout keyword for these.
+- GLSL: added GLSLShader and GLSLProgram reload() functions.
+- GLSL: GLSLProgram::useProgram() removed, use OpenGLContext::useGLSLProgram().
+- GLSL: automatic vertex attrib location binding:
+  - vl_VertexPosition
+  - vl_VertexNormal
+  - vl_VertexColor
+  - vl_VertexSecondaryColor
+  - vl_VertexFogCoord
+  - vl_VertexTexCoord0
+  - vl_VertexTexCoord1
+  - vl_VertexTexCoord2
+  - vl_VertexTexCoord3
+  - vl_VertexTexCoord4
+  - vl_VertexTexCoord5
+  - vl_VertexTexCoord6
+  - vl_VertexTexCoord7
+  - vl_VertexTexCoord8
+  - vl_VertexTexCoord9
+  - vl_VertexTexCoord10
+- GLSL: automatic standard uniform detection:
+  - vl_WorldMatrix
+  - vl_ModelViewMatrix
+  - vl_ProjectionMatrix
+  - vl_ModelViewProjectionMatrix
+  - vl_NormalMatrix
+
 
 <div class="featuretitle">Visualization Library 1.0.2</div>
 
