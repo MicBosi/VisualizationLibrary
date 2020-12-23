@@ -28,7 +28,7 @@
 - RaycastVolume upated to support OpenGL Core (3.3+)
 - More resilient Applet, OpenGLContext and volume examples shutdown and destruction
 - GLFW support fixed
-- General documentation & website update
+- General documentation & website updates:
   - Based on Doxygen 1.8
   - Website includes v1.0 and v2.0 docs
   - Allow Markdown docs
