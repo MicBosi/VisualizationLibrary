@@ -107,7 +107,35 @@ silhouette extraction, geometry slicing and topology manipulation in geometry sh
   - vl_ProjectionMatrix
   - vl_ModelViewProjectionMatrix
   - vl_NormalMatrix
-
+- Added Renderer::rederRaw() function useful to create custom Renderer classes.
+- Added Enabled attribute to Actor and ActorTree. See also the new/updated functions:
+  - bool Renderer::isEnabled(const Actor* actor)
+  - bool Rendering::isEnabled(const Actor* actor)
+  - bool SceneManager::isEnabled(const Actor* actor)
+  - SceneManager::extractActors() vs extractVisibleActors()
+  - Actor::setEnabled()/isEnabled()
+  - ActorTreeAbstract::setEnabled()/isEnabled()
+  - ActorTreeAbstract::extractActors() vs extractVisibleActors()
+- ActorTree API changes:
+  - mChildren is now protected and can be accessed in read-only mode using the children() method.
+  - New/updated methods to manipulate the tree nodes:
+    - void addChild(ActorTreeAbstract* node);
+    - void addChildOnce(ActorTreeAbstract* node);
+    - void setChild(int i, ActorTreeAbstract* node);
+    - void eraseChild(int i, int count=1);
+    - int findChild(ActorTreeAbstract* node);
+    - bool eraseChild(ActorTreeAbstract* node);
+    - void eraseChild(int i, int count = 1);
+    - void eraseAllChildren();
+- Automatic Generalized Vertex Attribute Arrays
+  - Unified API to access all vertex attibutes, position, normal, color but also texture coords and the generic vertex attibutes (glVertexAttribPointer).
+  - Standard vertex attributes like position, normal and color can be seen both from the legacy API (ex. Geometry::normalArray()) and the generic api (ex. Geometry::vertexAttribArray( vl::VA_Normal )).
+  - Geometry::convertToVertexAttribs() removed as it's not needed anymore.
+  - Great simplification of lot's of code that can now be agnostic of legacy vs generic vertex attributes usage.
+- Geometry::setColorArray() tries to not reallocate the color array. It also sets the buffer object dirty.
+- Rendering: fixed bug creating a continuous stream of Textures.
+- GLSL: always setup legacy GLSL matrices as well as vl standard matrix uniforms.
+- OpenGLContext: much better Core profile support and closer OpenGL state tracking.
 
 <div class="featuretitle">Visualization Library 1.0.2</div>
 
