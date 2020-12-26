@@ -556,7 +556,7 @@ void vlWin32::translateKeyEvent(WPARAM wParam, LPARAM lParam, unsigned short& un
       case L',': key_out = Key_Comma; break;
       case L'-': key_out = Key_Minus; break;
       case L'.': key_out = Key_Period; break;
-      case L'\\': key_out = Key_Slash; break;
+      case L'\\': key_out = Key_BackSlash; break;
       case L':': key_out = Key_Colon; break;
       case L';': key_out = Key_Semicolon; break;
       case L'<': key_out = Key_Less; break;
@@ -565,7 +565,7 @@ void vlWin32::translateKeyEvent(WPARAM wParam, LPARAM lParam, unsigned short& un
       case L'?': key_out = Key_Question; break;
       case L'@': key_out = Key_At; break;
       case L'[': key_out = Key_LeftBracket; break;
-      case L'/': key_out = Key_BackSlash; break;
+      case L'/': key_out = Key_Slash; break;
       case L']': key_out = Key_RightBracket; break;
       case L'|': key_out = Key_Caret; break;
       case L'_': key_out = Key_Underscore; break;

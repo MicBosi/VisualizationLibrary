@@ -237,7 +237,7 @@ void translateKey(int& unicode, EKey& key, const wxKeyEvent& ev)
     case ',': key = Key_Comma; break;
     case '-': key = Key_Minus; break;
     case '.': key = Key_Period; break;
-    case '\\': key = Key_Slash; break;
+    case '\\': key = Key_BackSlash; break;
     case ':': key = Key_Colon; break;
     case ';': key = Key_Semicolon; break;
     case '<': key = Key_Less; break;
@@ -246,7 +246,7 @@ void translateKey(int& unicode, EKey& key, const wxKeyEvent& ev)
     case '?': key = Key_Question; break;
     case '@': key = Key_At; break;
     case '[': key = Key_LeftBracket; break;
-    case '/': key = Key_BackSlash; break;
+    case '/': key = Key_Slash; break;
     case ']': key = Key_RightBracket; break;
     case '|': key = Key_Caret; break;
     case '_': key = Key_Underscore; break;
