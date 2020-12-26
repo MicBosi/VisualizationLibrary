@@ -34,6 +34,7 @@
 
 #include <vlGraphics/Array.hpp>
 #include <vlCore/vlnamespace.hpp>
+#include <vlCore/Say.hpp>
 
 namespace vl
 {

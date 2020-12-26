@@ -203,7 +203,7 @@ void VisualizationLibrary::shutdownCore()
   setDefFileSystem( NULL );
 
   // Dispose default logger
-  Log::debug("VisualizationLibrary::shutdownCore().\n");
+  Log::debug("VisualizationLibrary::shutdownCore()\n");
 
   // we keep the logger alive as much as we can.
   // setDefLogger( NULL );
