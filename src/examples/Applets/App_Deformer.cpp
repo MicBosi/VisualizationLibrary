@@ -74,7 +74,7 @@ public:
     mTextureMatrix = new vl::TextureMatrix;
 
     vl::ref<vl::Effect> image_fx = new vl::Effect;
-    image_fx->shader()->gocTextureSampler(0)->setTexture(mTexture.get());
+    image_fx->shader()->gocTextureImageUnit(0)->setTexture(mTexture.get());
     image_fx->shader()->setRenderState( mTextureMatrix.get(), 0 );
     image_fx->shader()->enable(vl::EN_BLEND);
     image_fx->shader()->gocColor()->setValue(vl::white);

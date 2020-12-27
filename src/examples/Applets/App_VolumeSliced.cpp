@@ -241,10 +241,10 @@ public:
     // remove GLSLProgram
     vol_fx->shader()->eraseRenderState(vl::RS_GLSLProgram);
     // keep texture unit #0
-    // vol_fx->shader()->eraseRenderState(RS_TextureSampler,0);
+    // vol_fx->shader()->eraseRenderState(RS_TextureImageUnit,0);
     // remove texture unit #1 and #2
-    vol_fx->shader()->eraseRenderState(RS_TextureSampler, 1);
-    vol_fx->shader()->eraseRenderState(RS_TextureSampler, 2);
+    vol_fx->shader()->eraseRenderState(RS_TextureImageUnit, 1);
+    vol_fx->shader()->eraseRenderState(RS_TextureImageUnit, 2);
 
     if( img->format() == IF_LUMINANCE )
     {
@@ -262,7 +262,7 @@ public:
         // installs GLSLProgram
         vol_fx->shader()->setRenderState( mGLSL.get() );
         // install volume image
-        vol_fx->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( img.get() ) );
+        vol_fx->shader()->gocTextureImageUnit(0)->setTexture( new vl::Texture( img.get() ) );
         vol_fx->shader()->gocUniform("volume_texunit")->setUniformI(0);
         mSlicedVolume->generateTextureCoordinates( ivec3(img->width(), img->height(), img->depth()) );
         // installs the transfer function as texture #1
@@ -270,7 +270,7 @@ public:
         tex->getTexParameter()->setMagFilter( vl::TPF_LINEAR );
         tex->getTexParameter()->setMinFilter( vl::TPF_LINEAR );
         tex->getTexParameter()->setWrap( vl::TPW_CLAMP_TO_EDGE );
-        vol_fx->shader()->gocTextureSampler(1)->setTexture( tex.get() );
+        vol_fx->shader()->gocTextureImageUnit(1)->setTexture( tex.get() );
         vol_fx->shader()->gocUniform("trfunc_texunit")->setUniformI(1);
         vol_fx->shader()->gocUniform("trfunc_delta")->setUniformF( 0.5f / trfunc->width() );
 
@@ -281,12 +281,12 @@ public:
           // This might take a while...
           ref<Image> gradient = vl::genGradientNormals( img.get() );
           vol_fx->shader()->gocUniform("gradient_texunit")->setUniformI(2);
-          vol_fx->shader()->gocTextureSampler(2)->setTexture( new Texture( gradient.get(), TF_RGBA8, false, false ) );
+          vol_fx->shader()->gocTextureImageUnit(2)->setTexture( new Texture( gradient.get(), TF_RGBA8, false, false ) );
           vl::ref< vl::Texture > tex = new Texture( gradient.get(), TF_RGBA8, false, false );
           tex->getTexParameter()->setMagFilter( vl::TPF_LINEAR );
           tex->getTexParameter()->setMinFilter( vl::TPF_LINEAR );
           tex->getTexParameter()->setWrap( vl::TPW_CLAMP_TO_EDGE );
-          vol_fx->shader()->gocTextureSampler(2)->setTexture( tex.get() );
+          vol_fx->shader()->gocTextureImageUnit(2)->setTexture( tex.get() );
         }
 
         // no need for alpha testing, we discard fragments inside the fragment shader
@@ -300,7 +300,7 @@ public:
         ref<Image> trfunc = vl::makeColorSpectrum(128, vl::black, vl::blue, vl::green, vl::yellow, vl::red);
         // precompute volume with transfer function and lighting
         ref<Image> volume = vl::genRGBAVolume(img.get(), trfunc.get(), fvec3(1.0f,1.0f,0.0f));
-        vol_fx->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( volume.get() ) );
+        vol_fx->shader()->gocTextureImageUnit(0)->setTexture( new vl::Texture( volume.get() ) );
         mSlicedVolume->generateTextureCoordinates( ivec3(volume->width(), volume->height(), volume->depth()) );
         vol_fx->shader()->enable(EN_ALPHA_TEST);
         vol_fx->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.3f);
@@ -310,7 +310,7 @@ public:
     {
       Log::notify("Non IF_LUMINANCE image: not using GLSL.\n");
       // install volume texture
-      vol_fx->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( img.get() ) );
+      vol_fx->shader()->gocTextureImageUnit(0)->setTexture( new vl::Texture( img.get() ) );
       mSlicedVolume->generateTextureCoordinates( ivec3(img->width(), img->height(), img->depth()) );
       // setup alpha test
       vol_fx->shader()->enable(EN_ALPHA_TEST);

@@ -652,7 +652,7 @@ void OpenGLContext::setupDefaultRenderStates()
   mDefaultRenderStates[RS_GLSLProgram] = RenderStateSlot(new GLSLProgram, 0);
 
   for(int i=0; i<textureImageUnitCount(); ++i) {
-    mDefaultRenderStates[RS_TextureSampler + i] = RenderStateSlot(new TextureSampler, i);
+    mDefaultRenderStates[RS_TextureImageUnit + i] = RenderStateSlot(new TextureImageUnit, i);
   }
 
   if( Has_Fixed_Function_Pipeline )

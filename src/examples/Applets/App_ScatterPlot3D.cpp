@@ -69,7 +69,7 @@ public:
       if (vl::Has_Point_Sprite)
       {
         vl::ref<vl::Image> img = vl::loadImage("/images/particle.tif");
-        effect->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( img.get() ) );
+        effect->shader()->gocTextureImageUnit(0)->setTexture( new vl::Texture( img.get() ) );
         effect->shader()->gocTexEnv(0)->setPointSpriteCoordReplace(true);
         effect->shader()->enable(vl::EN_POINT_SPRITE);
       }

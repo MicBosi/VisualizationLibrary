@@ -159,7 +159,7 @@ Some items might appear in more than one group. Hovering with the mouse on the n
 - vl::TexEnv
 - vl::TexGen
 - vl::TextureMatrix
-- vl::TextureSampler
+- vl::TextureImageUnit
 - vl::CopyTexSubImage1D
 - vl::CopyTexSubImage2D
 - vl::CopyTexSubImage3D
@@ -375,7 +375,7 @@ Some items might appear in more than one group. Hovering with the mouse on the n
 - vl::TexEnv, see also http://www.opengl.org/sdk/docs/man/xhtml/glTexEnv.xml
 - vl::TexGen, see also http://www.opengl.org/sdk/docs/man/xhtml/glTexGen.xml
 - vl::TextureMatrix
-- vl::TextureSampler
+- vl::TextureImageUnit
 - vl::ShaderNode
 
 */

@@ -181,8 +181,8 @@ void registerVLXGraphicsWrappers()
   // Texture
   vlX::defVLXRegistry()->registerClassWrapper( Texture::Type(), new vlX::VLXClassWrapper_Texture );
 
-  // TextureSampler
-  vlX::defVLXRegistry()->registerClassWrapper( TextureSampler::Type(), new vlX::VLXClassWrapper_TextureSampler );
+  // TextureImageUnit
+  vlX::defVLXRegistry()->registerClassWrapper( TextureImageUnit::Type(), new vlX::VLXClassWrapper_TextureImageUnit );
 
   // TexParameter
   vlX::defVLXRegistry()->registerClassWrapper( TexParameter::Type(), new vlX::VLXClassWrapper_TexParameter );

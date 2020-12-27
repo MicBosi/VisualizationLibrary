@@ -181,7 +181,7 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera*
   }
 
   // Normalized x/y/z offeset required to center on a texel
-  const Texture* tex = shader->getTextureSampler( 0 )->texture();
+  const Texture* tex = shader->getTextureImageUnit( 0 )->texture();
   fvec3 centering = fvec3(
     0.5f / tex->width(),
     0.5f / tex->height(),

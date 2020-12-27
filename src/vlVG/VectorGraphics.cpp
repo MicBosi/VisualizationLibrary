@@ -819,7 +819,7 @@ Effect* VectorGraphics::currentEffect(const State& vgs)
     // texture
     if (vgs.mImage)
     {
-      shader->gocTextureSampler(0)->setTexture( resolveTexture(vgs.mImage.get()) );
+      shader->gocTextureImageUnit(0)->setTexture( resolveTexture(vgs.mImage.get()) );
       if (Has_Point_Sprite)
       {
         shader->gocTexEnv(0)->setPointSpriteCoordReplace(true);

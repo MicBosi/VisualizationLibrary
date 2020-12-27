@@ -3499,10 +3499,10 @@ namespace vlX
 
   //---------------------------------------------------------------------------
 
-  /** VLX wrapper of vl::TextureSampler */
-  struct VLXClassWrapper_TextureSampler: public ClassWrapper
+  /** VLX wrapper of vl::TextureImageUnit */
+  struct VLXClassWrapper_TextureImageUnit: public ClassWrapper
   {
-    void importTextureSampler(VLXSerializer& s, const VLXStructure* vlx, vl::TextureSampler* obj)
+    void importTextureSampler(VLXSerializer& s, const VLXStructure* vlx, vl::TextureImageUnit* obj)
     {
       const VLXValue* vlx_texture = vlx->getValue("Texture");
       if (vlx_texture)
@@ -3516,14 +3516,14 @@ namespace vlX
 
     virtual vl::ref<vl::Object> importVLX(VLXSerializer& s, const VLXStructure* vlx)
     {
-      vl::ref<vl::TextureSampler> obj = new vl::TextureSampler;
+      vl::ref<vl::TextureImageUnit> obj = new vl::TextureImageUnit;
       // register imported structure asap
       s.registerImportedStructure(vlx, obj.get());
       importTextureSampler(s, vlx, obj.get());
       return obj;
     }
 
-    void exportTextureSampler(VLXSerializer& s, const vl::TextureSampler* tex_sampler, VLXStructure* vlx)
+    void exportTextureSampler(VLXSerializer& s, const vl::TextureImageUnit* tex_sampler, VLXStructure* vlx)
     {
       if (tex_sampler->texture())
         *vlx << "Texture" << s.exportVLX(tex_sampler->texture());
@@ -3531,7 +3531,7 @@ namespace vlX
 
     virtual vl::ref<VLXStructure> exportVLX(VLXSerializer& s, const vl::Object* obj)
     {
-      const vl::TextureSampler* cast_obj = obj->as<vl::TextureSampler>(); VL_CHECK(cast_obj)
+      const vl::TextureImageUnit* cast_obj = obj->as<vl::TextureImageUnit>(); VL_CHECK(cast_obj)
       vl::ref<VLXStructure> vlx = new VLXStructure(vlx_makeTag(obj).c_str(), s.generateID("texsampler_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());

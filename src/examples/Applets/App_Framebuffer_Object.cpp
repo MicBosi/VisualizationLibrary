@@ -467,7 +467,7 @@ public:
     effect1->shader()->gocLightModel()->setTwoSide(true);
     effect1->shader()->enable(vl::EN_LIGHTING);
     effect1->shader()->enable(vl::EN_DEPTH_TEST);
-    effect1->shader()->gocTextureSampler(0)->setTexture( texture1 );
+    effect1->shader()->gocTextureImageUnit(0)->setTexture( texture1 );
     effect1->shader()->gocTexEnv(0)->setMode(vl::TEM_MODULATE);
     // TD_TEXTURE_2D_MULTISAMPLE requires a special fragment shader
     if (texture1->dimension() == vl::TD_TEXTURE_2D_MULTISAMPLE)
@@ -492,7 +492,7 @@ public:
       // box #2
       vl::ref<vl::Effect> effect2 = new vl::Effect;
       effect2->shader()->shallowCopyFrom(*effect1->shader());
-      vl::ref<vl::TextureSampler> texture_sampler = new vl::TextureSampler;
+      vl::ref<vl::TextureImageUnit> texture_sampler = new vl::TextureImageUnit;
       texture_sampler->setTexture(texture2);
       effect2->shader()->setRenderState(texture_sampler.get(), 0);
 

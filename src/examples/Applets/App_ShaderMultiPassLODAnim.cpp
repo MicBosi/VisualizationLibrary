@@ -106,12 +106,12 @@ public:
     tex_rot_scale_sh->enable(vl::EN_LIGHTING);
     tex_rot_scale_sh->setRenderState( light.get(), 0 );
     texture = new vl::Texture("/images/holebox.tif", vl::TF_RGBA);
-    tex_rot_scale_sh->gocTextureSampler(0)->setTexture( texture.get() );
+    tex_rot_scale_sh->gocTextureImageUnit(0)->setTexture( texture.get() );
     // on this unit we'll apply the roto-scale effect
     texture = new vl::Texture("/images/star2.tif", vl::TF_RGBA);
-    tex_rot_scale_sh->gocTextureSampler(1)->setTexture( texture.get() );
-    tex_rot_scale_sh->gocTextureSampler(1)->texture()->getTexParameter()->setWrapS(vl::TPW_REPEAT);
-    tex_rot_scale_sh->gocTextureSampler(1)->texture()->getTexParameter()->setWrapT(vl::TPW_REPEAT);
+    tex_rot_scale_sh->gocTextureImageUnit(1)->setTexture( texture.get() );
+    tex_rot_scale_sh->gocTextureImageUnit(1)->texture()->getTexParameter()->setWrapS(vl::TPW_REPEAT);
+    tex_rot_scale_sh->gocTextureImageUnit(1)->texture()->getTexParameter()->setWrapT(vl::TPW_REPEAT);
     // install shader animator
     tex_rot_scale_sh->setShaderAnimator( new TexRotScaleShaderAnimator );
 
@@ -122,7 +122,7 @@ public:
     tex_sh->enable(vl::EN_LIGHTING);
     tex_sh->setRenderState( light.get(), 0 );
     texture = new vl::Texture("/images/holebox.tif", vl::TF_RGBA);
-    tex_sh->gocTextureSampler(0)->setTexture( texture.get() );
+    tex_sh->gocTextureImageUnit(0)->setTexture( texture.get() );
 
     // wireframe outline blinking shader
     vl::ref<vl::Shader> blink_sh = new vl::Shader;

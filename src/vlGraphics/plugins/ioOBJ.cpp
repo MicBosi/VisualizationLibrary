@@ -768,7 +768,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
           texture->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
           texture->getTexParameter()->setMagFilter(TPF_LINEAR);
           texture->prepareTexture2D( diff_img.get(), TF_RGBA, true );
-          effect->shader()->gocTextureSampler(0)->setTexture( texture.get() );
+          effect->shader()->gocTextureImageUnit(0)->setTexture( texture.get() );
         }
       }
     }

@@ -61,7 +61,7 @@ void FlatManipulator::mouseDownEvent(EMouseButton btn, int x, int y)
     if(mouseInViewport(x, y, vx, vy) == false)
         return;
     //store the rodent's position in the cage
-    mMouseStart = vec2(x,y);
+    mMouseStart = vec2(vec2::scalar_type(x), vec2::scalar_type(y));
 
     // enter new mode
     if (btn == translationButton())
@@ -100,16 +100,16 @@ void FlatManipulator::mouseMoveEvent(int x, int y)
         camera()->setViewMatrix(
                         mat4::getScaling(scale, scale,1.0)*
                         camera()->viewMatrix());
-        mMouseStart = vec2(x,y);
+        mMouseStart = vec2(vec2::scalar_type(x), vec2::scalar_type(y));
     }
     else
     if (mode() == TranslationMode)
     {
-        vec2 shift = (vec2(x,y) - mMouseStart)*mPixelSize;
+        vec2 shift = (vec2(vec2::scalar_type(x), vec2::scalar_type(y)) - mMouseStart)*mPixelSize;
         camera()->setViewMatrix(
                     mat4::getTranslation(shift.x(), -shift.y(),0)*
                     camera()->viewMatrix());
-        mMouseStart = vec2(x,y);
+        mMouseStart = vec2(vec2::scalar_type(x), vec2::scalar_type(y));
     }
 
     // update the view

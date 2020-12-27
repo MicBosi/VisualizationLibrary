@@ -20,7 +20,7 @@ The most important classes involved in the texturing process are:
 - vl::Image: used to load, save and manipulate any kind of image that will be used to create a texture.
 - vl::Texture: implements all the OpenGL texture object types.
 - vl::TexParameter: used by vl::Texture to control the parameters associated to a texture such as clamping, filtering, anisotropy etc.
-- vl::TextureSampler: used by vl::Shader to bind a vl::Texture to a give texture unit.
+- vl::TextureImageUnit: used by vl::Shader to bind a vl::Texture to a give texture unit.
 - vl::TexGen: used by vl::Shader to control automatic texture coordinate generation.
 - vl::TexEnv: used by vl::Shader to program the various texture unit environment settings, such as blending modes etc.
 - vl::TextureMatrix: used by vl::Shader to transform the texture coordinates of a specific unit.

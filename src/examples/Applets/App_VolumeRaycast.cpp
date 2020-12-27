@@ -302,7 +302,7 @@ public:
 
     // volume image textue must be on sampler #0
     vl::ref< vl::Texture > vol_tex = new vl::Texture( mVolumeImage.get(), TF_RED, false, false );
-    volume_fx->shader()->gocTextureSampler( 0 )->setTexture( vol_tex.get() );
+    volume_fx->shader()->gocTextureImageUnit( 0 )->setTexture( vol_tex.get() );
     vol_tex->getTexParameter()->setMagFilter( vl::TPF_LINEAR );
     vol_tex->getTexParameter()->setMinFilter( vl::TPF_LINEAR );
     vol_tex->getTexParameter()->setWrap( vl::TPW_CLAMP_TO_EDGE );
@@ -323,7 +323,7 @@ public:
     trf_tex->getTexParameter()->setMagFilter( vl::TPF_LINEAR );
     trf_tex->getTexParameter()->setMinFilter( vl::TPF_LINEAR );
     trf_tex->getTexParameter()->setWrap( vl::TPW_CLAMP_TO_EDGE );
-    volume_fx->shader()->gocTextureSampler( 1 )->setTexture( trf_tex.get() );
+    volume_fx->shader()->gocTextureImageUnit( 1 )->setTexture( trf_tex.get() );
     volume_fx->shader()->gocUniform( "trfunc_texunit" )->setUniformI( 1 );
 
     // gradient computation, only use for isosurface methods
@@ -337,7 +337,7 @@ public:
         tex->getTexParameter()->setMagFilter( vl::TPF_LINEAR );
         tex->getTexParameter()->setMinFilter( vl::TPF_LINEAR );
         tex->getTexParameter()->setWrap( vl::TPW_CLAMP_TO_EDGE );
-        volume_fx->shader()->gocTextureSampler( 2 )->setTexture( tex.get() );
+        volume_fx->shader()->gocTextureImageUnit( 2 )->setTexture( tex.get() );
       }
     }
 

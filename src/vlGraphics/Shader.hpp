@@ -1535,7 +1535,7 @@ namespace vl
   //------------------------------------------------------------------------------
   /** The TextureMatrix class uses a 4x4 matrix to transform the texture coordinates of a texture unit.
    *
-   * \sa Shader, TextureSampler, Texture, TexGen, TexParameter, Effect, Actor */
+   * \sa Shader, TextureImageUnit, Texture, TexGen, TexParameter, Effect, Actor */
   class VLGRAPHICS_EXPORT TextureMatrix: public RenderStateIndexed
   {
     VL_INSTRUMENT_CLASS(vl::TextureMatrix, RenderStateIndexed)
@@ -1583,9 +1583,9 @@ namespace vl
    *
    * \note
    * A TexParameter defines a set of variables associated to a Texture while
-   * TexGen and TexEnv define a set of variables associated to a TextureSampler.
+   * TexGen and TexEnv define a set of variables associated to a TextureImageUnit.
    *
-   * \sa Shader, TextureSampler, Texture, TexGen, TexParameter, Effect, Actor */
+   * \sa Shader, TextureImageUnit, Texture, TexGen, TexParameter, Effect, Actor */
   class VLGRAPHICS_EXPORT TexEnv: public RenderStateIndexed
   {
     VL_INSTRUMENT_CLASS(vl::TexEnv, RenderStateIndexed)
@@ -1676,9 +1676,9 @@ namespace vl
    *
    * \note
    * A TexParameter defines a set of variables associated to a Texture while
-   * TexGen and TexEnv define a set of variables associated to a TextureSampler.
+   * TexGen and TexEnv define a set of variables associated to a TextureImageUnit.
    *
-   * \sa Shader, TextureSampler, Texture, TexGen, TexParameter, Effect, Actor */
+   * \sa Shader, TextureImageUnit, Texture, TexGen, TexParameter, Effect, Actor */
   class VLGRAPHICS_EXPORT TexGen: public RenderStateIndexed
   {
     VL_INSTRUMENT_CLASS(vl::TexGen, RenderStateIndexed)
@@ -1739,29 +1739,29 @@ namespace vl
     ETexGenMode mGenModeQ;
   };
   //------------------------------------------------------------------------------
-  // TextureSampler
+  // TextureImageUnit
   //------------------------------------------------------------------------------
-  /** The TextureSampler class associates a Texture object to an OpenGL texture unit.
+  /** The TextureImageUnit class associates a Texture object to an OpenGL texture unit.
    *
    * \sa Texture, TexParameter, Shader, TextureMatrix, TexEnv, TexGen, Effect, Actor */
-  class VLGRAPHICS_EXPORT TextureSampler: public RenderStateIndexed
+  class VLGRAPHICS_EXPORT TextureImageUnit: public RenderStateIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::TextureSampler, RenderStateIndexed)
+    VL_INSTRUMENT_CLASS(vl::TextureImageUnit, RenderStateIndexed)
 
   public:
-    TextureSampler()
+    TextureImageUnit()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
-    virtual ERenderState type() const { return RS_TextureSampler; }
+    virtual ERenderState type() const { return RS_TextureImageUnit; }
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
     /** Reset texture sampler to it's default disabled state. */
-    static void reset(int index, OpenGLContext* ctx) { TextureSampler().apply( index, NULL, ctx ); }
+    static void reset(int index, OpenGLContext* ctx) { TextureImageUnit().apply( index, NULL, ctx ); }
 
     //! The texture sampler by a texture unit.
-    //! @note You can override the Texture's TexParameter on a per-TextureSampler basis using the setTexParameter() method.
+    //! @note You can override the Texture's TexParameter on a per-TextureImageUnit basis using the setTexParameter() method.
     void setTexture(Texture* texture) { mTexture = texture; }
 
     //! The texture sampler by a texture unit.
@@ -1774,7 +1774,7 @@ namespace vl
 
     virtual ref<RenderState> clone() const
     {
-      ref<TextureSampler> rs = new TextureSampler;
+      ref<TextureImageUnit> rs = new TextureImageUnit;
       *rs = *this;
       return rs;
     }
@@ -2123,11 +2123,11 @@ namespace vl
 
     // texture unit
 
-    TextureSampler* gocTextureSampler(int unit_index);
+    TextureImageUnit* gocTextureImageUnit(int unit_index);
 
-    const TextureSampler* getTextureSampler(int unit_index) const { return static_cast<const TextureSampler*>( getRenderStateSet()->renderState( RS_TextureSampler, unit_index ) ); }
+    const TextureImageUnit* getTextureImageUnit(int unit_index) const { return static_cast<const TextureImageUnit*>( getRenderStateSet()->renderState( RS_TextureImageUnit, unit_index ) ); }
 
-    TextureSampler* getTextureSampler(int unit_index) { return static_cast<TextureSampler*>( getRenderStateSet()->renderState( RS_TextureSampler, unit_index ) ); }
+    TextureImageUnit* getTextureImageUnit(int unit_index) { return static_cast<TextureImageUnit*>( getRenderStateSet()->renderState( RS_TextureImageUnit, unit_index ) ); }
 
     // tex env
 

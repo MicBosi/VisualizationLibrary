@@ -168,7 +168,7 @@ const ClipPlane* Shader::getClipPlane(int plane_index) const { if (!getRenderSta
 //------------------------------------------------------------------------------
 ClipPlane* Shader::getClipPlane(int plane_index) { if (!getRenderStateSet()) return NULL; else return static_cast<ClipPlane*>( getRenderStateSet()->renderState( RS_ClipPlane, plane_index) ); }
 //------------------------------------------------------------------------------
-TextureSampler* Shader::gocTextureSampler(int unit_index) { GET_OR_CREATE_IDX(TextureSampler, unit_index) }
+TextureImageUnit* Shader::gocTextureImageUnit(int unit_index) { GET_OR_CREATE_IDX(TextureImageUnit, unit_index) }
 //------------------------------------------------------------------------------
 TexGen* Shader::gocTexGen(int unit_index) { GET_OR_CREATE_IDX(TexGen, unit_index) }
 //------------------------------------------------------------------------------
@@ -1101,14 +1101,14 @@ void TextureMatrix::apply(int index, const Camera* camera, OpenGLContext* ctx) c
   }
 }
 //-----------------------------------------------------------------------------
-// TextureSampler
+// TextureImageUnit
 //-----------------------------------------------------------------------------
-bool TextureSampler::hasTexture() const
+bool TextureImageUnit::hasTexture() const
 {
   return mTexture && mTexture->handle();
 }
 //------------------------------------------------------------------------------
-void TextureSampler::apply(int index, const Camera*, OpenGLContext* ctx) const
+void TextureImageUnit::apply(int index, const Camera*, OpenGLContext* ctx) const
 {
   VL_CHECK_OGL();
   VL_CHECK(index < VL_MAX_TEXTURE_IMAGE_UNITS)
@@ -1163,7 +1163,7 @@ void TextureSampler::apply(int index, const Camera*, OpenGLContext* ctx) const
           case TPF_NEAREST_MIPMAP_LINEAR:
           case TPF_NEAREST_MIPMAP_NEAREST:
           {
-            Log::bug( vl::Say("TextureSampler::apply() error: requested mipmapping texture filtering on a Texture with no mipmaps! (%s)\n") << texture()->objectName() );
+            Log::bug( vl::Say("TextureImageUnit::apply() error: requested mipmapping texture filtering on a Texture with no mipmaps! (%s)\n") << texture()->objectName() );
             VL_TRAP()
             break;
           }

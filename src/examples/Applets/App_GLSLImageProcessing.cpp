@@ -96,11 +96,11 @@ public:
     mTextureMatrix = new vl::TextureMatrix;
 
     vl::ref<vl::Effect> postproc_fx = new vl::Effect;
-    postproc_fx->shader()->gocTextureSampler(0)->setTexture(mTexture.get());
+    postproc_fx->shader()->gocTextureImageUnit(0)->setTexture(mTexture.get());
     postproc_fx->shader()->setRenderState( mTextureMatrix.get(), 0 );
 
     vl::ref<vl::Effect> original_fx = new vl::Effect;
-    original_fx->shader()->gocTextureSampler(0)->setTexture(mTexture.get());
+    original_fx->shader()->gocTextureImageUnit(0)->setTexture(mTexture.get());
 
     mGLSLProgram = postproc_fx->shader()->gocGLSLProgram();
     mGLSLProgram->attachShader( new vl::GLSLFragmentShader("/glsl/image_processing.fs") );

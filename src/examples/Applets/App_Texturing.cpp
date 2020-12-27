@@ -90,7 +90,7 @@ public:
     fx_right_cube->shader()->enable(EN_ALPHA_TEST);
     fx_right_cube->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.98f);
     fx_right_cube->shader()->gocLightModel()->setTwoSide(true);
-    fx_right_cube->shader()->gocTextureSampler(0)->setTexture( tex_holebox.get() );
+    fx_right_cube->shader()->gocTextureImageUnit(0)->setTexture( tex_holebox.get() );
 
     // multi-texture effect with alpha testing
     ref<Effect> fx_left_cube = new Effect;
@@ -101,8 +101,8 @@ public:
     fx_left_cube->shader()->enable(EN_ALPHA_TEST);
     fx_left_cube->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.98f);
     fx_left_cube->shader()->gocLightModel()->setTwoSide(true);
-    fx_left_cube->shader()->gocTextureSampler(0)->setTexture( tex_holebox.get() );
-    fx_left_cube->shader()->gocTextureSampler(1)->setTexture( tex_detail.get() );
+    fx_left_cube->shader()->gocTextureImageUnit(0)->setTexture( tex_holebox.get() );
+    fx_left_cube->shader()->gocTextureImageUnit(1)->setTexture( tex_detail.get() );
     fx_left_cube->shader()->gocTexEnv(1)->setMode(TEM_MODULATE); // modulate texture #0 and #1
 
     // add right box
@@ -148,7 +148,7 @@ public:
     texture_3d->createTexture3D( "/volume/VLTest.dat", TF_UNKNOWN, mMipmappingOn );
     texture_3d->getTexParameter()->setMagFilter(TPF_LINEAR);
     texture_3d->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
-    fx_3d->shader()->gocTextureSampler(0)->setTexture( texture_3d.get() );
+    fx_3d->shader()->gocTextureImageUnit(0)->setTexture( texture_3d.get() );
   }
 
   void texture2DArray()
@@ -186,7 +186,7 @@ public:
     texture_2darray->createTexture2DArray( img_volume.get(), TF_RGBA, mMipmappingOn );
     texture_2darray->getTexParameter()->setMagFilter(TPF_LINEAR);
     texture_2darray->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
-    fx_2darray->shader()->gocTextureSampler(0)->setTexture( texture_2darray.get() );
+    fx_2darray->shader()->gocTextureImageUnit(0)->setTexture( texture_2darray.get() );
 
     // IMPORTANT
     // We need a GLSL program that uses 'sampler2DArray()' to access the 1D and 2D texture arrays!
@@ -230,7 +230,7 @@ public:
     texture_1darray->createTexture1DArray( img_holebox.get(), TF_RGBA, mMipmappingOn );
     texture_1darray->getTexParameter()->setMagFilter(TPF_LINEAR);
     texture_1darray->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
-    fx_1darray->shader()->gocTextureSampler(0)->setTexture( texture_1darray.get() );
+    fx_1darray->shader()->gocTextureImageUnit(0)->setTexture( texture_1darray.get() );
 
     // IMPORTANT
     // We need a GLSL program that uses 'sampler1DArray()' to access the 1D and 2D texture arrays!
@@ -275,7 +275,7 @@ public:
     texture_rectangle->getTexParameter()->setWrapS(TPW_CLAMP);
     texture_rectangle->getTexParameter()->setWrapT(TPW_CLAMP);
     texture_rectangle->getTexParameter()->setWrapR(TPW_CLAMP);
-    fx_rect->shader()->gocTextureSampler(0)->setTexture( texture_rectangle.get() );
+    fx_rect->shader()->gocTextureImageUnit(0)->setTexture( texture_rectangle.get() );
   }
 
   void sphericalMapping()
@@ -304,7 +304,7 @@ public:
     texture_sphere_map->createTexture2D( "/images/spheremap_klimt.jpg", TF_UNKNOWN, mMipmappingOn );
     texture_sphere_map->getTexParameter()->setMagFilter(TPF_LINEAR);
     texture_sphere_map->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
-    mFXSpheric->shader()->gocTextureSampler(0)->setTexture( texture_sphere_map.get() );
+    mFXSpheric->shader()->gocTextureImageUnit(0)->setTexture( texture_sphere_map.get() );
 
     // Enable spherical mapping texture coordinate generation for s and t
     mFXSpheric->shader()->gocTexGen(0)->setGenModeS(TGM_SPHERE_MAP);
@@ -351,7 +351,7 @@ public:
     texture_cubic->getTexParameter()->setWrapT(TPW_CLAMP_TO_EDGE);
     texture_cubic->getTexParameter()->setWrapR(TPW_CLAMP_TO_EDGE);
     // Install the texture on unit #0
-    mFXCubic->shader()->gocTextureSampler(0)->setTexture( texture_cubic.get() );
+    mFXCubic->shader()->gocTextureImageUnit(0)->setTexture( texture_cubic.get() );
 
     // Enable automatic texture generation for s, t, r on unit #0
     mFXCubic->shader()->gocTexGen(0)->setGenModeS(TGM_REFLECTION_MAP);

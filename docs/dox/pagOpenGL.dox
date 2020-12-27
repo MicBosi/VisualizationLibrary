@@ -43,7 +43,7 @@ The table below shows how the most important OpenGL features and functions map t
 			- vl::Texture::prepareTexture1DArray()
 			- vl::Texture::prepareTexture2DArray()
 			- vl::TexParameter and vl::Texture::getTexParameter()
-			- vl::TextureSampler
+			- vl::TextureImageUnit
 			- vl::Shader::gocTextureSampler()
 		</td>
 	</tr>
@@ -561,10 +561,10 @@ glBindTexture(GL_TEXTURE_2D, 0);
 			- automatically managed by vl::ClipPlane
 			- automatically manaded by vl::Scissor
 			- see vl::Material::setColorMaterial(), vl::Material::setColorMaterialEnabled()
-			- automatically managed, see vl::Texture, vl::TextureSampler, vl::TexParameter
-			- automatically managed, see vl::Texture, vl::TextureSampler, vl::TexParameter
-			- automatically managed, see vl::Texture, vl::TextureSampler, vl::TexParameter
-			- automatically managed, see vl::Texture, vl::TextureSampler, vl::TexParameter
+			- automatically managed, see vl::Texture, vl::TextureImageUnit, vl::TexParameter
+			- automatically managed, see vl::Texture, vl::TextureImageUnit, vl::TexParameter
+			- automatically managed, see vl::Texture, vl::TextureImageUnit, vl::TexParameter
+			- automatically managed, see vl::Texture, vl::TextureImageUnit, vl::TexParameter
 			- automatically managed by vl::TexGen
 			- deprecated functionality
 			</td>

@@ -48,12 +48,12 @@ namespace vl
    *
    * \note
    * A TexParameter defines a set of variables associated to a Texture while
-   * TexGen and TexEnv define a set of variables associated to a TextureSampler.
+   * TexGen and TexEnv define a set of variables associated to a TextureImageUnit.
    *
    * \sa
    * - Texture::getTexParameter()
    * - Texture
-   * - TextureSampler
+   * - TextureImageUnit
    * - TexGen
    * - TexEnv
    * - Shader
@@ -114,7 +114,7 @@ namespace vl
     mutable bool mDirty;
   };
   //------------------------------------------------------------------------------
-  class TextureSampler;
+  class TextureImageUnit;
   //------------------------------------------------------------------------------
   // Texture
   //------------------------------------------------------------------------------
@@ -125,16 +125,30 @@ namespace vl
    * - http://www.opengl.org/sdk/docs/man/xhtml/glTexImage1D.xml
    * - http://www.opengl.org/sdk/docs/man/xhtml/glTexImage2D.xml
    * - http://www.opengl.org/sdk/docs/man/xhtml/glTexImage3D.xml
-   *
+   * 
+   * References
+   * - https://www.khronos.org/opengl/wiki/Texture
+   * - https://www.khronos.org/opengl/wiki/Texture_Storage
+   * - https://www.khronos.org/opengl/wiki/Sampler_(GLSL)
+   * - https://www.khronos.org/opengl/wiki/Sampler_Object
+   * - https://www.khronos.org/opengl/wiki/Image_Format
+   * - https://www.khronos.org/opengl/wiki/Pixel_Transfer
+   * - https://www.khronos.org/opengl/wiki/Cubemap_Texture
+   * - https://www.khronos.org/opengl/wiki/Array_Texture
+   * - https://www.khronos.org/opengl/wiki/Multisample_Texture
+   * - https://www.khronos.org/opengl/wiki/Rectangle_Texture
+   * - https://www.khronos.org/opengl/wiki/3D_Texture
+   * - https://www.khronos.org/opengl/wiki/Buffer_Texture
+   * 
    * \note
    * A TexParameter defines a set of variables associated to a Texture while
-   * TexGen and TexEnv define a set of variables associated to a TextureSampler.
+   * TexGen and TexEnv define a set of variables associated to a TextureImageUnit.
    *
    * \sa
    * - getTexParameter() and TexParameter
    * - createTexture()
    * - setMipLevel()
-   * - TextureSampler
+   * - TextureImageUnit
    * - TexGen
    * - TexEnv
    * - Shader
@@ -143,7 +157,7 @@ namespace vl
   class VLGRAPHICS_EXPORT Texture: public Object
   {
     VL_INSTRUMENT_CLASS(vl::Texture, Object)
-    friend class TextureSampler;
+    friend class TextureImageUnit;
 
   public:
     /** SetupParams wraps all the parameters needed to crate a Texture.
@@ -248,7 +262,8 @@ namespace vl
     /** The TexParameter object associated to a Texture. */
     const TexParameter* getTexParameter() const { return mTexParameter.get(); }
 
-    /** The TexParameter belonging to a TextureSampler that is currently overriding the Texture's own TexParameter. */
+    // MIC FIXME: remove this?
+    /** The TexParameter belonging to a TextureImageUnit that is currently overriding the Texture's own TexParameter. */
     const TexParameter* getTexParameterOverride() const { return mTexParameterOverride.get(); }
 
     /** The buffer object bound to a buffer object texture. */

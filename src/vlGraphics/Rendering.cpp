@@ -391,9 +391,9 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
           RenderStateSlot* states = shader->gocRenderStateSet()->renderStates();
           for( size_t i=0; i<count; ++i )
           {
-            if (states[i].mRS->type() == RS_TextureSampler)
+            if (states[i].mRS->type() == RS_TextureImageUnit)
             {
-              TextureSampler* tex_unit = static_cast<TextureSampler*>( states[i].mRS.get() );
+              TextureImageUnit* tex_unit = static_cast<TextureImageUnit*>( states[i].mRS.get() );
               VL_CHECK(tex_unit);
               if (tex_unit)
               {

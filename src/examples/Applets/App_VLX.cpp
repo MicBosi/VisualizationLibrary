@@ -270,8 +270,8 @@ public:
 #endif
 
     // Textures
-    fx->shader()->gocTextureSampler(0)->setTexture( new Texture );
-    fx->shader()->gocTextureSampler(0)->texture()->prepareTexture2D( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN );
+    fx->shader()->gocTextureImageUnit(0)->setTexture( new Texture );
+    fx->shader()->gocTextureImageUnit(0)->texture()->prepareTexture2D( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN );
     ref<Texture> tex;
     tex = new Texture; tex->prepareTexture1D( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
     tex = new Texture; tex->prepareTexture1D( 10, TF_RGBA ); res_db->resources().push_back( tex.get() );
@@ -333,6 +333,7 @@ public:
     vl::writeResource(vlx_path, res_db.get()); // save again
 
     vlx_path = globalSettings()->defaultDataPath() + "/vlx/smoke_test.vlb";
+    // vl::writeResource(vlx_path, res_db.get()); // regenerate vlb from vlt
     /*res_db =*/ vl::loadResource(vlx_path); // load first (backwards compatibility check)
     vl::writeResource(vlx_path, res_db.get()); // save
     res_db = vl::loadResource(vlx_path); // load

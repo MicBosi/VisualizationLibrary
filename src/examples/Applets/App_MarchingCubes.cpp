@@ -316,7 +316,7 @@ public:
 
     // automatic 3D texture coordinate generation
     #if 1
-      fx->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( mColorImage.get() ) );
+      fx->shader()->gocTextureImageUnit(0)->setTexture( new vl::Texture( mColorImage.get() ) );
       fx->shader()->gocTexGen(0)->setGenModeS(vl::TGM_OBJECT_LINEAR);
       fx->shader()->gocTexGen(0)->setGenModeT(vl::TGM_OBJECT_LINEAR);
       fx->shader()->gocTexGen(0)->setGenModeR(vl::TGM_OBJECT_LINEAR);
@@ -344,7 +344,7 @@ public:
                          vl::mat4::getScaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) *
                          vl::mat4::getTranslation( -box.center() );
 
-      fx->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( mColorImage.get() ) );
+      fx->shader()->gocTextureImageUnit(0)->setTexture( new vl::Texture( mColorImage.get() ) );
       vl::ref<vl::ArrayFloat3> tex_array = new vl::ArrayFloat3;
       tex_array->resize( geom->vertexArray()->size() );
       geom->setTexCoordArray(0, tex_array.get());
@@ -413,7 +413,7 @@ public:
     if (vl::Has_GL_Version_1_1)
     {
       vl::ref<vl::Image> texture = vl::loadImage("/images/spheremap.png");
-      fx->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( texture.get() ) );
+      fx->shader()->gocTextureImageUnit(0)->setTexture( new vl::Texture( texture.get() ) );
       fx->shader()->gocTexGen(0)->setGenModeS(vl::TGM_SPHERE_MAP);
       fx->shader()->gocTexGen(0)->setGenModeT(vl::TGM_SPHERE_MAP);
       fx->shader()->gocTexEnv(0)->setMode(vl::TEM_BLEND);
