@@ -262,10 +262,6 @@ namespace vl
     /** The TexParameter object associated to a Texture. */
     const TexParameter* getTexParameter() const { return mTexParameter.get(); }
 
-    // MIC FIXME: remove this?
-    /** The TexParameter belonging to a TextureImageUnit that is currently overriding the Texture's own TexParameter. */
-    const TexParameter* getTexParameterOverride() const { return mTexParameterOverride.get(); }
-
     /** The buffer object bound to a buffer object texture. */
     BufferObject* bufferObject() { return mBufferObject.get(); }
 
@@ -774,7 +770,6 @@ namespace vl
     unsigned int mHandle;
     bool mManaged;
     ref<TexParameter> mTexParameter;
-    mutable ref<TexParameter> mTexParameterOverride;
     ref<SetupParams> mSetupParams;
     ref<BufferObject> mBufferObject;
     ETextureFormat mFormat;
