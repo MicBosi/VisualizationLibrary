@@ -52,15 +52,16 @@ namespace vlWX
   class VLWX_EXPORT WXGLCanvas: public wxGLCanvas, public vl::OpenGLContext
   {
   public:
-    WXGLCanvas( wxWindow *parent,
-      const wxGLContext *shared,
+    WXGLCanvas( 
+      wxWindow* parent,
       wxWindowID id = wxID_ANY,
+      const int *attribList = NULL,
       const wxPoint& pos = wxDefaultPosition,
       const wxSize& size = wxDefaultSize,
       long style = 0,
-      int *attribList = 0,
       const wxString& name = wxT("WXGLCanvas"),
-      const wxPalette& palette = wxNullPalette );
+      const wxPalette& palette = wxNullPalette
+    );
 
     ~WXGLCanvas();
 
@@ -91,11 +92,17 @@ namespace vlWX
     void setPosition(int x, int y);
     void setSize(int w, int h);
     vl::ivec2 position() const;
+    vl::ivec2 size() const;
     void setMouseVisible(bool visible);
+
+    const wxGLContext* getWXGLContext() const { return mWXGLContext; }
+    wxGLContext* getWXGLContext() { return mWXGLContext; }
+    void setWXGLContext( wxGLContext* c ) { mWXGLContext = c; }
 
   private:
     wxCursor mCursor;
     int mMouseCount;
+    wxGLContext* mWXGLContext;
     DECLARE_EVENT_TABLE()
   };
 }

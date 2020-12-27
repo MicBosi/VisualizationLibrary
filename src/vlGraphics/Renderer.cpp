@@ -31,6 +31,7 @@
 
 #include <vlCore/GlobalSettings.hpp>
 #include <vlCore/Say.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
 #include <vlGraphics/Renderer.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 #include <vlGraphics/GLSL.hpp>
@@ -364,6 +365,8 @@ const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* 
 const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* camera, real frame_clock)
 {
   VL_CHECK_OGL()
+  // FIXME: make this work, we got a linking error atm.
+  //VL_CHECK( vl::VisualizationLibrary::isGraphicsInitialized() )
 
   // skip if renderer is disabled
 

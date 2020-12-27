@@ -41,28 +41,28 @@
 namespace vl
 {
   //! Used to initialize/shutdown VisualizationLibrary and to access important global data.
-  class VisualizationLibrary
+  class VLMAIN_EXPORT VisualizationLibrary
   {
   public:
     //! Initializes VLCore and VLGraphics libraries.
     //! Call initCore() instead of init() when using only VLCore.
-    VLMAIN_EXPORT static void init(bool log_info=true);
+    static void init(bool log_info=true);
 
     //! Releases all the resources acquired by VLCore and VLGraphics.
     //! Call shutdownCore() instead of shutdown() when using only VLCore.
-    VLMAIN_EXPORT static void shutdown();
+    static void shutdown();
 
     //! Returns true if VLCore library is initialized and shutdown has not been called.
-    VLMAIN_EXPORT static bool isCoreInitialized();
+    static bool isCoreInitialized();
 
     //! Returns true if VLGraphics library is initialized and shutdown has not been called.
-    VLMAIN_EXPORT static bool isGraphicsInitialized();
+    static bool isGraphicsInitialized();
 
   private:
-    VLMAIN_EXPORT static void initCore(bool log_info=true);
-    VLMAIN_EXPORT static void shutdownCore();
-    VLMAIN_EXPORT static void initGraphics();
-    VLMAIN_EXPORT static void shutdownGraphics();
+    static void initCore(bool log_info=true);
+    static void shutdownCore();
+    static void initGraphics();
+    static void shutdownGraphics();
   };
 
   //! Returns the Visualization Library's version string.
