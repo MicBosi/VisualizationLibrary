@@ -45,6 +45,12 @@ namespace vl
 //-----------------------------------------------------------------------------
   /**
    * Abstract class that represents a framebuffer object attachment to be used with FramebufferObject.
+   *
+   * \sa
+   * - https://www.khronos.org/opengl/wiki/Framebuffer
+   * - https://www.khronos.org/opengl/wiki/Default_Framebuffer
+   * - https://www.khronos.org/opengl/wiki/Framebuffer_Object
+   * - OpenGLContext::framebuffer() and FramebufferObject
    */
   class VLGRAPHICS_EXPORT FBOAbstractAttachment: public Object
   {
@@ -542,20 +548,30 @@ namespace vl
     friend class OpenGLContext;
 
   private:
-    FramebufferObject( const FramebufferObject& other ): Framebuffer( other ), mHandle( 0 ) {}
-
     void operator=( const FramebufferObject& ) {}
 
+    FramebufferObject( const FramebufferObject& other ): 
+      Framebuffer( other ), 
+      mHandle( 0 ), 
+      mExternallyManaged(false) 
+    {}
+
     FramebufferObject():
-    Framebuffer( NULL, 0, 0, RDB_COLOR_ATTACHMENT0, RDB_COLOR_ATTACHMENT0 ), mHandle( 0 )
+      Framebuffer( NULL, 0, 0, RDB_COLOR_ATTACHMENT0, RDB_COLOR_ATTACHMENT0 ), 
+      mHandle( 0 ), 
+      mExternallyManaged( false )
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
-    FramebufferObject( OpenGLContext* ctx, int w, int h,
-        EReadDrawBuffer draw_buffer=RDB_COLOR_ATTACHMENT0,
-        EReadDrawBuffer read_buffer=RDB_COLOR_ATTACHMENT0 ):
-    Framebuffer( ctx, w, h, draw_buffer, read_buffer ), mHandle( 0 )
+    FramebufferObject( OpenGLContext* ctx, 
+                       int w, 
+                       int h,
+                       EReadDrawBuffer draw_buffer = RDB_COLOR_ATTACHMENT0,
+                       EReadDrawBuffer read_buffer = RDB_COLOR_ATTACHMENT0 ):
+      Framebuffer( ctx, w, h, draw_buffer, read_buffer ), 
+      mHandle( 0 ), 
+      mExternallyManaged( false )
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -585,7 +601,13 @@ namespace vl
     /**
      * Makes the framebuffer the current rendering target calling glBindFramebuffer( GL_FRAMEBUFFER, FramebufferObject::handle() )
      * and initializes all the previously defined attachment points.
-     * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glBindFramebuffer.xml
+     * 
+     * Wen externallyManaged() == true then this function does nothing. This is used when external logic is handling the framebuffer
+     * for example for compositing and off-screen rendering (eg Qt 6 QOpenGLWidget).
+     * 
+     * \sa 
+     * - externallyManaged()
+     * - http://www.opengl.org/sdk/docs/man3/xhtml/glBindFramebuffer.xml
      */
     virtual void bindFramebuffer( EFramebufferBind target = FBB_FRAMEBUFFER );
 
@@ -628,9 +650,17 @@ namespace vl
     /** A map associating which fbo-attachment belongs to which attachment point in a framebuffer object. */
     const std::map< EAttachmentPoint, ref<FBOAbstractAttachment> >& fboAttachments() const { return mFBOAttachments; }
 
+    /** Wen externallyManaged() == true then this function does nothing. This is used when external logic is handling the framebuffer
+     * for example for compositing and off-screen rendering (eg Qt 6 QOpenGLWidget). */
+    bool externallyManaged() const { return mExternallyManaged; }
+    /** Wen externallyManaged() == true then this function does nothing. This is used when external logic is handling the framebuffer
+     * for example for compositing and off-screen rendering (eg Qt 6 QOpenGLWidget). */
+    void setExternallyManaged( bool em ) { mExternallyManaged = em; }
+
   public:
     std::map< EAttachmentPoint, ref<FBOAbstractAttachment> > mFBOAttachments;
     GLuint mHandle;
+    bool mExternallyManaged;
   };
 }
 

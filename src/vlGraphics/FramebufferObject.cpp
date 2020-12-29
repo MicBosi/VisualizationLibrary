@@ -104,6 +104,10 @@ void FramebufferObject::bindFramebuffer( EFramebufferBind target )
   VL_CHECK(openglContext());
   openglContext()->makeCurrent(); VL_CHECK_OGL();
 
+  if ( externallyManaged() ) {
+    return;
+  }
+
   if ( !Has_FBO )
   {
     Log::error( "FramebufferObject::bindFramebuffer(): framebuffer object not supported.\n" );
@@ -116,37 +120,47 @@ void FramebufferObject::bindFramebuffer( EFramebufferBind target )
     VL_TRAP()
   }
 
-  if ( mFBOAttachments.empty() )
+  // This is an error only if not default framebuffer
+  if ( handle() != 0 && mFBOAttachments.empty() )
   {
     Log::error( "FramebufferObject::bindFramebuffer() called with no attachment points!\n" );
     VL_TRAP()
   }
 
+  /* handle() == 0: default framebuffer
   if ( !handle() )
   {
     Log::error( "FramebufferObject::bindFramebuffer() called but handle() == NULL!\n" );
     VL_TRAP()
   }
+  */
 
-  VL_glBindFramebuffer( target, handle() ); VL_CHECK_OGL()
+   VL_glBindFramebuffer( target, handle() ); VL_CHECK_OGL()
 
 #if defined(VL_OPENGL)
   // bind draw buffers
-  if (target == FBB_FRAMEBUFFER || target == FBB_DRAW_FRAMEBUFFER)
+  if ( target == FBB_FRAMEBUFFER || target == FBB_DRAW_FRAMEBUFFER ) 
+  {
     bindDrawBuffers();
+  }
 
   // bind read buffer
-  if (target == FBB_FRAMEBUFFER || target == FBB_READ_FRAMEBUFFER)
+  if ( target == FBB_FRAMEBUFFER || target == FBB_READ_FRAMEBUFFER ) 
+  {
     bindReadBuffer();
+  }
 #endif
 
   #ifndef NDEBUG
+  if ( handle() )
+  {
     GLenum status = VL_glCheckFramebufferStatus( GL_FRAMEBUFFER ); VL_CHECK_OGL()
     if ( status != GL_FRAMEBUFFER_COMPLETE )
     {
+      printFramebufferError( status );
       VL_glBindFramebuffer( GL_FRAMEBUFFER, 0 ); VL_CHECK_OGL()
     }
-    printFramebufferError( status );
+  }
   #endif
 }
 //-----------------------------------------------------------------------------

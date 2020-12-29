@@ -228,7 +228,7 @@ namespace vl
     //! @param tangent [out] Returns the tangent vector of the vertices. This parameter is mandatory.
     //! @param bitangent [out] Returns the bitangent vector of the vertics. This parameter can be NULL.
     // Based on:
-    // Lengyel, Eric. ìComputing Tangent Space Basis Vectors for an Arbitrary Meshî. Terathon Software 3D Graphics Library, 2001.
+    // Lengyel, Eric. ‚ÄúComputing Tangent Space Basis Vectors for an Arbitrary Mesh‚Äù. Terathon Software 3D Graphics Library, 2001.
     // http://www.terathon.com/code/tangent.html
     static void computeTangentSpace(
       u32 vert_count,

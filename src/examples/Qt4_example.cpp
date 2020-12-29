@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
   int y = 10;
   int width = 512;
   int height= 512;
-  qt4_window->initQt4Widget( "Visualization Library on Qt4 - Rotating Cube", format, NULL, x, y, width, height );
+  qt4_window->initQt4Widget( "Visualization Library on Qt 4 - Rotating Cube", format, NULL, x, y, width, height );
   /* show the window */
   qt4_window->show();
 

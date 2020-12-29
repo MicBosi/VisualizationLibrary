@@ -29,67 +29,63 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/VisualizationLibrary.hpp>
-#include <vlQt5/Qt5Widget.hpp>
-#include "Applets/App_RotatingCube.hpp"
+#ifndef QtDirectory_INCLUDE_ONCE
+#define QtDirectory_INCLUDE_ONCE
 
-using namespace vl;
-using namespace vlQt5;
+#include <vlQt6/link_config.hpp>
+#include <vlCore/VirtualDirectory.hpp>
 
-int main(int argc, char *argv[])
+namespace vl
 {
-  QApplication app(argc, argv);
+  class QtFile;
+  //---------------------------------------------------------------------------
+  // QtDirectory
+  //---------------------------------------------------------------------------
+  /**
+   * A VirtualDirectory that uses Qt's QDir.
+   *
+   * \sa
+   * - MemoryDirectory
+   * - DiskDirectory
+   * - ZippedDirectory
+   * - FileSystem
+   * - VirtualFile
+   * - DiskFile
+   * - QtFile
+   * - MemoryFile
+   * - ZippedFile
+  */
+  class VLQT6_EXPORT QtDirectory : public VirtualDirectory
+  {
+    VL_INSTRUMENT_CLASS(vl::QtDirectory, VirtualDirectory)
 
-  /* init Visualization Library */
-  VisualizationLibrary::init();
+  public:
+    QtDirectory();
 
-  /* setup the OpenGL context format */
-  OpenGLContextFormat format;
-  format.setDoubleBuffer(true);
-  format.setRGBABits( 8,8,8,0 );
-  format.setDepthBufferBits(24);
-  format.setStencilBufferBits(8);
-  format.setMultisampleSamples(16);
-  format.setMultisample(false);
-  format.setFullscreen(false);
-  //format.setOpenGLProfile( GLP_Core );
-  //format.setVersion( 3, 3 );
+    QtDirectory(const String &path);
 
-  /* create the applet to be run */
-  ref<Applet> applet = new App_RotatingCube;
-  applet->initialize();
-  /* create a native Qt5 window */
-  ref<vlQt5::Qt5Widget> qt5_window = new vlQt5::Qt5Widget;
-  /* bind the applet so it receives all the GUI events related to the OpenGLContext */
-  qt5_window->addEventListener(applet.get());
-  /* target the window so we can render on it */
-  applet->rendering()->as<Rendering>()->renderer()->setFramebuffer( qt5_window->framebuffer() );
-  /* black background */
-  applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
-  /* define the camera position and orientation */
-  vec3 eye    = vec3(0,10,35); // camera position
-  vec3 center = vec3(0,0,0);   // point the camera is looking at
-  vec3 up     = vec3(0,1,0);   // up direction
-  mat4 view_mat = mat4::getLookAt(eye, center, up);
-  applet->rendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
-  /* Initialize the OpenGL context and window properties */
-  int x = 10;
-  int y = 10;
-  int width = 512;
-  int height= 512;
-  qt5_window->initQt5Widget( "Visualization Library on Qt 5 - Rotating Cube", format, NULL, x, y, width, height );
-  /* show the window */
-  qt5_window->show();
+    //! Use carefully this function, since this search the whole given file system tree.
+    void listFilesRecursive(std::vector<String> &file_list) const;
 
-  /* run the Win32 message loop */
-  int val = app.exec();
+    void listFiles(std::vector<String> &file_list, bool append = false) const;
 
-  /* deallocate the window with all the OpenGL resources before shutting down Visualization Library */
-  qt5_window = NULL;
+    void listFiles(std::vector<ref<QtFile>> &file_list, bool append = false) const;
 
-  /* shutdown Visualization Library */
-  VisualizationLibrary::shutdown();
+    void listSubDirs(std::vector<String> &dirs, bool append = false) const;
 
-  return val;
-}
-// Have fun!
+    ref<QtDirectory> qtSubDir(const String &subdir_name) const;
+
+    ref<VirtualDirectory> subDir(const String &subdir_name) const { return qtSubDir(subdir_name); }
+
+    virtual ref<VirtualFile> file(const String &name) const;
+
+    virtual ref<QtFile> qtFile(const String &name) const;
+
+    bool exists() const;
+
+  protected:
+    void listFilesRecursive_internal(std::vector<String> &file_list) const;
+  };
+} // namespace vl
+
+#endif

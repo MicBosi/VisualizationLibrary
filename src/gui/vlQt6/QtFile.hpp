@@ -29,67 +29,87 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/VisualizationLibrary.hpp>
-#include <vlQt5/Qt5Widget.hpp>
-#include "Applets/App_RotatingCube.hpp"
+#ifndef QtFile_INCLUDE_ONCE
+#define QtFile_INCLUDE_ONCE
 
-using namespace vl;
-using namespace vlQt5;
+#include <vlQt6/link_config.hpp>
+#include <vlCore/VirtualFile.hpp>
+#include <vlQt6/QtDirectory.hpp>
+#include <QFile>
 
-int main(int argc, char *argv[])
+namespace vl
 {
-  QApplication app(argc, argv);
+  class QtDirectory;
+  //---------------------------------------------------------------------------
+  // QtFile
+  //---------------------------------------------------------------------------
+  /**
+   * A VirtualFile that uses Qt's QFile.
+   *
+   * \sa
+   * - VirtualDirectory
+   * - DiskDirectory
+   * - QtDirectory
+   * - MemoryDirectory
+   * - ZippedDirectory
+   * - FileSystem
+   * - VirtualFile
+   * - MemoryFile
+   * - DiskFile
+   * - ZippedFile
+  */
+  class VLQT6_EXPORT QtFile : public VirtualFile
+  {
+    VL_INSTRUMENT_CLASS(vl::QtFile, VirtualFile)
 
-  /* init Visualization Library */
-  VisualizationLibrary::init();
+    friend class QtDirectory;
 
-  /* setup the OpenGL context format */
-  OpenGLContextFormat format;
-  format.setDoubleBuffer(true);
-  format.setRGBABits( 8,8,8,0 );
-  format.setDepthBufferBits(24);
-  format.setStencilBufferBits(8);
-  format.setMultisampleSamples(16);
-  format.setMultisample(false);
-  format.setFullscreen(false);
-  //format.setOpenGLProfile( GLP_Core );
-  //format.setVersion( 3, 3 );
+  protected:
+    QtFile(const QtFile &other) : VirtualFile(other) {}
 
-  /* create the applet to be run */
-  ref<Applet> applet = new App_RotatingCube;
-  applet->initialize();
-  /* create a native Qt5 window */
-  ref<vlQt5::Qt5Widget> qt5_window = new vlQt5::Qt5Widget;
-  /* bind the applet so it receives all the GUI events related to the OpenGLContext */
-  qt5_window->addEventListener(applet.get());
-  /* target the window so we can render on it */
-  applet->rendering()->as<Rendering>()->renderer()->setFramebuffer( qt5_window->framebuffer() );
-  /* black background */
-  applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
-  /* define the camera position and orientation */
-  vec3 eye    = vec3(0,10,35); // camera position
-  vec3 center = vec3(0,0,0);   // point the camera is looking at
-  vec3 up     = vec3(0,1,0);   // up direction
-  mat4 view_mat = mat4::getLookAt(eye, center, up);
-  applet->rendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
-  /* Initialize the OpenGL context and window properties */
-  int x = 10;
-  int y = 10;
-  int width = 512;
-  int height= 512;
-  qt5_window->initQt5Widget( "Visualization Library on Qt 5 - Rotating Cube", format, NULL, x, y, width, height );
-  /* show the window */
-  qt5_window->show();
+  public:
+    QtFile(const String &path = String());
 
-  /* run the Win32 message loop */
-  int val = app.exec();
+    ~QtFile();
 
-  /* deallocate the window with all the OpenGL resources before shutting down Visualization Library */
-  qt5_window = NULL;
+    //! The specified path is relative to the parent directory. See setPhysicalPath().
+    bool open(const String &path, EOpenMode mode);
 
-  /* shutdown Visualization Library */
-  VisualizationLibrary::shutdown();
+    virtual bool open(EOpenMode mode);
 
-  return val;
-}
-// Have fun!
+    virtual bool isOpen() const;
+
+    virtual void close();
+
+    //! Returns the file size in bytes or -1 on error.
+    virtual long long size() const;
+
+    virtual bool exists() const;
+
+    QtFile &operator=(const QtFile &other)
+    {
+      close();
+      super::operator=(other);
+      return *this;
+    }
+
+    virtual ref<VirtualFile> clone() const;
+
+  protected:
+    virtual long long read_Implementation(void *buffer, long long byte_count);
+
+    virtual long long write_Implementation(const void *buffer, long long byte_count);
+
+    virtual long long position_Implementation() const;
+
+    virtual bool seekSet_Implementation(long long offset);
+
+  protected:
+    QFile mQFile;
+
+  protected:
+  };
+
+} // namespace vl
+
+#endif

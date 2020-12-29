@@ -55,8 +55,8 @@ OpenGLContext* UIEventListener::openglContext() { return mOpenGLContext; }
 OpenGLContext::OpenGLContext(int w, int h)
 {
   VL_DEBUG_SET_OBJECT_NAME()
-  mLeftFramebuffer  = new Framebuffer(this, w, h, RDB_BACK_LEFT, RDB_BACK_LEFT);
-  mRightFramebuffer = new Framebuffer(this, w, h, RDB_BACK_RIGHT, RDB_BACK_RIGHT);
+  mLeftFramebuffer  = new FramebufferObject(this, w, h, RDB_BACK_LEFT, RDB_BACK_LEFT);
+  mRightFramebuffer = new FramebufferObject(this, w, h, RDB_BACK_RIGHT, RDB_BACK_RIGHT);
 
   mDefaultVAO = 0;
 
@@ -98,12 +98,12 @@ OpenGLContext::~OpenGLContext()
   }
 }
 //-----------------------------------------------------------------------------
-ref<FramebufferObject> OpenGLContext::createFramebufferObject(int width, int height, EReadDrawBuffer draw_buffer, EReadDrawBuffer read_buffer)
+FramebufferObject* OpenGLContext::createFramebufferObject(int width, int height, EReadDrawBuffer draw_buffer, EReadDrawBuffer read_buffer)
 {
   makeCurrent();
   mFramebufferObject.push_back(new FramebufferObject(this, width, height, draw_buffer, read_buffer));
   mFramebufferObject.back()->createFBO();
-  return mFramebufferObject.back();
+  return mFramebufferObject.back().get();
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::destroyFramebufferObject(FramebufferObject* fbort)
@@ -1258,7 +1258,7 @@ void OpenGLContext::resetContextStates(EResetContextStates start_or_finish)
   if (globalSettings()->checkOpenGLStates())
     isCleanState(true);
 
-  VL_glBindFramebuffer(GL_FRAMEBUFFER, 0); VL_CHECK_OGL();
+  VL_glBindFramebuffer( GL_FRAMEBUFFER, 0 ); VL_CHECK_OGL();
 
   // not existing under OpenGL ES 1 and 2
 #if defined(VL_OPENGL)

@@ -15,6 +15,7 @@ project(EXAMPLES)
 
 if( VL_GUI_QT4_EXAMPLES OR
     VL_GUI_QT5_EXAMPLES OR
+    VL_GUI_QT6_EXAMPLES OR
     VL_GUI_MFC_EXAMPLES OR
     VL_GUI_WIN32_EXAMPLES OR
     VL_GUI_WXWIDGETS_EXAMPLES OR
@@ -110,6 +111,18 @@ if( VL_GUI_QT4_EXAMPLES OR
     add_executable(vlQt5_tests WIN32 Qt5_tests.cpp )
     target_link_libraries(vlQt5_tests VLApplets VLQt5 ${VL_LIBS_TESTS} Qt5::Widgets Qt5::OpenGL)
     VL_INSTALL_TARGET(vlQt5_tests)
+  endif()
+
+  if(VL_GUI_QT6_EXAMPLES)
+    # Example
+    add_executable(vlQt6_example WIN32 Qt6_example.cpp Applets/App_RotatingCube.hpp)
+    target_link_libraries(vlQt6_example VLQt6 ${VL_LIBS_EXAMPLE} Qt6::Widgets Qt6::OpenGLWidgets)
+    VL_INSTALL_TARGET(vlQt6_example)
+
+    # Tests
+    add_executable(vlQt6_tests WIN32 Qt6_tests.cpp )
+    target_link_libraries(vlQt6_tests VLApplets VLQt6 ${VL_LIBS_TESTS} Qt6::Widgets Qt6::OpenGLWidgets)
+    VL_INSTALL_TARGET(vlQt6_tests)
   endif()
 
   if (VL_GUI_WIN32_EXAMPLES)

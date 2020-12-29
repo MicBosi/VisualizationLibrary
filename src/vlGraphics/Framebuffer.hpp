@@ -44,7 +44,12 @@ namespace vl
   // Framebuffer
   //-----------------------------------------------------------------------------
   /** The Framebuffer class defines an abstract 'surface' where OpenGL can render into.
-   * \sa OpenGLContext::framebuffer() and FramebufferObject
+   *
+   * \sa
+   * - https://www.khronos.org/opengl/wiki/Framebuffer
+   * - https://www.khronos.org/opengl/wiki/Default_Framebuffer
+   * - https://www.khronos.org/opengl/wiki/Framebuffer_Object
+   * - OpenGLContext::framebuffer() and FramebufferObject
    */
   class VLGRAPHICS_EXPORT Framebuffer: public Object
   {
@@ -84,36 +89,9 @@ namespace vl
     virtual GLuint handle() const { return 0; }
 
     /** Activates the Framebuffer by calling bindFramebuffer() and bindDrawBuffers() */
-    void activate(EFramebufferBind target = FBB_FRAMEBUFFER)
-    {
-      bindFramebuffer(target);
-    }
+    void activate(EFramebufferBind target = FBB_FRAMEBUFFER)  { bindFramebuffer(target); }
 
-    /** 
-      * Calls glBindFramebuffer(target, 0) thus activating the the framebuffer 0, that is, the normal OpenGL buffers.
-      * \note This method is overridden in FramebufferObject in order to activate the appropriate framebuffer object.
-      */
-    virtual void bindFramebuffer(EFramebufferBind target = FBB_FRAMEBUFFER)
-    {
-      VL_CHECK_OGL()
-
-      // the base render target is the framebuffer 0, that is, the normal OpenGL buffers
-      VL_glBindFramebuffer(target, 0); VL_CHECK_OGL()
-
-#if defined(VL_OPENGL)
-      // bind draw buffers
-      if (target == FBB_FRAMEBUFFER || target == FBB_DRAW_FRAMEBUFFER) {
-        bindDrawBuffers();
-      }
-
-      // bind read buffer
-      if (target == FBB_FRAMEBUFFER || target == FBB_READ_FRAMEBUFFER) {
-        bindReadBuffer();
-      }
-#endif
-      
-      VL_CHECK_OGL()
-    }
+    virtual void bindFramebuffer( EFramebufferBind target = FBB_FRAMEBUFFER ) = 0;
 
     /** Binds to the currently active framebuffer object (including the 0 one) the read buffer specified by setReadBuffer(). */
     void bindReadBuffer();

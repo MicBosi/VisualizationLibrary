@@ -230,13 +230,13 @@ namespace vl
 
     // Unmaps a previously mapped BufferObject.
     // @return Returs true or false based on what's specified in the OpenGL specs:
-    // "UnmapBuffer returns TRUE unless data values in the buffer’s data store have
+    // "UnmapBuffer returns TRUE unless data values in the buffer's data store have
     // become corrupted during the period that the buffer was mapped. Such corruption
     // can be the result of a screen resolution change or other window system-dependent
     // event that causes system heaps such as those for high-performance graphics memory
     // to be discarded. GL implementations must guarantee that such corruption can
-    // occur only during the periods that a buffer’s data store is mapped. If such corruption
-    // has occurred, UnmapBuffer returns FALSE, and the contents of the buffer’s
+    // occur only during the periods that a buffer's data store is mapped. If such corruption
+    // has occurred, UnmapBuffer returns FALSE, and the contents of the buffer's
     // data store become undefined."
     bool unmapBufferObject()
     {

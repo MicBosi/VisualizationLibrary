@@ -102,6 +102,15 @@ if(VL_GUI_QT5_SUPPORT)
 	add_subdirectory("gui/vlQt5")
 endif()
 
+# Qt6
+option(VL_GUI_QT6_SUPPORT "Build Qt6 support" OFF)
+if(VL_GUI_QT6_SUPPORT)
+	# Instruct CMake to run moc automatically when needed.
+	set(CMAKE_AUTOMOC ON)
+	find_package(Qt6 COMPONENTS OpenGLWidgets REQUIRED)
+	add_subdirectory("gui/vlQt6")
+endif()
+
 if(VL_PLATFORM_WINDOWS)
 	option(VL_GUI_WIN32_SUPPORT "Build Win32 support" OFF)
 endif()
@@ -160,6 +169,7 @@ cmake_dependent_option(VL_GUI_GLUT_EXAMPLES "Build GLUT examples" ON "VL_GUI_GLU
 cmake_dependent_option(VL_GUI_GLFW_EXAMPLES "Build GLFW examples" ON "VL_GUI_GLFW_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_QT4_EXAMPLES "Build Qt4 examples" ON "VL_GUI_QT4_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_QT5_EXAMPLES "Build Qt5 examples" ON "VL_GUI_QT5_SUPPORT" OFF)
+cmake_dependent_option(VL_GUI_QT6_EXAMPLES "Build Qt6 examples" ON "VL_GUI_QT6_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_MFC_EXAMPLES "Build MFC examples" ON "VL_GUI_MFC_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_WIN32_EXAMPLES "Build win32 examples" ON "VL_GUI_WIN32_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_SDL_EXAMPLES "Build SDL examples" ON "VL_GUI_SDL_SUPPORT" OFF)

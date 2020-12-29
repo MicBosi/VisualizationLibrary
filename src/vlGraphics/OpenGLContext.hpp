@@ -34,7 +34,7 @@
 
 #include <vlCore/Object.hpp>
 #include <vlGraphics/UIEventListener.hpp>
-#include <vlGraphics/FramebufferObject.hpp> // Framebuffer and FramebufferObject
+#include <vlGraphics/FramebufferObject.hpp>
 #include <vlGraphics/RenderState.hpp>
 #include <vlGraphics/NaryQuickMap.hpp>
 #include <vlGraphics/GLSL.hpp>
@@ -179,39 +179,41 @@ namespace vl
     void* getProcAddress(const char* function_name);
 
     //! The render target representing the default left framebuffer.
-    //! It's basically just a Framebuffer with both draw-buffer and read-buffer set to RDB_BACK_LEFT by default.
-    //! The returned Framebuffer's dimensions will be automatically updated to the OpenGLContext's dimensions.
-    Framebuffer* leftFramebuffer() { return mLeftFramebuffer.get(); }
+    //! It's basically just a FramebufferObject with both draw-buffer and read-buffer set to RDB_BACK_LEFT by default.
+    //! The returned FramebufferObject's dimensions will be automatically updated to the OpenGLContext's dimensions.
+    FramebufferObject* leftFramebuffer() { return mLeftFramebuffer.get(); }
 
     //! The render target representing the default left framebuffer.
-    //! It's basically just a Framebuffer with both draw-buffer and read-buffer set to RDB_BACK_LEFT by default.
-    //! The returned Framebuffer's dimensions will be automatically updated to the OpenGLContext's dimensions.
-    const Framebuffer* leftFramebuffer() const { return mLeftFramebuffer.get(); }
+    //! It's basically just a FramebufferObject with both draw-buffer and read-buffer set to RDB_BACK_LEFT by default.
+    //! The returned FramebufferObject's dimensions will be automatically updated to the OpenGLContext's dimensions.
+    const FramebufferObject* leftFramebuffer() const { return mLeftFramebuffer.get(); }
 
     //! The render target representing the default right framebuffer (if a stereo OpenGL context is present).
-    //! It's basically just a Framebuffer with both draw-buffer and read-buffer set to RDB_BACK_RIGHT by default.
-    //! The returned Framebuffer's dimensions will be automatically updated to the OpenGLContext's dimensions.
-    Framebuffer* rightFramebuffer() { return mRightFramebuffer.get(); }
+    //! It's basically just a FramebufferObject with both draw-buffer and read-buffer set to RDB_BACK_RIGHT by default.
+    //! The returned FramebufferObject's dimensions will be automatically updated to the OpenGLContext's dimensions.
+    FramebufferObject* rightFramebuffer() { return mRightFramebuffer.get(); }
 
     //! The render target representing the default right framebuffer (if a stereo OpenGL context is present).
-    //! It's basically just a Framebuffer with both draw-buffer and read-buffer set to RDB_BACK_RIGHT by default.
-    //! The returned Framebuffer's dimensions will be automatically updated to the OpenGLContext's dimensions.
-    const Framebuffer* rightFramebuffer() const { return mRightFramebuffer.get(); }
+    //! It's basically just a FramebufferObject with both draw-buffer and read-buffer set to RDB_BACK_RIGHT by default.
+    //! The returned FramebufferObject's dimensions will be automatically updated to the OpenGLContext's dimensions.
+    const FramebufferObject* rightFramebuffer() const { return mRightFramebuffer.get(); }
 
     //! The default render target (always returns leftFramebuffer()).
-    //! The returned Framebuffer's dimensions will be automatically updated to the OpenGLContext's dimensions.
-    Framebuffer* framebuffer() { return leftFramebuffer(); }
+    //! The returned FramebufferObject's dimensions will be automatically updated to the OpenGLContext's dimensions.
+    FramebufferObject* framebuffer() { return leftFramebuffer(); }
 
     //! The default render target (always returns leftFramebuffer()).
-    //! The returned Framebuffer's dimensions will be automatically updated to the OpenGLContext's dimensions.
-    const Framebuffer* framebuffer() const { return leftFramebuffer(); }
+    //! The returned FramebufferObject's dimensions will be automatically updated to the OpenGLContext's dimensions.
+    const FramebufferObject* framebuffer() const { return leftFramebuffer(); }
 
     //! Equivalent to \p "createFramebufferObject(0,0);".
-    ref<FramebufferObject> createFramebufferObject() { return createFramebufferObject(0,0); }
+    FramebufferObject* createFramebufferObject() { return createFramebufferObject(0,0); }
 
-    //! Creates a new FramebufferObject (framebuffer object Framebuffer).
+    //! Creates a new FramebufferObject (framebuffer object FramebufferObject).
     //! \note A framebuffer object always belongs to an OpenGL context and in order to render on it the appropriate OpenGL context must be active.
-    ref<FramebufferObject> createFramebufferObject(int width, int height,
+    FramebufferObject* createFramebufferObject(
+      int width, 
+      int height,
       EReadDrawBuffer draw_buffer=RDB_COLOR_ATTACHMENT0,
       EReadDrawBuffer read_buffer=RDB_COLOR_ATTACHMENT0);
 
@@ -578,8 +580,8 @@ namespace vl
     const fvec4& vertexAttribValue(int i) const { VL_CHECK(i<VA_MaxAttribCount); return mVertexAttribValue[i]; }
 
   protected:
-    ref<Framebuffer> mLeftFramebuffer;
-    ref<Framebuffer> mRightFramebuffer;
+    ref<FramebufferObject> mLeftFramebuffer;
+    ref<FramebufferObject> mRightFramebuffer;
     std::vector< ref<FramebufferObject> > mFramebufferObject;
     std::vector< ref<UIEventListener> > mEventListeners;
     std::set<EKey> mKeyboard;
