@@ -1195,9 +1195,10 @@ void TextureImageUnit::apply(int index, const Camera*, OpenGLContext* ctx) const
     // track currently used texture target
     ctx->setTexUnitBinding( index, texture()->dimension() );
 
-    // texture parameters
-    if ( texture()->getTexParameter()->dirty() )
+    // texture parameters - set them only once when we detect a change since they are bound the texture object not the texture image unit
+    if ( texture()->getTexParameter()->dirty() ) {
       texture()->getTexParameter()->apply( texture()->dimension(), ctx );
+    }
   }
 }
 //-----------------------------------------------------------------------------
