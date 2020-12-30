@@ -45,6 +45,7 @@ namespace vl
   {
   public:
     typedef T_Scalar scalar_type;
+    typedef T_Scalar* scalar_ptr_type;
     static const int scalar_count = 4;
     Vector4(const Vector4& other) { *this = other; }
     Vector4() { x() = y() = z() = w() = 0; }
@@ -58,18 +59,19 @@ namespace vl
       w() = (T_Scalar)other.w();
     }
 
+    template<>
+    explicit Vector4(const scalar_ptr_type& pval)
+    {
+      mScalar[0] = pval[0];
+      mScalar[1] = pval[1];
+      mScalar[2] = pval[2];
+      mScalar[3] = pval[3];
+    }
+
     explicit Vector4(T_Scalar val)
     {
       mScalar[0] = mScalar[1] = mScalar[2] = mScalar[3] = val;
     }
-
-    //explicit Vector4(const T_Scalar* pval)
-    //{
-    //  mScalar[0] = pval[0];
-    //  mScalar[1] = pval[1];
-    //  mScalar[2] = pval[2];
-    //  mScalar[3] = pval[3];
-    //}
 
     explicit Vector4(T_Scalar x, T_Scalar y, T_Scalar z, T_Scalar w)
     {
