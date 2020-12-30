@@ -37,7 +37,6 @@
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/RenderQueue.hpp>
 #include <vlGraphics/Renderer.hpp>
-#include <vlGraphics/Framebuffer.hpp>
 #include <vlGraphics/Camera.hpp>
 #include <vlGraphics/SceneManager.hpp>
 #include <vlCore/Transform.hpp>

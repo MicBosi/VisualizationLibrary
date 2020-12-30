@@ -121,13 +121,13 @@ namespace vl
     }
 
     /** The render-target used as source during blitting. */
-    void setReadFramebuffer(Framebuffer* fbo) { mReadFramebuffer = fbo; }
+    void setReadFramebuffer(FramebufferObject* fbo) { mReadFramebuffer = fbo; }
 
     /** The render-target used as source during blitting. */
-    const Framebuffer* readFramebuffer() const { return mReadFramebuffer.get(); }
+    const FramebufferObject* readFramebuffer() const { return mReadFramebuffer.get(); }
 
     /** The render-target used as source during blitting. */
-    Framebuffer* readFramebuffer() { return mReadFramebuffer.get(); }
+    FramebufferObject* readFramebuffer() { return mReadFramebuffer.get(); }
 
     /** The read-buffer of the read-render-target used as pixel source during blitting. */
     void setReadBuffer(EReadDrawBuffer read_buffer) { mReadBuffer = read_buffer; }
@@ -136,13 +136,13 @@ namespace vl
     EReadDrawBuffer readBuffer() const { return mReadBuffer; }
 
     /** The render-target used as destination during blitting. */
-    void setDrawFramebuffer(Framebuffer* fbo) { mDrawFramebuffer = fbo; }
+    void setDrawFramebuffer(FramebufferObject* fbo) { mDrawFramebuffer = fbo; }
 
     /** The render-target used as destination during blitting. */
-    const Framebuffer* drawFramebuffer() const { return mDrawFramebuffer.get(); }
+    const FramebufferObject* drawFramebuffer() const { return mDrawFramebuffer.get(); }
 
     /** The render-target used as destination during blitting. */
-    Framebuffer* drawFramebuffer() { return mDrawFramebuffer.get(); }
+    FramebufferObject* drawFramebuffer() { return mDrawFramebuffer.get(); }
 
     void setSrcRect(int x0, int y0, int x1, int y1)
     {
@@ -171,8 +171,8 @@ namespace vl
     bool linearFilteringEnabled() const { return mLinearFilteringEnabled; }
 
   protected:
-    ref<Framebuffer> mReadFramebuffer;
-    ref<Framebuffer> mDrawFramebuffer;
+    ref<FramebufferObject> mReadFramebuffer;
+    ref<FramebufferObject> mDrawFramebuffer;
     int mSrcRect[4];
     int mDstRect[4];
     int mBufferMask;

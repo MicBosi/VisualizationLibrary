@@ -68,10 +68,10 @@ namespace vl
     int occlusionThreshold() const { return mOcclusionThreshold; }
 
     /** Returns the wrapped Renderer's Framebuffer */
-    const Framebuffer* framebuffer() const;
+    const FramebufferObject* framebuffer() const;
 
     /** Returns the wrapped Renderer's Framebuffer */
-    Framebuffer* framebuffer();
+    FramebufferObject* framebuffer();
 
     /** Returns the total number or objects candidate for rendering before occlusion culling. */
     int statsTotalObjects() const { return mStatsTotalObjects; }

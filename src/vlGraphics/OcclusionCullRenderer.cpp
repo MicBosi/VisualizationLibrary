@@ -130,7 +130,7 @@ void OcclusionCullRenderer::setWrappedRenderer(Renderer* renderer)
   mWrappedRenderer = renderer; 
 }
 //-----------------------------------------------------------------------------
-const Framebuffer* OcclusionCullRenderer::framebuffer() const
+const FramebufferObject* OcclusionCullRenderer::framebuffer() const
 {
   if (mWrappedRenderer)
     return mWrappedRenderer->framebuffer();
@@ -138,7 +138,7 @@ const Framebuffer* OcclusionCullRenderer::framebuffer() const
     return NULL;
 }
 //-----------------------------------------------------------------------------
-Framebuffer* OcclusionCullRenderer::framebuffer()
+FramebufferObject* OcclusionCullRenderer::framebuffer()
 {
   if (mWrappedRenderer)
     return mWrappedRenderer->framebuffer();

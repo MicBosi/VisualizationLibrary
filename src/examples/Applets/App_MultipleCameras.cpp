@@ -47,7 +47,7 @@ public:
 
     // save to be used later
     ref<Renderer> renderer = rendering()->as<Rendering>()->renderer();
-    ref<Framebuffer> framebuffer = rendering()->as<Rendering>()->renderer()->framebuffer();
+    ref<FramebufferObject> framebuffer = rendering()->as<Rendering>()->renderer()->framebuffer();
     // install new rendering tree
     mRenderingTree = new RenderingTree;
     setRendering(mRenderingTree.get());

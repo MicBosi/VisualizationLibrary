@@ -80,10 +80,10 @@ namespace vl
     virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, real frame_clock) = 0;
 
     /** The Framebuffer on which the rendering is performed. */
-    virtual const Framebuffer* framebuffer() const = 0;
+    virtual const FramebufferObject* framebuffer() const = 0;
 
     /** The Framebuffer on which the rendering is performed. */
-    virtual Framebuffer* framebuffer() = 0;
+    virtual FramebufferObject* framebuffer() = 0;
 
     /** Dispatches the onRendererStarted() event to the registered RenderEventCallback objects. */
     void dispatchOnRendererStarted()

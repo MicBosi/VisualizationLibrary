@@ -68,10 +68,8 @@ void FlatManipulator::mouseDownEvent(EMouseButton btn, int x, int y)
     {//we need world pixel size only in translation mode
         mMode = TranslationMode;
         //now let's find the pixel size, assuming an orthographic projection
-        mPixelSize.x() = 2.0/camera()->projectionMatrix().e(0,0)/
-                            camera()->viewport()->width();
-        mPixelSize.y() =  2.0/camera()->projectionMatrix().e(1,1)/
-                            camera()->viewport()->height();
+        mPixelSize.x() = vec2::scalar_type( 2.0 / camera()->projectionMatrix().e( 0, 0 ) / camera()->viewport()->width() );
+        mPixelSize.y() = vec2::scalar_type( 2.0 / camera()->projectionMatrix().e( 1, 1 ) / camera()->viewport()->height() );
     }
     else
     if (btn == zoomButton())
@@ -96,7 +94,7 @@ void FlatManipulator::mouseMoveEvent(int x, int y)
 
     if (mode() == ZoomMode)
     {
-        float scale = 1.0-(y - mMouseStart.y())*zoomSpeed()/100.0;
+      float scale = 1.0f - ( y - mMouseStart.y() ) * zoomSpeed() / 100.0f;
         camera()->setViewMatrix(
                         mat4::getScaling(scale, scale,1.0)*
                         camera()->viewMatrix());

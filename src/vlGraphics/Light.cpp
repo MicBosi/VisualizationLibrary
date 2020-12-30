@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vlGraphics/Light.hpp>
+#include <vlGraphics/OpenGL.hpp>
 #include <vlCore/Transform.hpp>
 #include <vlGraphics/Camera.hpp>
 #include <vlCore/Log.hpp>

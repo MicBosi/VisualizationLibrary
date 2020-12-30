@@ -541,9 +541,9 @@ namespace vl
    * - FBOTextureAttachment
    * - FBOTextureLayerAttachment
    */
-  class VLGRAPHICS_EXPORT FramebufferObject: public Framebuffer
+  class VLGRAPHICS_EXPORT FramebufferObject: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::FramebufferObject, Framebuffer)
+    VL_INSTRUMENT_CLASS(vl::FramebufferObject, Object)
 
     friend class OpenGLContext;
 
@@ -551,17 +551,27 @@ namespace vl
     void operator=( const FramebufferObject& ) {}
 
     FramebufferObject( const FramebufferObject& other ): 
-      Framebuffer( other ), 
+      Object( other ),
+      mOpenGLContext(0), 
+      mWidth(0), 
+      mHeight(0),
       mHandle( 0 ), 
       mExternallyManaged(false) 
-    {}
+    {
+      // setDrawBuffer(draw_buffer);
+      // setReadBuffer(read_buffer);
+    }
 
     FramebufferObject():
-      Framebuffer( NULL, 0, 0, RDB_COLOR_ATTACHMENT0, RDB_COLOR_ATTACHMENT0 ), 
+      mOpenGLContext(NULL), 
+      mWidth(0), 
+      mHeight(0),
       mHandle( 0 ), 
       mExternallyManaged( false )
     {
       VL_DEBUG_SET_OBJECT_NAME()
+      setDrawBuffer(RDB_COLOR_ATTACHMENT0);
+      setReadBuffer(RDB_COLOR_ATTACHMENT0);
     }
 
     FramebufferObject( OpenGLContext* ctx, 
@@ -569,16 +579,98 @@ namespace vl
                        int h,
                        EReadDrawBuffer draw_buffer = RDB_COLOR_ATTACHMENT0,
                        EReadDrawBuffer read_buffer = RDB_COLOR_ATTACHMENT0 ):
-      Framebuffer( ctx, w, h, draw_buffer, read_buffer ), 
+      mOpenGLContext(ctx), 
+      mWidth(w), 
+      mHeight(h),
       mHandle( 0 ), 
       mExternallyManaged( false )
     {
       VL_DEBUG_SET_OBJECT_NAME()
+      setDrawBuffer(draw_buffer);
+      setReadBuffer(read_buffer);
     }
 
   public:
     /** Destructor. */
     ~FramebufferObject() { if (openglContext()) deleteFBO(); }
+
+    /** The OpenGLContext bound to a render target. */
+    OpenGLContext* openglContext() { return mOpenGLContext; }
+    
+    /** The OpenGLContext bound to a render target. */
+    const OpenGLContext* openglContext() const { return mOpenGLContext; }
+
+    /** The width of a render target. */
+    int width() const { return mWidth; }
+    
+    /** The height of a render target. */
+    int height() const { return mHeight; }
+    
+    /** The width of a render target. */
+    void setWidth(int width) { mWidth = width; }
+    
+    /** The height of a render target. */
+    void setHeight(int height) { mHeight = height; }
+
+    /** Activates the FramebufferObject by calling bindFramebuffer() and bindDrawBuffers() */
+    void activate(EFramebufferBind target = FBB_FRAMEBUFFER)  { bindFramebuffer(target); }
+
+    /** Binds to the currently active framebuffer object (including the 0 one) the read buffer specified by setReadBuffer(). */
+    void bindReadBuffer();
+
+    /** Binds to the currently active framebuffer object (including the 0 one) the draw buffers specified by setDrawBuffers(). */
+    void bindDrawBuffers() const;
+
+    /** Returns \p true if the draw buffers bound to this render target are legal for this render target type. */
+    bool checkDrawBuffers() const;
+
+    /** Specifies the color buffer to be drawn into. */
+    void setDrawBuffer(EReadDrawBuffer draw_buffer)
+    {
+      mDrawBuffers.clear();
+      mDrawBuffers.push_back(draw_buffer);
+    }
+
+    /** Specifies a list of color buffers to be drawn into. */
+    void setDrawBuffers(EReadDrawBuffer draw_buffer1, EReadDrawBuffer draw_buffer2)
+    {
+      mDrawBuffers.clear();
+      mDrawBuffers.push_back(draw_buffer1);
+      mDrawBuffers.push_back(draw_buffer2);
+    }
+
+    /** Specifies a list of color buffers to be drawn into. */
+    void setDrawBuffers(EReadDrawBuffer draw_buffer1, EReadDrawBuffer draw_buffer2, EReadDrawBuffer draw_buffer3)
+    {
+      mDrawBuffers.clear();
+      mDrawBuffers.push_back(draw_buffer1);
+      mDrawBuffers.push_back(draw_buffer2);
+      mDrawBuffers.push_back(draw_buffer3);
+    }
+
+    /** Specifies a list of color buffers to be drawn into. */
+    void setDrawBuffers(EReadDrawBuffer draw_buffer1, EReadDrawBuffer draw_buffer2, EReadDrawBuffer draw_buffer3, EReadDrawBuffer draw_buffer4)
+    {
+      mDrawBuffers.clear();
+      mDrawBuffers.push_back(draw_buffer1);
+      mDrawBuffers.push_back(draw_buffer2);
+      mDrawBuffers.push_back(draw_buffer3);
+      mDrawBuffers.push_back(draw_buffer4);
+    }
+
+    /** Specifies a list of color buffers to be drawn into. */
+    void setDrawBuffers(const std::vector< EReadDrawBuffer >& draw_buffers) { mDrawBuffers = draw_buffers; }
+
+    /** The color buffers to be drawn into. */
+    const std::vector< EReadDrawBuffer >& drawBuffers() { return mDrawBuffers; }
+
+    /** The read-buffer bound when the render target is activated. */
+    EReadDrawBuffer readBuffer() const { return mReadBuffer; }
+    
+    /** The read-buffer bound when the render target is activated. */
+    void setReadBuffer(EReadDrawBuffer read_buffer) { mReadBuffer = read_buffer; }
+
+    // ---------- FramebufferObject proper functions ----------
 
     /**
      * Creates a framebuffer object by calling glGenFramebuffers().
@@ -658,6 +750,12 @@ namespace vl
     void setExternallyManaged( bool em ) { mExternallyManaged = em; }
 
   public:
+    std::vector< EReadDrawBuffer > mDrawBuffers;
+    EReadDrawBuffer mReadBuffer;
+    OpenGLContext* mOpenGLContext;
+    int mWidth;
+    int mHeight;
+
     std::map< EAttachmentPoint, ref<FBOAbstractAttachment> > mFBOAttachments;
     GLuint mHandle;
     bool mExternallyManaged;

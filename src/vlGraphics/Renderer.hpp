@@ -32,6 +32,7 @@
 #ifndef Renderer_INCLUDE_ONCE
 #define Renderer_INCLUDE_ONCE
 
+#include <vlGraphics/FramebufferObject.hpp>
 #include <vlGraphics/RendererAbstract.hpp>
 #include <vlGraphics/ProjViewTransfCallback.hpp>
 #include <vlGraphics/Shader.hpp>
@@ -93,16 +94,16 @@ namespace vl
     bool isEnabled(const Actor* actor) { return actor->isEnabled() && (actor->enableMask() & mEnableMask) != 0; }
 
     /** The Framebuffer on which the rendering is performed. */
-    void setFramebuffer(Framebuffer* framebuffer) { mFramebuffer = framebuffer; }
+    void setFramebuffer(FramebufferObject* framebuffer) { mFramebuffer = framebuffer; }
 
     /** The Framebuffer on which the rendering is performed. */
-    const Framebuffer* framebuffer() const { return mFramebuffer.get(); }
+    const FramebufferObject* framebuffer() const { return mFramebuffer.get(); }
 
     /** The Framebuffer on which the rendering is performed. */
-    Framebuffer* framebuffer() { return mFramebuffer.get(); }
+    FramebufferObject* framebuffer() { return mFramebuffer.get(); }
 
   protected:
-    ref<Framebuffer> mFramebuffer;
+    ref<FramebufferObject> mFramebuffer;
 
     // used to reset the OpenGL states & enables at the end of the rendering.
     vl::ref<EnableSet> mDummyEnables;
