@@ -65,7 +65,7 @@ ref<Geometry> Extrusion::extrude()
 
   ref<Geometry> geom = new Geometry;
 
-  size_t segments = positionPath().size()-2;
+  int segments = int(positionPath().size()-2);
 
   std::vector<fvec3> verts;
   verts.resize( silhouette().size() * segments );
@@ -142,7 +142,7 @@ ref<Geometry> Extrusion::extrude()
   ref<DrawElementsUInt> de = new DrawElementsUInt(PT_QUADS);
   geom->drawCalls().push_back(de.get());
   de->indexBuffer()->resize(4 * prof_count * (segments-1));
-  for(size_t iseg=0; iseg<segments-1; ++iseg)
+  for(int iseg=0; iseg<segments-1; ++iseg)
   {
     for(int iquad=0; iquad<prof_count; ++iquad)
     {
@@ -160,7 +160,7 @@ ref<Geometry> Extrusion::extrude()
 
   if(fillBottom())
   {
-    size_t start = verts.size();
+    int start = int(verts.size());
     Tessellator tessellator;
     tessellator.contours().push_back((int)silhouette().size());
     for(unsigned i=0; i<silhouette().size(); ++i)
@@ -170,14 +170,14 @@ ref<Geometry> Extrusion::extrude()
     for(unsigned i=0; i<tessellator.tessellatedTris().size(); ++i)
       verts.push_back(tessellator.tessellatedTris()[i]);
     if (tessellator.tessellatedTris().size())
-      geom->drawCalls().push_back( new DrawArrays(PT_TRIANGLES, start, tessellator.tessellatedTris().size()) );
+      geom->drawCalls().push_back( new DrawArrays(PT_TRIANGLES, start, (int)tessellator.tessellatedTris().size()) );
     tess_bottom_count = tessellator.tessellatedTris().size();
   }
   if(fillTop())
   {
-    size_t start = verts.size();
+    int start = int(verts.size());
     Tessellator tessellator;
-    tessellator.contours().push_back(silhouette().size());
+    tessellator.contours().push_back((int)silhouette().size());
     for(unsigned i=0; i<silhouette().size(); ++i)
       tessellator.contourVerts().push_back((dvec3)verts[verts.size()-i-1-tess_bottom_count]);
     tessellator.setWindingRule(vl::TW_TESS_WINDING_NONZERO);
@@ -185,7 +185,7 @@ ref<Geometry> Extrusion::extrude()
     for(unsigned i=0; i<tessellator.tessellatedTris().size(); ++i)
       verts.push_back(tessellator.tessellatedTris()[i]);
     if (tessellator.tessellatedTris().size())
-      geom->drawCalls().push_back( new DrawArrays(PT_TRIANGLES, start, tessellator.tessellatedTris().size()) );
+      geom->drawCalls().push_back( new DrawArrays(PT_TRIANGLES, start, (int)tessellator.tessellatedTris().size()) );
     tess_top_count = tessellator.tessellatedTris().size();
   }
 

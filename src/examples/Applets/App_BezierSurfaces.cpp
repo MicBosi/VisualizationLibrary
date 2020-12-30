@@ -204,7 +204,7 @@ public:
     else
     if(key == Key_Space)
     {
-      if (sceneManager()->tree()->actors()->find(mCtrlPoints_Actor.get()) == -1)
+      if (sceneManager()->tree()->actors()->find(mCtrlPoints_Actor.get()) == Collection<void>::not_found)
         sceneManager()->tree()->actors()->push_back(mCtrlPoints_Actor.get());
       else
         sceneManager()->tree()->actors()->erase(mCtrlPoints_Actor.get());

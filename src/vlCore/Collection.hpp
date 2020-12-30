@@ -51,6 +51,9 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::Collection<T>, Object)
 
   public:
+    const static size_t not_found = size_t( -1 );
+
+  public:
     Collection(const std::vector< ref<T> >& vector)
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -77,9 +80,9 @@ namespace vl
 
     void pop_back() { mVector.pop_back(); }
 
-    void resize(int size) { mVector.resize(size); }
+    void resize(size_t size) { mVector.resize(size); }
 
-    int size() const { return (int)mVector.size(); }
+    size_t size() const { return mVector.size(); }
 
     bool empty() const { return mVector.empty(); }
 
@@ -89,17 +92,17 @@ namespace vl
 
     T* back() { return mVector.back().get(); }
 
-    void reserve(int capacity) { mVector.reserve(capacity); }
+    void reserve(size_t capacity) { mVector.reserve(capacity); }
 
-    int capacity() const { return (int)mVector.capacity(); }
+    size_t capacity() const { return mVector.capacity(); }
 
-    const ref<T>& operator[](int i) const { return mVector[i]; }
+    const ref<T>& operator[](size_t i) const { return mVector[i]; }
 
-    ref<T>& operator[](int i) { return mVector[i]; }
+    ref<T>& operator[](size_t i) { return mVector[i]; }
 
-    const T* at(int i) const { return mVector[i].get(); }
+    const T* at(size_t i) const { return mVector[i].get(); }
 
-    T* at(int i) { return mVector[i].get(); }
+    T* at(size_t i) { return mVector[i].get(); }
 
     void swap(Collection& other) { mVector.swap(other.mVector); }
 
@@ -110,13 +113,13 @@ namespace vl
       std::sort(mVector.begin(), mVector.end(), less);
     }
 
-    int find(T* obj) const
+    size_t find(T* obj) const
     {
       typename std::vector< ref<T> >::const_iterator pos = std::find(mVector.begin(), mVector.end(), obj);
       if (pos == mVector.end())
-        return -1;
+        return size_t(-1);
       else
-        return (int)(pos - mVector.begin());
+        return (size_t)(pos - mVector.begin());
     }
 
     void shrink()
@@ -129,7 +132,7 @@ namespace vl
       mVector.insert(mVector.end(), objs.mVector.begin(), objs.mVector.end());
     }
 
-    void insert(int start, const Collection<T>& objs )
+    void insert(size_t start, const Collection<T>& objs )
     {
       mVector.insert(mVector.begin()+start, objs.mVector.begin(), objs.mVector.end());
     }
@@ -139,14 +142,14 @@ namespace vl
       mVector = objs.mVector;
     }
 
-    void erase(int start, int count)
+    void erase(size_t start, size_t count)
     {
       mVector.erase(mVector.begin()+start, mVector.begin()+start+count);
     }
 
-    void set(int index, T* obj) { mVector[index] = obj; }
+    void set(size_t index, T* obj) { mVector[index] = obj; }
 
-    void insert(int index, T* obj) { mVector.insert(mVector.begin() + index, obj); }
+    void insert(size_t index, T* obj) { mVector.insert(mVector.begin() + index, obj); }
 
     void erase(const T* data)
     {
@@ -156,7 +159,7 @@ namespace vl
 
     }
 
-    void eraseAt(int index) { mVector.erase(mVector.begin()+index); }
+    void eraseAt(size_t index) { mVector.erase(mVector.begin()+index); }
 
     const std::vector< ref<T> >& vector() const { return mVector; }
 

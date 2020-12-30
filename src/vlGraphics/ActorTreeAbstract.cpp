@@ -106,8 +106,8 @@ void ActorTreeAbstract::extractVisibleActors(ActorCollection& list, const Camera
 //-----------------------------------------------------------------------------
 ActorTreeAbstract* ActorTreeAbstract::eraseActor(Actor* actor)
 {
-  int pos = actors()->find(actor);
-  if (pos != -1)
+  size_t pos = actors()->find(actor);
+  if (pos != Collection<void>::not_found)
   {
     actors()->eraseAt(pos);
     return this;
