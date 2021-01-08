@@ -59,7 +59,6 @@ namespace vl
       w() = (T_Scalar)other.w();
     }
 
-    template<>
     explicit Vector4(const scalar_ptr_type& pval)
     {
       mScalar[0] = pval[0];

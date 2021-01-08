@@ -232,9 +232,9 @@ namespace vl
     const Collection<VolumeInfo>* volumeInfo() const { return &mVolumeInfo; }
     Collection<VolumeInfo>* volumeInfo() { return &mVolumeInfo; }
 
-    void updateColor(const fvec3& color, int volume_index);
-    void updateColor(const fvec4& color, int volume_index);
-    void updateAlpha(float alpha, int volume_index);
+    void updateColor(const fvec3& color, size_t volume_index);
+    void updateColor(const fvec4& color, size_t volume_index);
+    void updateAlpha(float alpha, size_t volume_index);
 
     //! Select hight quality normals for best rendering quality, select low quality normals for best performances.
     void setHighQualityNormals(bool hq) { mHighQualityNormals = hq; }

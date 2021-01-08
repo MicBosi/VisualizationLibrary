@@ -66,7 +66,7 @@ bool Portal::computeNormal()
 AABB Sector::computeBoundingBox()
 {
   AABB aabb;
-  for(int i=0; i<actors()->size(); ++i)
+  for(size_t i=0; i<actors()->size(); ++i)
   {
     actors()->at(i)->computeBounds();
     aabb += actors()->at(i)->boundingBox();
@@ -129,7 +129,7 @@ void SceneManagerPortals::renderPortal(Portal* portal)
 void SceneManagerPortals::extractActors(ActorCollection& list)
 {
   for(unsigned i=0; i<mSectors.size(); ++i)
-    for(int j=0; j<mSectors[i]->actors()->size(); ++j)
+    for(size_t j=0; j<mSectors[i]->actors()->size(); ++j)
       list.push_back( mSectors[i]->actors()->at(j) );
 }
 //-----------------------------------------------------------------------------
@@ -164,7 +164,7 @@ void SceneManagerPortals::extractVisibleActors(ActorCollection& list, const Came
 void SceneManagerPortals::visitSector(Sector* prev, Sector* sector, const vec3& eye, const Camera* camera)
 {
   // this sector is visible so we add the visible objects
-  for(int j=0; j<sector->actors()->size(); ++j)
+  for(size_t j=0; j<sector->actors()->size(); ++j)
   {
     if (isEnabled(sector->actors()->at(j)))
     {

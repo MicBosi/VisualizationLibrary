@@ -123,7 +123,7 @@ namespace vl
       {
         // create local shallow copies of all the Shaders
         for(int lod=0; lod<VL_MAX_EFFECT_LOD; ++lod)
-          for(int pass=0; mLODShaders[lod] && pass<mLODShaders[lod]->size(); ++pass)
+          for(size_t pass=0; mLODShaders[lod] && pass<mLODShaders[lod]->size(); ++pass)
             (*mLODShaders[lod])[pass] = (*mLODShaders[lod])[pass]->shallowCopy();
       }
 
@@ -149,7 +149,7 @@ namespace vl
 
       // create local clones of all the Shaders
       for(int lod=0; lod<VL_MAX_EFFECT_LOD; ++lod)
-        for(int pass=0; mLODShaders[lod] && pass<mLODShaders[lod]->size(); ++pass)
+        for(size_t pass=0; mLODShaders[lod] && pass<mLODShaders[lod]->size(); ++pass)
           (*mLODShaders[lod])[pass] = (*mLODShaders[lod])[pass]->deepCopy();
 
       return *this;

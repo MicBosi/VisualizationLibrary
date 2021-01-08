@@ -69,7 +69,7 @@ void Geometry::computeBounds_Implementation()
   }
 
   AABB aabb;
-  for(int i=0; i<drawCalls().size(); ++i)
+  for(size_t i=0; i<drawCalls().size(); ++i)
   {
     for(IndexIterator iit = drawCalls().at(i)->indexIterator(); iit.hasNext(); iit.next())
     {
@@ -79,7 +79,7 @@ void Geometry::computeBounds_Implementation()
 
   real radius = 0, r = 0;
   vec3 center = aabb.center();
-  for(int i=0; i<drawCalls().size(); ++i)
+  for(size_t i=0; i<drawCalls().size(); ++i)
   {
     for(IndexIterator iit = drawCalls().at(i)->indexIterator(); iit.hasNext(); iit.next())
     {
@@ -117,7 +117,7 @@ Geometry& Geometry::deepCopyFrom(const Geometry& other)
 
   // primitives
   mDrawCalls.clear();
-  for(int i=0; i<other.mDrawCalls.size(); ++i) {
+  for(size_t i=0; i<other.mDrawCalls.size(); ++i) {
     mDrawCalls.push_back( other.mDrawCalls[i]->clone().get() );
   }
 
@@ -372,7 +372,7 @@ void Geometry::updateDirtyBufferObject(EBufferObjectUpdateMode mode)
     }
   }
 
-  for(int i=0; i<drawCalls().size(); ++i)
+  for(size_t i=0; i<drawCalls().size(); ++i)
     drawCalls().at(i)->updateDirtyBufferObject(mode);
 }
 //-----------------------------------------------------------------------------
@@ -1020,7 +1020,7 @@ void Geometry::makeGLESFriendly()
   shrinkDrawCalls();
 
   // check primitive type is supported by OpenGL ES
-  for(int i=0; i<drawCalls().size(); ++i)
+  for(size_t i=0; i<drawCalls().size(); ++i)
   {
     DrawCall* dc = drawCalls().at(i);
     // check supported primitive types
@@ -1069,7 +1069,7 @@ bool Geometry::sortVertices()
   std::vector< ref<DrawElementsUInt> > de_u32_set;
 
   // collect DrawElements
-  for(int i=0; i<drawCalls().size(); ++i)
+  for(size_t i=0; i<drawCalls().size(); ++i)
   {
     DrawCall* dc = drawCalls().at(i);
     if (dc->primitiveRestartEnabled())
@@ -1177,7 +1177,7 @@ void Geometry::colorizePrimitives()
 
   setColorArray( col.get() );
 
-  for(int i=0; i<drawCalls().size(); ++i)
+  for(size_t i=0; i<drawCalls().size(); ++i)
   {
     fvec4 c;
     c.r() = rand()%100 / 99.0f;

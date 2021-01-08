@@ -52,7 +52,7 @@ void RenderingTree::render()
     return;
 
   dispatchOnRenderingStarted();
-  for(int i=0; i<subRenderings()->size(); ++i)
+  for(size_t i=0; i<subRenderings()->size(); ++i)
   {
     // dispatch update time
     subRenderings()->at(i)->setFrameClock( frameClock() );

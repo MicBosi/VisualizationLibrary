@@ -50,6 +50,9 @@ namespace vl
     //! Constructor.
     RenderingAbstract();
 
+    //! Copy Constructor
+    RenderingAbstract(const RenderingAbstract&) = default;
+
     /** Executes the rendering. */
     virtual void render() = 0;
 

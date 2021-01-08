@@ -70,6 +70,8 @@ namespace vl
     }
     Bond(const Bond& other): Object(other) { *this = other; }
 
+    Bond& operator=(const Bond& other) = default;
+
     unsigned int id() const { return mId; }
     void setId(unsigned int id) { mId = id; }
 

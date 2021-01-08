@@ -211,7 +211,7 @@ ref<Geometry> Extrusions::extrude( bool compatibilityProfile )
       geom->setVertexAttribArray( VA_Color, col_array.get() );
     col_array->resize( geom->vertexArray()->size() );
     int offs = 0;
-    for ( size_t iseg = 0; iseg < segments; ++iseg )
+    for ( int iseg = 0; iseg < segments; ++iseg )
     {
       for ( unsigned j = 0; j < silhouette().size(); ++j, ++offs )
         col_array->at( offs ) = colorPath()[ iseg ];

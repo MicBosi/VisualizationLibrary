@@ -258,7 +258,7 @@ void DoubleVertexRemover::removeDoubles(Geometry* geom)
   // regenerate DrawCall
 
   std::vector< ref<DrawCall> > draw_cmd;
-  for(int idraw=0; idraw<geom->drawCalls().size(); ++idraw)
+  for(size_t idraw=0; idraw<geom->drawCalls().size(); ++idraw)
     draw_cmd.push_back( geom->drawCalls().at(idraw) );
   geom->drawCalls().clear();
 

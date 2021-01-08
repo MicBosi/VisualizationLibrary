@@ -82,7 +82,7 @@ void EdgeExtractor::extractEdges(Geometry* geom)
   std::set<Edge> edges;
 
   // iterate all primitives
-  for(int iprim=0; iprim<geom->drawCalls().size(); ++iprim)
+  for(size_t iprim=0; iprim<geom->drawCalls().size(); ++iprim)
   {
     DrawCall* prim = geom->drawCalls().at(iprim);
     // iterate triangles (if present)
@@ -172,7 +172,7 @@ bool EdgeExtractor::extractEdges(Actor* actor)
 //-----------------------------------------------------------------------------
 void EdgeExtractor::extractEdges(ActorCollection* actors)
 {
-  for(int i=0; i<actors->size(); ++i)
+  for(size_t i=0; i<actors->size(); ++i)
   {
     Geometry* geom = cast<Geometry>(actors->at(i)->lod(0));
     if (geom)
@@ -189,7 +189,7 @@ void EdgeExtractor::extractEdges(SceneManager* scene_manager)
 //-----------------------------------------------------------------------------
 void EdgeExtractor::extractEdges(Rendering* rendering)
 {
-  for(int i=0; i<rendering->sceneManagers()->size(); ++i) {
+  for(size_t i=0; i<rendering->sceneManagers()->size(); ++i) {
     extractEdges( rendering->sceneManagers()->at(i) );
   }
 }

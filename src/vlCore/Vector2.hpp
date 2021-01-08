@@ -110,7 +110,6 @@ namespace vl
       y() = (T_Scalar)other.y();
     }
 
-    template<>
     explicit Vector2(const scalar_ptr_type& pval)
     {
       mScalar[0] = pval[0];

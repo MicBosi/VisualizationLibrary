@@ -81,9 +81,9 @@ namespace vl
     virtual void extractActors(ActorCollection& queue)
     {
       int actor_rank = mActorRenderRankStart;
-      for(int i=0; i<vectorGraphicObjects()->size(); ++i)
+      for(size_t i=0; i<vectorGraphicObjects()->size(); ++i)
       {
-        for(int j=0; j<vectorGraphicObjects()->at(i)->actors()->size(); ++j)
+        for(size_t j=0; j<vectorGraphicObjects()->at(i)->actors()->size(); ++j)
         {
           vectorGraphicObjects()->at(i)->actors()->at(j)->setRenderRank( actor_rank++ );
           queue.push_back( vectorGraphicObjects()->at(i)->actors()->at(j) );

@@ -321,7 +321,7 @@ void MarchingCubes::run(bool generate_colors)
 
   /*Time time; time.start();*/
 
-  for(int ivol=0; ivol<mVolumeInfo.size(); ++ivol)
+  for(size_t ivol=0; ivol<mVolumeInfo.size(); ++ivol)
   {
     Volume* vol     = mVolumeInfo.at(ivol)->volume();
     float threshold = mVolumeInfo.at(ivol)->threshold();
@@ -395,7 +395,7 @@ void MarchingCubes::run(bool generate_colors)
   }
 }
 //------------------------------------------------------------------------------
-void MarchingCubes::updateColor(const fvec3& color, int volume_index)
+void MarchingCubes::updateColor(const fvec3& color, size_t volume_index)
 {
   if(volume_index>=mVolumeInfo.size())
   {
@@ -417,7 +417,7 @@ void MarchingCubes::updateColor(const fvec3& color, int volume_index)
   }
 }
 //------------------------------------------------------------------------------
-void MarchingCubes::updateColor(const fvec4& color, int volume_index)
+void MarchingCubes::updateColor(const fvec4& color, size_t volume_index)
 {
   if(volume_index>=mVolumeInfo.size())
   {
@@ -435,7 +435,7 @@ void MarchingCubes::updateColor(const fvec4& color, int volume_index)
     mColorArray->at(i) = color;
 }
 //------------------------------------------------------------------------------
-void MarchingCubes::updateAlpha(float alpha, int volume_index)
+void MarchingCubes::updateAlpha(float alpha, size_t volume_index)
 {
   if(volume_index>=mVolumeInfo.size())
   {
