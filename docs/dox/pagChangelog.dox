@@ -2,6 +2,16 @@
 
 \page pagChangelog Changelog
 
+<div class="featuretitle">Visualization Library 2.1</div>
+
+- Added Qt 6 support
+- Added wxWidgets 3.1 support
+- Added Vector2/3/4 constructor from T_Scalar*
+- Unified FramebufferObject and Framebuffer classes
+- Renamed TextureSampler to TextureImageUnit for better compliance with OpenGL language
+- Removed extraneous deprecated TexParameterOverride dead code
+- Various other compilation fixes and code cleanups
+
 <div class="featuretitle">Visualization Library 2.0</div>
 
 - Excluded external sources in documentation
