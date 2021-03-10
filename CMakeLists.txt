@@ -127,6 +127,7 @@ endif()
 # Required Dependencies
 
 if( VL_OPENGL_MODE STREQUAL "OPENGL")
+	set(OpenGL_GL_PREFERENCE GLVND)
 	find_package(OpenGL REQUIRED)
 	set(VL_OPENGL_LIBRARIES ${OPENGL_LIBRARIES})
 endif()

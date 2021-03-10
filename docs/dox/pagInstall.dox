@@ -84,6 +84,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
 include_directories(${VL_INCLUDE_DIRS})
 
 # find ${OPENGL_LIBRARIES} to be used later
+set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 
 # adds a new executable with sources
