@@ -425,6 +425,8 @@ namespace vl
       mString = new StringData(*other.mString);
       return *this;
     }
+#else 
+  String& operator=(const String& other) = default; // because copy constructor is defined, an operator= has to be too
 #endif
 
     bool operator==(const String& other) const

@@ -56,7 +56,7 @@ void SceneManager::computeBounds()
 
   AABB bbox;
   bbox.setNull();
-  for(int i=0; i<actors.size(); ++i)
+  for(size_t i=0; i<actors.size(); ++i)
   {
     actors.at(i)->computeBounds();
     bbox += actors.at(i)->boundingBox();
@@ -66,7 +66,7 @@ void SceneManager::computeBounds()
   // better method
   Sphere sphere;
   real radius = real(-1.0);
-  for(int i=0; i<actors.size(); ++i)
+  for(size_t i=0; i<actors.size(); ++i)
   {
     if (actors.at(i)->boundingSphere().isNull())
       continue;

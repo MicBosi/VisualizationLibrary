@@ -64,6 +64,10 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
+protected:
+    //! operator=
+    Renderable& operator=(const Renderable&) = default;
+
   public:
     //! Constructor
     Renderable(): mBoundsUpdateTick(0), mDisplayList(0), mBoundsDirty(true),

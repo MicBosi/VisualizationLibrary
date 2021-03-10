@@ -227,7 +227,7 @@ void TrackballManipulator::adjustView(ActorCollection& actors, const vec3& dir, 
 {
   if ( ! actors.empty() ) {
     AABB aabb;
-    for(int i=0; i<actors.size(); ++i)
+    for(size_t i=0; i<actors.size(); ++i)
     {
       if (actors.at(i)->transform())
       {
@@ -251,7 +251,7 @@ void TrackballManipulator::adjustView(SceneManager* scene, const vec3& dir, cons
 void TrackballManipulator::adjustView(Rendering* rendering, const vec3& dir, const vec3& up, real bias)
 {
   ActorCollection actors;
-  for(int i = 0; i < rendering->sceneManagers()->size(); ++i ) {
+  for(size_t i = 0; i < rendering->sceneManagers()->size(); ++i ) {
     rendering->sceneManagers()->at( i )->extractVisibleActors( actors, NULL );
   }
   adjustView(actors, dir, up, bias);

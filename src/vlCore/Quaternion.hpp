@@ -53,13 +53,18 @@ namespace vl
     }
     //-----------------------------------------------------------------------------
     //! Copy-constructor.
-    template<typename T>
-    explicit Quaternion(const Quaternion<T>& quat)
+    Quaternion(const Quaternion& quat)
     {
-      mXYZW.x() = (T_Scalar)quat.xyzw().x();
-      mXYZW.y() = (T_Scalar)quat.xyzw().y();
-      mXYZW.z() = (T_Scalar)quat.xyzw().z();
-      mXYZW.w() = (T_Scalar)quat.xyzw().w();
+      operator=(quat);
+    }
+    //-----------------------------------------------------------------------------
+    template<typename T>
+    explicit Quaternion(const Quaternion<T>& q)
+    {
+      mXYZW.x() = (T_Scalar)q.x();
+      mXYZW.y() = (T_Scalar)q.y();
+      mXYZW.z() = (T_Scalar)q.z();
+      mXYZW.w() = (T_Scalar)q.w();
     }
     //-----------------------------------------------------------------------------
     //! Constructor.

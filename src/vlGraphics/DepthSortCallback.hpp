@@ -182,7 +182,7 @@ namespace vl
       geometry->setBufferObjectDirty(true);
       geometry->setDisplayListDirty(true);
 
-      for(int idraw=0; idraw<geometry->drawCalls().size(); ++idraw)
+      for(size_t idraw=0; idraw<geometry->drawCalls().size(); ++idraw)
       {
         DrawCall* dc = geometry->drawCalls().at(idraw);
         if (dc->classType() == DrawElementsUInt::Type())

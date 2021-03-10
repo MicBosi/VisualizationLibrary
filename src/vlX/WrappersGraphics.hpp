@@ -769,7 +769,7 @@ namespace vlX
       //  }
       //}
 
-      for(int i=0; i<geom->drawCalls().size(); ++i) {
+      for(size_t i=0; i<geom->drawCalls().size(); ++i) {
         *vlx << "DrawCall" << s.exportVLX(geom->drawCalls().at(i));
       }
     }
@@ -1893,7 +1893,7 @@ namespace vlX
     VLXValue export_ShaderPasses(VLXSerializer& s, const vl::ShaderPasses* sh_seq)
     {
       VLXValue value( new VLXList(vlx_makeTag(sh_seq).c_str()) );
-      for(int i=0; i<sh_seq->size(); ++i)
+      for(size_t i=0; i<sh_seq->size(); ++i)
         *value.getList() << s.exportVLX(sh_seq->at(i));
       return value;
     }
@@ -2097,7 +2097,7 @@ namespace vlX
 
       VLXValue callbacks;
       callbacks.setList( new VLXList );
-      for(int i=0; i<obj->actorEventCallbacks()->size(); ++i)
+      for(size_t i=0; i<obj->actorEventCallbacks()->size(); ++i)
         *callbacks.getList() << s.exportVLX(obj->actorEventCallbacks()->at(i));
       *vlx << "ActorEventCallbacks" << callbacks;
     }

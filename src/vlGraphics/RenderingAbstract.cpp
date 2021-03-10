@@ -59,7 +59,7 @@ RenderingAbstract& RenderingAbstract::operator=(const RenderingAbstract& other)
 void RenderingAbstract::dispatchOnRenderingStarted()
 {
   Collection<RenderEventCallback>& cb = *mOnStartedCallbacks;
-  for(int i=0; i<cb.size(); ++i)
+  for(size_t i=0; i<cb.size(); ++i)
   {
     if ( cb[i]->isEnabled() && cb[i]->onRenderingStarted(this) && cb[i]->removeAfterCall() )
     {
@@ -72,7 +72,7 @@ void RenderingAbstract::dispatchOnRenderingStarted()
 void RenderingAbstract::dispatchOnRenderingFinished()
 {
   Collection<RenderEventCallback>& cb = *mOnFinishedCallbacks;
-  for(int i=0; i<cb.size(); ++i)
+  for(size_t i=0; i<cb.size(); ++i)
   {
     if ( cb[i]->isEnabled() && cb[i]->onRenderingFinished(this) && cb[i]->removeAfterCall() )
     {

@@ -99,7 +99,7 @@ void PolygonSimplifier::simplify()
 
   // merge all triangles in a single DrawElementsUInt
   ref<DrawElementsUInt> pint = new DrawElementsUInt(PT_TRIANGLES, 1);
-  for( int i=0; i<mInput->drawCalls().size(); ++i )
+  for( size_t i=0; i<mInput->drawCalls().size(); ++i )
   {
     DrawCall* prim = mInput->drawCalls().at(i);
     for(TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next())

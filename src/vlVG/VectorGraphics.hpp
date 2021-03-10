@@ -635,7 +635,7 @@ namespace vl
     const std::vector< ref<Scissor> >& scissorStack() const { return mScissorStack; }
 
     //! Binds the given Transform to all the Actor[s] that have been generated so far.
-    void setTransform(Transform* transform) { for(int i=0; i<actors()->size(); ++i) actors()->at(i)->setTransform(transform); }
+    void setTransform(Transform* transform) { for(size_t i=0; i<actors()->size(); ++i) actors()->at(i)->setTransform(transform); }
 
     //! Returns the Effect representing the current VectorGraphic's state.
     Effect* currentEffect() { return currentEffect(mState); }

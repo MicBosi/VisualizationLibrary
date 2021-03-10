@@ -375,7 +375,7 @@ namespace vl
     /** Calls all the onActorRenderStarted() of all the ActorEventCallback installed on this Actor. */
     void dispatchOnActorRenderStarted( real frame_clock, const Camera* camera, Renderable* renderable, const Shader* shader, int pass)
     {
-      for(int i=0; i<actorEventCallbacks()->size(); ++i)
+      for(size_t i=0; i<actorEventCallbacks()->size(); ++i)
       {
         ActorEventCallback& cb = *actorEventCallbacks()->at(i);
         if (cb.isEnabled())
@@ -386,7 +386,7 @@ namespace vl
     /** Calls all the onActorDelete() of all the ActorEventCallback installed on this Actor. */
     void dispatchOnActorDelete()
     {
-      for(int i=0; i<actorEventCallbacks()->size(); ++i)
+      for(size_t i=0; i<actorEventCallbacks()->size(); ++i)
       {
         ActorEventCallback& cb = *actorEventCallbacks()->at(i);
         cb.onActorDelete(this);

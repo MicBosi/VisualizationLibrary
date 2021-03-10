@@ -195,7 +195,7 @@ void Rendering::render()
   }
 
   actorQueue()->clear();
-  for(int i = 0; i < sceneManagers()->size(); ++i )
+  for(size_t i = 0; i < sceneManagers()->size(); ++i )
   {
     if ( isEnabled( sceneManagers()->at(i)->enableMask() ) )
     {
@@ -223,7 +223,7 @@ void Rendering::render()
   if (nearFarClippingPlanesOptimized())
   {
     Sphere world_bounding_sphere;
-    for(int i=0; i<actorQueue()->size(); ++i)
+    for(size_t i=0; i<actorQueue()->size(); ++i)
       world_bounding_sphere += actorQueue()->at(i)->boundingSphere();
 
     // compute the optimized
@@ -246,7 +246,7 @@ void Rendering::render()
   // --- RENDER THE QUEUE: loop through the renderers, feeding the output of one as input for the next ---
 
   const RenderQueue* render_queue = renderQueue();
-  for(int i=0; i<renderers().size(); ++i)
+  for(size_t i=0; i<renderers().size(); ++i)
   {
     if (renderers()[i])
     {
@@ -291,7 +291,7 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
 
   // iterate actor list
 
-  for(int iactor=0; iactor < actor_list->size(); iactor++)
+  for(size_t iactor=0; iactor < actor_list->size(); iactor++)
   {
     Actor* actor = actor_list->at(iactor);
 

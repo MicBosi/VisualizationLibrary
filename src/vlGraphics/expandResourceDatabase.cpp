@@ -97,7 +97,7 @@ namespace
     {
       if( fx->lod(i) )
       {
-        for(int j=0; j<fx->lod(i)->size(); ++j)
+        for(size_t j=0; j<fx->lod(i)->size(); ++j)
         {
           Shader* shader = fx->lod(i)->at(j);
           set.sh.insert( shader );

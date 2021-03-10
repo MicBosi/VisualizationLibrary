@@ -89,7 +89,7 @@ namespace vl
     void dispatchOnRendererStarted()
     {
       Collection<RenderEventCallback>& cb = *mOnStartedCallbacks;
-      for(int i=0; i<cb.size(); ++i)
+      for(size_t i=0; i<cb.size(); ++i)
       {
         if ( cb[i]->isEnabled() && cb[i]->onRendererStarted(this) && cb[i]->removeAfterCall() )
         {
@@ -103,7 +103,7 @@ namespace vl
     void dispatchOnRendererFinished()
     {
       Collection<RenderEventCallback>& cb = *mOnFinishedCallbacks;
-      for(int i=0; i<cb.size(); ++i)
+      for(size_t i=0; i<cb.size(); ++i)
       {
         if ( cb[i]->isEnabled() && cb[i]->onRendererFinished(this) && cb[i]->removeAfterCall() )
         {
