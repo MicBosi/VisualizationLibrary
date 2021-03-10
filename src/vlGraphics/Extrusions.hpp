@@ -40,13 +40,15 @@
 
 namespace vl
 {
-  typedef enum { SilhouetteClosed, SilhouetteOpen } ESilhouetteMode;
   /**
-   * The Extrusion class generates a Geometry extruding a silhouette along a path.
+   * The Extrusions class generates a Geometry extruding a silhouette along a path.
+   * 
+   * As opposed to the legacy Extrusion class, this class allows you to extrude multiple contours.
+   * 
    * \sa
    *
    * - \ref pagGuideExtrusion "Extrusion Tutorial" for a practical example of how to use extrusions.
-   * - Interpolator, LinearInterpolator, CatmullRomInterpolator to generate silhouettes and extrusion paths.
+   * - Extrusion, Interpolator, LinearInterpolator, CatmullRomInterpolator to generate silhouettes and extrusion paths.
    *
    * <img src="pics/pagGuideExtrusion3.jpg">
    */

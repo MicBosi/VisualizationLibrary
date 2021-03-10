@@ -1550,7 +1550,11 @@ namespace vl
     GLP_Compatibility,
     GLP_Core
   } EOpenGLProfile;
-}
 
+  typedef enum { 
+    SilhouetteClosed, 
+    SilhouetteOpen 
+  } ESilhouetteMode;
+}
 
 #endif
