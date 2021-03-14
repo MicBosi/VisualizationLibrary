@@ -1,4 +1,4 @@
-# Visualization Library
+# Visualization Library 2.1
 
 [Gallery](http://VisualizationLibrary.org/gallery)
 
