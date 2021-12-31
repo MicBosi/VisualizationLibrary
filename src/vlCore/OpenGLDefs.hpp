@@ -38,7 +38,16 @@
 
   #if defined(VL_PLATFORM_WINDOWS)
 
-    // MIC FIXME: GL_GLEXT_PROTOTYPES --> Python script to generate function list --> Python script to generate wrapper class
+    // MIC FIXME:
+    // --> Remove GL_GLEXT_PROTOTYPES 
+    // --> Python script to generate function list 
+    // --> Python script to generate wrapper class
+    // --> Remove GLFunctionWrappers.hpp
+    // --> Python script to generate GLExtensionList.hpp (ARB only?)
+    // --> Core profile startup working
+    // --> Expose 4.6 features (enums, shaders, compute shaders etc.)
+    // --> Merge into VL 2.2
+    // --> Continue VL 3.0: remove all fixed function pipeline
     #define GL_GLEXT_PROTOTYPES 1
     #include <gl/gl.h>
     #include <gl/glu.h>
