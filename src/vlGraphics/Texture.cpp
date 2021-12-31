@@ -44,9 +44,6 @@ namespace
   int getDefaultFormat(ETextureFormat internal_format)
   {
     // OpenGL ES requires the internal format to be equal to the source image format when creating textures
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-    return internal_format;
-#else
     switch(internal_format)
     {
       case TF_ALPHA:
@@ -226,7 +223,6 @@ namespace
       default:
         return GL_RED;
     }
-#endif
   }
 
   // if you think your application has a bug that depends on this function you are wrong
@@ -844,14 +840,6 @@ bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_
 bool Texture::setMipLevel(int mip_level, const Image* img, bool gen_mipmaps)
 {
   VL_CHECK_OGL()
-
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-    if (internalFormat() != img->format())
-    {
-      Log::bug("Texture::setMipLevel(): under OpenGL ES the texture internal format must match the source image format!\n");
-      return false;
-    }
-#endif
 
   if ( dimension() == TD_TEXTURE_BUFFER || dimension() == TD_TEXTURE_2D_MULTISAMPLE || dimension() == TD_TEXTURE_2D_MULTISAMPLE_ARRAY )
   {

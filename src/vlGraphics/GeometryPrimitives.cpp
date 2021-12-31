@@ -138,10 +138,6 @@ ref<Geometry> vl::makeIcosphere(const vec3& pos, real diameter, int detail, bool
     dvr.removeDoubles(geom.get());
   }
 
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  geom->makeGLESFriendly();
-#endif
-
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -274,9 +270,6 @@ ref<Geometry> vl::makeTeapot( const vec3& origin, real diameter, int detail)
   DoubleVertexRemover dvr;
   dvr.removeDoubles(teapot.get());
 
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  teapot->makeGLESFriendly();
-#endif
 
   return teapot;
 }
@@ -345,10 +338,6 @@ ref<Geometry> vl::makeUVSphere( const vec3& origin, real diameter, int phi, int 
     tris->indexBuffer()->at(idx++) = 1+phi*(theta-1)+(j+1)%phi;
     tris->indexBuffer()->at(idx++) = 1+phi*(theta-1)+(j+0)%phi;
   }
-
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  geom->makeGLESFriendly();
-#endif
 
   return geom;
 }
@@ -439,10 +428,6 @@ ref<Geometry> vl::makeCylinder( const vec3& origin, real diameter, real height, 
       tris->indexBuffer()->at(idx++) = 1+fan_center+(phi -1 - j%phi);
   }
 
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  geom->makeGLESFriendly();
-#endif
-
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -512,10 +497,6 @@ ref<Geometry> vl::makeTorus( const vec3& origin, real diameter, real thickness, 
     }
   }
 
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  geom->makeGLESFriendly();
-#endif
-
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -559,8 +540,6 @@ ref<Geometry> vl::makeBox( const vec3& origin, real xside, real yside, real zsid
   fvec3 a6( (fvec3)(vec3(-x,-y,-z) + origin) );
   fvec3 a7( (fvec3)(vec3(+x,-y,-z) + origin) );
 
-#if defined(VL_OPENGL)
-
   fvec3 verts[] = {
    a1, a2, a3, a0,
    a2, a6, a7, a3,
@@ -590,44 +569,6 @@ ref<Geometry> vl::makeBox( const vec3& origin, real xside, real yside, real zsid
     tex_array->resize( vert3->size() );
     memcpy(tex_array->ptr(), texc, sizeof(texc));
   }
-
-#else
-  
-  fvec3 verts[] = {
-    a1, a2, a3, a3, a0, a1,
-    a2, a6, a7, a7, a3, a2,
-    a6, a5, a4, a4, a7, a6,
-    a5, a1, a0, a0, a4, a5,
-    a0, a3, a7, a7, a4, a0,
-    a5, a6, a2, a2, a1, a5
-  };
-
-  ref<DrawArrays> polys = new DrawArrays(PT_TRIANGLES, 0, 36);
-  geom->drawCalls().push_back( polys.get() );
-  vert3->resize( 36 );
-  memcpy(vert3->ptr(), verts, sizeof(verts));
-
-  if(tex_coords)
-  {
-    fvec2 texc[] = {
-      fvec2(0,1), fvec2(0,0), fvec2(1,0), fvec2(1,0), fvec2(1,1), fvec2(0,1), 
-      fvec2(0,1), fvec2(0,0), fvec2(1,0), fvec2(1,0), fvec2(1,1), fvec2(0,1), 
-      fvec2(1,0), fvec2(1,1), fvec2(0,1), fvec2(0,1), fvec2(0,0), fvec2(1,0), 
-      fvec2(0,1), fvec2(0,0), fvec2(1,0), fvec2(1,0), fvec2(1,1), fvec2(0,1), 
-      fvec2(0,0), fvec2(1,0), fvec2(1,1), fvec2(1,1), fvec2(0,1), fvec2(0,0), 
-      fvec2(1,1), fvec2(0,1), fvec2(0,0), fvec2(0,0), fvec2(1,0), fvec2(1,1), 
-    };
-    ref<ArrayFloat2> tex_array = new ArrayFloat2;
-    geom->setTexCoordArray(0, tex_array.get());
-    tex_array->resize( vert3->size() );
-    memcpy(tex_array->ptr(), texc, sizeof(texc));
-  }
-
-#endif
-
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  geom->makeGLESFriendly();
-#endif
 
   return geom;
 }
@@ -661,10 +602,6 @@ ref<Geometry> vl::makePyramid( const vec3& origin, real side, real height)
   vert3->at(9)  = a1; vert3->at(10) = a2; vert3->at(11) = a0;
   vert3->at(12) = a2; vert3->at(13) = a3; vert3->at(14) = a0;
   vert3->at(15) = a3; vert3->at(16) = a4; vert3->at(17) = a0;
-
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  geom->makeGLESFriendly();
-#endif
 
   return geom;
 }
@@ -719,10 +656,6 @@ ref<Geometry> vl::makeCone( const vec3& origin, real diameter, real height, int 
     for(int j=0; j<phi+1; ++j)
       bottom_fan->indexBuffer()->at(idx++) = fan_center+1+(phi-1-j%phi);
   }
-
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  geom->makeGLESFriendly();
-#endif
 
   return geom;
 }
@@ -784,10 +717,6 @@ ref<Geometry> vl::makeGrid( const vec3& origin, real xside, real zside, int x, i
     }
   }
 
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  geom->makeGLESFriendly();
-#endif
-
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -810,10 +739,6 @@ ref<Geometry> vl::makePoints( const std::vector< vec3>& pos, const fvec4& color 
   }
 
   geom->drawCalls().push_back( new DrawArrays(PT_POINTS, 0, (int)vert3->size() ));
-
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  geom->makeGLESFriendly();
-#endif
 
   return geom;
 }
@@ -862,10 +787,6 @@ ref<Geometry> vl::makeIcosahedron( const vec3& origin, real diameter )
   polys->indexBuffer()->resize(20*3);
   memcpy(polys->indexBuffer()->ptr(), faces, sizeof(faces));
 
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  geom->makeGLESFriendly();
-#endif
-
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -884,10 +805,6 @@ ref<Geometry> vl::makeCircle( vec3 origin, real radius, int slices )
     points->at(i) = (fvec3)v;
   }
   geom->drawCalls().push_back( new DrawArrays(PT_LINE_LOOP, 0, (int)points->size()) );
-
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  geom->makeGLESFriendly();
-#endif
 
   return geom;
 }
@@ -1101,10 +1018,6 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
 
   vert_array->initFrom(verts);
   colr_array->initFrom(cols);
-
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  geom->makeGLESFriendly();
-#endif
 
   return geom;
 }

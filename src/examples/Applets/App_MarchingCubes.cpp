@@ -95,7 +95,7 @@ public:
     // text setup
 
     mText = new vl::Text();
-    mText->setDisplayListEnabled(!vl::Has_GLES);
+    mText->setDisplayListEnabled(true);
     mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
     mText->setMargin(5);
     mText->setViewportAlignment(vl::AlignTop | vl::AlignHCenter);

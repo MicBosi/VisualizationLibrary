@@ -254,7 +254,7 @@ bool OpenGLContext::initGLContext(bool log)
 
   // Find max number of texture units, see http://www.opengl.org/sdk/docs/man/xhtml/glActiveTexture.xml
   mTextureImageUnitCount = mTextureCoordCount = 1;
-  if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_1) // for GL < 2.x
+  if (Has_GL_ARB_multitexture||Has_GL_Version_1_3) // for GL < 2.x
   {
     int max_tmp = 0;
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
@@ -347,7 +347,7 @@ void OpenGLContext::logOpenGLInfo()
   Log::debug( Say("Max texture size: %n\n")<<max_val);
 
   max_val = 1;
-  if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_1)
+  if (Has_GL_ARB_multitexture||Has_GL_Version_1_3)
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_val); // deprecated enum
   Log::debug( Say("Texture units (legacy): %n\n") << max_val);
 
@@ -400,7 +400,7 @@ void OpenGLContext::logOpenGLInfo()
     // - my GTX 460 in opengl 3.2 core allows GL_MAX_VARYING_VECTORS
     // - a user reported that a Quadro FX GL 3.2 compatibility did not support GL_MAX_VARYING_VECTORS
     // - ergo we don't check if we are in GL 3.x non-compatible mode
-    if (Has_GLES_Version_2_0||Has_GL_Version_4_1)
+    if (Has_GL_Version_4_1)
     {
       glGetIntegerv(GL_MAX_VARYING_VECTORS, &max_val); VL_CHECK_OGL();
     }
@@ -416,15 +416,8 @@ void OpenGLContext::logOpenGLInfo()
   max_val = 0;
   if(Has_GLSL)
   {
-    if (Has_GLES_Version_2_0)
-    {
-      glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &max_val); VL_CHECK_OGL();
-    }
-    else
-    {
-      glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
-      max_val /= 4;
-    }
+    glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
+    max_val /= 4;
 
     Log::debug( Say("Max fragment uniform vectors: %n\n")<<max_val);
   }
@@ -432,15 +425,8 @@ void OpenGLContext::logOpenGLInfo()
   max_val = 0;
   if(Has_GLSL)
   {
-    if (Has_GLES_Version_2_0)
-    {
-      glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &max_val); VL_CHECK_OGL();
-    }
-    else
-    {
-      glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
-      max_val /= 4;
-    }
+    glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
+    max_val /= 4;
 
     Log::debug( Say("Max vertex uniform vectors: %n\n")<<max_val);
   }
@@ -466,7 +452,7 @@ void OpenGLContext::logOpenGLInfo()
     Log::debug( Say("Max clipping planes: %n\n") << max_val );
   }
   else
-  if (Has_GLSL && !Has_GLES_Version_2_0)
+  if (Has_GLSL)
   {
     max_val = 0;
     glGetIntegerv(GL_MAX_CLIP_DISTANCES,  &max_val ); VL_CHECK_OGL();
@@ -590,12 +576,9 @@ void OpenGLContext::setupDefaultRenderStates()
     mDefaultRenderStates[RS_ShadeModel] = RenderStateSlot(new ShadeModel, 0);
     mDefaultRenderStates[RS_LightModel] = RenderStateSlot(new LightModel, 0);
     mDefaultRenderStates[RS_Material]   = RenderStateSlot(new Material, 0);
-    if(!Has_GLES_Version_1_1)
-    {
-      mDefaultRenderStates[RS_PixelTransfer]  = RenderStateSlot(new PixelTransfer, 0);
-      mDefaultRenderStates[RS_LineStipple]    = RenderStateSlot(new LineStipple, 0);
-      mDefaultRenderStates[RS_PolygonStipple] = RenderStateSlot(new PolygonStipple, 0);
-    }
+    mDefaultRenderStates[RS_PixelTransfer]  = RenderStateSlot(new PixelTransfer, 0);
+    mDefaultRenderStates[RS_LineStipple]    = RenderStateSlot(new LineStipple, 0);
+    mDefaultRenderStates[RS_PolygonStipple] = RenderStateSlot(new PolygonStipple, 0);
 
     mDefaultRenderStates[RS_Light0] = RenderStateSlot(new Light, 0); mDefaultRenderStates[RS_Light0].mRS->as<Light>()->setEnabled(false);
     mDefaultRenderStates[RS_Light1] = RenderStateSlot(new Light, 1); mDefaultRenderStates[RS_Light1].mRS->as<Light>()->setEnabled(false);
@@ -614,20 +597,16 @@ void OpenGLContext::setupDefaultRenderStates()
     mDefaultRenderStates[RS_ClipPlane5] = RenderStateSlot(new ClipPlane, 5); mDefaultRenderStates[RS_ClipPlane5].mRS->as<ClipPlane>()->setEnabled(false);
   }
 
-  if (Has_GL_EXT_blend_color||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_0)
+  if (Has_GL_EXT_blend_color||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
     mDefaultRenderStates[RS_BlendColor] = RenderStateSlot(new BlendColor, 0);
 
-  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_blend_subtract||Has_GLES_Version_2_0)
+  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
     mDefaultRenderStates[RS_BlendEquation] = RenderStateSlot(new BlendEquation, 0);
 
-  if(!Has_GLES)
-    mDefaultRenderStates[RS_PolygonMode] = RenderStateSlot(new PolygonMode, 0);
+  mDefaultRenderStates[RS_PolygonMode] = RenderStateSlot(new PolygonMode, 0);
 
-  if(!Has_GLES_Version_2_0)
-  {
-    mDefaultRenderStates[RS_LogicOp] = RenderStateSlot(new LogicOp, 0);
-    mDefaultRenderStates[RS_PointSize] = RenderStateSlot(new PointSize, 0);
-  }
+  mDefaultRenderStates[RS_LogicOp] = RenderStateSlot(new LogicOp, 0);
+  mDefaultRenderStates[RS_PointSize] = RenderStateSlot(new PointSize, 0);
 
   mDefaultRenderStates[RS_PolygonOffset] = RenderStateSlot(new PolygonOffset, 0);
   mDefaultRenderStates[RS_BlendFunc]  = RenderStateSlot(new BlendFunc, 0);
@@ -640,10 +619,10 @@ void OpenGLContext::setupDefaultRenderStates()
   mDefaultRenderStates[RS_Hint]       = RenderStateSlot(new Hint, 0);
   mDefaultRenderStates[RS_LineWidth]  = RenderStateSlot(new LineWidth, 0);
 
-  if (Has_GL_ARB_point_parameters||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_1) // note GLES 2.x is excluded
+  if (Has_GL_ARB_point_parameters||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
     mDefaultRenderStates[RS_PointParameter] = RenderStateSlot(new PointParameter, 0);
 
-  if (Has_GL_ARB_multisample||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_1||Has_GLES_Version_2_0)
+  if (Has_GL_ARB_multisample||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0)
     mDefaultRenderStates[RS_SampleCoverage] = RenderStateSlot(new SampleCoverage, 0);
 
   mDefaultRenderStates[RS_StencilFunc] = RenderStateSlot(new StencilFunc, 0);
@@ -659,18 +638,15 @@ void OpenGLContext::setupDefaultRenderStates()
   {
     for(int i=0; i<textureCoordCount(); ++i)
     {
-        // TexGen under GLES is supported only if GL_OES_texture_cube_map is present
-        if( ! Has_GLES_Version_1_1 || Has_GL_OES_texture_cube_map) {
-          mDefaultRenderStates[RS_TexGen + i] = RenderStateSlot(new TexGen, i);
-        }
-        mDefaultRenderStates[RS_TexEnv + i] = RenderStateSlot(new TexEnv, i);
-        mDefaultRenderStates[RS_TextureMatrix + i] = RenderStateSlot(new TextureMatrix, i);
-      }
+      mDefaultRenderStates[RS_TexGen + i] = RenderStateSlot(new TexGen, i);
+      mDefaultRenderStates[RS_TexEnv + i] = RenderStateSlot(new TexEnv, i);
+      mDefaultRenderStates[RS_TextureMatrix + i] = RenderStateSlot(new TextureMatrix, i);
+    }
   }
 
   VL_CHECK_OGL();
 
-  // applies default render states backwards so we don't need to call VL_glActiveTexture(GL_TEXTURE0) at the end.
+  // applies default render states backwards so we don't need to call glActiveTexture(GL_TEXTURE0) at the end.
   for( int i=RS_RenderStateCount; i--; )
   {
     // the empty ones are the ones that are not supported by the current OpenGL implementation (too old or Core profile)
@@ -791,7 +767,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   /* We only check the subset of tex-units supported also by glClientActiveTexture() */
   // Find the minimum of the max texture units supported, starting at 16
   int coord_count = 16;
-  if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_1)
+  if (Has_GL_ARB_multitexture||Has_GL_Version_1_3)
   {
     int max_tmp = 0;
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
@@ -819,11 +795,11 @@ bool OpenGLContext::isCleanState(bool verbose)
   while(coord_count--)
   {
     VL_CHECK_OGL()
-    VL_glActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
+    glActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
 
     if (Has_Fixed_Function_Pipeline)
     {
-	    VL_glClientActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
+	    glClientActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
 
 	    float matrix[16];
 	    float imatrix[16];
@@ -845,21 +821,18 @@ bool OpenGLContext::isCleanState(bool verbose)
 
 	    // check that all texture targets are disabled and bound to texture #0
 
-      if (!Has_GLES)
-      {
-	      if (glIsEnabled(GL_TEXTURE_1D))
-	      {
-	        error_msg += Say(" - GL_TEXTURE_1D was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
-          glDisable(GL_TEXTURE_1D);
-	      }
+	    if (glIsEnabled(GL_TEXTURE_1D))
+	    {
+	    error_msg += Say(" - GL_TEXTURE_1D was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
+        glDisable(GL_TEXTURE_1D);
+	    }
 
         GLint bound_tex = 0;
-	      glGetIntegerv(GL_TEXTURE_BINDING_1D, &bound_tex); VL_CHECK_OGL()
-	      if (bound_tex != 0)
-	      {
-	        error_msg += Say(" - GL_TEXTURE_BINDING_1D != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
-	      }
-      }
+	    glGetIntegerv(GL_TEXTURE_BINDING_1D, &bound_tex); VL_CHECK_OGL()
+	    if (bound_tex != 0)
+	    {
+	    error_msg += Say(" - GL_TEXTURE_BINDING_1D != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
+	    }
 
 	    if (glIsEnabled(GL_TEXTURE_2D))
 	    {
@@ -969,7 +942,6 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (Has_Fixed_Function_Pipeline)
     {
-#if defined(VL_OPENGL)
 	    if (glIsEnabled(GL_TEXTURE_GEN_S))
 	    {
 	      error_msg += Say(" - GL_TEXTURE_GEN_S was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
@@ -993,13 +965,6 @@ bool OpenGLContext::isCleanState(bool verbose)
 	      error_msg += Say(" - GL_TEXTURE_GEN_Q was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
         glDisable(GL_TEXTURE_GEN_Q);
 	    }
-#elif defined(VL_OPENGL_ES1)
-	    if (Has_GL_OES_texture_cube_map && glIsEnabled(GL_TEXTURE_GEN_STR_OES))
-	    {
-	      error_msg += Say(" - GL_TEXTURE_GEN_STR_OES was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
-        glDisable(GL_TEXTURE_GEN_STR_OES);
-	    }
-#endif
     }
   }
 
@@ -1512,7 +1477,7 @@ void OpenGLContext::bindVAS_Fixed(const IVertexAttribSet* vas, bool use_bo) {
 
     if ( ! texarr ) {
       if ( mTexCoordArray[tex_coord_i].mEnabled ) {
-        VL_glClientActiveTexture(GL_TEXTURE0 + tex_coord_i); VL_CHECK_OGL();
+        glClientActiveTexture(GL_TEXTURE0 + tex_coord_i); VL_CHECK_OGL();
         glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
         mTexCoordArray[tex_coord_i].mEnabled = false;
         mTexCoordArray[tex_coord_i].mPtr = 0;
@@ -1520,7 +1485,7 @@ void OpenGLContext::bindVAS_Fixed(const IVertexAttribSet* vas, bool use_bo) {
       }
     } else {
       if ( ! mTexCoordArray[tex_coord_i].mEnabled ) {
-        VL_glClientActiveTexture(GL_TEXTURE0 + tex_coord_i); VL_CHECK_OGL();
+        glClientActiveTexture(GL_TEXTURE0 + tex_coord_i); VL_CHECK_OGL();
         glEnableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
         mTexCoordArray[tex_coord_i].mEnabled = 1;
       }
@@ -1677,7 +1642,7 @@ void OpenGLContext::bindVAS_Reset()
     // iterate backwards so the last active is #0
     for ( int i=mTextureCoordCount; i--; )
     {
-      VL_glClientActiveTexture(GL_TEXTURE0 + i); VL_CHECK_OGL();
+      glClientActiveTexture(GL_TEXTURE0 + i); VL_CHECK_OGL();
       glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
     }
 

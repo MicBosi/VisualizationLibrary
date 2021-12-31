@@ -280,12 +280,6 @@ public:
 
   void sphericalMapping()
   {
-    if (Has_GLES)
-    {
-      Log::error("Spherical mapping texture coordinate generation not supported.\n");
-      return;
-    }
-
     // Effect used by the actor
     mFXSpheric = new Effect;
     mFXSpheric->shader()->enable(EN_DEPTH_TEST);

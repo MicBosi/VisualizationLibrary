@@ -182,28 +182,4 @@ if( VL_GUI_QT4_EXAMPLES OR
       VL_INSTALL_TARGET(vlWX_tests)
   endif()
 
-  if (VL_GUI_GLES_EXAMPLES AND VL_OPENGL_ES1)
-  	# Example
-  	add_executable(vlGLES1_example GLES1_example.cpp)
-  	target_link_libraries(vlGLES1_example VLEGL ${VL_LIBS_EXAMPLE})
-  	VL_INSTALL_TARGET(vlGLES1_example)
-
-  	# Tests
-  	add_executable(vlGLES1_tests GLES1_tests.cpp)
-  	target_link_libraries(vlGLES1_tests VLApplets VLEGL ${VL_LIBS_TESTS})
-  	VL_INSTALL_TARGET(vlGLES1_tests)
-  endif()
-
-  if (VL_GUI_GLES_EXAMPLES AND VL_OPENGL_ES2)
-  	# Example
-  	add_executable(vlGLES2_example GLES2_example.cpp)
-  	target_link_libraries(vlGLES2_example VLEGL ${VL_LIBS_EXAMPLE})
-  	VL_INSTALL_TARGET(vlGLES2_example)
-
-  	# Tests
-  	add_executable(vlGLES2_tests GLES2_tests.cpp)
-  	target_link_libraries(vlGLES2_tests VLApplets VLEGL ${VL_LIBS_TESTS})
-  	VL_INSTALL_TARGET(vlGLES2_tests)
-  endif()
-
 endif()

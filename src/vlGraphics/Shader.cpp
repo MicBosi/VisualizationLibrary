@@ -235,12 +235,10 @@ void Hint::apply(int, const Camera*, OpenGLContext*) const
     }
   }
 
-  if ( !Has_GLES )
-  {
-    glHint( GL_POLYGON_SMOOTH_HINT, mPolygonSmoothHint ); VL_CHECK_OGL()
-    glHint( GL_LINE_SMOOTH_HINT, mLineSmoothHint ); VL_CHECK_OGL()
-  }
-  if ( Has_GL_Version_1_1 )
+  glHint( GL_POLYGON_SMOOTH_HINT, mPolygonSmoothHint ); VL_CHECK_OGL()
+  glHint( GL_LINE_SMOOTH_HINT, mLineSmoothHint ); VL_CHECK_OGL()
+
+      if ( Has_GL_Version_1_1 )
   {
     glHint( GL_POINT_SMOOTH_HINT, mPointSmoothHint ); VL_CHECK_OGL()
   }
@@ -301,7 +299,7 @@ void ShadeModel::apply(int, const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void BlendFunc::apply(int, const Camera*, OpenGLContext*) const
 {
-  if (Has_GL_EXT_blend_func_separate||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_blend_func_separate||Has_GLES_Version_2_0)
+  if (Has_GL_EXT_blend_func_separate||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
   {
     VL_glBlendFuncSeparate(mSrcRGB, mDstRGB, mSrcAlpha, mDstAlpha); VL_CHECK_OGL()
   }
@@ -618,13 +616,13 @@ void LineStipple::apply(int, const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void PointParameter::apply(int, const Camera*, OpenGLContext*) const
 {
-  if (Has_GL_Version_1_4||Has_GLES_Version_1_1)
+  if (Has_GL_Version_1_4)
   {
     VL_glPointParameterf(GL_POINT_SIZE_MIN, mSizeMin); VL_CHECK_OGL()
     VL_glPointParameterf(GL_POINT_SIZE_MAX, mSizeMax); VL_CHECK_OGL()
     VL_glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, (const float*)mDistanceAttenuation.ptr()); VL_CHECK_OGL()
   }
-  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_1)
+  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
   {
     VL_glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, mFadeThresholdSize); VL_CHECK_OGL()
   }
@@ -791,7 +789,7 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* ) const
 
   if (wrapS() == GL_MIRRORED_REPEAT || wrapT() == GL_MIRRORED_REPEAT || wrapR() == GL_MIRRORED_REPEAT)
   {
-    if( !(Has_GL_IBM_texture_mirrored_repeat || Has_GL_ARB_texture_mirrored_repeat || Has_GL_Version_1_4 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES_Version_2_0) )
+    if( !(Has_GL_IBM_texture_mirrored_repeat || Has_GL_ARB_texture_mirrored_repeat || Has_GL_Version_1_4 || Has_GL_Version_3_0 || Has_GL_Version_4_0) )
     {
       Log::bug("GL_MIRRORED_REPEAT not supported by your OpenGL implementation.\n"); VL_TRAP()
     }
@@ -799,7 +797,7 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* ) const
 
   if (wrapS() == GL_CLAMP_TO_EDGE || wrapT() == GL_CLAMP_TO_EDGE || wrapR() == GL_CLAMP_TO_EDGE)
   {
-    if( !(Has_GL_SGIS_texture_edge_clamp || Has_GL_Version_1_2 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES_Version_1_1 || Has_GLES_Version_2_0) )
+    if( !(Has_GL_SGIS_texture_edge_clamp || Has_GL_Version_1_2 || Has_GL_Version_3_0 || Has_GL_Version_4_0) )
     {
       Log::bug("GL_CLAMP_TO_EDGE not supported by your OpenGL implementation.\n"); VL_TRAP()
     }
@@ -887,7 +885,7 @@ void TexEnv::apply(int index, const Camera*, OpenGLContext* ctx) const
   VL_CHECK(index < ctx->textureCoordCount())
 
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
-  VL_glActiveTexture( GL_TEXTURE0 + index ); VL_CHECK_OGL();
+  glActiveTexture( GL_TEXTURE0 + index ); VL_CHECK_OGL();
 
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode()); VL_CHECK_OGL()
 
@@ -967,11 +965,9 @@ void TexGen::apply(int index, const Camera*, OpenGLContext* ctx) const
   VL_CHECK(index < VL_MAX_LEGACY_TEXTURE_UNITS)
   VL_CHECK(index < ctx->textureCoordCount())
 
-  VL_glActiveTexture( GL_TEXTURE0 + index );
+  glActiveTexture( GL_TEXTURE0 + index );
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
   VL_CHECK_OGL();
-
-#if defined(VL_OPENGL)
 
   if (genModeS() || genModeT() || genModeR() || genModeQ())
   {
@@ -1040,46 +1036,6 @@ void TexGen::apply(int index, const Camera*, OpenGLContext* ctx) const
 
   if (!genModeQ())
     glDisable(GL_TEXTURE_GEN_Q);
-
-#elif defined(VL_OPENGL_ES1)
-
-  if ( genModeS() != TGM_DISABLED && genModeS() != TGM_REFLECTION_MAP && genModeS() != TGM_NORMAL_MAP )
-  {
-    Log::bug("OpenGL ES does not support GL_SPHERE_MAP, GL_EYE_LINEAR or GL_OBJECT_LINEAR texture coordinate generation!\n"); VL_TRAP();
-    return;
-  }
-
-  if ( genModeS() != genModeT() || genModeT() != genModeR() )
-  {
-    Log::bug("OpenGL ES requires the same texture coordinate generation mode for S, T and R!\n"); VL_TRAP();
-    return;
-  }
-
-  if(!Has_GL_OES_texture_cube_map)
-  {
-    Log::bug("Use of vl::TexGen under OpenGL ES requires GL_OES_texture_cube_map extension!\n"); VL_TRAP();
-    return;
-  }
-
-  if (genModeS() && genModeT() && genModeR())
-  {
-    glMatrixMode(GL_MODELVIEW); VL_CHECK_OGL();
-    glPushMatrix(); VL_CHECK_OGL();
-    glLoadIdentity(); VL_CHECK_OGL();
-
-    glEnable(GL_TEXTURE_GEN_STR_OES); VL_CHECK_OGL();
-    glTexGeni( GL_TEXTURE_GEN_STR_OES, GL_TEXTURE_GEN_MODE, genModeS() ); VL_CHECK_OGL();
-
-    glPopMatrix(); VL_CHECK_OGL();
-  }
-  else
-  {
-    glTexGeni( GL_TEXTURE_GEN_STR_OES, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP_OES ); VL_CHECK_OGL();
-    glEnable(GL_TEXTURE_GEN_STR_OES); VL_CHECK_OGL();
-    glDisable(GL_TEXTURE_GEN_STR_OES); VL_CHECK_OGL();
-  }
-
-#endif
 }
 //-----------------------------------------------------------------------------
 // TextureMatrix
@@ -1090,7 +1046,7 @@ void TextureMatrix::apply(int index, const Camera* camera, OpenGLContext* ctx) c
   VL_CHECK(index < VL_MAX_LEGACY_TEXTURE_UNITS)
   VL_CHECK(index < ctx->textureCoordCount())
 
-  VL_glActiveTexture( GL_TEXTURE0 + index ); VL_CHECK_OGL();
+  glActiveTexture( GL_TEXTURE0 + index ); VL_CHECK_OGL();
 
   glMatrixMode(GL_TEXTURE); VL_CHECK_OGL();
   if (useCameraRotationInverse()) {
@@ -1115,7 +1071,7 @@ void TextureImageUnit::apply(int index, const Camera*, OpenGLContext* ctx) const
   VL_CHECK(index < ctx->textureImageUnitCount())
 
   // activate the appropriate texture unit
-  VL_glActiveTexture( GL_TEXTURE0 + index ); VL_CHECK_OGL()
+  glActiveTexture( GL_TEXTURE0 + index ); VL_CHECK_OGL()
 
   // disable and unbind previous active texture target on this texture unit.
   vl::ETextureDimension prev_tex_target = ctx->texUnitBinding( index );

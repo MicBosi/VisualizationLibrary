@@ -62,10 +62,6 @@ namespace vl
   VLGRAPHICS_EXPORT extern bool Is_Enable_Supported[];
   VLGRAPHICS_EXPORT extern const char* Translate_Enable_String[];
 
-  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_1_1;
-  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_2_0;
-  VLGRAPHICS_EXPORT extern bool Has_GLES;
-
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_1;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_2;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_3;
@@ -115,25 +111,9 @@ namespace vl
   #include <vlGraphics/GL/GLExtensionList.hpp>
   #undef VL_EXTENSION
 
-  #define VL_GLES_EXTENSION(extension) VLGRAPHICS_EXPORT extern bool Has_##extension;
-  #include <vlGraphics/GL/GLESExtensionList.hpp>
-  #undef VL_GLES_EXTENSION
-
   #if defined(VL_OPENGL)
     #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
     #include <vlGraphics/GL/GLFunctionList.hpp>
-    #undef VL_GL_FUNCTION
-  #endif
-
-  #if defined(VL_OPENGL_ES1)
-    #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
-    #include <vlGraphics/GL/GLES1FunctionList.hpp>
-    #undef VL_GL_FUNCTION
-  #endif
-
-  #if defined(VL_OPENGL_ES2)
-    #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
-    #include <vlGraphics/GL/GLES2FunctionList.hpp>
     #undef VL_GL_FUNCTION
   #endif
 
@@ -167,15 +147,7 @@ namespace vl
 //-----------------------------------------------------------------------------
 
 #if defined(VL_OPENGL)
-  #include <vlGraphics/GL/VL_Functions_GL.hpp>
-#endif
-
-#if defined(VL_OPENGL_ES1)
-  #include <vlGraphics/GL/VL_Functions_GLES1.hpp>
-#endif
-
-#if defined(VL_OPENGL_ES2)
-  #include <vlGraphics/GL/VL_Functions_GLES2.hpp>
+  #include <vlGraphics/GL/GLFunctionWrappers.hpp>
 #endif
 //-----------------------------------------------------------------------------
 #endif

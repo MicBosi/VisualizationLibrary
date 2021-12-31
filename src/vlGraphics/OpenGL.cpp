@@ -35,10 +35,6 @@
 #include <vlCore/Say.hpp>
 #include <algorithm>
 
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  #include <EGL/egl.h> // for eglGetProcAddress()
-#endif
-
 //-----------------------------------------------------------------------------
 namespace vl
 {
@@ -61,12 +57,6 @@ namespace vl
   bool Has_GL_Version_4_1 = false;
 
   bool Has_Fixed_Function_Pipeline = false;
-
-  // GLES defines
-
-  bool Has_GLES_Version_1_1 = false;
-  bool Has_GLES_Version_2_0 = false;
-  bool Has_GLES = false;
 
   // Helper defines
 
@@ -103,25 +93,9 @@ namespace vl
   #include <vlGraphics/GL/GLExtensionList.hpp>
   #undef VL_EXTENSION
 
-  #define VL_GLES_EXTENSION(extension) bool Has_##extension = false;
-  #include <vlGraphics/GL/GLESExtensionList.hpp>
-  #undef VL_GLES_EXTENSION
-
   #if defined(VL_OPENGL)
     #define VL_GL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
     #include <vlGraphics/GL/GLFunctionList.hpp>
-    #undef VL_GL_FUNCTION
-  #endif
-
-  #if defined(VL_OPENGL_ES1)
-    #define VL_GL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
-    #include <vlGraphics/GL/GLES1FunctionList.hpp>
-    #undef VL_GL_FUNCTION
-  #endif
-
-  #if defined(VL_OPENGL_ES2)
-    #define VL_GL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
-    #include <vlGraphics/GL/GLES2FunctionList.hpp>
     #undef VL_GL_FUNCTION
   #endif
 
@@ -320,47 +294,16 @@ bool vl::initializeOpenGL()
     #include <vlGraphics/GL/GLFunctionList.hpp>
   #endif
 
-  // opengl function pointer initialization
-  #if defined(VL_OPENGL_ES1)
-    #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress(#NAME);
-    #include <vlGraphics/GL/GLES1FunctionList.hpp>
-  #endif
-
-  // opengl function pointer initialization
-  #if defined(VL_OPENGL_ES2)
-    #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress(#NAME);
-    #include <vlGraphics/GL/GLES2FunctionList.hpp>
-  #endif
-
   // - - - OpenGL versions - - -
-
-  // GLES detect
-  #if defined(VL_OPENGL_ES1)
-    Has_GLES = Has_GLES_Version_1_1 = true;
-  #endif
-
-  #if defined(VL_OPENGL_ES2)
-    Has_GLES = Has_GLES_Version_2_0 = true;
-  #endif
 
   // GL versions
   // OpenGL ES returns "OpenGL ES-XX N.M"
   const char* version_string = (const char*)glGetString(GL_VERSION);
 
-  // These stay zero for GLES
-  const int vmaj = Has_GLES ? 0 : version_string[0] - '0';
-  const int vmin = Has_GLES ? 0 : version_string[2] - '0';
+  const int vmaj = version_string[0] - '0';
+  const int vmin = version_string[2] - '0';
 
   // Check fixed function pipeline
-#if defined(VL_OPENGL_ES2)
-  Is_OpenGL_Core_Profile = false;
-  Is_OpenGL_Forward_Compatible = false;
-  Has_Fixed_Function_Pipeline = false;
-#elif defined(VL_OPENGL_ES1)
-  Is_OpenGL_Core_Profile = false;
-  Is_OpenGL_Forward_Compatible = false;
-  Has_Fixed_Function_Pipeline = true;
-#else
   Is_OpenGL_Forward_Compatible = false;
   if( vmaj >= 3 )
   {
@@ -388,7 +331,6 @@ bool vl::initializeOpenGL()
   }
 
   Has_Fixed_Function_Pipeline = !Is_OpenGL_Forward_Compatible && !Is_OpenGL_Core_Profile;
-#endif
 
   Has_GL_Version_1_1 = (vmaj == 1 && vmin >= 1) || (vmaj > 1 && Has_Fixed_Function_Pipeline);
   Has_GL_Version_1_2 = (vmaj == 1 && vmin >= 2) || (vmaj > 1 && Has_Fixed_Function_Pipeline);
@@ -412,39 +354,11 @@ bool vl::initializeOpenGL()
     #include <vlGraphics/GL/GLExtensionList.hpp>
   #undef VL_EXTENSION
 
-  #define VL_GLES_EXTENSION(extension) Has_##extension = strstr(extensions.c_str(), #extension" ") != NULL;
-    #include <vlGraphics/GL/GLESExtensionList.hpp>
-  #undef VL_GLES_EXTENSION
-
-#if defined(VL_OPENGL_ES1)
-  // mic fixme
-  // POWERVR emulator bugs: http://www.imgtec.com/forum/forum_posts.asp?TID=1379
-  if (Has_GL_OES_texture_cube_map && glTexGenfOES == 0)
-  {
-    Has_GL_OES_texture_cube_map = false;
-    Has_Cubemap_Textures = false;
-    Log::error("GL_OES_texture_cube_map exposed but glTexGenfOES == NULL!\n"); /*VL_TRAP();*/
-  }
-  if(Has_GL_OES_blend_func_separate && glBlendFuncSeparateOES == 0)
-  {
-    Has_GL_OES_blend_func_separate = false;
-    Log::error("GL_OES_blend_func_separate exposed but glBlendFuncSeparateOES == NULL!\n"); /*VL_TRAP();*/
-  }
-  if (Has_GL_OES_fixed_point && glAlphaFuncxOES == NULL)
-  {
-    Log::warning("GL_OES_fixed_point functions are not exposed with their OES suffix!\n");
-  }
-  if (Has_GL_OES_single_precision && glDepthRangefOES == NULL)
-  {
-    Log::warning("GL_OES_single_precision functions are not exposed with their OES suffix!\n");
-  }
-#endif
-
   // - - - Helper defines - - - 
 
   // Note that GL extensions pertaining to deprecated features seem to be exposed under Core profiles even if they are not supported (like Has_GL_SGIS_generate_mipmap)
 
-  Has_GLSL = Has_GL_ARB_shading_language_100 || Has_GL_Version_2_0 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES_Version_2_0;
+  Has_GLSL = Has_GL_ARB_shading_language_100 || Has_GL_Version_2_0 || Has_GL_Version_3_0 || Has_GL_Version_4_0;
   Has_GLSL_120_Or_More = Has_GL_Version_2_1 || Has_GL_Version_3_0 || Has_GL_Version_4_0;
   Has_GLSL_130_Or_More = Has_GL_Version_3_0 || Has_GL_Version_4_0;
   Has_GLSL_140_Or_More = Has_GL_Version_3_1 || Has_GL_Version_4_0;
@@ -453,26 +367,26 @@ bool vl::initializeOpenGL()
   Has_GLSL_400_Or_More = Has_GL_Version_4_0;
   Has_GLSL_410_Or_More = Has_GL_Version_4_1;
   Has_Geometry_Shader  = Has_GL_NV_geometry_shader4 || Has_GL_EXT_geometry_shader4 || Has_GL_ARB_geometry_shader4 || Has_GL_Version_3_2 || Has_GL_Version_4_0;
-  Has_BufferObject = Has_GL_ARB_vertex_buffer_object || Has_GL_Version_1_5 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES;
-  Has_FBO = Has_GL_EXT_framebuffer_object || Has_GL_ARB_framebuffer_object || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GL_OES_framebuffer_object || Has_GLES_Version_2_0;
+  Has_BufferObject = Has_GL_ARB_vertex_buffer_object || Has_GL_Version_1_5 || Has_GL_Version_3_0 || Has_GL_Version_4_0;
+  Has_FBO = Has_GL_EXT_framebuffer_object || Has_GL_ARB_framebuffer_object || Has_GL_Version_3_0 || Has_GL_Version_4_0;
   Has_PBO = Has_GL_ARB_pixel_buffer_object || Has_GL_EXT_pixel_buffer_object || Has_GL_Version_2_1 || Has_GL_Version_3_0 || Has_GL_Version_4_0;
   // We only support GL_ANGLE_framebuffer_blit for GLES, see also:
   // http://www.khronos.org/registry/gles/extensions/IMG/IMG_multisampled_render_to_texture.txt
   // http://www.khronos.org/registry/gles/extensions/APPLE/APPLE_framebuffer_multisample.txt
-  Has_FBO_Multisample = Has_GL_Version_4_0 || Has_GL_Version_3_0 || Has_GL_ARB_framebuffer_object || Has_GL_EXT_framebuffer_multisample || Has_GL_ANGLE_framebuffer_multisample;
-  Has_Cubemap_Textures = Has_GL_ARB_texture_cube_map || Has_GL_Version_1_3 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GL_OES_texture_cube_map || Has_GLES_Version_2_0;
+  Has_FBO_Multisample = Has_GL_Version_4_0 || Has_GL_Version_3_0 || Has_GL_ARB_framebuffer_object || Has_GL_EXT_framebuffer_multisample;
+  Has_Cubemap_Textures = Has_GL_ARB_texture_cube_map || Has_GL_Version_1_3 || Has_GL_Version_3_0 || Has_GL_Version_4_0 ;
   Has_Texture_Rectangle = Has_GL_ARB_texture_rectangle || Has_GL_NV_texture_rectangle || Has_GL_Version_3_1 || Has_GL_Version_4_0;
   Has_Texture_Array = Has_GL_EXT_texture_array || Has_GL_Version_3_0 || Has_GL_Version_4_0;
   Has_Texture_Buffer = Has_GL_ARB_texture_buffer_object || Has_GL_EXT_texture_buffer_object || Has_GL_Version_3_1 || Has_GL_Version_4_0;
   Has_Texture_Multisample = Has_GL_ARB_texture_multisample || Has_GL_Version_3_2 || Has_GL_Version_4_0;
-  Has_Texture_3D = Has_GL_EXT_texture3D || Has_GL_Version_1_2 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GL_OES_texture_3D;
-  Has_Multitexture = Has_GL_ARB_multitexture || Has_GL_Version_1_3 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES;
+  Has_Texture_3D = Has_GL_EXT_texture3D || Has_GL_Version_1_2 || Has_GL_Version_3_0 || Has_GL_Version_4_0;
+  Has_Multitexture = Has_GL_ARB_multitexture || Has_GL_Version_1_3 || Has_GL_Version_3_0 || Has_GL_Version_4_0;
   Has_Primitive_Restart = Has_GL_Version_3_1 || Has_GL_Version_4_0;
   Has_Occlusion_Query = Has_GL_ARB_occlusion_query || Has_GL_Version_1_5 || Has_GL_Version_3_0 || Has_GL_Version_4_0;
   Has_Transform_Feedback = Has_GL_NV_transform_feedback || Has_GL_EXT_transform_feedback || Has_GL_Version_3_0 || Has_GL_Version_4_0;
-  Has_glGenerateMipmaps = Has_GL_ARB_framebuffer_object || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES_Version_2_0;
-  Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && Has_Fixed_Function_Pipeline) || Has_GL_Version_1_4 || Has_GLES_Version_1_1;
-  Has_Point_Sprite = Has_GL_NV_point_sprite || Has_GL_ARB_point_sprite || Has_GLSL || Has_GLES_Version_1_1;
+  Has_glGenerateMipmaps = Has_GL_ARB_framebuffer_object || Has_GL_Version_3_0 || Has_GL_Version_4_0;
+  Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && Has_Fixed_Function_Pipeline) || Has_GL_Version_1_4;
+  Has_Point_Sprite = Has_GL_NV_point_sprite || Has_GL_ARB_point_sprite || Has_GLSL;
   Has_Base_Vertex = Has_GL_Version_3_2 || Has_GL_Version_4_0 || Has_GL_ARB_draw_elements_base_vertex;
   Has_Primitive_Instancing = Has_GL_Version_3_1 || Has_GL_Version_4_0 || Has_GL_ARB_draw_instanced || Has_GL_EXT_draw_instanced;
 
@@ -485,15 +399,15 @@ bool vl::initializeOpenGL()
   Is_Enable_Supported[EN_STENCIL_TEST] = true;
   Is_Enable_Supported[EN_DITHER]       = true;
   Is_Enable_Supported[EN_POLYGON_OFFSET_FILL]  = true;
-  Is_Enable_Supported[EN_POLYGON_OFFSET_LINE]  = !Has_GLES;
-  Is_Enable_Supported[EN_POLYGON_OFFSET_POINT] = !Has_GLES;
-  Is_Enable_Supported[EN_COLOR_LOGIC_OP]       = !Has_GLES_Version_2_0;
-  Is_Enable_Supported[EN_MULTISAMPLE]          = !Has_GLES_Version_2_0;
+  Is_Enable_Supported[EN_POLYGON_OFFSET_LINE]  = true;
+  Is_Enable_Supported[EN_POLYGON_OFFSET_POINT] = true;
+  Is_Enable_Supported[EN_COLOR_LOGIC_OP]       = true;
+  Is_Enable_Supported[EN_MULTISAMPLE]          = true;
 
   // Smooth
-  Is_Enable_Supported[EN_POINT_SMOOTH]   = Has_GL_Version_1_1||Has_GLES_Version_1_1;
-  Is_Enable_Supported[EN_LINE_SMOOTH]    = !Has_GLES_Version_2_0;
-  Is_Enable_Supported[EN_POLYGON_SMOOTH] = !Has_GLES;
+  Is_Enable_Supported[EN_POINT_SMOOTH]   = Has_GL_Version_1_1;
+  Is_Enable_Supported[EN_LINE_SMOOTH]    = true;
+  Is_Enable_Supported[EN_POLYGON_SMOOTH] = true;
 
   // Stipple
   Is_Enable_Supported[EN_LINE_STIPPLE]    = Has_GL_Version_1_1;
@@ -502,16 +416,16 @@ bool vl::initializeOpenGL()
   // Point sprites
   // Point sprites when !Has_Fixed_Function_Pipeline is considered always enabled but GL_POINT_SPRITE should not be called even if GL_OES_point_sprite, GL_ARB_point_sprite etc. are exposed!
   // Note that calling glIsEnabled() with the two below under a Core profile returns true for the same reason.
-  Is_Enable_Supported[EN_POINT_SPRITE]       = (Has_GL_NV_point_sprite||Has_GL_ARB_point_sprite||Has_GL_Version_2_0||Has_GL_OES_point_sprite||Has_GLES_Version_1_1) && Has_Fixed_Function_Pipeline;
-  Is_Enable_Supported[EN_PROGRAM_POINT_SIZE] = Has_GLSL && !Has_GLES_Version_2_0; // Only OpenGL ES 2 does not support glPointSize()/GL_POINT_SIZE
+  Is_Enable_Supported[EN_POINT_SPRITE]       = (Has_GL_NV_point_sprite||Has_GL_ARB_point_sprite||Has_GL_Version_2_0) && Has_Fixed_Function_Pipeline;
+  Is_Enable_Supported[EN_PROGRAM_POINT_SIZE] = Has_GLSL; 
 
   // Fixed function pipeline
-  Is_Enable_Supported[EN_ALPHA_TEST]     = Has_GL_Version_1_1||Has_GLES_Version_1_1;
-  Is_Enable_Supported[EN_LIGHTING]       = Has_GL_Version_1_1||Has_GLES_Version_1_1;
+  Is_Enable_Supported[EN_ALPHA_TEST]     = Has_GL_Version_1_1;
+  Is_Enable_Supported[EN_LIGHTING]       = Has_GL_Version_1_1;
   Is_Enable_Supported[EN_COLOR_SUM]      = Has_GL_Version_1_1;
-  Is_Enable_Supported[EN_FOG]            = Has_GL_Version_1_1||Has_GLES_Version_1_1;
-  Is_Enable_Supported[EN_NORMALIZE]      = Has_GL_Version_1_1||Has_GLES_Version_1_1;
-  Is_Enable_Supported[EN_RESCALE_NORMAL] = Has_GL_Version_1_2||Has_GLES_Version_1_1;
+  Is_Enable_Supported[EN_FOG]            = Has_GL_Version_1_1;
+  Is_Enable_Supported[EN_NORMALIZE]      = Has_GL_Version_1_1;
+  Is_Enable_Supported[EN_RESCALE_NORMAL] = Has_GL_Version_1_2;
 
   // Available only under OpenGL 2.x
   Is_Enable_Supported[EN_VERTEX_PROGRAM_TWO_SIDE]   = ((Has_GL_ARB_vertex_program||Has_GL_NV_vertex_program) && Has_GL_Version_1_1) || Has_GL_Version_2_0;
@@ -521,11 +435,7 @@ bool vl::initializeOpenGL()
   
   // Clipping planes
   int max_clip_planes = 0;
-  // OpenGL ES 2 is the only one without clipping planes!
-  if (!Has_GLES_Version_2_0)
-  {
-    glGetIntegerv(GL_MAX_CLIP_DISTANCES, &max_clip_planes); // GL_MAX_CLIP_DISTANCES == GL_MAX_CLIP_PLANES
-  }
+  glGetIntegerv(GL_MAX_CLIP_DISTANCES, &max_clip_planes); // GL_MAX_CLIP_DISTANCES == GL_MAX_CLIP_PLANES
   Is_Enable_Supported[EN_CLIP_DISTANCE0] = max_clip_planes >= 1;
   Is_Enable_Supported[EN_CLIP_DISTANCE1] = max_clip_planes >= 2;
   Is_Enable_Supported[EN_CLIP_DISTANCE2] = max_clip_planes >= 3;
@@ -536,9 +446,9 @@ bool vl::initializeOpenGL()
   Is_Enable_Supported[EN_CLIP_DISTANCE7] = max_clip_planes >= 8;
 
   // Multisampling
-  Is_Enable_Supported[EN_SAMPLE_ALPHA_TO_COVERAGE] = Has_GL_Version_1_3||!Has_Fixed_Function_Pipeline||Has_GLES;
-  Is_Enable_Supported[EN_SAMPLE_ALPHA_TO_ONE]      = Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_1;
-  Is_Enable_Supported[EN_SAMPLE_COVERAGE]          = Has_GL_Version_1_3||!Has_Fixed_Function_Pipeline||Has_GLES;
+  Is_Enable_Supported[EN_SAMPLE_ALPHA_TO_COVERAGE] = Has_GL_Version_1_3||!Has_Fixed_Function_Pipeline;
+  Is_Enable_Supported[EN_SAMPLE_ALPHA_TO_ONE]      = Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0;
+  Is_Enable_Supported[EN_SAMPLE_COVERAGE]          = Has_GL_Version_1_3||!Has_Fixed_Function_Pipeline;
 
   // Driver bugs
   // MESA Mesa 11.2.0 advertises these extensions but does not support them!
@@ -622,17 +532,7 @@ int vl::glcheck(const char* file, int line)
 //------------------------------------------------------------------------------
 // vl::getGLProcAddress() implementation based on GLEW's
 //------------------------------------------------------------------------------
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-void* vl::getGLProcAddress(const char* name)
-{
-  void* func = (void*)eglGetProcAddress(name);
-  /*if (func)
-    Log::warning( String().printf("+ %s\n", name) );
-  else
-    Log::error( String().printf("- %s\n", name) );*/
-  return func;
-}
-#elif defined(VL_PLATFORM_WINDOWS)
+#if defined(VL_PLATFORM_WINDOWS)
 void* vl::getGLProcAddress(const char* name)
 {
   return (void*)wglGetProcAddress((LPCSTR)name);
