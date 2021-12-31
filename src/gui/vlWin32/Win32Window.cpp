@@ -183,17 +183,18 @@ LONG WINAPI Win32Window::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
       break;
     }
 
-    /*case WM_CLOSE:
+    case WM_CLOSE:
     {
+      // Shutdown OpenGL
+      // OpenGL shutdown must be handled here before the window is removed from the screen
       win->dispatchDestroyEvent();
-      win->destroyWin32GLWindow();
       break;
-    }*/
+    }
 
     case WM_DESTROY:
     {
+      // Shutdown Win32
       Win32Window::mWinMap.erase(hWnd);
-      win->dispatchDestroyEvent();
       win->destroyWin32GLWindow();
       break;
     }
@@ -306,14 +307,18 @@ void Win32Window::destroyWin32GLWindow()
 
   if (hwnd())
   {
-    bool destroy_win = mWinMap.find(mHWND) != mWinMap.end();
-
-    // WM_DESTROY must be dispatched while the OpenGL context is still available!
-    if (destroy_win)
+    std::map< HWND, Win32Window* >::iterator it = mWinMap.find(mHWND);
+    
+    // This bit is only executed when () is not called by WM_DESTROY
+    if (it != mWinMap.end())
     {
+      Win32Window* win = it->second;      
+      win->dispatchDestroyEvent();
+      Win32Window::mWinMap.erase(mHWND);
       DestroyWindow(mHWND);
       mHWND = NULL;
     }
+
     if (mHGLRC)
     {
       if ( wglDeleteContext(mHGLRC) == FALSE )
