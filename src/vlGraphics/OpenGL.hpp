@@ -120,7 +120,30 @@ namespace vl
     #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
     #include <vlGraphics/GL/GLFunctionList.hpp>
     #undef VL_GL_FUNCTION
-  #endif
+
+  //-----------------------------------------------------------------------------
+  // OpenGLFunctions
+  //-----------------------------------------------------------------------------
+  class OpenGLFunctions {
+  public:
+    // OpenGL 1.1
+    #define VL_GL_FUNCTION(NAME) decltype(NAME)* _##NAME = 0;
+    #include <vlGraphics/GL/GLFunctionList_1_1.hpp>
+    #undef VL_GL_FUNCTION
+
+    // OpenGL 1.2 - 4.6
+    #define VL_GL_FUNCTION(TYPE, NAME) TYPE _##NAME = 0;
+    #include <vlGraphics/GL/GLFunctionList.hpp>
+    #undef VL_GL_FUNCTION
+    void initFunctions();
+  };
+
+
+#endif
+
+  //-----------------------------------------------------------------------------
+  // MISC
+  //-----------------------------------------------------------------------------
 
   //! To test whether OpenGL has been initialized at least once check vl::Is_OpenGL_Initialized
   VLGRAPHICS_EXPORT bool initializeOpenGL();

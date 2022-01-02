@@ -285,6 +285,17 @@ namespace vl
   VL_COMPILE_TIME_CHECK( EN_EnableCount == sizeof(Translate_Enable_String) / sizeof(Translate_Enable_String[0]) );
 }
 //-----------------------------------------------------------------------------
+void vl::OpenGLFunctions::initFunctions() {
+  // #define VL_GL_FUNCTION(NAME) _##NAME = (decltype(NAME)*)getGLProcAddress(#NAME);
+  #define VL_GL_FUNCTION(NAME) _##NAME = NAME;
+  #include <vlGraphics/GL/GLFunctionList_1_1.hpp>
+  #undef VL_GL_FUNCTION
+
+  #define VL_GL_FUNCTION(TYPE, NAME) _##NAME = (TYPE)getGLProcAddress(#NAME);
+  #include <vlGraphics/GL/GLFunctionList.hpp>
+  #undef VL_GL_FUNCTION
+}
+//-----------------------------------------------------------------------------
 bool vl::initializeOpenGL()
 {
   Is_OpenGL_Initialized = false;

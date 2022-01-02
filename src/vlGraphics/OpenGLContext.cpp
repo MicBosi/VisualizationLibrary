@@ -237,6 +237,8 @@ bool OpenGLContext::initGLContext(bool log)
 
   makeCurrent();
 
+  mGL.initFunctions();
+
   // init OpenGL extensions
   if (!initializeOpenGL())
   {

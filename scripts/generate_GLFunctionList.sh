@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# usage: ./generate_GLFunctionList.sh > ../src/vlGraphics/GL/GLFunctionList.hpp
+# Usage: ./generate_GLFunctionList.sh > ../src/vlGraphics/GL/GLFunctionList.hpp
 
 GLDIR=../src/external/Khronos/GL
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# usage: ./generate_GLExtensionList.sh > ../src/vlGraphics/GL/GLExtensionList.hpp
+# Usage: ./generate_GLExtensionList.sh > ../src/vlGraphics/GL/GLExtensionList.hpp
 
 GLDIR=../src/external/Khronos/GL
 
