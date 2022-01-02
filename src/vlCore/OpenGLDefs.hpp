@@ -39,16 +39,28 @@
   #if defined(VL_PLATFORM_WINDOWS)
 
     // MIC FIXME:
-    // --> Remove GL_GLEXT_PROTOTYPES 
-    // --> Python script to generate function list 
-    // --> Python script to generate wrapper class
-    // --> Remove GLFunctionWrappers.hpp
-    // --> Python script to generate GLExtensionList.hpp (ARB only?)
+    // --> [v] Script to generate GLExtensionList.hpp
+    // --> [v] GL 4.2 to 4.6 basic checks
+    // --> [v] script to generate function list 
+    // --> [v] removed usage of GL_GLEXT_PROTOTYPES
+    // --> [v] script to generate wrapper class
+    // --> [v] Remove GLFunctionWrappers.hpp
+    // --> [v] Linux compilation fixed
+    // 
+    // --> Compute Shader support + test
+    // 
+    // --> Retest all tests
+    // 
+    // --> Mac compile
     // --> Core profile startup working
-    // --> Expose 4.6 features (enums, shaders, compute shaders etc.)
+    // 
     // --> Merge into VL 2.2
-    // --> Continue VL 3.0: remove all fixed function pipeline
-    #define GL_GLEXT_PROTOTYPES 1
+    // 
+    // --> Foundation of VL 3.0: 
+    //     -> Remove all fixed function pipeline & legacy tests
+    //     -> Ephemerium start
+    //
+    
     #include <gl/gl.h>
     #include <gl/glu.h>
     #include <GL/khronos_glext.h>
@@ -56,10 +68,11 @@
 
   #elif defined(VL_PLATFORM_LINUX)
 
-    // MIC FIXME: test Linux
-    #include <GL/mesa_gl.h>
-    #include <GL/glu.h>
+    #include <GL/mesa_gl_1_1_only.h>
     #include <GL/khronos_glext.h>
+    #include <GL/glu.h>
+    // No need to expose GLX functions for now
+    // #include <GL/khronos_glxext.h>
     extern "C" { extern void ( * glXGetProcAddress (const GLubyte *procName)) (void); }
 
   #elif defined(VL_PLATFORM_MACOSX)
