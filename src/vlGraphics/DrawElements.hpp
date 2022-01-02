@@ -242,12 +242,12 @@ namespace vl
       const GLvoid* ptr = indexBuffer()->bufferObject()->ptr();
       if (use_bo && indexBuffer()->bufferObject()->handle())
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->bufferObject()->handle()); VL_CHECK_OGL()
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->bufferObject()->handle()); VL_CHECK_OGL()
         ptr = 0;
       }
       else
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL()
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL()
       }
 
       // compute final pointer and count
@@ -282,7 +282,7 @@ namespace vl
         else
         {
           VL_CHECK(Has_Primitive_Instancing)
-          VL_glDrawElementsInstanced( primitiveType(), count, arr_type::gl_type, ptr, instances() ); VL_CHECK_OGL()
+          glDrawElementsInstanced( primitiveType(), count, arr_type::gl_type, ptr, instances() ); VL_CHECK_OGL()
         }
       }
       else
@@ -290,12 +290,12 @@ namespace vl
         VL_CHECK(Has_Base_Vertex)
         if ( instances() == 1 )
         {
-          VL_glDrawElementsBaseVertex( primitiveType(), count, arr_type::gl_type, ptr, mBaseVertex ); VL_CHECK_OGL()
+          glDrawElementsBaseVertex( primitiveType(), count, arr_type::gl_type, ptr, mBaseVertex ); VL_CHECK_OGL()
         }
         else
         {
           VL_CHECK(Has_Primitive_Instancing)
-          VL_glDrawElementsInstancedBaseVertex( primitiveType(), count, arr_type::gl_type, ptr, instances(), mBaseVertex ); VL_CHECK_OGL()
+          glDrawElementsInstancedBaseVertex( primitiveType(), count, arr_type::gl_type, ptr, instances(), mBaseVertex ); VL_CHECK_OGL()
         }
       }
 

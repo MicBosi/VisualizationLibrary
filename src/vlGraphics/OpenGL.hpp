@@ -117,9 +117,13 @@ namespace vl
   #undef VL_EXTENSION
 
   #if defined(VL_OPENGL)
-    #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
-    #include <vlGraphics/GL/GLFunctionList.hpp>
-    #undef VL_GL_FUNCTION
+
+  //-----------------------------------------------------------------------------
+  // Globally accessible OpenGL functions
+  //-----------------------------------------------------------------------------
+  #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
+  #include <vlGraphics/GL/GLFunctionList.hpp>
+  #undef VL_GL_FUNCTION
 
   //-----------------------------------------------------------------------------
   // OpenGLFunctions
@@ -137,8 +141,6 @@ namespace vl
     #undef VL_GL_FUNCTION
     void initFunctions();
   };
-
-
 #endif
 
   //-----------------------------------------------------------------------------
@@ -146,7 +148,7 @@ namespace vl
   //-----------------------------------------------------------------------------
 
   //! To test whether OpenGL has been initialized at least once check vl::Is_OpenGL_Initialized
-  VLGRAPHICS_EXPORT bool initializeOpenGL();
+  VLGRAPHICS_EXPORT bool initializeOpenGL(const OpenGLFunctions* gl = NULL);
 
   //! Returns the address of the specified OpenGL function if supported by the active OpenGL driver and profile.
   VLGRAPHICS_EXPORT void* getGLProcAddress(const char* name);
@@ -154,7 +156,9 @@ namespace vl
   //! Returns a readable string corresponding to the given OpenGL error code as returned by glGetError()
   VLGRAPHICS_EXPORT const char* getGLErrorString(int err);
 
-  //-----------------------------------------------------------------------------
+  VLGRAPHICS_EXPORT std::string getOpenGLExtensions(const OpenGLFunctions* gl);
+  
+//-----------------------------------------------------------------------------
   // VL_CHECK_OGL
   //-----------------------------------------------------------------------------
 

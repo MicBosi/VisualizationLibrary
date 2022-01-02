@@ -120,7 +120,7 @@ namespace vl
       if (Has_BufferObject && handle() == 0)
       {
         VL_CHECK(mByteCountBufferObject == 0)
-        VL_glGenBuffers( 1, &mHandle ); VL_CHECK_OGL();
+        glGenBuffers( 1, &mHandle ); VL_CHECK_OGL();
         mByteCountBufferObject = 0;
         VL_CHECK(handle())
       }
@@ -133,7 +133,7 @@ namespace vl
       VL_CHECK(Has_BufferObject || handle() == 0)
       if (Has_BufferObject && handle() != 0)
       {
-        VL_glDeleteBuffers( 1, &mHandle ); // VL_CHECK_OGL();
+        glDeleteBuffers( 1, &mHandle ); // VL_CHECK_OGL();
         mHandle = 0;
         mByteCountBufferObject = 0;
       }
@@ -173,9 +173,9 @@ namespace vl
       {
         createBufferObject();
         // we use the GL_ARRAY_BUFFER slot to send the data for no special reason
-        VL_glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
-        VL_glBufferData( GL_ARRAY_BUFFER, byte_count, data, usage ); VL_CHECK_OGL();
-        VL_glBindBuffer( GL_ARRAY_BUFFER, 0 ); VL_CHECK_OGL();
+        glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
+        glBufferData( GL_ARRAY_BUFFER, byte_count, data, usage ); VL_CHECK_OGL();
+        glBindBuffer( GL_ARRAY_BUFFER, 0 ); VL_CHECK_OGL();
         mByteCountBufferObject = byte_count;
         mUsage = usage;
       }
@@ -204,9 +204,9 @@ namespace vl
       if (Has_BufferObject && data && handle())
       {
         // we use the GL_ARRAY_BUFFER slot to send the data for no special reason
-        VL_glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
-        VL_glBufferSubData( GL_ARRAY_BUFFER, offset, byte_count, data ); VL_CHECK_OGL();
-        VL_glBindBuffer( GL_ARRAY_BUFFER, 0 ); VL_CHECK_OGL();
+        glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
+        glBufferSubData( GL_ARRAY_BUFFER, offset, byte_count, data ); VL_CHECK_OGL();
+        glBindBuffer( GL_ARRAY_BUFFER, 0 ); VL_CHECK_OGL();
       }
     }
 
@@ -219,9 +219,9 @@ namespace vl
       if ( Has_BufferObject )
       {
         createBufferObject();
-        VL_glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
-        void* ptr = VL_glMapBuffer( GL_ARRAY_BUFFER, access ); VL_CHECK_OGL();
-        VL_glBindBuffer( GL_ARRAY_BUFFER, 0 ); VL_CHECK_OGL();
+        glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
+        void* ptr = glMapBuffer( GL_ARRAY_BUFFER, access ); VL_CHECK_OGL();
+        glBindBuffer( GL_ARRAY_BUFFER, 0 ); VL_CHECK_OGL();
         return ptr;
       }
       else
@@ -245,9 +245,9 @@ namespace vl
       if ( Has_BufferObject )
       {
         createBufferObject();
-        VL_glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
-        bool ok = VL_glUnmapBuffer( GL_ARRAY_BUFFER ) == GL_TRUE; VL_CHECK_OGL();
-        VL_glBindBuffer( GL_ARRAY_BUFFER, 0 ); VL_CHECK_OGL();
+        glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
+        bool ok = glUnmapBuffer( GL_ARRAY_BUFFER ) == GL_TRUE; VL_CHECK_OGL();
+        glBindBuffer( GL_ARRAY_BUFFER, 0 ); VL_CHECK_OGL();
         VL_CHECK_OGL();
         return ok;
       }

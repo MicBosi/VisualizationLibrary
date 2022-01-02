@@ -504,7 +504,7 @@ void GLSLProgram::preLink()
     std::map<std::string, int>::iterator it = mFragDataLocation.begin();
     while(it != mFragDataLocation.end())
     {
-      VL_glBindFragDataLocation( handle(), it->second, it->first.c_str() ); VL_CHECK_OGL();
+      glBindFragDataLocation( handle(), it->second, it->first.c_str() ); VL_CHECK_OGL();
       ++it;
     }
   }
@@ -513,12 +513,12 @@ void GLSLProgram::preLink()
 
   if( Has_GL_ARB_get_program_binary )
   {
-    VL_glProgramParameteri(handle(), GL_PROGRAM_BINARY_RETRIEVABLE_HINT, programBinaryRetrievableHint()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
+    glProgramParameteri(handle(), GL_PROGRAM_BINARY_RETRIEVABLE_HINT, programBinaryRetrievableHint()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
   }
 
   if ( Has_GL_ARB_separate_shader_objects )
   {
-    VL_glProgramParameteri(handle(), GL_PROGRAM_SEPARABLE, programSeparable()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
+    glProgramParameteri(handle(), GL_PROGRAM_SEPARABLE, programSeparable()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
   }
 
   // Automatically binds the specified attributes to the desired values
@@ -718,10 +718,10 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
       case UT_INT_VEC3: glUniform3iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
       case UT_INT_VEC4: glUniform4iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
 
-      case UT_UNSIGNED_INT:      VL_glUniform1uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
-      case UT_UNSIGNED_INT_VEC2: VL_glUniform2uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
-      case UT_UNSIGNED_INT_VEC3: VL_glUniform3uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
-      case UT_UNSIGNED_INT_VEC4: VL_glUniform4uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
+      case UT_UNSIGNED_INT:      glUniform1uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
+      case UT_UNSIGNED_INT_VEC2: glUniform2uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
+      case UT_UNSIGNED_INT_VEC3: glUniform3uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
+      case UT_UNSIGNED_INT_VEC4: glUniform4uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
 
       case UT_FLOAT:      glUniform1fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
       case UT_FLOAT_VEC2: glUniform2fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
@@ -814,7 +814,7 @@ bool GLSLProgram::getProgramBinary(GLenum& binary_format, std::vector<unsigned c
     if (length)
     {
       binary.resize(length);
-      VL_glGetProgramBinary(handle(), length, NULL, &binary_format, &binary[0]); VL_CHECK_OGL();
+      glGetProgramBinary(handle(), length, NULL, &binary_format, &binary[0]); VL_CHECK_OGL();
     }
     return true;
   }
@@ -840,7 +840,7 @@ bool GLSLProgram::programBinary(GLenum binary_format, const void* binary, int le
     preLink();
 
     // load glsl program and link
-    VL_glProgramBinary(handle(), binary_format, binary, length); VL_CHECK_OGL();
+    glProgramBinary(handle(), binary_format, binary, length); VL_CHECK_OGL();
     mScheduleLink = !linkStatus();
 
     // log error

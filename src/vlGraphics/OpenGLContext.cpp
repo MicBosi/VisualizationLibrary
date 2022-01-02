@@ -240,14 +240,14 @@ bool OpenGLContext::initGLContext(bool log)
   mGL.initFunctions();
 
   // init OpenGL extensions
-  if (!initializeOpenGL())
+  if (!initializeOpenGL(&mGL))
   {
     Log::error("Error initializing OpenGL!\n");
     VL_TRAP()
     return false;
   }
 
-  mExtensions = getOpenGLExtensions();
+  mExtensions = getOpenGLExtensions(&mGL);
 
   if (log)
     logOpenGLInfo();
@@ -259,19 +259,19 @@ bool OpenGLContext::initGLContext(bool log)
   if (Has_GL_ARB_multitexture||Has_GL_Version_1_3) // for GL < 2.x
   {
     int max_tmp = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
+    mGL._glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
     mTextureCoordCount = mTextureImageUnitCount = max_tmp > mTextureImageUnitCount ? max_tmp : mTextureImageUnitCount;
   }
   if (Has_GL_Version_2_0) // for GL == 2.x
   {
     int max_tmp = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
+    mGL._glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
     mTextureCoordCount = mTextureImageUnitCount = max_tmp > mTextureImageUnitCount ? max_tmp : mTextureImageUnitCount;
   }
   if (Has_GLSL) // for GL >= 2.0
   {
     int max_tmp = 0;
-    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
     mTextureImageUnitCount = max_tmp > mTextureImageUnitCount ? max_tmp : mTextureImageUnitCount;
   }
   mTextureImageUnitCount = mTextureImageUnitCount < VL_MAX_TEXTURE_IMAGE_UNITS ? mTextureImageUnitCount : VL_MAX_TEXTURE_IMAGE_UNITS;
@@ -280,21 +280,21 @@ bool OpenGLContext::initGLContext(bool log)
   // find max number of vertex attributes
   mVertexAttribCount = 0;
   if(Has_GLSL)
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &mVertexAttribCount);
+    mGL._glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &mVertexAttribCount);
   mVertexAttribCount = mVertexAttribCount < VA_MaxAttribCount ? mVertexAttribCount : VA_MaxAttribCount;
 
   // default VAO needed for OpenGL Core profiles
   if ( Is_OpenGL_Core_Profile && glGenVertexArrays && glBindVertexArray ) {
-    glGenVertexArrays( 1, &mDefaultVAO ); VL_CHECK_OGL();
-    glBindVertexArray( mDefaultVAO ); VL_CHECK_OGL();
+    mGL._glGenVertexArrays( 1, &mDefaultVAO ); VL_CHECK_OGL();
+    mGL._glBindVertexArray( mDefaultVAO ); VL_CHECK_OGL();
   }
 
   VL_CHECK_OGL();
 
 #if defined(VL_OPENGL)
   // test for double buffer availability
-  glDrawBuffer(GL_BACK);
-  if ( glGetError() )
+  mGL._glDrawBuffer(GL_BACK);
+  if (mGL._glGetError() )
     mHasDoubleBuffer = false;
   else
     mHasDoubleBuffer = true;
@@ -336,33 +336,33 @@ void OpenGLContext::logOpenGLInfo()
   makeCurrent();
 
   Log::debug(" --- OpenGL Info ---\n");
-  Log::debug( Say("OpenGL version: %s\n") << glGetString(GL_VERSION) );
-  Log::debug( Say("OpenGL vendor: %s\n") << glGetString(GL_VENDOR) );
-  Log::debug( Say("OpenGL renderer: %s\n") << glGetString(GL_RENDERER) );
+  Log::debug( Say("OpenGL version: %s\n") << mGL._glGetString(GL_VERSION) );
+  Log::debug( Say("OpenGL vendor: %s\n") << mGL._glGetString(GL_VENDOR) );
+  Log::debug( Say("OpenGL renderer: %s\n") << mGL._glGetString(GL_RENDERER) );
   Log::debug( Say("OpenGL profile: %s\n") << (Has_Fixed_Function_Pipeline ? "Compatible" : "Core") );
 
   if (Has_GLSL)
-    Log::debug( Say("GLSL version: %s\n") << glGetString(GL_SHADING_LANGUAGE_VERSION) );
+    Log::debug( Say("GLSL version: %s\n") << mGL._glGetString(GL_SHADING_LANGUAGE_VERSION) );
 
   int max_val = 0;
-  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_val);
+  mGL._glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_val);
   Log::debug( Say("Max texture size: %n\n")<<max_val);
 
   max_val = 1;
   if (Has_GL_ARB_multitexture||Has_GL_Version_1_3)
-    glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_val); // deprecated enum
+    mGL._glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_val); // deprecated enum
   Log::debug( Say("Texture units (legacy): %n\n") << max_val);
 
   max_val = 0;
   if (Has_GL_Version_2_0)
   {
-    glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_val); // deprecated enum
+    mGL._glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_val); // deprecated enum
     Log::debug( Say("Texture units (client): %n\n") << max_val);
   }
   if (Has_GLSL)
   {
     int tmp = 0;
-    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &tmp);
+    mGL._glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &tmp);
     // max between GL_MAX_TEXTURE_COORDS and GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS
     max_val = tmp > max_val ? tmp : max_val;
     Log::debug( Say("Texture units (combined): %n\n") << max_val);
@@ -371,13 +371,13 @@ void OpenGLContext::logOpenGLInfo()
   max_val = 0;
   if (Has_GLSL)
   {
-    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_val);
+    mGL._glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_val);
     Log::debug( Say("Texture units (fragment shader): %n\n") << max_val);
   }
 
   max_val = 0;
   if (Has_GL_EXT_texture_filter_anisotropic)
-    glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_val);
+    mGL._glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_val);
   Log::debug( Say("Anisotropic texture filter: %s, ") << (Has_GL_EXT_texture_filter_anisotropic? "YES" : "NO") );
   Has_GL_EXT_texture_filter_anisotropic ? Log::debug( Say("%nX\n") << max_val) : Log::debug("\n");
   Log::debug( Say("S3 Texture Compression: %s\n") << (Has_GL_EXT_texture_compression_s3tc? "YES" : "NO") );
@@ -388,7 +388,7 @@ void OpenGLContext::logOpenGLInfo()
   max_val = 0;
   if(Has_GLSL)
   {
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_val); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_val); VL_CHECK_OGL();
     Log::debug( Say("Max vertex attributes: %n\n")<<max_val);
   }
 
@@ -404,12 +404,12 @@ void OpenGLContext::logOpenGLInfo()
     // - ergo we don't check if we are in GL 3.x non-compatible mode
     if (Has_GL_Version_4_1)
     {
-      glGetIntegerv(GL_MAX_VARYING_VECTORS, &max_val); VL_CHECK_OGL();
+      mGL._glGetIntegerv(GL_MAX_VARYING_VECTORS, &max_val); VL_CHECK_OGL();
     }
     else
     if (Has_GL_Version_2_0)
     {
-      glGetIntegerv(GL_MAX_VARYING_FLOATS, &max_val); VL_CHECK_OGL();
+      mGL._glGetIntegerv(GL_MAX_VARYING_FLOATS, &max_val); VL_CHECK_OGL();
       max_val /= 4;
     }
     Log::debug( Say("Max varying vectors: %n\n")<<max_val);
@@ -418,7 +418,7 @@ void OpenGLContext::logOpenGLInfo()
   max_val = 0;
   if(Has_GLSL)
   {
-    glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
     max_val /= 4;
 
     Log::debug( Say("Max fragment uniform vectors: %n\n")<<max_val);
@@ -427,7 +427,7 @@ void OpenGLContext::logOpenGLInfo()
   max_val = 0;
   if(Has_GLSL)
   {
-    glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
     max_val /= 4;
 
     Log::debug( Say("Max vertex uniform vectors: %n\n")<<max_val);
@@ -436,28 +436,28 @@ void OpenGLContext::logOpenGLInfo()
   max_val = 0;
   if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0)
   {
-    glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &max_val); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &max_val); VL_CHECK_OGL();
     Log::debug( Say("Max elements vertices: %n\n") << max_val );
   }
 
   max_val = 0;
   if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0)
   {
-    glGetIntegerv(GL_MAX_ELEMENTS_INDICES,  &max_val ); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_MAX_ELEMENTS_INDICES,  &max_val ); VL_CHECK_OGL();
     Log::debug( Say("Max elements indices: %n\n") << max_val );
   }
 
   if (Has_Fixed_Function_Pipeline)
   {
     max_val = 0;
-    glGetIntegerv(GL_MAX_CLIP_PLANES,  &max_val ); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_MAX_CLIP_PLANES,  &max_val ); VL_CHECK_OGL();
     Log::debug( Say("Max clipping planes: %n\n") << max_val );
   }
   else
   if (Has_GLSL)
   {
     max_val = 0;
-    glGetIntegerv(GL_MAX_CLIP_DISTANCES,  &max_val ); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_MAX_CLIP_DISTANCES,  &max_val ); VL_CHECK_OGL();
     Log::debug( Say("Max clip distances: %n\n") << max_val );
   }
 
@@ -505,9 +505,9 @@ void OpenGLContext::applyEnables( const EnableSet* new_enables )
       mNewEnableSet->append(capability);
       if(!mCurrentEnableSet->hasKey(capability))
       {
-        glEnable( Translate_Enable[capability] );
+        mGL._glEnable( Translate_Enable[capability] );
         #ifndef NDEBUG
-          if (glGetError() != GL_NO_ERROR)
+          if (mGL._glGetError() != GL_NO_ERROR)
           {
             Log::error( Say("An unsupported capability has been enabled: %s.\n") << Translate_Enable_String[capability]);
           }
@@ -520,9 +520,9 @@ void OpenGLContext::applyEnables( const EnableSet* new_enables )
   {
     if (!mNewEnableSet->hasKey(*capability))
     {
-      glDisable( Translate_Enable[*capability] );
+      mGL._glDisable( Translate_Enable[*capability] );
       #ifndef NDEBUG
-        if (glGetError() != GL_NO_ERROR)
+        if (mGL._glGetError() != GL_NO_ERROR)
         {
           Log::error( Say("An unsupported capability has been disabled: %s.\n") << Translate_Enable_String[*capability]);
         }
@@ -676,12 +676,12 @@ bool OpenGLContext::isCleanState(bool verbose)
   String error_msg;
 
   // check default VAO is active
-  if ( Is_OpenGL_Core_Profile && glBindVertexArray ) {
+  if ( Is_OpenGL_Core_Profile && mGL._glBindVertexArray ) {
     int vao = 0;
-    glGetIntegerv( GL_VERTEX_ARRAY_BINDING, &vao ); VL_CHECK_OGL();
+    mGL._glGetIntegerv( GL_VERTEX_ARRAY_BINDING, &vao ); VL_CHECK_OGL();
     if (vao != (int)mDefaultVAO ) {
       error_msg += Say("Current VAO (%n) is not the default one (%n)!\n") << vao << mDefaultVAO;
-      glBindVertexArray( mDefaultVAO ); VL_CHECK_OGL();
+      mGL._glBindVertexArray( mDefaultVAO ); VL_CHECK_OGL();
     }
   }
 
@@ -694,47 +694,47 @@ bool OpenGLContext::isCleanState(bool verbose)
     if (i == EN_DITHER || i == EN_MULTISAMPLE)
       continue;
 
-    GLboolean enabled = glIsEnabled( Translate_Enable[i] ); VL_CHECK_OGL();
+    GLboolean enabled = mGL._glIsEnabled( Translate_Enable[i] ); VL_CHECK_OGL();
 
     if (enabled)
     {
       error_msg += Say(" - Capability %s was enabled!\n") << Translate_Enable_String[i];
-      glDisable(Translate_Enable[i]);
+      mGL._glDisable(Translate_Enable[i]);
     }
   }
 
   if (Has_Fixed_Function_Pipeline)
   {
     int max_lights = 0;
-    glGetIntegerv(GL_MAX_LIGHTS, &max_lights);
+    mGL._glGetIntegerv(GL_MAX_LIGHTS, &max_lights);
 
     for( int i=0; i<max_lights; ++i)
     {
-      if (glIsEnabled(GL_LIGHT0+i))
+      if (mGL._glIsEnabled(GL_LIGHT0+i))
       {
         error_msg += Say(" - GL_LIGHT%n was enabled!\n") << i;
-        glDisable(GL_LIGHT0+i);
+        mGL._glDisable(GL_LIGHT0+i);
       }
     }
 
     // OpenGL requires 6 planes but GLES 1.x requires only 1.
     int max_planes = 0;
-    glGetIntegerv(GL_MAX_CLIP_PLANES, &max_planes);
+    mGL._glGetIntegerv(GL_MAX_CLIP_PLANES, &max_planes);
 
     for( int i=0; i<max_planes; ++i)
     {
-      if (glIsEnabled(GL_CLIP_PLANE0+i))
+      if (mGL._glIsEnabled(GL_CLIP_PLANE0+i))
       {
         error_msg += Say(" - GL_CLIP_PLANE%n was enabled!\n") << i;
-        glDisable(GL_CLIP_PLANE0+i);
+        mGL._glDisable(GL_CLIP_PLANE0+i);
       }
     }
   }
 
-  if (Has_Primitive_Restart && glIsEnabled(GL_PRIMITIVE_RESTART))
+  if (Has_Primitive_Restart && mGL._glIsEnabled(GL_PRIMITIVE_RESTART))
   {
     error_msg += " - GL_PRIMITIVE_RESTART was enabled!\n";
-    glDisable(GL_PRIMITIVE_RESTART);
+    mGL._glDisable(GL_PRIMITIVE_RESTART);
   }
 
   if(Has_Multitexture)
@@ -742,24 +742,24 @@ bool OpenGLContext::isCleanState(bool verbose)
     int active_tex = -1;
     // mic fixme: PVR emulator bug? returns always 1.
 #if !defined(VL_OPENGL_ES2)
-    glGetIntegerv(GL_ACTIVE_TEXTURE, &active_tex); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_ACTIVE_TEXTURE, &active_tex); VL_CHECK_OGL();
     active_tex -= GL_TEXTURE0;
     if (active_tex != 0)
     {
         error_msg += Say(" - Active texture unit is GL_TEXTURE%n instead of GL_TEXTURE0!\n") << active_tex;
-        glActiveTexture(GL_TEXTURE0);
+        mGL._glActiveTexture(GL_TEXTURE0);
     }
 #endif
 
     if (Has_Fixed_Function_Pipeline)
     {
       active_tex = -1;
-      glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &active_tex); VL_CHECK_OGL();
+      mGL._glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &active_tex); VL_CHECK_OGL();
       active_tex -= GL_TEXTURE0;
       if (active_tex != 0)
       {
         error_msg += Say(" - Active client texture unit is GL_TEXTURE%n instead of GL_TEXTURE0!\n") << active_tex;
-        glClientActiveTexture(GL_TEXTURE0);
+        mGL._glClientActiveTexture(GL_TEXTURE0);
       }
     }
   }
@@ -772,7 +772,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   if (Has_GL_ARB_multitexture||Has_GL_Version_1_3)
   {
     int max_tmp = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
+    mGL._glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
     coord_count = max_tmp < coord_count ? max_tmp : coord_count;
   }
 
@@ -781,14 +781,14 @@ bool OpenGLContext::isCleanState(bool verbose)
   if (Has_GLSL) // for GL >= 2.0
   {
     int max_tmp = 0;
-    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
     coord_count = max_tmp < coord_count ? max_tmp : coord_count;
   }
 
   if (Has_GL_Version_2_0) // for GL == 2.x && compatible higher
   {
     int max_tmp = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
+    mGL._glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
     coord_count = max_tmp < coord_count ? max_tmp : coord_count;
   }
 
@@ -797,54 +797,54 @@ bool OpenGLContext::isCleanState(bool verbose)
   while(coord_count--)
   {
     VL_CHECK_OGL()
-    glActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
+      mGL._glActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
 
     if (Has_Fixed_Function_Pipeline)
     {
-	    glClientActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
+      mGL._glClientActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
 
 	    float matrix[16];
 	    float imatrix[16];
-	    glGetFloatv(GL_TEXTURE_MATRIX, matrix); VL_CHECK_OGL()
-	    glMatrixMode(GL_TEXTURE); VL_CHECK_OGL()
-	    glLoadIdentity(); VL_CHECK_OGL()
-	    glGetFloatv(GL_TEXTURE_MATRIX, imatrix); VL_CHECK_OGL()
+      mGL._glGetFloatv(GL_TEXTURE_MATRIX, matrix); VL_CHECK_OGL()
+      mGL._glMatrixMode(GL_TEXTURE); VL_CHECK_OGL()
+      mGL._glLoadIdentity(); VL_CHECK_OGL()
+      mGL._glGetFloatv(GL_TEXTURE_MATRIX, imatrix); VL_CHECK_OGL()
 	    // glLoadMatrixf(matrix); VL_CHECK_OGL() // we keep the identity
 	    if (memcmp(matrix,imatrix,sizeof(matrix)) != 0)
 	    {
 	      error_msg += Say(" - Texture matrix was not set to identity on texture unit %n!\n") << coord_count;
 	    }
 
-	    if (glIsEnabled(GL_TEXTURE_COORD_ARRAY))
+	    if (mGL._glIsEnabled(GL_TEXTURE_COORD_ARRAY))
 	    {
           error_msg += Say(" - GL_TEXTURE_COORD_ARRAY was enabled on texture unit %n!\n") << coord_count;
-          glDisable(GL_TEXTURE_COORD_ARRAY);
+          mGL._glDisable(GL_TEXTURE_COORD_ARRAY);
 	    }
 
 	    // check that all texture targets are disabled and bound to texture #0
 
-	    if (glIsEnabled(GL_TEXTURE_1D))
+	    if (mGL._glIsEnabled(GL_TEXTURE_1D))
 	    {
-	    error_msg += Say(" - GL_TEXTURE_1D was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
-        glDisable(GL_TEXTURE_1D);
+	      error_msg += Say(" - GL_TEXTURE_1D was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
+        mGL._glDisable(GL_TEXTURE_1D);
 	    }
 
         GLint bound_tex = 0;
-	    glGetIntegerv(GL_TEXTURE_BINDING_1D, &bound_tex); VL_CHECK_OGL()
+      mGL._glGetIntegerv(GL_TEXTURE_BINDING_1D, &bound_tex); VL_CHECK_OGL()
 	    if (bound_tex != 0)
 	    {
 	    error_msg += Say(" - GL_TEXTURE_BINDING_1D != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
 	    }
 
-	    if (glIsEnabled(GL_TEXTURE_2D))
+	    if (mGL._glIsEnabled(GL_TEXTURE_2D))
 	    {
 	      error_msg += Say(" - GL_TEXTURE_2D was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
-        glDisable(GL_TEXTURE_2D);
+        mGL._glDisable(GL_TEXTURE_2D);
 	    }
     }
 
     GLint bound_tex = 0;
-    glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound_tex); VL_CHECK_OGL()
+    mGL._glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound_tex); VL_CHECK_OGL()
     if (bound_tex != 0)
     {
       error_msg += Say(" - GL_TEXTURE_BINDING_2D != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
@@ -852,14 +852,14 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (Has_Texture_Rectangle)
     {
-      if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_TEXTURE_RECTANGLE))
+      if (Has_Fixed_Function_Pipeline && mGL._glIsEnabled(GL_TEXTURE_RECTANGLE))
       {
         error_msg += Say(" - GL_TEXTURE_RECTANGLE was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
-        glDisable(GL_TEXTURE_RECTANGLE);
+        mGL._glDisable(GL_TEXTURE_RECTANGLE);
       }
 
       bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_RECTANGLE, &bound_tex); VL_CHECK_OGL()
+      mGL._glGetIntegerv(GL_TEXTURE_BINDING_RECTANGLE, &bound_tex); VL_CHECK_OGL()
       if (bound_tex != 0)
       {
         error_msg += Say(" - GL_TEXTURE_BINDING_RECTANGLE != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
@@ -868,14 +868,14 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (Has_Texture_3D)
     {
-      if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_TEXTURE_3D))
+      if (Has_Fixed_Function_Pipeline && mGL._glIsEnabled(GL_TEXTURE_3D))
       {
         error_msg += Say(" - GL_TEXTURE_3D was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
-        glDisable(GL_TEXTURE_3D);
+        mGL._glDisable(GL_TEXTURE_3D);
       }
 
       bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_3D, &bound_tex); VL_CHECK_OGL()
+      mGL._glGetIntegerv(GL_TEXTURE_BINDING_3D, &bound_tex); VL_CHECK_OGL()
       if (bound_tex != 0)
       {
         error_msg += Say(" - GL_TEXTURE_BINDING_3D != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
@@ -884,14 +884,14 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (Has_Cubemap_Textures)
     {
-      if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_TEXTURE_CUBE_MAP))
+      if (Has_Fixed_Function_Pipeline && mGL._glIsEnabled(GL_TEXTURE_CUBE_MAP))
       {
         error_msg += Say(" - GL_TEXTURE_CUBE_MAP was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
-        glDisable(GL_TEXTURE_CUBE_MAP);
+        mGL._glDisable(GL_TEXTURE_CUBE_MAP);
       }
 
       bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &bound_tex); VL_CHECK_OGL()
+      mGL._glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &bound_tex); VL_CHECK_OGL()
       if (bound_tex != 0)
       {
         error_msg += Say(" - GL_TEXTURE_BINDING_CUBE_MAP != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
@@ -901,14 +901,14 @@ bool OpenGLContext::isCleanState(bool verbose)
     if (Has_Texture_Array)
     {
       bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_1D_ARRAY, &bound_tex);
+      mGL._glGetIntegerv(GL_TEXTURE_BINDING_1D_ARRAY, &bound_tex);
       if (bound_tex != 0)
       {
         error_msg += Say(" - GL_TEXTURE_BINDING_1D_ARRAY != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
       }
 
       bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_2D_ARRAY, &bound_tex);
+      mGL._glGetIntegerv(GL_TEXTURE_BINDING_2D_ARRAY, &bound_tex);
       if (bound_tex != 0)
       {
         error_msg += Say(" - GL_TEXTURE_BINDING_2D_ARRAY != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
@@ -918,14 +918,14 @@ bool OpenGLContext::isCleanState(bool verbose)
     if (Has_Texture_Multisample)
     {
       bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_2D_MULTISAMPLE, &bound_tex);
+      mGL._glGetIntegerv(GL_TEXTURE_BINDING_2D_MULTISAMPLE, &bound_tex);
       if (bound_tex != 0)
       {
         error_msg += Say(" - GL_TEXTURE_BINDING_2D_MULTISAMPLE != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
       }
 
       bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY, &bound_tex);
+      mGL._glGetIntegerv(GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY, &bound_tex);
       if (bound_tex != 0)
       {
         error_msg += Say(" - GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
@@ -935,7 +935,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     if (Has_Texture_Buffer)
     {
       bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_BUFFER, &bound_tex);
+      mGL._glGetIntegerv(GL_TEXTURE_BINDING_BUFFER, &bound_tex);
       if (bound_tex != 0)
       {
         error_msg += Say(" - GL_TEXTURE_BINDING_BUFFER != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
@@ -944,99 +944,99 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (Has_Fixed_Function_Pipeline)
     {
-	    if (glIsEnabled(GL_TEXTURE_GEN_S))
+	    if (mGL._glIsEnabled(GL_TEXTURE_GEN_S))
 	    {
 	      error_msg += Say(" - GL_TEXTURE_GEN_S was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
-        glDisable(GL_TEXTURE_GEN_S);
+        mGL._glDisable(GL_TEXTURE_GEN_S);
 	    }
 
-	    if (glIsEnabled(GL_TEXTURE_GEN_T))
+	    if (mGL._glIsEnabled(GL_TEXTURE_GEN_T))
 	    {
 	      error_msg += Say(" - GL_TEXTURE_GEN_T was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
-        glDisable(GL_TEXTURE_GEN_T);
+        mGL._glDisable(GL_TEXTURE_GEN_T);
 	    }
 
-	    if (glIsEnabled(GL_TEXTURE_GEN_R))
+	    if (mGL._glIsEnabled(GL_TEXTURE_GEN_R))
 	    {
 	      error_msg += Say(" - GL_TEXTURE_GEN_R was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
-        glDisable(GL_TEXTURE_GEN_R);
+        mGL._glDisable(GL_TEXTURE_GEN_R);
 	    }
 
-	    if (glIsEnabled(GL_TEXTURE_GEN_Q))
+	    if (mGL._glIsEnabled(GL_TEXTURE_GEN_Q))
 	    {
 	      error_msg += Say(" - GL_TEXTURE_GEN_Q was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
-        glDisable(GL_TEXTURE_GEN_Q);
+        mGL._glDisable(GL_TEXTURE_GEN_Q);
 	    }
     }
   }
 
-  if (Has_GL_Version_1_1 && glIsEnabled(GL_COLOR_MATERIAL)) // excludes also GLES
+  if (Has_GL_Version_1_1 && mGL._glIsEnabled(GL_COLOR_MATERIAL)) // excludes also GLES
   {
     error_msg += " - GL_COLOR_MATERIAL was enabled!\n";
-    glDisable(GL_COLOR_MATERIAL);
+    mGL._glDisable(GL_COLOR_MATERIAL);
   }
 
   if (Has_GL_Version_1_4 || Has_GL_EXT_fog_coord) // excludes also GLES 1.x
   {
-    if (glIsEnabled(GL_FOG_COORD_ARRAY))
+    if (mGL._glIsEnabled(GL_FOG_COORD_ARRAY))
     {
       error_msg += " - GL_FOG_COORD_ARRAY was enabled!\n";
-      glDisable(GL_FOG_COORD_ARRAY);
+      mGL._glDisable(GL_FOG_COORD_ARRAY);
     }
   }
 
   if (Has_GL_Version_1_4 || Has_GL_EXT_secondary_color) // excludes also GLES 1.x
   {
-    if (glIsEnabled(GL_SECONDARY_COLOR_ARRAY))
+    if (mGL._glIsEnabled(GL_SECONDARY_COLOR_ARRAY))
     {
       error_msg += " - GL_SECONDARY_COLOR_ARRAY was enabled!\n";
-      glDisable(GL_SECONDARY_COLOR_ARRAY);
+      mGL._glDisable(GL_SECONDARY_COLOR_ARRAY);
     }
   }
 
-  if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_COLOR_ARRAY)) // includes GLES 1.x
+  if (Has_Fixed_Function_Pipeline && mGL._glIsEnabled(GL_COLOR_ARRAY)) // includes GLES 1.x
   {
     error_msg += " - GL_COLOR_ARRAY was enabled!\n";
-    glDisable(GL_COLOR_ARRAY);
+    mGL._glDisable(GL_COLOR_ARRAY);
   }
 
-  if (Has_GL_Version_1_1 && glIsEnabled(GL_EDGE_FLAG_ARRAY)) // excludes GLES
+  if (Has_GL_Version_1_1 && mGL._glIsEnabled(GL_EDGE_FLAG_ARRAY)) // excludes GLES
   {
     error_msg += " - GL_EDGE_FLAG_ARRAY was enabled!\n";
-    glDisable(GL_EDGE_FLAG_ARRAY);
+    mGL._glDisable(GL_EDGE_FLAG_ARRAY);
   }
 
-  if (Has_GL_Version_1_1 && glIsEnabled(GL_INDEX_ARRAY)) // excludes GLES
+  if (Has_GL_Version_1_1 && mGL._glIsEnabled(GL_INDEX_ARRAY)) // excludes GLES
   {
     error_msg += " - GL_INDEX_ARRAY was enabled!\n";
-    glDisable(GL_INDEX_ARRAY);
+    mGL._glDisable(GL_INDEX_ARRAY);
   }
 
-  if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_NORMAL_ARRAY)) // includes GLES 1.x
+  if (Has_Fixed_Function_Pipeline && mGL._glIsEnabled(GL_NORMAL_ARRAY)) // includes GLES 1.x
   {
     error_msg += " - GL_NORMAL_ARRAY was enabled!\n";
-    glDisable(GL_NORMAL_ARRAY);
+    mGL._glDisable(GL_NORMAL_ARRAY);
   }
 
-  if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_VERTEX_ARRAY)) // includes GLES 1.x
+  if (Has_Fixed_Function_Pipeline && mGL._glIsEnabled(GL_VERTEX_ARRAY)) // includes GLES 1.x
   {
     error_msg += " - GL_VERTEX_ARRAY was enabled!\n";
-    glDisable(GL_VERTEX_ARRAY);
+    mGL._glDisable(GL_VERTEX_ARRAY);
   }
 
-  if (glIsEnabled(GL_SCISSOR_TEST))
+  if (mGL._glIsEnabled(GL_SCISSOR_TEST))
   {
     error_msg += " - GL_SCISSOR_TEST was enabled!\n";
-    glDisable(GL_SCISSOR_TEST);
+    mGL._glDisable(GL_SCISSOR_TEST);
   }
 
   GLint max_vert_attribs = 0;
   if (Has_GLSL)
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_vert_attribs);
+    mGL._glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_vert_attribs);
   for(int i=0; i<max_vert_attribs; ++i)
   {
     GLint is_enabled = 0;
-    glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &is_enabled);
+    mGL._glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &is_enabled);
     if (is_enabled)
     {
       error_msg += Say(" - GL_VERTEX_ATTRIB_ARRAY #%n is enabled!\n") << i;
@@ -1045,16 +1045,16 @@ bool OpenGLContext::isCleanState(bool verbose)
 
   if (Has_GL_ARB_imaging)
   {
-    if (glIsEnabled(GL_HISTOGRAM))
+    if (mGL._glIsEnabled(GL_HISTOGRAM))
     {
       error_msg += " - GL_HISTOGRAM was enabled!\n";
-      glDisable(GL_HISTOGRAM);
+      mGL._glDisable(GL_HISTOGRAM);
     }
 
-    if (glIsEnabled(GL_MINMAX))
+    if (mGL._glIsEnabled(GL_MINMAX))
     {
       error_msg += " - GL_MINMAX was enabled!\n";
-      glDisable(GL_MINMAX);
+      mGL._glDisable(GL_MINMAX);
     }
   }
 
@@ -1062,32 +1062,32 @@ bool OpenGLContext::isCleanState(bool verbose)
 #if defined(VL_OPENGL_ES2)
   GLint blend_src = 0;
   GLint blend_dst = 0;
-  glGetIntegerv( GL_BLEND_SRC_RGB, &blend_src ); VL_CHECK_OGL();
-  glGetIntegerv( GL_BLEND_DST_RGB, &blend_dst ); VL_CHECK_OGL();
+  mGL._glGetIntegerv( GL_BLEND_SRC_RGB, &blend_src ); VL_CHECK_OGL();
+  mGL._glGetIntegerv( GL_BLEND_DST_RGB, &blend_dst ); VL_CHECK_OGL();
   if (blend_src != GL_SRC_ALPHA)
   {
     error_msg += " - GL_BLEND_SRC is not GL_SRC_ALPHA!\n";
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    mGL._glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
   if (blend_dst != GL_ONE_MINUS_SRC_ALPHA)
   {
     error_msg += " - GL_BLEND_DST is not GL_ONE_MINUS_SRC_ALPHA!\n";
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    mGL._glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
 #else
   GLint blend_src = 0;
   GLint blend_dst = 0;
-  glGetIntegerv( GL_BLEND_SRC, &blend_src ); VL_CHECK_OGL();
-  glGetIntegerv( GL_BLEND_DST, &blend_dst ); VL_CHECK_OGL();
+  mGL._glGetIntegerv( GL_BLEND_SRC, &blend_src ); VL_CHECK_OGL();
+  mGL._glGetIntegerv( GL_BLEND_DST, &blend_dst ); VL_CHECK_OGL();
   if (blend_src != GL_SRC_ALPHA)
   {
     error_msg += " - GL_BLEND_SRC is not GL_SRC_ALPHA!\n";
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    mGL._glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
   if (blend_dst != GL_ONE_MINUS_SRC_ALPHA)
   {
     error_msg += " - GL_BLEND_DST is not GL_ONE_MINUS_SRC_ALPHA!\n";
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    mGL._glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
 #endif
 
@@ -1096,13 +1096,13 @@ bool OpenGLContext::isCleanState(bool verbose)
   GLint buf_bind = 0;
   if (Has_BufferObject)
   {
-    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
     if (buf_bind != 0)
     {
       error_msg += " - GL_ARRAY_BUFFER_BINDING should be 0!\n";
     }
     buf_bind = 0;
-    glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
     if (buf_bind != 0)
     {
       error_msg += " - GL_ELEMENT_ARRAY_BUFFER_BINDING should be 0!\n";
@@ -1111,13 +1111,13 @@ bool OpenGLContext::isCleanState(bool verbose)
   if (Has_GL_Version_2_1)
   {
     buf_bind = 0;
-    glGetIntegerv(GL_PIXEL_PACK_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_PIXEL_PACK_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
     if (buf_bind != 0)
     {
       error_msg += " - GL_PIXEL_PACK_BUFFER_BINDING should be 0!\n";
     }
     buf_bind = 0;
-    glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
     if (buf_bind != 0)
     {
       error_msg += " - GL_PIXEL_UNPACK_BUFFER_BINDING should be 0!\n";
@@ -1126,7 +1126,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   if (Has_GL_ARB_uniform_buffer_object)
   {
     buf_bind = 0;
-    glGetIntegerv(GL_UNIFORM_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_UNIFORM_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
     if (buf_bind != 0)
     {
       error_msg += " - GL_UNIFORM_BUFFER_BINDING should be 0!\n";
@@ -1135,7 +1135,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   if(Has_Transform_Feedback)
   {
     buf_bind = 0;
-    glGetIntegerv(GL_TRANSFORM_FEEDBACK_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
+    mGL._glGetIntegerv(GL_TRANSFORM_FEEDBACK_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
     if (buf_bind != 0)
     {
       error_msg += " - GL_TRANSFORM_FEEDBACK_BUFFER_BINDING should be 0!\n";
@@ -1145,7 +1145,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   #if 0
   // check viewport
   GLint viewport[4] = {0,0,0,0};
-  glGetIntegerv(GL_VIEWPORT, viewport);
+  mGL._glGetIntegerv(GL_VIEWPORT, viewport);
   if (viewport[2] * viewport[3] == 1)
   {
     error_msg += " - Viewport dimension is 1 pixel!\n"
@@ -1154,27 +1154,27 @@ bool OpenGLContext::isCleanState(bool verbose)
   #endif
 
   GLboolean write_mask[4];
-  glGetBooleanv(GL_COLOR_WRITEMASK, write_mask); VL_CHECK_OGL();
+  mGL._glGetBooleanv(GL_COLOR_WRITEMASK, write_mask); VL_CHECK_OGL();
   if( !write_mask[0] || !write_mask[1] || !write_mask[2] || !write_mask[3] )
   {
     error_msg += " - Color write-mask should be glColorMask(GL_TRUE ,GL_TRUE, GL_TRUE, GL_TRUE)!\n";
-    glColorMask(GL_TRUE ,GL_TRUE, GL_TRUE, GL_TRUE);
+    mGL._glColorMask(GL_TRUE ,GL_TRUE, GL_TRUE, GL_TRUE);
   }
 
-  glGetBooleanv(GL_DEPTH_WRITEMASK, write_mask); VL_CHECK_OGL();
+  mGL._glGetBooleanv(GL_DEPTH_WRITEMASK, write_mask); VL_CHECK_OGL();
   if ( !write_mask[0] )
   {
     error_msg += " - Depth write-mask should be glDepthMask(GL_TRUE)!\n";
-    glDepthMask(GL_TRUE);
+    mGL._glDepthMask(GL_TRUE);
   }
 
 #if defined(VL_OPENGL)
   GLint poly_mode[] = { GL_FILL, GL_FILL };
-  glGetIntegerv(GL_POLYGON_MODE, poly_mode); VL_CHECK_OGL();
+  mGL._glGetIntegerv(GL_POLYGON_MODE, poly_mode); VL_CHECK_OGL();
   if ( poly_mode[0] != GL_FILL || poly_mode[1] != GL_FILL )
   {
     error_msg += " - Polygon mode should be glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)!\n";
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); VL_CHECK_OGL();
+    mGL._glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); VL_CHECK_OGL();
   }
 #endif
 
@@ -1184,7 +1184,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     Log::error(error_msg);
     Log::error("To disable this check use globalSettings()->setCheckOpenGLStates(false);\n");
     Log::error( Say("Driver info: %s, %s, OpenGL %s\n")
-                << glGetString(GL_VENDOR) << glGetString(GL_RENDERER) << glGetString(GL_VERSION) );
+                << mGL._glGetString(GL_VENDOR) << mGL._glGetString(GL_RENDERER) << mGL._glGetString(GL_VERSION) );
   }
 
   VL_CHECK_OGL();
@@ -1225,19 +1225,19 @@ void OpenGLContext::resetContextStates(EResetContextStates start_or_finish)
   if (globalSettings()->checkOpenGLStates())
     isCleanState(true);
 
-  VL_glBindFramebuffer( GL_FRAMEBUFFER, 0 ); VL_CHECK_OGL();
+  glBindFramebuffer( GL_FRAMEBUFFER, 0 ); VL_CHECK_OGL();
 
   // not existing under OpenGL ES 1 and 2
 #if defined(VL_OPENGL)
   if ( hasDoubleBuffer() )
   {
-    glDrawBuffer(GL_BACK); VL_CHECK_OGL();
-    glReadBuffer(GL_BACK); VL_CHECK_OGL();
+    mGL._glDrawBuffer(GL_BACK); VL_CHECK_OGL();
+    mGL._glReadBuffer(GL_BACK); VL_CHECK_OGL();
   }
   else
   {
-    glDrawBuffer(GL_FRONT); VL_CHECK_OGL();
-    glReadBuffer(GL_FRONT); VL_CHECK_OGL();
+    mGL._glDrawBuffer(GL_FRONT); VL_CHECK_OGL();
+    mGL._glReadBuffer(GL_FRONT); VL_CHECK_OGL();
   }
 #endif
 
@@ -1250,8 +1250,8 @@ void OpenGLContext::resetContextStates(EResetContextStates start_or_finish)
     resetRenderStates();
 
     // default VAO needed for OpenGL Core profiles
-    if ( Is_OpenGL_Core_Profile && mDefaultVAO && glGenVertexArrays && glBindVertexArray ) {
-       glBindVertexArray( mDefaultVAO ); VL_CHECK_OGL();
+    if ( Is_OpenGL_Core_Profile && mDefaultVAO && mGL._glGenVertexArrays && mGL._glBindVertexArray ) {
+      mGL._glBindVertexArray( mDefaultVAO ); VL_CHECK_OGL();
     }
 
     // reset Vertex Attrib Set tables and also calls "glBindBuffer(GL_ARRAY_BUFFER, 0)"
@@ -1285,21 +1285,21 @@ void OpenGLContext::bindVAS_Fixed(const IVertexAttribSet* vas, bool use_bo) {
       {
         if (!mVertexArray.mEnabled)
         {
-          glEnableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
+          mGL._glEnableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
         }
         // mic fixme:
         // Note: for the moment we threat glBindBuffer and glVertexPointer as an atomic operation.
         // In the future we'll want to eliminate all direct calls to glBindBuffer and similar an
         // go through the OpenGLContext that will lazily do everything.
-        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
-        glVertexPointer((int)vas->vertexArray()->glSize(), vas->vertexArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
+        glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+        mGL._glVertexPointer((int)vas->vertexArray()->glSize(), vas->vertexArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
         mVertexArray.mPtr = ptr;
         mVertexArray.mBufferObject = buf_obj;
       }
     }
     else
     {
-      glDisableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
+      mGL._glDisableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
       mVertexArray.mPtr = 0;
       mVertexArray.mBufferObject = 0;
     }
@@ -1327,20 +1327,20 @@ void OpenGLContext::bindVAS_Fixed(const IVertexAttribSet* vas, bool use_bo) {
       {
         if (!mNormalArray.mEnabled)
         {
-          glEnableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
+          mGL._glEnableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
         }
-        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
-        glNormalPointer(vas->normalArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
+        glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+        mGL._glNormalPointer(vas->normalArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
         mNormalArray.mPtr = ptr;
         mNormalArray.mBufferObject = buf_obj;
       }
     }
     else
     {
-      glDisableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
+      mGL._glDisableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
 
       // restore constant normal
-      glNormal3f( mNormal.x(), mNormal.y(), mNormal.z() );
+      mGL._glNormal3f( mNormal.x(), mNormal.y(), mNormal.z() );
 
       mNormalArray.mPtr = 0;
       mNormalArray.mBufferObject = 0;
@@ -1369,20 +1369,20 @@ void OpenGLContext::bindVAS_Fixed(const IVertexAttribSet* vas, bool use_bo) {
       {
         if (!mColorArray.mEnabled)
         {
-          glEnableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
+          mGL._glEnableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
         }
-        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
-        glColorPointer((int)vas->colorArray()->glSize(), vas->colorArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
+        glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+        mGL._glColorPointer((int)vas->colorArray()->glSize(), vas->colorArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
         mColorArray.mPtr = ptr;
         mColorArray.mBufferObject = buf_obj;
       }
     }
     else
     {
-      glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
+      mGL._glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
 
       // restore constant color
-      glColor4f( mColor.r(), mColor.g(), mColor.b(), mColor.a() );
+      mGL._glColor4f( mColor.r(), mColor.g(), mColor.b(), mColor.a() );
 
       mColorArray.mPtr = 0;
       mColorArray.mBufferObject = 0;
@@ -1411,20 +1411,20 @@ void OpenGLContext::bindVAS_Fixed(const IVertexAttribSet* vas, bool use_bo) {
       {
         if (!mSecondaryColorArray.mEnabled)
         {
-          glEnableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
+          mGL._glEnableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
         }
-        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
-        glSecondaryColorPointer((int)vas->secondaryColorArray()->glSize(), vas->secondaryColorArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
+        glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+        mGL._glSecondaryColorPointer((int)vas->secondaryColorArray()->glSize(), vas->secondaryColorArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
         mSecondaryColorArray.mPtr = ptr;
         mSecondaryColorArray.mBufferObject = buf_obj;
       }
     }
     else
     {
-      glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
+      mGL._glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
 
       // restore constant secondary color
-      VL_glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() );
+      glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() );
 
       mSecondaryColorArray.mPtr = 0;
       mSecondaryColorArray.mBufferObject = 0;
@@ -1453,17 +1453,17 @@ void OpenGLContext::bindVAS_Fixed(const IVertexAttribSet* vas, bool use_bo) {
       {
         if (!mFogArray.mEnabled)
         {
-          glEnableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
+          mGL._glEnableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
         }
-        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
-        glFogCoordPointer(vas->fogCoordArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
+        glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+        mGL._glFogCoordPointer(vas->fogCoordArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
         mFogArray.mPtr = ptr;
         mFogArray.mBufferObject = buf_obj;
       }
     }
     else
     {
-      glDisableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
+      mGL._glDisableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
       mFogArray.mPtr = 0;
       mFogArray.mBufferObject = 0;
     }
@@ -1479,16 +1479,16 @@ void OpenGLContext::bindVAS_Fixed(const IVertexAttribSet* vas, bool use_bo) {
 
     if ( ! texarr ) {
       if ( mTexCoordArray[tex_coord_i].mEnabled ) {
-        glClientActiveTexture(GL_TEXTURE0 + tex_coord_i); VL_CHECK_OGL();
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
+        mGL._glClientActiveTexture(GL_TEXTURE0 + tex_coord_i); VL_CHECK_OGL();
+        mGL._glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
         mTexCoordArray[tex_coord_i].mEnabled = false;
         mTexCoordArray[tex_coord_i].mPtr = 0;
         mTexCoordArray[tex_coord_i].mBufferObject = 0;
       }
     } else {
       if ( ! mTexCoordArray[tex_coord_i].mEnabled ) {
-        glClientActiveTexture(GL_TEXTURE0 + tex_coord_i); VL_CHECK_OGL();
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
+        mGL._glClientActiveTexture(GL_TEXTURE0 + tex_coord_i); VL_CHECK_OGL();
+        mGL._glEnableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
         mTexCoordArray[tex_coord_i].mEnabled = 1;
       }
 
@@ -1507,8 +1507,8 @@ void OpenGLContext::bindVAS_Fixed(const IVertexAttribSet* vas, bool use_bo) {
         mTexCoordArray[tex_coord_i].mPtr = ptr;
         mTexCoordArray[tex_coord_i].mBufferObject = buf_obj;
 
-        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
-        glTexCoordPointer((int)texarr->glSize(), texarr->glType(), 0/*texarr->stride()*/, ptr/*+ texarr->offset()*/); VL_CHECK_OGL();
+        glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+        mGL._glTexCoordPointer((int)texarr->glSize(), texarr->glType(), 0/*texarr->stride()*/, ptr/*+ texarr->offset()*/); VL_CHECK_OGL();
       }
     }
   }
@@ -1527,17 +1527,17 @@ void OpenGLContext::bindVAS_Attribs(const IVertexAttribSet* vas, bool use_bo) {
       // --- disable ---
 
       if ( mVertexAttrib[idx].mEnabled ) {
-        VL_glDisableVertexAttribArray( idx ); VL_CHECK_OGL();
+        glDisableVertexAttribArray( idx ); VL_CHECK_OGL();
         mVertexAttrib[idx].mEnabled = false;
         mVertexAttrib[idx].mPtr = 0;
         mVertexAttrib[idx].mBufferObject = 0;
         // restore constant vertex attrib
-        glVertexAttrib4fv( idx, mVertexAttribValue[idx].ptr() ); VL_CHECK_OGL();
+        mGL._glVertexAttrib4fv( idx, mVertexAttribValue[idx].ptr() ); VL_CHECK_OGL();
       }
       // make sure it's disabled
       #if !defined(NDEBUG)
         GLint enabled = 0;
-        glGetVertexAttribiv( idx, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled); VL_CHECK(!enabled);
+        mGL._glGetVertexAttribiv( idx, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled); VL_CHECK(!enabled);
       #endif
     }
     else
@@ -1545,13 +1545,13 @@ void OpenGLContext::bindVAS_Attribs(const IVertexAttribSet* vas, bool use_bo) {
       // --- enable ---
 
       if ( ! mVertexAttrib[idx].mEnabled ) {
-        VL_glEnableVertexAttribArray( idx ); VL_CHECK_OGL();
+        glEnableVertexAttribArray( idx ); VL_CHECK_OGL();
         mVertexAttrib[idx].mEnabled = true;
       }
       // make sure it's enabled
       #if !defined(NDEBUG)
         GLint enabled = 0;
-        glGetVertexAttribiv( idx, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled); VL_CHECK(enabled);
+        mGL._glGetVertexAttribiv( idx, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled); VL_CHECK(enabled);
       #endif
 
       if ( use_bo && arr->bufferObject()->handle() )
@@ -1568,21 +1568,21 @@ void OpenGLContext::bindVAS_Attribs(const IVertexAttribSet* vas, bool use_bo) {
       {
         mVertexAttrib[idx].mPtr = ptr;
         mVertexAttrib[idx].mBufferObject = buf_obj;
-        VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
+        glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
 
         if ( arr->interpretation() == VAI_NORMAL )
         {
-          VL_glVertexAttribPointer( idx, (int)arr->glSize(), arr->glType(), arr->normalize(), /*stride*/0, ptr ); VL_CHECK_OGL();
+          glVertexAttribPointer( idx, (int)arr->glSize(), arr->glType(), arr->normalize(), /*stride*/0, ptr ); VL_CHECK_OGL();
         }
         else
         if ( arr->interpretation() == VAI_INTEGER )
         {
-          VL_glVertexAttribIPointer( idx, (int)arr->glSize(), arr->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
+          glVertexAttribIPointer( idx, (int)arr->glSize(), arr->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
         }
         else
         if ( arr->interpretation() == VAI_DOUBLE )
         {
-          VL_glVertexAttribLPointer( idx, (int)arr->glSize(), arr->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
+          glVertexAttribLPointer( idx, (int)arr->glSize(), arr->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
         }
       }
     }
@@ -1595,7 +1595,7 @@ void OpenGLContext::bindVAS_Reset()
   mGLSLUpdated = true;
 
   for(int i=0; i<mVertexAttribCount; ++i) {
-    VL_glDisableVertexAttribArray(i); VL_CHECK_OGL();
+    glDisableVertexAttribArray(i); VL_CHECK_OGL();
   }
 
   for(int i=0; i<vertexAttribCount(); ++i)
@@ -1635,25 +1635,25 @@ void OpenGLContext::bindVAS_Reset()
   // reset all gl states
 
   // note this one
-  VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL();
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL();
 
-  VL_glBindBuffer(GL_ARRAY_BUFFER, 0); VL_CHECK_OGL();
+  glBindBuffer(GL_ARRAY_BUFFER, 0); VL_CHECK_OGL();
 
   if(Has_Fixed_Function_Pipeline)
   {
     // iterate backwards so the last active is #0
     for ( int i=mTextureCoordCount; i--; )
     {
-      glClientActiveTexture(GL_TEXTURE0 + i); VL_CHECK_OGL();
-      glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
+      mGL._glClientActiveTexture(GL_TEXTURE0 + i); VL_CHECK_OGL();
+      mGL._glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
     }
 
-    glDisableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
-    glDisableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
-    glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
+    mGL._glDisableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
+    mGL._glDisableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
+    mGL._glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
 
-    glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
-    glDisableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
+    mGL._glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
+    mGL._glDisableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
   }
 }
 //-----------------------------------------------------------------------------
@@ -1696,7 +1696,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_bo, bool force
       // ----- end -----
 
       // Note: we don't call "glBindBuffer(GL_ARRAY_BUFFER, 0)" here as it will be called by Renderer::render() just before exiting.
-      // VL_glBindBuffer(GL_ARRAY_BUFFER, 0); VL_CHECK_OGL();
+      // glBindBuffer(GL_ARRAY_BUFFER, 0); VL_CHECK_OGL();
 
     } // if(vas)
 

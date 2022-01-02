@@ -296,12 +296,20 @@ void vl::OpenGLFunctions::initFunctions() {
   #undef VL_GL_FUNCTION
 }
 //-----------------------------------------------------------------------------
-bool vl::initializeOpenGL()
+bool vl::initializeOpenGL(const OpenGLFunctions* gl)
 {
+  // If gl == NULL we fallback to a default set of functions.
+  // This is used when creating temporary contexts.
+  OpenGLFunctions gl_functions;
+  if (gl == NULL) {
+    gl_functions.initFunctions();
+    gl = &gl_functions;
+  }
+
   Is_OpenGL_Initialized = false;
 
   // clear errors
-  glGetError();
+  gl->_glGetError();
 
   // check OpenGL context is present
   if (glGetError() != GL_NO_ERROR)
@@ -309,7 +317,9 @@ bool vl::initializeOpenGL()
 
   // - - - OpenGL function pointers - - -
 
-  // opengl function pointer initialization
+  // MIC FIXME: remove this and use OpenGLFunctions -> OpenGLContext::mGL instead
+  
+  // Globally accessible OpenGL functions - INITIALIZE
   #if defined(VL_OPENGL)
     #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress(#NAME);
     #include <vlGraphics/GL/GLFunctionList.hpp>
@@ -374,7 +384,7 @@ bool vl::initializeOpenGL()
 
   // - - - Extension strings init - - -
 
-  std::string extensions = getOpenGLExtensions();
+  std::string extensions = getOpenGLExtensions(gl);
 
   #define VL_EXTENSION(extension) Has_##extension = strstr(extensions.c_str(), #extension" ") != NULL;
     #include <vlGraphics/GL/GLExtensionList.hpp>
@@ -549,6 +559,30 @@ const char* vl::getGLErrorString(int err)
   }
 }
 //------------------------------------------------------------------------------
+std::string vl::getOpenGLExtensions(const vl::OpenGLFunctions* gl)
+{
+  std::string ext;
+  if (vl::Has_GL_Version_3_0 || vl::Has_GL_Version_4_0)
+  {
+    int count = 0;
+    gl->_glGetIntegerv(GL_NUM_EXTENSIONS, &count);
+    for (int i = 0; i < count; ++i)
+    {
+      ext += std::string((char*)gl->_glGetStringi(GL_EXTENSIONS, i)) + " ";
+      VL_CHECK_OGL();
+    }
+  }
+  else
+  {
+    VL_CHECK(gl->_glGetString(GL_EXTENSIONS));
+    ext = (const char*)gl->_glGetString(GL_EXTENSIONS);
+    // make sure also the last extension ends with a space
+    ext.push_back(' ');
+  }
+
+  return ext;
+}
+//------------------------------------------------------------------------------
 int vl::glcheck(const char* file, int line)
 {
   unsigned int glerr = glGetError();
@@ -658,3 +692,4 @@ void* vl::getGLProcAddress(const char* name)
 }
 #endif
 //------------------------------------------------------------------------------
+

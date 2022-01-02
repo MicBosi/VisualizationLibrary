@@ -242,12 +242,12 @@ namespace vl
       const GLvoid* ptr = indexBuffer()->bufferObject()->ptr();
       if (use_bo && indexBuffer()->bufferObject()->handle())
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->bufferObject()->handle()); VL_CHECK_OGL()
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->bufferObject()->handle()); VL_CHECK_OGL()
         ptr = 0;
       }
       else
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL()
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL()
       }
 
       // compute final pointer and count
@@ -280,7 +280,7 @@ namespace vl
       else
       {
         VL_CHECK(Has_Base_Vertex)
-        VL_glDrawRangeElementsBaseVertex( primitiveType(), mRangeStart, mRangeEnd, count, arr_type::gl_type, ptr, mBaseVertex ); VL_CHECK_OGL()
+        glDrawRangeElementsBaseVertex( primitiveType(), mRangeStart, mRangeEnd, count, arr_type::gl_type, ptr, mBaseVertex ); VL_CHECK_OGL()
       }
 
       // primitive restart disable

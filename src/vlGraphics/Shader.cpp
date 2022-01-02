@@ -301,7 +301,7 @@ void BlendFunc::apply(int, const Camera*, OpenGLContext*) const
 {
   if (Has_GL_EXT_blend_func_separate||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
   {
-    VL_glBlendFuncSeparate(mSrcRGB, mDstRGB, mSrcAlpha, mDstAlpha); VL_CHECK_OGL()
+    glBlendFuncSeparate(mSrcRGB, mDstRGB, mSrcAlpha, mDstAlpha); VL_CHECK_OGL()
   }
   else
   {
@@ -314,9 +314,9 @@ void BlendFunc::apply(int, const Camera*, OpenGLContext*) const
 void BlendEquation::apply(int, const Camera*, OpenGLContext*) const
 {
   if (Has_GL_Version_2_0||Has_GL_EXT_blend_equation_separate)
-    { VL_glBlendEquationSeparate(mModeRGB, mModeAlpha); VL_CHECK_OGL() }
+    { glBlendEquationSeparate(mModeRGB, mModeAlpha); VL_CHECK_OGL() }
   else
-    { VL_glBlendEquation(mModeRGB); VL_CHECK_OGL() }
+    { glBlendEquation(mModeRGB); VL_CHECK_OGL() }
 }
 //------------------------------------------------------------------------------
 // AlphaFunc
@@ -618,17 +618,17 @@ void PointParameter::apply(int, const Camera*, OpenGLContext*) const
 {
   if (Has_GL_Version_1_4)
   {
-    VL_glPointParameterf(GL_POINT_SIZE_MIN, mSizeMin); VL_CHECK_OGL()
-    VL_glPointParameterf(GL_POINT_SIZE_MAX, mSizeMax); VL_CHECK_OGL()
-    VL_glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, (const float*)mDistanceAttenuation.ptr()); VL_CHECK_OGL()
+    glPointParameterf(GL_POINT_SIZE_MIN, mSizeMin); VL_CHECK_OGL()
+    glPointParameterf(GL_POINT_SIZE_MAX, mSizeMax); VL_CHECK_OGL()
+    glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, (const float*)mDistanceAttenuation.ptr()); VL_CHECK_OGL()
   }
   if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
   {
-    VL_glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, mFadeThresholdSize); VL_CHECK_OGL()
+    glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, mFadeThresholdSize); VL_CHECK_OGL()
   }
   if (Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
   {
-    VL_glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, mPointSpriteCoordOrigin); VL_CHECK_OGL()
+    glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, mPointSpriteCoordOrigin); VL_CHECK_OGL()
   }
 }
 //------------------------------------------------------------------------------
@@ -638,8 +638,8 @@ void StencilFunc::apply(int, const Camera*, OpenGLContext*) const
 {
   if(Has_GL_Version_2_0)
   {
-    VL_glStencilFuncSeparate(GL_FRONT, mFunction_Front, mRefValue_Front, mMask_Front); VL_CHECK_OGL()
-    VL_glStencilFuncSeparate(GL_BACK,  mFunction_Back,  mRefValue_Back,  mMask_Back);  VL_CHECK_OGL()
+    glStencilFuncSeparate(GL_FRONT, mFunction_Front, mRefValue_Front, mMask_Front); VL_CHECK_OGL()
+    glStencilFuncSeparate(GL_BACK,  mFunction_Back,  mRefValue_Back,  mMask_Back);  VL_CHECK_OGL()
   }
   else
   {
@@ -653,8 +653,8 @@ void StencilOp::apply(int, const Camera*, OpenGLContext*) const
 {
   if(Has_GL_Version_2_0)
   {
-    VL_glStencilOpSeparate(GL_FRONT, mSFail_Front, mDpFail_Front, mDpPass_Front); VL_CHECK_OGL()
-    VL_glStencilOpSeparate(GL_BACK,  mSFail_Back,  mDpFail_Back,  mDpPass_Back);  VL_CHECK_OGL()
+    glStencilOpSeparate(GL_FRONT, mSFail_Front, mDpFail_Front, mDpPass_Front); VL_CHECK_OGL()
+    glStencilOpSeparate(GL_BACK,  mSFail_Back,  mDpFail_Back,  mDpPass_Back);  VL_CHECK_OGL()
   }
   else
   {
@@ -681,7 +681,7 @@ void StencilMask::apply(int, const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void BlendColor::apply(int, const Camera*, OpenGLContext*) const
 {
-  VL_glBlendColor(mBlendColor.r(), mBlendColor.g(), mBlendColor.b(), mBlendColor.a()); VL_CHECK_OGL()
+  glBlendColor(mBlendColor.r(), mBlendColor.g(), mBlendColor.b(), mBlendColor.a()); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // VertexAttrib
@@ -705,7 +705,7 @@ void Color::apply(int, const Camera*, OpenGLContext* ctx) const
 //------------------------------------------------------------------------------
 void SecondaryColor::apply(int, const Camera*, OpenGLContext* ctx) const
 {
-  VL_glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() ); VL_CHECK_OGL()
+  glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() ); VL_CHECK_OGL()
   ctx->mSecondaryColor = mSecondaryColor;
 }
 //------------------------------------------------------------------------------
@@ -728,7 +728,7 @@ void ColorMask::apply(int, const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void SampleCoverage::apply(int, const Camera*, OpenGLContext*) const
 {
-  VL_glSampleCoverage(mValue, mInvert?GL_TRUE:GL_FALSE); VL_CHECK_OGL()
+  glSampleCoverage(mValue, mInvert?GL_TRUE:GL_FALSE); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // TexParameter

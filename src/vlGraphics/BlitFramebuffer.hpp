@@ -82,16 +82,16 @@ namespace vl
         // ...
 
         // performs the blit
-        VL_glBlitFramebuffer( mSrcRect[0], mSrcRect[1], mSrcRect[2], mSrcRect[3],
+        glBlitFramebuffer( mSrcRect[0], mSrcRect[1], mSrcRect[2], mSrcRect[3],
                               mDstRect[0], mDstRect[1], mDstRect[2], mDstRect[3],
                               mBufferMask,
                               mLinearFilteringEnabled ? GL_LINEAR : GL_NEAREST);
         VL_CHECK_OGL()
 
         // restore FBOs
-        VL_glBindFramebuffer( GL_READ_FRAMEBUFFER_EXT, read_fbo );
+        glBindFramebuffer( GL_READ_FRAMEBUFFER_EXT, read_fbo );
         VL_CHECK_OGL()
-        VL_glBindFramebuffer( GL_DRAW_FRAMEBUFFER_EXT, draw_fbo );
+        glBindFramebuffer( GL_DRAW_FRAMEBUFFER_EXT, draw_fbo );
         VL_CHECK_OGL()
       }
     }

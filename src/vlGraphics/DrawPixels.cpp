@@ -226,13 +226,13 @@ void DrawPixels::render_Implementation(const Actor* actor, const Shader*, const 
 
     if ( glbuf->handle() )
     {
-      VL_glBindBuffer( GL_PIXEL_UNPACK_BUFFER, glbuf->handle() ); VL_CHECK_OGL()
+      glBindBuffer( GL_PIXEL_UNPACK_BUFFER, glbuf->handle() ); VL_CHECK_OGL()
       glDrawPixels( cmd->mSize.x() -clip_left -clip_right, cmd->mSize.y() -clip_bottom -clip_top, cmd->image()->format(), cmd->image()->type(), 0 );
       VL_CHECK_OGL();
     }
     else
     {
-      VL_glBindBuffer( GL_PIXEL_UNPACK_BUFFER, 0 );
+      glBindBuffer( GL_PIXEL_UNPACK_BUFFER, 0 );
       glDrawPixels( cmd->mSize.x() -clip_left -clip_right, cmd->mSize.y() -clip_bottom -clip_top, cmd->image()->format(), cmd->image()->type(), cmd->image()->pixels() );
       VL_CHECK_OGL();
     }
@@ -240,7 +240,7 @@ void DrawPixels::render_Implementation(const Actor* actor, const Shader*, const 
 
   VL_CHECK_OGL();
 
-  VL_glBindBuffer( GL_PIXEL_UNPACK_BUFFER, 0 );
+  glBindBuffer( GL_PIXEL_UNPACK_BUFFER, 0 );
 
   VL_CHECK_OGL()
 
