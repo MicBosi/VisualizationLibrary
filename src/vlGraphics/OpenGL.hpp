@@ -75,6 +75,11 @@ namespace vl
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_3_3;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_0;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_1;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_2;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_3;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_4;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_5;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_6;
 
   // Helper variables
 

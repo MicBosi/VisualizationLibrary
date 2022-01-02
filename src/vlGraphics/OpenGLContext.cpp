@@ -395,8 +395,8 @@ void OpenGLContext::logOpenGLInfo()
   max_val = 0;
   if(Has_GLSL)
   {
-    // - opengl 3.2 seem to deprecate both  GL_MAX_VARYING_COMPONENTS and GL_MAX_VARYING_FLOATS
-    //   but does not support explicitly GL_MAX_VARYING_VECTORS, leving the issue ambiguous.
+    // - opengl 3.2 seem to deprecate both GL_MAX_VARYING_COMPONENTS and GL_MAX_VARYING_FLOATS
+    //   but does not support explicitly GL_MAX_VARYING_VECTORS, leaving the issue ambiguous.
     // - my GTX 460 in opengl 3.2 core allows GL_MAX_VARYING_VECTORS
     // - a user reported that a Quadro FX GL 3.2 compatibility did not support GL_MAX_VARYING_VECTORS
     // - ergo we don't check if we are in GL 3.x non-compatible mode

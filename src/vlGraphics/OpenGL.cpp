@@ -55,6 +55,11 @@ namespace vl
   bool Has_GL_Version_3_3 = false;
   bool Has_GL_Version_4_0 = false;
   bool Has_GL_Version_4_1 = false;
+  bool Has_GL_Version_4_2 = false;
+  bool Has_GL_Version_4_3 = false;
+  bool Has_GL_Version_4_4 = false;
+  bool Has_GL_Version_4_5 = false;
+  bool Has_GL_Version_4_6 = false;
 
   bool Has_Fixed_Function_Pipeline = false;
 
@@ -68,6 +73,11 @@ namespace vl
   bool Has_GLSL_330_Or_More = false;
   bool Has_GLSL_400_Or_More = false;
   bool Has_GLSL_410_Or_More = false;
+  bool Has_GLSL_420_Or_More = false;
+  bool Has_GLSL_430_Or_More = false;
+  bool Has_GLSL_440_Or_More = false;
+  bool Has_GLSL_450_Or_More = false;
+  bool Has_GLSL_460_Or_More = false;
   bool Has_Geometry_Shader = false;
   bool Has_BufferObject = false;
   bool Has_FBO = false;
@@ -345,6 +355,11 @@ bool vl::initializeOpenGL()
   Has_GL_Version_3_3 = (vmaj == 3 && vmin >= 3) || (vmaj > 3 && Has_Fixed_Function_Pipeline);
   Has_GL_Version_4_0 = (vmaj == 4 && vmin >= 0) || (vmaj > 4 && Has_Fixed_Function_Pipeline);
   Has_GL_Version_4_1 = (vmaj == 4 && vmin >= 1) || (vmaj > 4 && Has_Fixed_Function_Pipeline);
+  Has_GL_Version_4_2 = (vmaj == 4 && vmin >= 2) || (vmaj > 4 && Has_Fixed_Function_Pipeline);
+  Has_GL_Version_4_3 = (vmaj == 4 && vmin >= 3) || (vmaj > 4 && Has_Fixed_Function_Pipeline);
+  Has_GL_Version_4_4 = (vmaj == 4 && vmin >= 4) || (vmaj > 4 && Has_Fixed_Function_Pipeline);
+  Has_GL_Version_4_5 = (vmaj == 4 && vmin >= 5) || (vmaj > 4 && Has_Fixed_Function_Pipeline);
+  Has_GL_Version_4_6 = (vmaj == 4 && vmin >= 6) || (vmaj > 4 && Has_Fixed_Function_Pipeline);
 
   // - - - Extension strings init - - -
 
@@ -366,6 +381,11 @@ bool vl::initializeOpenGL()
   Has_GLSL_330_Or_More = Has_GL_Version_3_3 || Has_GL_Version_4_0;
   Has_GLSL_400_Or_More = Has_GL_Version_4_0;
   Has_GLSL_410_Or_More = Has_GL_Version_4_1;
+  Has_GLSL_420_Or_More = Has_GL_Version_4_2;
+  Has_GLSL_430_Or_More = Has_GL_Version_4_3;
+  Has_GLSL_440_Or_More = Has_GL_Version_4_4;
+  Has_GLSL_450_Or_More = Has_GL_Version_4_5;
+  Has_GLSL_460_Or_More = Has_GL_Version_4_6;
   Has_Geometry_Shader  = Has_GL_NV_geometry_shader4 || Has_GL_EXT_geometry_shader4 || Has_GL_ARB_geometry_shader4 || Has_GL_Version_3_2 || Has_GL_Version_4_0;
   Has_BufferObject = Has_GL_ARB_vertex_buffer_object || Has_GL_Version_1_5 || Has_GL_Version_3_0 || Has_GL_Version_4_0;
   Has_FBO = Has_GL_EXT_framebuffer_object || Has_GL_ARB_framebuffer_object || Has_GL_Version_3_0 || Has_GL_Version_4_0;
@@ -477,6 +497,11 @@ bool vl::initializeOpenGL()
     #define PRINT_INFO(STRING) printf(#STRING" = %d\n", STRING?1:0)
     PRINT_INFO(Is_OpenGL_Core_Profile);
     PRINT_INFO(Is_OpenGL_Forward_Compatible);
+    PRINT_INFO(Has_GL_Version_4_6);
+    PRINT_INFO(Has_GL_Version_4_5);
+    PRINT_INFO(Has_GL_Version_4_4);
+    PRINT_INFO(Has_GL_Version_4_3);
+    PRINT_INFO(Has_GL_Version_4_2);
     PRINT_INFO(Has_GL_Version_4_1);
     PRINT_INFO(Has_GL_Version_4_0);
     PRINT_INFO(Has_GL_Version_3_3);
