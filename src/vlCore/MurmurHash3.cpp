@@ -7,6 +7,8 @@
 // compile and run any of them on any platform, but your performance with the
 // non-native version will be less than optimal.
 
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough="
+
 #include <vlCore/MurmurHash3.hpp>
 
 using namespace vl;

@@ -89,7 +89,7 @@ SlicedVolume::SlicedVolume()
     fvec3(0,0,0), fvec3(1,0,0), fvec3(1,1,0), fvec3(0,1,0),
     fvec3(0,0,1), fvec3(1,0,1), fvec3(1,1,1), fvec3(0,1,1)
   };
-  memcpy(mTexCoord, texc, sizeof(texc));
+  memcpy(mTexCoord[0].ptr(), texc[0].ptr(), sizeof(texc));
 }
 //-----------------------------------------------------------------------------
 /** Reimplement this method to update the uniform variables of your GLSL program before the volume is rendered.
@@ -366,7 +366,7 @@ void SlicedVolume::generateTextureCoordinates(const ivec3& img_size)
     fvec3(x0,y0,z0), fvec3(x1,y0,z0), fvec3(x1,y1,z0), fvec3(x0,y1,z0),
     fvec3(x0,y0,z1), fvec3(x1,y0,z1), fvec3(x1,y1,z1), fvec3(x0,y1,z1),
   };
-  memcpy(mTexCoord, texc, sizeof(texc));
+  memcpy(mTexCoord[0].ptr(), texc[0].ptr(), sizeof(texc));
 }
 //-----------------------------------------------------------------------------
 void SlicedVolume::generateTextureCoordinates(const ivec3& img_size, const ivec3& min_corner, const ivec3& max_corner)
@@ -393,7 +393,7 @@ void SlicedVolume::generateTextureCoordinates(const ivec3& img_size, const ivec3
         fvec3(x0,y0,z0), fvec3(x1,y0,z0), fvec3(x1,y1,z0), fvec3(x0,y1,z0),
         fvec3(x0,y0,z1), fvec3(x1,y0,z1), fvec3(x1,y1,z1), fvec3(x0,y1,z1)
     };
-    memcpy(mTexCoord, texc, sizeof(texc));
+    memcpy(mTexCoord[0].ptr(), texc[0].ptr(), sizeof(texc));
 }
 //-----------------------------------------------------------------------------
 void SlicedVolume::setBox(const AABB& box)

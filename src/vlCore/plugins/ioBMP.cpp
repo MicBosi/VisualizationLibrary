@@ -148,7 +148,7 @@ ref<Image> vl::loadBMP( VirtualFile* file )
     *h = -*h;
     flip = true;
   }
-  VL_CHECK( bih.Height() * bih.Width() );
+  VL_CHECK( bih.Height() != 0 && bih.Width() != 0 );
 
   // TODO: support bih.Compression() == BMP_Type_RLE8 e BMP_XRGB meglio
   if ( bih.Compression() != BMP_NoCompression && bih.Compression() != BMP_XRGB )

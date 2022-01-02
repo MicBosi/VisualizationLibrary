@@ -182,7 +182,10 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix4& operator=(const Matrix4& m)
     {
-      memcpy(mVec, m.mVec, sizeof(T_Scalar)*16);
+      mVec[0] = m.mVec[0];
+      mVec[1] = m.mVec[1];
+      mVec[2] = m.mVec[2];
+      mVec[3] = m.mVec[3];
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -417,7 +420,10 @@ namespace vl
         (T_Scalar)0, (T_Scalar)0, (T_Scalar)1, (T_Scalar)0,
         (T_Scalar)0, (T_Scalar)0, (T_Scalar)0, (T_Scalar)1
       };
-      memcpy(mVec, I4d, sizeof(T_Scalar)*16);
+      mVec[0] = I4d[0];
+      mVec[1] = I4d[1];
+      mVec[2] = I4d[2];
+      mVec[3] = I4d[3];
       return *this;
     }
     //-----------------------------------------------------------------------------

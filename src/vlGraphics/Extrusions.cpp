@@ -182,7 +182,7 @@ ref<Geometry> Extrusions::extrude( bool compatibilityProfile )
   {
     int start = int( verts.size() );
     Tessellator tessellator;
-    for ( size_t i = silhouettes().size() - 1; i >= 0; --i )
+    for ( int i = silhouettes().size() - 1; i >= 0; --i )
       tessellator.contours().push_back( silhouettes().at( i ) );
     for ( unsigned i = 0; i < silhouette().size(); ++i )
       tessellator.contourVerts().push_back( (dvec3)verts[ verts.size() - i - 1 - tess_bottom_count ] );
