@@ -413,17 +413,10 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix4& setIdentity()
     {
-      static const T_Scalar I4d[] =
-      {
-        (T_Scalar)1, (T_Scalar)0, (T_Scalar)0, (T_Scalar)0,
-        (T_Scalar)0, (T_Scalar)1, (T_Scalar)0, (T_Scalar)0,
-        (T_Scalar)0, (T_Scalar)0, (T_Scalar)1, (T_Scalar)0,
-        (T_Scalar)0, (T_Scalar)0, (T_Scalar)0, (T_Scalar)1
-      };
-      mVec[0] = I4d[0];
-      mVec[1] = I4d[1];
-      mVec[2] = I4d[2];
-      mVec[3] = I4d[3];
+      mVec[0] = Vector4<T_Scalar>(1,0,0,0);
+      mVec[1] = Vector4<T_Scalar>(0,1,0,0);
+      mVec[2] = Vector4<T_Scalar>(0,0,1,0);
+      mVec[3] = Vector4<T_Scalar>(0,0,0,1);
       return *this;
     }
     //-----------------------------------------------------------------------------

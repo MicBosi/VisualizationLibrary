@@ -311,13 +311,8 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix2& setIdentity()
     {
-      static const T_Scalar I2d[] =
-      {
-        (T_Scalar)1, (T_Scalar)0,
-        (T_Scalar)0, (T_Scalar)1
-      };
-      mVec[0] = I2d[0];
-      mVec[1] = I2d[1];
+      mVec[0] = Vector2<T_Scalar>(1,0);
+      mVec[1] = Vector2<T_Scalar>(0,1);
       return *this;
     }
     //-----------------------------------------------------------------------------

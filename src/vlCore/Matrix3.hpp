@@ -375,15 +375,9 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix3& setIdentity()
     {
-      static const T_Scalar I3d[] =
-      {
-        (T_Scalar)1, (T_Scalar)0, (T_Scalar)0,
-        (T_Scalar)0, (T_Scalar)1, (T_Scalar)0,
-        (T_Scalar)0, (T_Scalar)0, (T_Scalar)1,
-      };
-      mVec[0] = I3d[0];
-      mVec[1] = I3d[1];
-      mVec[2] = I3d[2];
+      mVec[0] = Vector3<T_Scalar>(1,0,0);
+      mVec[1] = Vector3<T_Scalar>(0,1,0);
+      mVec[2] = Vector3<T_Scalar>(0,0,1);
       return *this;
     }
     //-----------------------------------------------------------------------------
