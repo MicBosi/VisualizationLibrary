@@ -207,7 +207,7 @@ void OpenGLContext::setVSyncEnabled(bool enable)
 {
 #if defined(VL_OPENGL) && defined(VL_PLATFORM_WINDOWS)
   makeCurrent();
-  if (Has_GL_EXT_swap_control)
+  if (Has_WGL_EXT_swap_control)
     wglSwapIntervalEXT(enable?1:0);
 #else
   // Mac and Linux?
@@ -222,7 +222,7 @@ void OpenGLContext::setVSyncEnabled(bool enable)
 bool OpenGLContext::vsyncEnabled() const
 {
 #if defined(VL_OPENGL) && defined(VL_PLATFORM_WINDOWS)
-  if (Has_GL_EXT_swap_control)
+  if (Has_WGL_EXT_swap_control)
     return wglGetSwapIntervalEXT() != 0;
   else
     return false;
