@@ -42,11 +42,12 @@ include_directories(${_INCLUDE_DIRS})
 
 # Khronos OpenGL headers
 set(KHRONOS_DIR "${3RDPARTY_DIR}/Khronos")
-set(KHRONOS_INC ${KHRONOS_DIR}/GL/mesa_gl.h
+set(KHRONOS_INC ${KHRONOS_DIR}/GL/mesa_gl_1_1_only.h
 				${KHRONOS_DIR}/GL/glcorearb.h
-				${KHRONOS_DIR}/KHR/khrplatform.h
 				${KHRONOS_DIR}/GL/khronos_glext.h
+				${KHRONOS_DIR}/GL/khronos_glxext.h
 				${KHRONOS_DIR}/GL/khronos_wglext.h
+				${KHRONOS_DIR}/KHR/khrplatform.h
 )
 
 add_library(VLGraphics ${VL_SHARED_OR_STATIC} ${VLGRAPHICS_SRC} ${VLGRAPHICS_INC} ${KHRONOS_INC} ${_SOURCES})

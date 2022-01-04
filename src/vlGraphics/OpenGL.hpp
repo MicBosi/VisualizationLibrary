@@ -165,7 +165,9 @@ namespace vl
   VLGRAPHICS_EXPORT int glcheck( const char* file, int line );
 
   // Kind of brutal but all files including this one will have this warning disabled since VL_CHECK_OGL seem to trigger it everywhere
+  #ifdef __GNUC__
   #pragma GCC diagnostic ignored "-Wmisleading-indentation"
+  #endif
   #if defined( _DEBUG ) || !defined( NDEBUG ) || VL_FORCE_CHECKS == 1
     #define VL_CHECK_OGL( ) { if ( ::vl::glcheck( __FILE__, __LINE__ ) ) { VL_TRAP( ) } }
   #else

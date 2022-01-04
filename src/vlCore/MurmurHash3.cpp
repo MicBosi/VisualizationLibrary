@@ -7,7 +7,9 @@
 // compile and run any of them on any platform, but your performance with the
 // non-native version will be less than optimal.
 
+#ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough="
+#endif
 
 #include <vlCore/MurmurHash3.hpp>
 

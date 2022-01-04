@@ -77,7 +77,7 @@
 
   #elif defined(VL_PLATFORM_MACOSX)
 
-    #include <GL/mesa_gl.h>
+    #include <GL/mesa_gl_1_1_only.h>
     #include <OpenGL/glu.h>
     #include <GL/khronos_glext.h>
 
