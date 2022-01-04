@@ -38,29 +38,6 @@
 
   #if defined(VL_PLATFORM_WINDOWS)
 
-    // MIC FIXME:
-    // --> [v] Script to generate GLExtensionList.hpp
-    // --> [v] GL 4.2 to 4.6 basic checks
-    // --> [v] script to generate function list 
-    // --> [v] removed usage of GL_GLEXT_PROTOTYPES
-    // --> [v] script to generate wrapper class
-    // --> [v] Remove GLFunctionWrappers.hpp
-    // --> [v] Linux compilation fixed
-    // 
-    // --> Compute Shader support + test
-    // 
-    // --> Retest all tests
-    // 
-    // --> Mac compile
-    // --> Core profile startup working
-    // 
-    // --> Merge into VL 2.2
-    // 
-    // --> Foundation of VL 3.0: 
-    //     -> Remove all fixed function pipeline & legacy tests
-    //     -> Ephemerium start
-    //
-    
     #include <gl/gl.h>
     #include <gl/glu.h>
     #include <GL/khronos_glext.h>
