@@ -222,32 +222,6 @@ namespace vl
       VL_CHECK_OGL()
       VL_CHECK(!use_bo || (use_bo && Has_BufferObject))
 
-#if !defined(NDEBUG) && (defined(VL_OPENGL_ES1) || defined(GL_OPENGL_ES2))
-      bool error = true;
-      // check primitive type
-      switch(primitiveType())
-      {
-      case PT_QUADS:      Log::error("vl::DrawElements does not support PT_QUADS under OpenGL ES!\n"); break;
-      case PT_QUAD_STRIP: Log::error("vl::DrawElements does not support PT_QUAD_STRIP under OpenGL ES!\n"); break;
-      case PT_POLYGON:    Log::error("vl::DrawElements does not support PT_POLYGON under OpenGL ES!\n"); break;
-      case PT_LINES_ADJACENCY:      Log::error("vl::DrawElements does not support PT_LINES_ADJACENCY under OpenGL ES!\n"); break;
-      case PT_LINE_STRIP_ADJACENCY: Log::error("vl::DrawElements does not support PT_LINE_STRIP_ADJACENCY under OpenGL ES!\n"); break;
-      case PT_TRIANGLES_ADJACENCY:  Log::error("vl::DrawElements does not support PT_TRIANGLES_ADJACENCY under OpenGL ES!\n"); break;
-      case PT_TRIANGLE_STRIP_ADJACENCY: Log::error("vl::DrawElements does not support PT_TRIANGLE_STRIP_ADJACENCY under OpenGL ES!\n"); break;
-      case PT_PATCHES:    Log::error("vl::DrawElements does not support PT_PATCHES under OpenGL ES!\n"); break;
-      default:
-        error = false;
-        break;
-      }
-      // check index type
-      if (indexBuffer()->glType() != GL_UNSIGNED_BYTE && indexBuffer()->glType() != GL_UNSIGNED_SHORT)
-      {
-        Log::error("vl::DrawElements only supports GL_UNSIGNED_BYTE and GL_UNSIGNED_SHORT under OpenGL ES!\n");
-        error = true;
-      }
-      VL_CHECK(!error)
-#endif
-
       use_bo &= Has_BufferObject; // && indexBuffer()->bufferObject()->handle() && indexBuffer()->sizeBufferObject();
       if ( !use_bo && !indexBuffer()->size() )
         return;
@@ -268,12 +242,12 @@ namespace vl
       const GLvoid* ptr = indexBuffer()->bufferObject()->ptr();
       if (use_bo && indexBuffer()->bufferObject()->handle())
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->bufferObject()->handle()); VL_CHECK_OGL()
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->bufferObject()->handle()); VL_CHECK_OGL()
         ptr = 0;
       }
       else
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL()
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL()
       }
 
       // compute final pointer and count
@@ -308,7 +282,7 @@ namespace vl
         else
         {
           VL_CHECK(Has_Primitive_Instancing)
-          VL_glDrawElementsInstanced( primitiveType(), count, arr_type::gl_type, ptr, instances() ); VL_CHECK_OGL()
+          glDrawElementsInstanced( primitiveType(), count, arr_type::gl_type, ptr, instances() ); VL_CHECK_OGL()
         }
       }
       else
@@ -316,12 +290,12 @@ namespace vl
         VL_CHECK(Has_Base_Vertex)
         if ( instances() == 1 )
         {
-          VL_glDrawElementsBaseVertex( primitiveType(), count, arr_type::gl_type, ptr, mBaseVertex ); VL_CHECK_OGL()
+          glDrawElementsBaseVertex( primitiveType(), count, arr_type::gl_type, ptr, mBaseVertex ); VL_CHECK_OGL()
         }
         else
         {
           VL_CHECK(Has_Primitive_Instancing)
-          VL_glDrawElementsInstancedBaseVertex( primitiveType(), count, arr_type::gl_type, ptr, instances(), mBaseVertex ); VL_CHECK_OGL()
+          glDrawElementsInstancedBaseVertex( primitiveType(), count, arr_type::gl_type, ptr, instances(), mBaseVertex ); VL_CHECK_OGL()
         }
       }
 

@@ -223,13 +223,13 @@ namespace vl
       const GLvoid **indices_ptr = NULL;
       if (use_bo && indexBuffer()->bufferObject()->handle())
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->bufferObject()->handle()); VL_CHECK_OGL()
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->bufferObject()->handle()); VL_CHECK_OGL()
         VL_CHECK(!mBufferObjectPointerVector.empty())
         indices_ptr = (const GLvoid**)&mBufferObjectPointerVector[0];
       }
       else
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         VL_CHECK(!mPointerVector.empty())
         indices_ptr = (const GLvoid**)&mPointerVector[0];
       }

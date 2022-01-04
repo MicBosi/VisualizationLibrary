@@ -62,10 +62,6 @@ namespace vl
   VLGRAPHICS_EXPORT extern bool Is_Enable_Supported[];
   VLGRAPHICS_EXPORT extern const char* Translate_Enable_String[];
 
-  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_1_1;
-  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_2_0;
-  VLGRAPHICS_EXPORT extern bool Has_GLES;
-
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_1;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_2;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_3;
@@ -79,6 +75,11 @@ namespace vl
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_3_3;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_0;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_1;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_2;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_3;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_4;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_5;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_6;
 
   // Helper variables
 
@@ -115,30 +116,39 @@ namespace vl
   #include <vlGraphics/GL/GLExtensionList.hpp>
   #undef VL_EXTENSION
 
-  #define VL_GLES_EXTENSION(extension) VLGRAPHICS_EXPORT extern bool Has_##extension;
-  #include <vlGraphics/GL/GLESExtensionList.hpp>
-  #undef VL_GLES_EXTENSION
-
   #if defined(VL_OPENGL)
-    #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
+
+  //-----------------------------------------------------------------------------
+  // Globally accessible OpenGL functions
+  //-----------------------------------------------------------------------------
+  #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
+  #include <vlGraphics/GL/GLFunctionList.hpp>
+  #undef VL_GL_FUNCTION
+
+  //-----------------------------------------------------------------------------
+  // OpenGLFunctions
+  //-----------------------------------------------------------------------------
+  class OpenGLFunctions {
+  public:
+    // OpenGL 1.1
+    #define VL_GL_FUNCTION(NAME) decltype(NAME)* _##NAME = 0;
+    #include <vlGraphics/GL/GLFunctionList_1_1.hpp>
+    #undef VL_GL_FUNCTION
+
+    // OpenGL 1.2 - 4.6
+    #define VL_GL_FUNCTION(TYPE, NAME) TYPE _##NAME = 0;
     #include <vlGraphics/GL/GLFunctionList.hpp>
     #undef VL_GL_FUNCTION
-  #endif
+    void initFunctions();
+  };
+#endif
 
-  #if defined(VL_OPENGL_ES1)
-    #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
-    #include <vlGraphics/GL/GLES1FunctionList.hpp>
-    #undef VL_GL_FUNCTION
-  #endif
-
-  #if defined(VL_OPENGL_ES2)
-    #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
-    #include <vlGraphics/GL/GLES2FunctionList.hpp>
-    #undef VL_GL_FUNCTION
-  #endif
+  //-----------------------------------------------------------------------------
+  // MISC
+  //-----------------------------------------------------------------------------
 
   //! To test whether OpenGL has been initialized at least once check vl::Is_OpenGL_Initialized
-  VLGRAPHICS_EXPORT bool initializeOpenGL();
+  VLGRAPHICS_EXPORT bool initializeOpenGL(const OpenGLFunctions* gl = NULL);
 
   //! Returns the address of the specified OpenGL function if supported by the active OpenGL driver and profile.
   VLGRAPHICS_EXPORT void* getGLProcAddress(const char* name);
@@ -146,12 +156,18 @@ namespace vl
   //! Returns a readable string corresponding to the given OpenGL error code as returned by glGetError()
   VLGRAPHICS_EXPORT const char* getGLErrorString(int err);
 
+  VLGRAPHICS_EXPORT std::string getOpenGLExtensions(const OpenGLFunctions* gl);
+  
   //-----------------------------------------------------------------------------
   // VL_CHECK_OGL
   //-----------------------------------------------------------------------------
 
   VLGRAPHICS_EXPORT int glcheck( const char* file, int line );
 
+  // Kind of brutal but all files including this one will have this warning disabled since VL_CHECK_OGL seem to trigger it everywhere
+  #ifdef __GNUC__
+  #pragma GCC diagnostic ignored "-Wmisleading-indentation"
+  #endif
   #if defined( _DEBUG ) || !defined( NDEBUG ) || VL_FORCE_CHECKS == 1
     #define VL_CHECK_OGL( ) { if ( ::vl::glcheck( __FILE__, __LINE__ ) ) { VL_TRAP( ) } }
   #else
@@ -161,21 +177,5 @@ namespace vl
   //------------------------------------------------------------------------------
 
 }
-
-//-----------------------------------------------------------------------------
-// OpenGL functions wrappers
-//-----------------------------------------------------------------------------
-
-#if defined(VL_OPENGL)
-  #include <vlGraphics/GL/VL_Functions_GL.hpp>
-#endif
-
-#if defined(VL_OPENGL_ES1)
-  #include <vlGraphics/GL/VL_Functions_GLES1.hpp>
-#endif
-
-#if defined(VL_OPENGL_ES2)
-  #include <vlGraphics/GL/VL_Functions_GLES2.hpp>
-#endif
 //-----------------------------------------------------------------------------
 #endif

@@ -103,11 +103,11 @@ namespace vl
       // allocates the PBO
       glbuf->setBufferData( bytes, NULL, glbuf->usage() );
       // bind the pbo
-      VL_glBindBuffer( GL_PIXEL_PACK_BUFFER, glbuf->handle() );
+      glBindBuffer( GL_PIXEL_PACK_BUFFER, glbuf->handle() );
       // read pixels into the pbo
       glReadPixels( x, y, w, h, image->format(), image->type(), 0);
       // unbind the pbo
-      VL_glBindBuffer( GL_PIXEL_PACK_BUFFER, 0 );
+      glBindBuffer( GL_PIXEL_PACK_BUFFER, 0 );
 
       // deallocates the local storage and sets up the image configuration
       image->reset(w, h, 0, 1, image->format(), image->type(), false);

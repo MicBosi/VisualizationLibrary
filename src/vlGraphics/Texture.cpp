@@ -44,9 +44,6 @@ namespace
   int getDefaultFormat(ETextureFormat internal_format)
   {
     // OpenGL ES requires the internal format to be equal to the source image format when creating textures
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-    return internal_format;
-#else
     switch(internal_format)
     {
       case TF_ALPHA:
@@ -226,7 +223,6 @@ namespace
       default:
         return GL_RED;
     }
-#endif
   }
 
   // if you think your application has a bug that depends on this function you are wrong
@@ -803,13 +799,13 @@ bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_
   else
   if (tex_dimension == TD_TEXTURE_2D_ARRAY)
   {
-    VL_glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, default_format, default_type, NULL);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, default_format, default_type, NULL);
     VL_CHECK_OGL();
   }
   else
   if (tex_dimension == TD_TEXTURE_3D)
   {
-    VL_glTexImage3D(GL_TEXTURE_3D, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, default_format, default_type, NULL);
+    glTexImage3D(GL_TEXTURE_3D, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, default_format, default_type, NULL);
     VL_CHECK_OGL();
   }
   else
@@ -844,14 +840,6 @@ bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_
 bool Texture::setMipLevel(int mip_level, const Image* img, bool gen_mipmaps)
 {
   VL_CHECK_OGL()
-
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-    if (internalFormat() != img->format())
-    {
-      Log::bug("Texture::setMipLevel(): under OpenGL ES the texture internal format must match the source image format!\n");
-      return false;
-    }
-#endif
 
   if ( dimension() == TD_TEXTURE_BUFFER || dimension() == TD_TEXTURE_2D_MULTISAMPLE || dimension() == TD_TEXTURE_2D_MULTISAMPLE_ARRAY )
   {
@@ -964,12 +952,12 @@ bool Texture::setMipLevel(int mip_level, const Image* img, bool gen_mipmaps)
   {
     if (is_compressed)
     {
-      VL_glCompressedTexImage3D(GL_TEXTURE_2D_ARRAY, mip_level, internalFormat(), w, h, d, border()?1:0, img->requiredMemory(), img->pixels());
+      glCompressedTexImage3D(GL_TEXTURE_2D_ARRAY, mip_level, internalFormat(), w, h, d, border()?1:0, img->requiredMemory(), img->pixels());
       VL_CHECK_OGL()
     }
     else
     {
-      VL_glTexImage3D(GL_TEXTURE_2D_ARRAY, mip_level, internalFormat(), w, h, d, border()?1:0, img->format(), img->type(), img->pixels());
+      glTexImage3D(GL_TEXTURE_2D_ARRAY, mip_level, internalFormat(), w, h, d, border()?1:0, img->format(), img->type(), img->pixels());
       VL_CHECK_OGL()
     }
   }
@@ -978,12 +966,12 @@ bool Texture::setMipLevel(int mip_level, const Image* img, bool gen_mipmaps)
   {
     if (is_compressed)
     {
-      VL_glCompressedTexImage3D(GL_TEXTURE_3D, mip_level, internalFormat(), w, h, d, border()?1:0, img->requiredMemory(), img->pixels());
+      glCompressedTexImage3D(GL_TEXTURE_3D, mip_level, internalFormat(), w, h, d, border()?1:0, img->requiredMemory(), img->pixels());
       VL_CHECK_OGL()
     }
     else
     {
-      VL_glTexImage3D(GL_TEXTURE_3D, mip_level, internalFormat(), w, h, d, border()?1:0, img->format(), img->type(), img->pixels());
+      glTexImage3D(GL_TEXTURE_3D, mip_level, internalFormat(), w, h, d, border()?1:0, img->format(), img->type(), img->pixels());
       VL_CHECK_OGL()
     }
   }

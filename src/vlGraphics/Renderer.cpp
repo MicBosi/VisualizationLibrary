@@ -348,9 +348,9 @@ const RenderQueue* Renderer::renderRaw(const RenderQueue* render_queue, Camera* 
   opengl_context->applyRenderStates( mDummyStateSet.get(), NULL ); VL_CHECK_OGL();
 
   // enabled texture unit #0
-  VL_glActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
+  glActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
   if ( Has_Fixed_Function_Pipeline ) {
-    VL_glClientActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
+    glClientActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
   }
 
   // disable scissor test

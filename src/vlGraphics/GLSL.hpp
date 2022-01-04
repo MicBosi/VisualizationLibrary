@@ -187,18 +187,36 @@ namespace vl
   /** Wraps a GLSL tessellation evaluation shader to be bound to a GLSLProgram: this shader will run on the programmable tessellation processor in the evaluation stage.
    *
    * \sa GLSLVertexShader, GLSLFragmentShader, GLSLGeometryShader, GLSLTessControlShader, GLSLProgram, Effect */
-  class GLSLTessEvaluationShader: public GLSLShader
+  class GLSLTessEvaluationShader : public GLSLShader
   {
     VL_INSTRUMENT_CLASS(vl::GLSLTessEvaluationShader, GLSLShader)
 
   public:
     //! \param source Tessellation-evaluation shader's source code or path to a text file containing the shader's source code.
-    GLSLTessEvaluationShader(const String& source=String()): GLSLShader(ST_TESS_EVALUATION_SHADER, source)
+    GLSLTessEvaluationShader(const String& source = String()) : GLSLShader(ST_TESS_EVALUATION_SHADER, source)
     {
-      #ifndef NDEBUG
-        if (mObjectName.empty())
-          mObjectName = className();
-      #endif
+#ifndef NDEBUG
+      if (mObjectName.empty())
+        mObjectName = className();
+#endif
+    }
+  };
+  //------------------------------------------------------------------------------
+  /** Wraps a GLSL compute shader to be bound to a GLSLProgram.
+   *
+   * \sa GLSLVertexShader, GLSLFragmentShader, GLSLGeometryShader, GLSLTessControlShader, GLSLProgram, Effect */
+  class GLSLComputeShader : public GLSLShader
+  {
+    VL_INSTRUMENT_CLASS(vl::GLSLTessEvaluationShader, GLSLShader)
+
+  public:
+    //! \param source Compute shader's source code or path to a text file containing the shader's source code.
+    GLSLComputeShader(const String& source = String()) : GLSLShader(ST_COMPUTE_SHADER, source)
+    {
+#ifndef NDEBUG
+      if (mObjectName.empty())
+        mObjectName = className();
+#endif
     }
   };
   //------------------------------------------------------------------------------

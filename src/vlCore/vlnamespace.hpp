@@ -1291,7 +1291,8 @@ namespace vl
     ST_TESS_CONTROL_SHADER    = GL_TESS_CONTROL_SHADER, //!< A shader that is intended to run on the programmable tessellation processor in the control stage.
     ST_TESS_EVALUATION_SHADER = GL_TESS_EVALUATION_SHADER, //!< A shader that is intended to run on the programmable tessellation processor in the evaluation stage.
     ST_GEOMETRY_SHADER        = GL_GEOMETRY_SHADER, //!< A shader that is intended to run on the programmable geometry processor.
-    ST_FRAGMENT_SHADER        = GL_FRAGMENT_SHADER //!< A shader that is intended to run on the programmable fragment processor.
+    ST_FRAGMENT_SHADER        = GL_FRAGMENT_SHADER, //!< A shader that is intended to run on the programmable fragment processor.
+    ST_COMPUTE_SHADER         = GL_COMPUTE_SHADER //!< A shader that is intended to run on the programmable compute processor.
   } EShaderType;
 
   typedef enum

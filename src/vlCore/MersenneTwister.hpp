@@ -187,9 +187,9 @@ namespace vl
 	  // See Knuth TAOCP Vol 2, 3rd Ed, p.106 for multiplier.
 	  // In previous versions, most significant bits (MSBs) of the seed affect
 	  // only MSBs of the state array.  Modified 9 Jan 2002 by Makoto Matsumoto.
-	  register uint32 *s = state;
-	  register uint32 *r = state;
-	  register int i = 1;
+	  uint32 *s = state;
+	  uint32 *r = state;
+	  int i = 1;
 	  *s++ = seed & 0xffffffffUL;
 	  for( ; i < N; ++i )
 	  {
@@ -203,8 +203,8 @@ namespace vl
 	  // Generate N new values in state
 	  // Made clearer and faster by Matthew Bellew (matthew.bellew@home.com)
 	  static const int MmN = int(M) - int(N);  // in case enums are unsigned
-	  register uint32 *p = state;
-	  register int i;
+	  uint32 *p = state;
+	  int i;
 	  for( i = N - M; i--; ++p )
 		  *p = twist( p[M], p[0], p[1] );
 	  for( i = M; --i; ++p )
@@ -230,9 +230,9 @@ namespace vl
 	  // in each element are discarded.
 	  // Just call seed() if you want to get array from /dev/urandom
 	  initialize(19650218UL);
-	  register int i = 1;
-	  register uint32 j = 0;
-	  register int k = ( N > seedLength ? (int)N : (int)seedLength );
+	  int i = 1;
+	  uint32 j = 0;
+	  int k = ( N > seedLength ? (int)N : (int)seedLength );
 	  for( ; k; --k )
 	  {
 		  state[i] =
@@ -266,9 +266,9 @@ namespace vl
 	  if( urandom )
 	  {
 		  uint32 bigSeed[N];
-		  register uint32 *s = bigSeed;
-		  register int i = N;
-		  register bool success = true;
+		  uint32 *s = bigSeed;
+		  int i = N;
+		  bool success = true;
 		  while( success && i-- )
 			  success = fread( s++, sizeof(uint32), 1, urandom ) != 0;
 		  fclose(urandom);
@@ -290,9 +290,9 @@ namespace vl
 
   inline MersenneTwister::MersenneTwister( const MersenneTwister& o ): Object(o)
   {
-	  register const uint32 *t = o.state;
-	  register uint32 *s = state;
-	  register int i = N;
+	  const uint32 *t = o.state;
+	  uint32 *s = state;
+	  int i = N;
 	  for( ; i--; *s++ = *t++ ) {}
 	  left = o.left;
 	  pNext = &state[N-left];
@@ -306,7 +306,7 @@ namespace vl
 	  if( left == 0 ) reload();
 	  --left;
 	
-	  register uint32 s1;
+	  uint32 s1;
 	  s1 = *pNext++;
 	  s1 ^= (s1 >> 11);
 	  s1 ^= (s1 <<  7) & 0x9d2c5680UL;
@@ -380,18 +380,18 @@ namespace vl
 
   inline void MersenneTwister::save( uint32* saveArray ) const
   {
-	  register const uint32 *s = state;
-	  register uint32 *sa = saveArray;
-	  register int i = N;
+	  const uint32 *s = state;
+	  uint32 *sa = saveArray;
+	  int i = N;
 	  for( ; i--; *sa++ = *s++ ) {}
 	  *sa = left;
   }
 
   inline void MersenneTwister::load( uint32 *const loadArray )
   {
-	  register uint32 *s = state;
-	  register uint32 *la = loadArray;
-	  register int i = N;
+	  uint32 *s = state;
+	  uint32 *la = loadArray;
+	  int i = N;
 	  for( ; i--; *s++ = *la++ ) {}
 	  left = *la;
 	  pNext = &state[N-left];
@@ -399,16 +399,16 @@ namespace vl
 
   inline std::ostream& operator<<( std::ostream& os, const MersenneTwister& mtrand )
   {
-	  register const MersenneTwister::uint32 *s = mtrand.state;
-	  register int i = mtrand.N;
+	  const MersenneTwister::uint32 *s = mtrand.state;
+	  int i = mtrand.N;
 	  for( ; i--; os << *s++ << "\t" ) {}
 	  return os << mtrand.left;
   }
 
   inline std::istream& operator>>( std::istream& is, MersenneTwister& mtrand )
   {
-	  register MersenneTwister::uint32 *s = mtrand.state;
-	  register int i = mtrand.N;
+	  MersenneTwister::uint32 *s = mtrand.state;
+	  int i = mtrand.N;
 	  for( ; i--; is >> *s++ ) {}
 	  is >> mtrand.left;
 	  mtrand.pNext = &mtrand.state[mtrand.N-mtrand.left];
@@ -418,9 +418,9 @@ namespace vl
   inline MersenneTwister& MersenneTwister::operator=( const MersenneTwister& o )
   {
 	  if( this == &o ) return (*this);
-	  register const uint32 *t = o.state;
-	  register uint32 *s = state;
-	  register int i = N;
+	  const uint32 *t = o.state;
+	  uint32 *s = state;
+	  int i = N;
 	  for( ; i--; *s++ = *t++ ) {}
 	  left = o.left;
 	  pNext = &state[N-left];

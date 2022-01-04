@@ -187,8 +187,8 @@ void CoreText::renderText(const Actor*, const Camera*, const fvec4& color, const
   // mic fixme: detect GLSLProgram and use VertexAttribPointer if present.
 
   float texc[] = { 0,0,0,0,0,0,0,0 };
-  VL_glActiveTexture( GL_TEXTURE0 );
-  VL_glClientActiveTexture( GL_TEXTURE0 );
+  glActiveTexture( GL_TEXTURE0 );
+  glClientActiveTexture( GL_TEXTURE0 );
   glEnable(GL_TEXTURE_2D);
   glEnableClientState( GL_TEXTURE_COORD_ARRAY );
   glTexCoordPointer(2, GL_FLOAT, 0, texc);

@@ -182,7 +182,10 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix4& operator=(const Matrix4& m)
     {
-      memcpy(mVec, m.mVec, sizeof(T_Scalar)*16);
+      mVec[0] = m.mVec[0];
+      mVec[1] = m.mVec[1];
+      mVec[2] = m.mVec[2];
+      mVec[3] = m.mVec[3];
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -410,14 +413,10 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix4& setIdentity()
     {
-      static const T_Scalar I4d[] =
-      {
-        (T_Scalar)1, (T_Scalar)0, (T_Scalar)0, (T_Scalar)0,
-        (T_Scalar)0, (T_Scalar)1, (T_Scalar)0, (T_Scalar)0,
-        (T_Scalar)0, (T_Scalar)0, (T_Scalar)1, (T_Scalar)0,
-        (T_Scalar)0, (T_Scalar)0, (T_Scalar)0, (T_Scalar)1
-      };
-      memcpy(mVec, I4d, sizeof(T_Scalar)*16);
+      mVec[0] = Vector4<T_Scalar>(1,0,0,0);
+      mVec[1] = Vector4<T_Scalar>(0,1,0,0);
+      mVec[2] = Vector4<T_Scalar>(0,0,1,0);
+      mVec[3] = Vector4<T_Scalar>(0,0,0,1);
       return *this;
     }
     //-----------------------------------------------------------------------------

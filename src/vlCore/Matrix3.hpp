@@ -160,7 +160,9 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix3& operator=(const Matrix3& m)
     {
-      memcpy(mVec, m.mVec, sizeof(T_Scalar)*9);
+      mVec[0] = m.mVec[0];
+      mVec[1] = m.mVec[1];
+      mVec[2] = m.mVec[2];
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -373,13 +375,9 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix3& setIdentity()
     {
-      static const T_Scalar I3d[] =
-      {
-        (T_Scalar)1, (T_Scalar)0, (T_Scalar)0,
-        (T_Scalar)0, (T_Scalar)1, (T_Scalar)0,
-        (T_Scalar)0, (T_Scalar)0, (T_Scalar)1,
-      };
-      memcpy(mVec, I3d, sizeof(T_Scalar)*9);
+      mVec[0] = Vector3<T_Scalar>(1,0,0);
+      mVec[1] = Vector3<T_Scalar>(0,1,0);
+      mVec[2] = Vector3<T_Scalar>(0,0,1);
       return *this;
     }
     //-----------------------------------------------------------------------------

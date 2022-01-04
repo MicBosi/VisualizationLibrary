@@ -359,7 +359,7 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
 
   setSize(width, height);
 
-  if (Has_GL_EXT_swap_control)
+  if (Has_WGL_EXT_swap_control)
     wglSwapIntervalEXT( fmt.vSync() ? 1 : 0 );
 
   if (share_context)

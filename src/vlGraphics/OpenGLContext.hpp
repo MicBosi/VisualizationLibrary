@@ -578,6 +578,7 @@ namespace vl
     const fvec4& color() const { return mColor; }
     const fvec3& secondaryColor() const { return mSecondaryColor; }
     const fvec4& vertexAttribValue(int i) const { VL_CHECK(i<VA_MaxAttribCount); return mVertexAttribValue[i]; }
+    OpenGLFunctions mGL;
 
   protected:
     ref<FramebufferObject> mLeftFramebuffer;

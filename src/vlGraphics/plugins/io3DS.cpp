@@ -329,6 +329,7 @@ void A3DSLoader::read_MATERIAL_BLOCK()
     {
       mat.mDoubleSided = true;
     }
+    break;
     // Texture map 1
     case ID_MAT_TEXMAP:
     {

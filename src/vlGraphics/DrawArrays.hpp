@@ -99,7 +99,7 @@ namespace vl
       applyPatchParameters();
 
       if ( instances() > 1 && (Has_GL_ARB_draw_instanced||Has_GL_EXT_draw_instanced) )
-        VL_glDrawArraysInstanced( primitiveType(), (int)start(), (int)count(), (int)instances() );
+        glDrawArraysInstanced( primitiveType(), (int)start(), (int)count(), (int)instances() );
       else
         glDrawArrays( primitiveType(), (int)start(), (int)count() );
 
