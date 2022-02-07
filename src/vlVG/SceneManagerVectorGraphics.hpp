@@ -35,10 +35,10 @@
 #include <vlGraphics/SceneManager.hpp>
 #include <vlCore/Collection.hpp>
 #include <vlGraphics/Frustum.hpp>
+#include <vlVG/VectorGraphics.hpp>
 
 namespace vl
 {
-  class VectorGraphics;
 //-------------------------------------------------------------------------------------------------------------------------------------------
 // SceneManagerVectorGraphics
 //-------------------------------------------------------------------------------------------------------------------------------------------
