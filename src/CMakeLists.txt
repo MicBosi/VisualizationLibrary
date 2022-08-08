@@ -144,6 +144,14 @@ if(VL_GUI_SDL_SUPPORT)
 	add_subdirectory("gui/vlSDL")
 endif()
 
+# SDL2
+option(VL_GUI_SDL2_SUPPORT "Build SDL2 support" OFF)
+
+if(VL_GUI_SDL2_SUPPORT)
+	find_package(SDL2 REQUIRED)
+	add_subdirectory("gui/vlSDL2")
+endif()
+
 # wxWidgets
 option(VL_GUI_WXWIDGETS_SUPPORT "Build wxWidgets support" OFF)
 if(VL_GUI_WXWIDGETS_SUPPORT)
@@ -173,6 +181,7 @@ cmake_dependent_option(VL_GUI_QT6_EXAMPLES "Build Qt6 examples" ON "VL_GUI_QT6_S
 cmake_dependent_option(VL_GUI_MFC_EXAMPLES "Build MFC examples" ON "VL_GUI_MFC_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_WIN32_EXAMPLES "Build win32 examples" ON "VL_GUI_WIN32_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_SDL_EXAMPLES "Build SDL examples" ON "VL_GUI_SDL_SUPPORT" OFF)
+cmake_dependent_option(VL_GUI_SDL2_EXAMPLES "Build SDL2 examples" ON "VL_GUI_SDL2_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_WXWIDGETS_EXAMPLES "Build wxWidgets examples" ON "VL_GUI_WXWIDGETS_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_GLES_EXAMPLES "Build OpenGL ES examples" ON "VL_GUI_EGL_SUPPORT" OFF)
 #cmake_dependent_option(VL_GUI_COCOA_EXAMPLES "Build Cocoa examples" ON "VL_GUI_COCOA_SUPPORT" OFF)
