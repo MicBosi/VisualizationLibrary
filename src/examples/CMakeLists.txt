@@ -22,7 +22,9 @@ if( VL_GUI_QT4_EXAMPLES OR
     VL_GUI_GLES_EXAMPLES OR
     VL_GUI_GLFW_EXAMPLES OR
     VL_GUI_GLUT_EXAMPLES OR
-    VL_GUI_SDL_EXAMPLES )
+    VL_GUI_SDL_EXAMPLES OR
+    VL_GUI_SDL2_EXAMPLES
+  )
 
   ################################################################################
   # Compile all Applets
@@ -57,6 +59,25 @@ if( VL_GUI_QT4_EXAMPLES OR
       add_executable(vlSDL_tests SDL_tests.cpp ${SDLMAIN_M_PATH})
       target_link_libraries(vlSDL_tests VLApplets VLSDL ${VL_LIBS_TESTS} ${SDLMAIN_LIBRARY} ${SDL_LIBRARY})
       VL_INSTALL_TARGET(vlSDL_tests)
+  endif()
+
+  if(VL_GUI_SDL2_EXAMPLES)
+      # Darwin
+      if( ${CMAKE_SYSTEM} MATCHES "Darwin" )
+          set(SDL2MAIN_M_PATH "Specify path to SDLMain.m" CACHE FILEPATH "Path to SDLMain.m")
+      endif()
+
+      include_directories(${SDL2_INCLUDE_DIR})
+
+      # Example
+      add_executable(vlSDL2_example SDL2_example.cpp Applets/App_RotatingCube.hpp ${SDL2MAIN_M_PATH})
+      target_link_libraries(vlSDL2_example VLSDL2 ${VL_LIBS_EXAMPLE} ${SDL2MAIN_LIBRARY} ${SDL2_LIBRARY})
+      VL_INSTALL_TARGET(vlSDL2_example)
+
+      # Tests
+      add_executable(vlSDL2_tests SDL2_tests.cpp ${SDL2MAIN_M_PATH})
+      target_link_libraries(vlSDL2_tests VLApplets VLSDL2 ${VL_LIBS_TESTS} ${SDL2MAIN_LIBRARY} ${SDL2_LIBRARY})
+      VL_INSTALL_TARGET(vlSDL2_tests)
   endif()
 
   if(VL_GUI_GLUT_EXAMPLES)

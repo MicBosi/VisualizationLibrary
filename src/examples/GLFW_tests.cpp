@@ -105,8 +105,8 @@ int main ( int argc, char *argv[] )
   format.setMultisampleSamples(16);
   format.setMultisample(false);
   format.setFullscreen(false);
-  //format.setOpenGLProfile( GLP_Core );
-  //format.setVersion( 3, 3 );
+  // format.setOpenGLProfile( GLP_Core );
+  // format.setVersion( 3, 3 );
 
   TestBatteryGLFW test_battery;
   test_battery.run(test, test_str, format, false);
