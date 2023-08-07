@@ -53,7 +53,7 @@ namespace vlWX
   class VLWX_EXPORT WXGLCanvas: public wxGLCanvas, public vl::OpenGLContext
   {
   public:
-    WXGLCanvas( 
+    WXGLCanvas(
       wxWindow* parent,
       wxWindowID id = wxID_ANY,
       const int *attribList = NULL,
@@ -102,7 +102,6 @@ namespace vlWX
 
   private:
     wxCursor mCursor;
-    int mMouseCount;
     wxGLContext* mWXGLContext;
     DECLARE_EVENT_TABLE()
   };

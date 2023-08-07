@@ -72,9 +72,8 @@ wxGLCanvas(parent, id, attribList, pos, size, style, name, palette)
 {
   // let wxWidgets manage the deletion of this object
   setAutomaticDelete(false);
-  mMouseCount = 0;
   DragAcceptFiles(true);
-  
+
   mWXGLContext = new wxGLContext(this);
 }
 //-----------------------------------------------------------------------------
@@ -125,27 +124,37 @@ void WXGLCanvas::OnMouseWheel( wxMouseEvent& ev )
 //-----------------------------------------------------------------------------
 void WXGLCanvas::OnMouseUp( wxMouseEvent& ev )
 {
-  if (ev.GetButton() == wxMOUSE_BTN_NONE)
-    return;
-  switch(ev.GetButton())
+  if (HasCapture())
   {
-    case wxMOUSE_BTN_LEFT:   dispatchMouseUpEvent(LeftButton,   ev.GetX(), ev.GetY()); break;
-    case wxMOUSE_BTN_MIDDLE: dispatchMouseUpEvent(MiddleButton, ev.GetX(), ev.GetY()); break;
-    case wxMOUSE_BTN_RIGHT:  dispatchMouseUpEvent(RightButton,  ev.GetX(), ev.GetY()); break;
-    default:
-    case wxMOUSE_BTN_ANY:  dispatchMouseUpEvent(UnknownButton,  ev.GetX(), ev.GetY()); break;
-  }
-  mMouseCount--;
-  // release only once
-  if (!mMouseCount)
+    // Release the mouse capture
     ReleaseMouse();
-  VL_CHECK(mMouseCount>=0)
+
+    if (ev.GetButton() == wxMOUSE_BTN_NONE)
+    {
+      ev.Skip();
+      return;
+    }
+    switch(ev.GetButton())
+    {
+      case wxMOUSE_BTN_LEFT:   dispatchMouseUpEvent(LeftButton,   ev.GetX(), ev.GetY()); break;
+      case wxMOUSE_BTN_MIDDLE: dispatchMouseUpEvent(MiddleButton, ev.GetX(), ev.GetY()); break;
+      case wxMOUSE_BTN_RIGHT:  dispatchMouseUpEvent(RightButton,  ev.GetX(), ev.GetY()); break;
+      default:
+      case wxMOUSE_BTN_ANY:  dispatchMouseUpEvent(UnknownButton,  ev.GetX(), ev.GetY()); break;
+    }
+    ev.Skip();
+  }
 }
 //-----------------------------------------------------------------------------
 void WXGLCanvas::OnMouseDown( wxMouseEvent& ev )
 {
+  CaptureMouse();
+
   if (ev.GetButton() == wxMOUSE_BTN_NONE)
+  {
+    ev.Skip();
     return;
+  }
   switch(ev.GetButton())
   {
     case wxMOUSE_BTN_LEFT:   dispatchMouseDownEvent(LeftButton,   ev.GetX(), ev.GetY()); break;
@@ -154,11 +163,7 @@ void WXGLCanvas::OnMouseDown( wxMouseEvent& ev )
     default:
     case wxMOUSE_BTN_ANY:    dispatchMouseDownEvent(UnknownButton,  ev.GetX(), ev.GetY()); break;
   }
-  // capture only once
-  VL_CHECK(mMouseCount>=0)
-  if (!mMouseCount)
-    CaptureMouse();
-  mMouseCount++;
+  ev.Skip();
 }
 //-----------------------------------------------------------------------------
 void WXGLCanvas::OnSize(wxSizeEvent& ev)
@@ -365,7 +370,7 @@ bool WXGLCanvas::setFullscreen(bool fullscreen)
 void WXGLCanvas::quitApplication()
 {
   wxApp* app = dynamic_cast<wxApp*>(wxApp::GetInstance());
-  if ( app ) 
+  if ( app )
   {
     app->ExitMainLoop();
   }
