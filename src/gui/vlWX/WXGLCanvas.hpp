@@ -32,15 +32,16 @@
 #ifndef vlWXGLCanvas_INCLUDE_ONCE
 #define vlWXGLCanvas_INCLUDE_ONCE
 
-#include <vlWX/link_config.hpp>
-#include <vlGraphics/OpenGLContext.hpp>
-#include <vlCore/Time.hpp>
 #include <wx/frame.h>
 #include <wx/glcanvas.h>
 #include <wx/timer.h>
 #include <wx/dcclient.h>
 #include <wx/image.h>
 #include <wx/app.h>
+#include <vlWX/link_config.hpp>
+#include <vlGraphics/OpenGLContext.hpp>
+#include <vlCore/Time.hpp>
+
 
 #if !wxUSE_GLCANVAS
   #error "OpenGL required: set wxUSE_GLCANVAS to 1 and rebuild the library"
@@ -52,7 +53,7 @@ namespace vlWX
   class VLWX_EXPORT WXGLCanvas: public wxGLCanvas, public vl::OpenGLContext
   {
   public:
-    WXGLCanvas( 
+    WXGLCanvas(
       wxWindow* parent,
       wxWindowID id = wxID_ANY,
       const int *attribList = NULL,
@@ -101,7 +102,6 @@ namespace vlWX
 
   private:
     wxCursor mCursor;
-    int mMouseCount;
     wxGLContext* mWXGLContext;
     DECLARE_EVENT_TABLE()
   };
