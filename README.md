@@ -95,3 +95,7 @@ Visualization Library is released under the OSI approved Simplified BSD License 
     * [michelebosi.com](https://michelebosi.com)
 
 Happy coding :)
+
+# Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=MicBosi/VisualizationLibrary&type=Date)](https://www.star-history.com/#MicBosi/VisualizationLibrary&Date)
