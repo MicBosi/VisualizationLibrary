@@ -44,6 +44,7 @@
 #       VLWX:    wxWidgets gui bindings.
 #       VLGLUT:  GLUT gui bindings.
 #       VLSDL:   SDL gui bindings.
+#       VLSDL2:  SDL2 gui bindings.
 #       VLEGL:   EGL support [EXPERIMENTAL]
 
 macro(_vl_find_library _var)
