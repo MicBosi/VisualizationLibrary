@@ -98,4 +98,4 @@ Happy coding :)
 
 # Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=MicBosi/VisualizationLibrary&type=Date)](https://www.star-history.com/#MicBosi/VisualizationLibrary&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=MicBosi/VisualizationLibrary&type=Date)](https://star-history.dera.page/#MicBosi/VisualizationLibrary&Date)
