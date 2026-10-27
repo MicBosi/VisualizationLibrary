@@ -147,9 +147,12 @@ namespace vl
       mActorEventCallbacks.setAutomaticDelete(false);
       setLod(0,renderable);
       // actor user data
-      #ifdef VL_USER_DATA_ACTOR
-        mActorUserData = NULL;
-      #endif
+    #ifdef VL_USER_DATA_ACTOR
+              mActorUserData = NULL;
+    #endif
+    #ifdef VL_USER_VOIDDATA_ACTOR
+              mActorVoidUserData = NULL;
+    #endif
     }
 
     //! Destructor.
@@ -444,15 +447,24 @@ namespace vl
     /** For internal use only. */
     unsigned occlusionQueryTick() const { return mOcclusionQueryTick; }
 
-#ifdef VL_USER_DATA_ACTOR
-  public:
-    const Object* actorUserData() const { return mActorUserData.get(); }
-    Object* actorUserData() { return mActorUserData.get(); }
-    void setActorUserData(Object* user_data) { mActorUserData = user_data; }
+    #ifdef VL_USER_DATA_ACTOR
+      public:
+          const Object* actorUserData() const { return mActorUserData.get(); }
+          Object* actorUserData() { return mActorUserData.get(); }
+          void setActorUserData(Object* user_data) { mActorUserData = user_data; }
 
-  private:
-    ref<Object> mActorUserData;
-#endif
+      private:
+          ref<Object> mActorUserData;
+    #endif
+    #ifdef VL_USER_VOIDDATA_ACTOR
+      public:
+          const void* actorVoidUserData() const { return mActorVoidUserData; }
+          void* actorVoidUserData() { return mActorVoidUserData; }
+          void setActorVoidUserData(void* user_data) { mActorVoidUserData = user_data; }
+
+      private:
+          void* mActorVoidUserData;
+    #endif
 
   protected:
     AABB mAABB;

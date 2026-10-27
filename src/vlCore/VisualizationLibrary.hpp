@@ -35,6 +35,7 @@
 #include <vlCore/config.hpp>
 #include <vlMain/link_config.hpp>
 #include <vlCore/link_config.hpp>
+#include <vlGraphics/link_config.hpp>
 
 // TODO: it would be nice not to have this VLGRAPHICS/VLMAIN_EXPORT mix and not to include <vlGraphics/link_config.hpp> here.
 

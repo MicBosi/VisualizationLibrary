@@ -36,6 +36,7 @@
 #include <vlCore/glsl_math.hpp>
 #include <vlGraphics/RenderState.hpp>
 #include <vlCore/String.hpp>
+#include <vlGraphics/TransformFeedback.hpp>
 
 namespace vl
 {
@@ -432,6 +433,27 @@ namespace vl
       VL_CHECK_OGL();
       return location;
     }
+	
+	// --------------- transform feedback -----------------------
+	
+	void setTransformFeedback(TransformFeedback* transformFeedback)
+	{
+	  VL_CHECK( Has_Transform_Feedback )
+	  if( !Has_Transform_Feedback )
+		return;
+	  VL_CHECK(!linked())
+	  
+	  mTransformFeedback = transformFeedback;
+	}
+	
+	const TransformFeedback* transformFeedback() const
+	{
+	  VL_CHECK( Has_Transform_Feedback )
+	  if( !Has_Transform_Feedback )
+		return NULL;
+	  
+	  return mTransformFeedback.get();
+	}
 
     // --------------- uniform variables: getters ---------------
 
@@ -560,6 +582,7 @@ namespace vl
     bool mProgramBinaryRetrievableHint;
     bool mProgramSeparable;
 
+	vl::ref< TransformFeedback > mTransformFeedback;
     // VL standard uniforms
 
     int m_vl_WorldMatrix;

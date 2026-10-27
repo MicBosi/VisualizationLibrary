@@ -142,7 +142,22 @@ ref<Geometry> Extrusions::extrude( bool compatibilityProfile )
   {
     int previousSilhouetteSize = ( i == 0 ) ? 0 : silhouettes().at( i - 1 );
     int prof_count = silhouetteMode() == SilhouetteClosed ? (int)silhouettes().at( i ) : (int)silhouettes().at( i ) - 1;
-    ref<DrawElementsUInt> de = new DrawElementsUInt( PT_QUADS );
+    ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLES);
+    geom->drawCalls().push_back(de.get());
+    de->indexBuffer()->resize(6 * prof_count * (segments-1));
+	for(int iseg=0; iseg<segments-1; ++iseg)
+	{
+	  for(int iquad=0; iquad<prof_count; ++iquad)
+        {
+        de->indexBuffer()->at(iquad*6+iseg*4*prof_count + 5) = (iseg + 1) * (GLuint)silhouette().size() + iquad+ previousSilhouetteSize;
+        de->indexBuffer()->at(iquad*6+iseg*4*prof_count + 4) = (iseg + 0) * (GLuint)silhouette().size() + iquad+ previousSilhouetteSize;
+        de->indexBuffer()->at(iquad*6+iseg*4*prof_count + 3) = (iseg + 0) * (GLuint)silhouette().size() + (iquad+1)%silhouette().size()+ previousSilhouetteSize;
+        de->indexBuffer()->at(iquad*6+iseg*4*prof_count + 2) = (iseg + 0) * (GLuint)silhouette().size() + (iquad+1)%silhouette().size()+ previousSilhouetteSize;
+        de->indexBuffer()->at(iquad*6+iseg*4*prof_count + 1) = (iseg + 1) * (GLuint)silhouette().size() + (iquad+1)%silhouette().size()+ previousSilhouetteSize;
+        de->indexBuffer()->at(iquad*6+iseg*4*prof_count + 0) = (iseg + 1) * (GLuint)silhouette().size() + iquad+ previousSilhouetteSize;
+        }
+	}
+	/*ref<DrawElementsUInt> de = new DrawElementsUInt( PT_QUADS );
     geom->drawCalls().push_back( de.get() );
     de->indexBuffer()->resize( 4 * prof_count * ( segments - 1 ) );
     for ( int iseg = 0; iseg < segments - 1; ++iseg )
@@ -154,7 +169,7 @@ ref<Geometry> Extrusions::extrude( bool compatibilityProfile )
         de->indexBuffer()->at( ( iquad ) * 4 + iseg * 4 * prof_count + 1 ) = ( iseg + 1 ) * (GLuint)silhouette().size() + ( iquad + 1 ) % silhouettes().at( i ) + previousSilhouetteSize; // % is used for loop
         de->indexBuffer()->at( ( iquad ) * 4 + iseg * 4 * prof_count + 0 ) = ( iseg + 1 ) * (GLuint)silhouette().size() + iquad + previousSilhouetteSize;
       }
-    }
+    }*/
   }
 
   // bottom/top caps

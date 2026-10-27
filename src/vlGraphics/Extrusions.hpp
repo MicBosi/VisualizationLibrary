@@ -37,9 +37,11 @@
 #include <vlCore/Vector3.hpp>
 #include <vlCore/Matrix4.hpp>
 #include <vector>
+//#include <vlGraphics/ExtrusionPrimitives.hpp>
 
 namespace vl
 {
+
   /**
    * The Extrusions class generates a Geometry extruding a silhouette along a path.
    * 

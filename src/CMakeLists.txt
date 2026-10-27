@@ -62,6 +62,9 @@ add_subdirectory("tools")
 # VLMain
 add_subdirectory("vlMain")
 
+# VLWin32
+#add_subdirectory("gui/vlWin32")
+
 ################################################################################
 # GUI Modules (automatically enabled when their requirements are met)
 ################################################################################

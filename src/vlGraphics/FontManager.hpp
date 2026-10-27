@@ -33,6 +33,7 @@
 #define FontManager_INCLUDE_ONCE
 
 #include <vlGraphics/Font.hpp>
+#include <vlGraphics/CoreFont.hpp>
 
 namespace vl
 {
@@ -57,15 +58,27 @@ namespace vl
 
     //! Creates or returns an already created Font.
     Font* acquireFont(const String& font, int size, bool smooth=false);
+	
+	//! Creates or returns an already created Font.
+    CoreFont* acquireCoreFont(const String& font, int size, bool smooth=false);
 
     //! Returns the list of Fonts created till now.
     const std::vector< ref<Font> >& fonts() const { return mFonts; }
+	
+	//! Returns the list of Fonts created till now.
+    const std::vector< ref<CoreFont> >& coreFonts() const { return mCoreFonts; }
 
     //! Releases a given Font and its associated resources and memory.
     void releaseFont(Font* font);
+	
+	//! Releases a given Font and its associated resources and memory.
+    void releaseCoreFont(CoreFont* font);
 
     //! Releases all Fonts and associated resources and memory.
     void releaseAllFonts();
+	
+	//! Releases all Fonts and associated resources and memory.
+    void releaseAllCoreFonts();
 
     //! Returns the FT_Library handle.
     const void* freeTypeLibrary() const { return mFreeTypeLibrary; }
@@ -79,6 +92,7 @@ namespace vl
 
   protected:
     std::vector< ref<Font> > mFonts;
+	std::vector< ref<CoreFont> > mCoreFonts;
     void* mFreeTypeLibrary;
   };
 

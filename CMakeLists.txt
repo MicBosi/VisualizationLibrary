@@ -34,9 +34,10 @@ add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP4>)
 ################################################################################
 
 set(VL_USER_DATA_OBJECT 0 CACHE BOOL "Enable vl::Object user data.")
-set(VL_USER_DATA_ACTOR 0 CACHE BOOL "Enable vl::Object user data.")
-set(VL_USER_DATA_TRANSFORM 0 CACHE BOOL "Enable vl::Object user data.")
-set(VL_USER_DATA_SHADER 0 CACHE BOOL "Enable vl::Object user data.")
+set(VL_USER_VOIDDATA_ACTOR 0 CACHE BOOL "Enable vl::Actor user data as void.")
+set(VL_USER_DATA_ACTOR 0 CACHE BOOL "Enable vl::Actor user data.")
+set(VL_USER_DATA_TRANSFORM 0 CACHE BOOL "Enable vl::Transform user data.")
+set(VL_USER_DATA_SHADER 0 CACHE BOOL "Enable vl::Shader user data.")
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	set(VL_PLATFORM_MACOSX 1)
@@ -62,7 +63,7 @@ endif()
 ################################################################################
 
 # Dynamic vs Static Linking
-option(VL_DYNAMIC_LINKING "Set to ON to build VL for dynamic linking, or OFF for static." ON)
+option(VL_DYNAMIC_LINKING "Set to ON to build VL for dynamic linking, or OFF for static." OFF)
 if(VL_DYNAMIC_LINKING)
 	add_definitions(-DVL_DYNAMIC_LINKING)
 	set(VL_SHARED_OR_STATIC "SHARED")

@@ -34,6 +34,9 @@
 
 #include <vlGraphics/Array.hpp>
 #include <vlGraphics/TriangleIterator.hpp>
+#include <vlGraphics/LineIterator.hpp>
+#include <vlGraphics/TriangleAccessor.hpp>
+#include <vlGraphics/LineAccessor.hpp>
 #include <vlGraphics/IndexIterator.hpp>
 #include <vlGraphics/PatchParameter.hpp>
 
@@ -133,6 +136,20 @@ namespace vl
      * PT_TRIANGLE_FAN, PT_POLYGON, PT_QUADS, PT_QUAD_STRIP. */
     virtual TriangleIterator triangleIterator() const = 0;
 
+    /**
+     * Returns a LineIterator used to iterate through the lines of a DrawCall. */
+    virtual LineIterator lineIterator() const = 0;
+	
+	/** 
+     * Returns a TriangleAccessor used to access a triangle of a DrawCall. 
+	 */
+    virtual TriangleAccessor triangleAccessor() const = 0;
+
+    /**
+     * Returns a LineIterator used to access a line of a DrawCall. 
+	 */
+    virtual LineAccessor lineAccessor() const = 0;
+	
     /** 
      * Returns a IndexIterator used to iterate through the virtual indices of a DrawCall.
      * This \note The returned indices already take into account primitive restart and base vertex. */

@@ -750,12 +750,13 @@ _TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 
             key.field_name = (char *)field_name;
             key.field_type = dt;
-
+            unsigned int nfields=tif->tif_nfields;
             ret = (const TIFFFieldInfo **) lfind(&pkey,
 						 tif->tif_fieldinfo, 
-						 &tif->tif_nfields,
+                         &nfields,
 						 sizeof(TIFFFieldInfo *),
 						 tagNameCompare);
+            tif->tif_nfields=nfields;
 	    return (ret) ? (*ret) : NULL;
         } else
 		for (i = 0, n = tif->tif_nfields; i < n; i++) {

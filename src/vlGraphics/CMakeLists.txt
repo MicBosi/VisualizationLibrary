@@ -28,10 +28,14 @@ file(GLOB VLGRAPHICS_GL_INC "GL/*.hpp")
 if( NOT VL_OPENGL )
 	list(REMOVE_ITEM VLGRAPHICS_SRC "${VLGRAPHICS_SOURCE_DIR}/Tessellator.cpp")
 	list(REMOVE_ITEM VLGRAPHICS_INC "${VLGRAPHICS_SOURCE_DIR}/Tessellator.hpp")
+	message(STATUS "Removing Tessellator class, not supported in OpenGL ES 1.x and 2.x (requires GLU)")
 
 	list(REMOVE_ITEM VLGRAPHICS_SRC "${VLGRAPHICS_SOURCE_DIR}/Extrusion.cpp")
 	list(REMOVE_ITEM VLGRAPHICS_INC "${VLGRAPHICS_SOURCE_DIR}/Extrusion.hpp")
-	message(STATUS "Removing Tessellator class, not supported in OpenGL ES 1.x and 2.x (requires GLU)")
+	list(REMOVE_ITEM VLGRAPHICS_SRC "${VLGRAPHICS_SOURCE_DIR}/Extrusions.cpp")
+	list(REMOVE_ITEM VLGRAPHICS_INC "${VLGRAPHICS_SOURCE_DIR}/Extrusions.hpp")
+	list(REMOVE_ITEM VLGRAPHICS_SRC "${VLGRAPHICS_SOURCE_DIR}/ExtrusionPrimitives.hpp")
+	message(STATUS "Removing Extrusion classes, not supported in OpenGL ES 1.x and 2.x (requires GLU)")
 endif()
 
 # Handle extras added by plugins
@@ -81,3 +85,4 @@ install(FILES ${VLGRAPHICS_GL_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlGrap
 
 # Khronos headers
 install(DIRECTORY "${KHRONOS_DIR}/GL" DESTINATION ${VL_INCLUDE_INSTALL_DIR})
+install(DIRECTORY "${KHRONOS_DIR}/KHR" DESTINATION ${VL_INCLUDE_INSTALL_DIR})

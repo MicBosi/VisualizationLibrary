@@ -105,8 +105,14 @@ namespace vl
     const DrawCall* drawCalls() const { return mDrawCalls; }
     //! The starting index of the intersected primitive inside drawCalls()
     int triangleIndex() const { return mTriangleIndex; }
+    //! The starting index of the intersected line inside TriangleIndex()
+    int lineIndex() const { return mLineIndex; }
     //! An int[3] representing the indices of the intersected triangle.
     const int* triangle() const { return mTriangle; }
+    //! An int[2] representing the indices of the intersected line.
+    const int* line() { return mLine; }
+    //! An int representing the indice of the nearest point to the intersection
+    int nearestPoint() { return mNearestPoint; }
 
     //! The intersected Geometry
     void setGeometry(Geometry* g) { mGeometry = g; }
@@ -116,6 +122,12 @@ namespace vl
     void setTriangleIndex(int t_idx) { mTriangleIndex = t_idx; }
     //! An int[3] representing the indices of the intersected triangle.
     void setTriangle(int a, int b, int c) { mTriangle[0] = a; mTriangle[1] = b; mTriangle[2] = c; }
+    //! The starting index of the intersected line inside TriangleIndex()
+    void setLineIndex(int l_idx) { mLineIndex = l_idx; }
+    //! An int[2] representing the indices of the intersected line.
+    void setLine(int a, int b) { mLine[0] = a; mLine[1] = b; }
+    //! An int representing the indice of the nearest point to the intersection
+    void setNearestPoint(int a) { mNearestPoint = a; }
 
   protected:
     vec3 mIntersectionPoint;
@@ -123,6 +135,9 @@ namespace vl
     DrawCall* mDrawCalls;
     int mTriangleIndex;
     int mTriangle[3];
+    int mLine[2];
+    int mNearestPoint;
+    int mLineIndex;
     float mDistance;
   };
   //-----------------------------------------------------------------------------
@@ -135,7 +150,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::RayIntersector, Object)
 
   public:
-    RayIntersector()
+    RayIntersector() : mDistance(0.1)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mActors = new ActorCollection;
@@ -155,6 +170,11 @@ namespace vl
     const Frustum& frustum() const { return mFrustum; }
     //! The frustum in world coordinates used to cull the objects.
     void setFrustum(const Frustum& frustum) { mFrustum = frustum; }
+	
+	//! The maximal distance for a line or a point intersection
+	real distance() const { return mDistance; }
+	//! The maximal distance for a line or a point intersection
+	void setDistance(real distance) { mDistance = distance; }
 
     //! The intersection points detected by the last intersect() call sorted according to their distance (the first one is the closest).
     const std::vector< ref<RayIntersection> >& intersections() const { return mIntersections; }
@@ -186,11 +206,19 @@ namespace vl
     template<class T>
     void intersectTriangle(const T& a, const T& b, const T& c, int ia, int ib, int ic, Actor*, Geometry* geom, DrawCall* prim, int prim_idx);
 
+	// From http://geomalgorithms.com/a07-_distance.html
+    template<class T>
+    void intersectLine(const T& a, const T& b, int ia, int ib, Actor*, Geometry* geom, DrawCall* prim, int prim_idx);
+
+    template<class T>
+    void intersectPoint(const T& a, int ia, Actor*, Geometry* geom, DrawCall* prim, int prim_idx);
+
   protected:
     Frustum mFrustum;
     std::vector< ref<RayIntersection> > mIntersections;
     ref<ActorCollection> mActors;
     Ray mRay;
+	real mDistance;
   };
 }
 

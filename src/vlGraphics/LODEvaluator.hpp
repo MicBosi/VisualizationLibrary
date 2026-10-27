@@ -33,6 +33,7 @@
 #define LODEvaluator_INCLUDE_ONCE
 
 #include <vlCore/Object.hpp>
+#include <vlGraphics/link_config.hpp>
 
 namespace vl
 {
@@ -56,6 +57,7 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
+    virtual ~LODEvaluator(){}
     virtual int evaluate(Actor* actor, Camera* camera) = 0;
   };
   //------------------------------------------------------------------------------

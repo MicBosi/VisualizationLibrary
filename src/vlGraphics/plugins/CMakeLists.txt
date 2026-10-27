@@ -41,3 +41,12 @@ endif()
 if(VL_IO_3D_COLLADA)
 	add_subdirectory("collada_dom")
 endif()
+
+#if(VL_IO_3D_MD2)
+#    if(NOT VL_DYNAMIC_LINKING)
+#        VL_INSTALL_TARGET(MD2)
+#    endif()
+#    VL_PROJECT_ADD(VLGRAPHICS INCLUDE_DIRECTORIES "${INSTALL_DIR}" LINK_LIBRARIES MD2)
+# endif()
+
+

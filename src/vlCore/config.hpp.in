@@ -133,9 +133,17 @@
  * Enable this to be able to attach user data to any vl::Actor using the
  * "setActorUserData(Object*)" and "Object* actorUserData()" methods.
  * Useful to glue VL classes to the user's application logic.
- * \note This will add 4 or 8 bytes to each vl::Actor instance.
+ * \note This will add 4 or 8 bytes to each vl::Actor instance.it must be disabled when next value "VL_USER_DATA_ACTOR" is enabled
  */
-#cmakedefine VL_USER_DATA_ACTOR
+ #cmakedefine VL_USER_DATA_ACTOR
+
+ /**
+  * Enable this to be able to attach user data to any vl::Actor using the
+  * "setActorUserData(void*)" and "void* actorUserData()" methods.
+  * Useful to glue VL classes to the user's application logic.
+  * \note This will add 4 or 8 bytes to each vl::Actor instance.it must be disabled when previous value "VL_USER_VOIDDATA_ACTOR" is enabled
+  */
+ #cmakedefine VL_USER_VOIDDATA_ACTOR
 
 
 /**

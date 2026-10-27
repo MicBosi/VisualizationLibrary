@@ -57,6 +57,8 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
+    virtual ~PixelLODEvaluator(){}
+
     virtual int evaluate(Actor* actor, Camera* camera);
 
     const std::vector<float>& pixelRangeSet() const { return mPixelRangeSet; }

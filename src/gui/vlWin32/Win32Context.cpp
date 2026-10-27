@@ -207,7 +207,7 @@ bool Win32Context::setFullscreen(bool fullscreen_on)
     {
       case DISP_CHANGE_SUCCESSFUL:
       {
-        RECT windowRect = { 0, 0, devmode.dmPelsWidth, devmode.dmPelsHeight };
+        RECT windowRect = { 0, 0, static_cast<LONG>(devmode.dmPelsWidth), static_cast<LONG>(devmode.dmPelsHeight) };
         /*mStyle = */SetWindowLongPtr(hwnd(), GWL_STYLE, WS_POPUP | WS_VISIBLE );
         AdjustWindowRectEx(&windowRect, (DWORD)GetWindowLongPtr(hwnd(), GWL_STYLE), 0, (DWORD)GetWindowLongPtr(hwnd(), GWL_EXSTYLE) );
         SetWindowPos(hwnd(), HWND_TOP, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, SWP_FRAMECHANGED );

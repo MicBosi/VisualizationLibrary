@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://visualizationlibrary.org                                                   */
+/*  http://www.visualizationlibrary.org                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2020, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi, Fabien Mathieu							  */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -29,70 +29,74 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/VisualizationLibrary.hpp>
-#include <vlQt6/Qt6Widget.hpp>
-#include "Applets/App_RotatingCube.hpp"
+#include <vlGraphics/TransformFeedback.hpp>
+#include <vlGraphics/OpenGLContext.hpp>
 
 using namespace vl;
-using namespace vlQt6;
 
-int main(int argc, char *argv[])
+void TransformFeedback::createTransformFeedbacks()
 {
-  QApplication app(argc, argv);
-
-  /* init Visualization Library */
-  VisualizationLibrary::init();
-
-  /* open a console so we can see the applet's output on stdout */
-  vl::showWin32Console();
-
-  /* setup the OpenGL context format */
-  OpenGLContextFormat format;
-  format.setDoubleBuffer(true);
-  format.setRGBABits(8, 8, 8, 0);
-  format.setDepthBufferBits(24);
-  format.setStencilBufferBits(8);
-  format.setMultisampleSamples(16);
-  format.setMultisample(false);
-  format.setFullscreen(false);
-  //format.setOpenGLProfile( GLP_Core );
-  //format.setVersion( 3, 3 );
-
-  /* create the applet to be run */
-  ref<Applet> applet = new App_RotatingCube;
-  applet->initialize();
-  /* create a native Qt6 window */
-  ref<vlQt6::Qt6Widget> qt6_window = new vlQt6::Qt6Widget;
-  /* bind the applet so it receives all the GUI events related to the OpenGLContext */
-  qt6_window->addEventListener(applet.get());
-  /* target the window so we can render on it */
-  applet->rendering()->as<Rendering>()->renderer()->setFramebuffer(qt6_window->framebuffer());
-  /* black background */
-  applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor(black);
-  /* define the camera position and orientation */
-  vec3 eye = vec3(0, 10, 35);  // camera position
-  vec3 center = vec3(0, 0, 0); // point the camera is looking at
-  vec3 up = vec3(0, 1, 0);     // up direction
-  mat4 view_mat = mat4::getLookAt(eye, center, up);
-  applet->rendering()->as<Rendering>()->camera()->setViewMatrix(view_mat);
-  /* Initialize the OpenGL context and window properties */
-  int x = 10;
-  int y = 10;
-  int width = 512;
-  int height = 512;
-  qt6_window->initQt6Widget("Visualization Library on Qt 6 - Rotating Cube", format, x, y, width, height);
-  /* show the window */
-  qt6_window->show();
-
-  /* run the Win32 message loop */
-  int val = app.exec();
-
-  /* deallocate the window with all the OpenGL resources before shutting down Visualization Library */
-  qt6_window = NULL;
-
-  /* shutdown Visualization Library */
-  VisualizationLibrary::shutdown();
-
-  return val;
+	glGenTransformFeedbacks(1, &mHandle);
 }
-// Have fun!
+
+void TransformFeedback::bindTransformFeedback() const
+{
+	VL_CHECK_OGL();
+	
+	if ( !Has_Transform_Feedback )
+	{
+		Log::error( "TransformFeedback::bindTransformFeedback(): transform feedback not supported.\n" );
+		return;
+	}
+	if(handle() != 0)
+	{
+		glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, TransformFeedback::handle());	VL_CHECK_OGL();
+	}
+}
+
+void TransformFeedback::beginTransformFeedback( ) const
+{
+	
+	if(mHandleQuery != 0)
+		glBeginQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, mHandleQuery);
+			
+	glBeginTransformFeedback(mType);	VL_CHECK_OGL();
+}
+
+void TransformFeedback::endTransformFeedback() const
+{
+	glEndTransformFeedback();	
+	
+	if(mHandleQuery != 0)
+		glEndQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN);
+		
+	VL_CHECK_OGL();
+}
+	
+void TransformFeedback::pauseTransformFeedback() const
+{
+	glPauseTransformFeedback();	VL_CHECK_OGL();
+}
+	
+void TransformFeedback::resumeTransformFeedback() const
+{
+	glResumeTransformFeedback();	VL_CHECK_OGL();
+}
+
+void TransformFeedback::setTransformFeedbackVaryings(std::list< String >& varyings)
+{
+	mVaryingsCount = varyings.size();
+	mVaryings = new char*[varyings.size()];
+	std::list< String >::iterator it;
+	int i = 0;
+	for(it = varyings.begin(); it != varyings.end(); ++it)
+	{
+		mVaryings[i] = new char[it->length()];
+		std::memcpy(mVaryings[i++], it->toStdString().c_str(), it->length() + 1);
+	}
+}
+
+char** TransformFeedback::transformFeedbackVaryings() const
+{
+	return mVaryings;
+}

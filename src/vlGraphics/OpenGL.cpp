@@ -135,6 +135,9 @@ namespace vl
     // Point sprites
     GL_POINT_SPRITE, 
     GL_PROGRAM_POINT_SIZE, 
+	
+	// Rasterizer
+	GL_RASTERIZER_DISCARD,
 
     // Fixed function pipeline
     GL_ALPHA_TEST, 
@@ -192,6 +195,9 @@ namespace vl
     // Point sprites
     "GL_POINT_SPRITE", 
     "GL_PROGRAM_POINT_SIZE", 
+	
+	// Rasterizer
+	"GL_RASTERIZER_DISCARD",
 
     // Fixed function pipeline
     "GL_ALPHA_TEST", 
@@ -249,6 +255,9 @@ namespace vl
     // Point sprites
     false /*GL_POINT_SPRITE*/, 
     false /*GL_PROGRAM_POINT_SIZE*/, 
+
+    // Rasterizer
+    false /*GL_RASTERIZER_DISCARD*/,
 
     // Fixed function pipeline
     false /*GL_ALPHA_TEST*/, 
@@ -459,6 +468,9 @@ bool vl::initializeOpenGL(const OpenGLFunctions* gl)
   // Note that calling glIsEnabled() with the two below under a Core profile returns true for the same reason.
   Is_Enable_Supported[EN_POINT_SPRITE]       = (Has_GL_NV_point_sprite||Has_GL_ARB_point_sprite||Has_GL_Version_2_0) && Has_Fixed_Function_Pipeline;
   Is_Enable_Supported[EN_PROGRAM_POINT_SIZE] = Has_GLSL; 
+
+  // Rasterizer
+  Is_Enable_Supported[EN_RASTERIZER_DISCARD] = Has_GLSL && Has_GL_Version_3_0;
 
   // Fixed function pipeline
   Is_Enable_Supported[EN_ALPHA_TEST]     = Has_GL_Version_1_1;
