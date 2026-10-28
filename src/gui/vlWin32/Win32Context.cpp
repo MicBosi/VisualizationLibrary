@@ -271,7 +271,7 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
       // delete HDC
       if (mContext->mHDC)
       {
-        DeleteDC(mContext->mHDC);
+        ReleaseDC(mContext->hwnd(), mContext->mHDC);
         mContext->mHDC = NULL;
       }
 
@@ -440,7 +440,7 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
   if (pixel_format_index == 0)
   {
     if (verbose) MessageBox(NULL, L"choosePixelFormat() critical failure: could not choose temporary format.", L"Visualization Library error", MB_OK);
-    DeleteDC(hDC);
+    ReleaseDC(hWnd, hDC);
     DestroyWindow(hWnd);
     return -1;
   }
@@ -448,7 +448,7 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
   if (SetPixelFormat(hDC, pixel_format_index, &pfd) == FALSE)
   {
     if (verbose) MessageBox(NULL, L"choosePixelFormat() critical failure: could not set temporary format.", L"Visualization Library error", MB_OK);
-    DeleteDC(hDC);
+    ReleaseDC(hWnd, hDC);
     DestroyWindow(hWnd);
     return -1;
   }
@@ -458,7 +458,7 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
   if (!hGLRC)
   {
     if (verbose) MessageBox(NULL, L"choosePixelFormat() critical failure: could not create temporary OpenGL context.", L"Visualization Library error", MB_OK);
-    DeleteDC(hDC);
+    ReleaseDC(hWnd, hDC);
     DestroyWindow(hWnd);
     return -1;
   }
@@ -468,7 +468,7 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
   if (!initializeOpenGL())
   {
     fprintf(stderr, "Error initializing OpenGL!\n");
-    DeleteDC(hDC);
+    ReleaseDC(hWnd, hDC);
     DestroyWindow(hWnd);
     return -1;
   }
@@ -524,7 +524,7 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
   // destroy temporary HWND, HDC, HGLRC
   if ( wglDeleteContext(hGLRC) == FALSE )
     if (verbose) MessageBox(NULL, L"Error deleting temporary OpenGL context, wglDeleteContext(hGLRC) failed.", L"Visualization Library error", MB_OK);
-  DeleteDC(hDC);
+  ReleaseDC(hWnd, hDC);
   DestroyWindow(hWnd);
 
   if (verbose)
