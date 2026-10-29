@@ -23,10 +23,9 @@ set(VL_VERSION_FULL "${VL_VERSION_MAJOR}.${VL_VERSION_MINOR}.${VL_VERSION_PATCH}
 # Initialization
 ################################################################################
 
-project(Visualization_Library_SDK)
+cmake_minimum_required(VERSION 3.5...3.31)
 
-# Must be called after project!
-cmake_minimum_required(VERSION 3.0)
+project(Visualization_Library_SDK C CXX)
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP4>)
 
 ################################################################################
@@ -85,6 +84,7 @@ endif()
 # Add our dir to the CMake modules path and include our InternalMacros file
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
 include( InternalMacros )
+include( ThirdParty )
 
 # Debug postfix for all libraries.
 set(CMAKE_DEBUG_POSTFIX "-d")

@@ -1,29 +1,29 @@
-/***************************************************************************/
-/*                                                                         */
-/*  pshglob.c                                                              */
-/*                                                                         */
-/*    PostScript hinter global hinting management (body).                  */
-/*    Inspired by the new auto-hinter module.                              */
-/*                                                                         */
-/*  Copyright 2001-2004, 2006, 2010, 2012 by                               */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used        */
-/*  modified and distributed under the terms of the FreeType project       */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
-/*                                                                         */
-/***************************************************************************/
+/****************************************************************************
+ *
+ * pshglob.c
+ *
+ *   PostScript hinter global hinting management (body).
+ *   Inspired by the new auto-hinter module.
+ *
+ * Copyright (C) 2001-2026 by
+ * David Turner, Robert Wilhelm, and Werner Lemberg.
+ *
+ * This file is part of the FreeType project, and may only be used
+ * modified and distributed under the terms of the FreeType project
+ * license, LICENSE.TXT.  By continuing to use, modify, or distribute
+ * this file you indicate that you have read the license and
+ * understand and accept it fully.
+ *
+ */
 
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_INTERNAL_OBJECTS_H
+#include <freetype/freetype.h>
+#include <freetype/internal/ftobjs.h>
+#include <freetype/internal/ftcalc.h>
 #include "pshglob.h"
 
 #ifdef DEBUG_HINTER
-  PSH_Globals  ps_debug_globals = 0;
+  PSH_Globals  ps_debug_globals = NULL;
 #endif
 
 
@@ -80,7 +80,7 @@
 
 #if 0
 
-  /* org_width is is font units, result in device pixels, 26.6 format */
+  /* org_width is in font units, result in device pixels, 26.6 format */
   FT_LOCAL_DEF( FT_Pos )
   psh_dimension_snap_width( PSH_Dimension  dimension,
                             FT_Int         org_width )
@@ -227,8 +227,8 @@
   }
 
 
-  /* Re-read blue zones from the original fonts and store them into out */
-  /* private structure.  This function re-orders, sanitizes and         */
+  /* Re-read blue zones from the original fonts and store them into our */
+  /* private structure.  This function re-orders, sanitizes, and        */
   /* fuzz-expands the zones as well.                                    */
   static void
   psh_blues_set_zones( PSH_Blues  target,
@@ -240,7 +240,7 @@
                        FT_Int     family )
   {
     PSH_Blue_Table  top_table, bot_table;
-    FT_Int          count_top, count_bot;
+    FT_UInt         count_top, count_bot;
 
 
     if ( family )
@@ -339,7 +339,7 @@
             bot   = zone[1].org_bottom;
             delta = bot - top;
 
-            if ( delta < 2 * fuzz )
+            if ( delta / 2 < fuzz )
               zone[0].org_top = zone[1].org_bottom = top + delta / 2;
             else
             {
@@ -369,43 +369,31 @@
   {
     FT_UInt         count;
     FT_UInt         num;
-    PSH_Blue_Table  table = 0;
+    PSH_Blue_Table  table = NULL;
 
     /*                                                        */
     /* Determine whether we need to suppress overshoots or    */
     /* not.  We simply need to compare the vertical scale     */
     /* parameter to the raw bluescale value.  Here is why:    */
     /*                                                        */
-    /*   We need to suppress overshoots for all pointsizes.   */
-    /*   At 300dpi that satisfies:                            */
+    /* The specs explain how the bluescale is calculated      */
+    /* from the desired maximum rounded pointsize at 300 dpi  */
+    /* and assuming upem of 1000.                             */
     /*                                                        */
-    /*      pointsize < 240*bluescale + 0.49                  */
+    /*    bluescale = ( pointsize - 0.49 ) / 240              */
     /*                                                        */
-    /*   This corresponds to:                                 */
+    /* For unrounded pointsize in general terms               */
     /*                                                        */
-    /*      pixelsize < 1000*bluescale + 49/24                */
+    /*    bluescale = ( pointsize * dpi / 72 ) / upem         */
     /*                                                        */
-    /*      scale*EM_Size < 1000*bluescale + 49/24            */
+    /* which is                                               */
     /*                                                        */
-    /*   However, for normal Type 1 fonts, EM_Size is 1000!   */
-    /*   We thus only check:                                  */
+    /*    bluescale = pixelsize / upem                        */
     /*                                                        */
-    /*      scale < bluescale + 49/24000                      */
+    /* Therefore, the bluescale value can be used directly    */
+    /* as a scale limit, now that it is in comparable units   */
     /*                                                        */
-    /*   which we shorten to                                  */
-    /*                                                        */
-    /*      "scale < bluescale"                               */
-    /*                                                        */
-    /* Note that `blue_scale' is stored 1000 times its real   */
-    /* value, and that `scale' converts from font units to    */
-    /* fractional pixels.                                     */
-    /*                                                        */
-
-    /* 1000 / 64 = 125 / 8 */
-    if ( scale >= 0x20C49BAL )
-      blues->no_overshoots = FT_BOOL( scale < blues->blue_scale * 8 / 125 );
-    else
-      blues->no_overshoots = FT_BOOL( scale * 125 < blues->blue_scale * 8 );
+    blues->no_overshoots = FT_BOOL( scale < blues->blue_scale );
 
     /*                                                        */
     /*  The blue threshold is the font units distance under   */
@@ -420,8 +408,8 @@
       FT_Int  threshold = blues->blue_shift;
 
 
-      while ( threshold > 0 && FT_MulFix( threshold, scale ) > 32 )
-        threshold--;
+      if ( threshold > 0 && FT_MulFix( threshold, scale ) > 32 )
+        threshold = 32 * 0x10000L / scale;
 
       blues->blue_threshold = threshold;
     }
@@ -568,7 +556,7 @@
 
     for ( ; count > 0; count--, zone++ )
     {
-      delta = stem_top - zone->org_bottom;
+      delta = SUB_LONG( stem_top, zone->org_bottom );
       if ( delta < -blues->blue_fuzz )
         break;
 
@@ -590,7 +578,7 @@
 
     for ( ; count > 0; count--, zone-- )
     {
-      delta = zone->org_top - stem_bot;
+      delta = SUB_LONG( zone->org_top, stem_bot );
       if ( delta < -blues->blue_fuzz )
         break;
 
@@ -635,7 +623,7 @@
       FT_FREE( globals );
 
 #ifdef DEBUG_HINTER
-      ps_debug_globals = 0;
+      ps_debug_globals = NULL;
 #endif
     }
   }
@@ -650,7 +638,7 @@
     FT_Error     error;
 
 
-    if ( !FT_NEW( globals ) )
+    if ( !FT_QNEW( globals ) )
     {
       FT_UInt    count;
       FT_Short*  read;
@@ -708,7 +696,6 @@
 
       /* limit the BlueScale value to `1 / max_of_blue_zone_heights' */
       {
-        FT_Fixed  max_scale;
         FT_Short  max_height = 1;
 
 
@@ -725,11 +712,12 @@
                                           priv->family_other_blues,
                                           max_height );
 
-        /* BlueScale is scaled 1000 times */
-        max_scale = FT_DivFix( 1000, max_height );
-        globals->blues.blue_scale = priv->blue_scale < max_scale
-                                      ? priv->blue_scale
-                                      : max_scale;
+        /* restrict BlueScale value that is amplified 1000-fold and */
+        /* rescale it to be comparable to the metrics scale         */
+        if ( FT_MulFix( max_height, priv->blue_scale ) < 1000 )
+          globals->blues.blue_scale = priv->blue_scale * 8 / 125;
+        else
+          globals->blues.blue_scale = 64 * 0x10000L / max_height;
       }
 
       globals->blues.blue_shift = priv->blue_shift;
@@ -750,14 +738,14 @@
   }
 
 
-  FT_LOCAL_DEF( FT_Error )
+  FT_LOCAL_DEF( void )
   psh_globals_set_scale( PSH_Globals  globals,
                          FT_Fixed     x_scale,
                          FT_Fixed     y_scale,
                          FT_Fixed     x_delta,
                          FT_Fixed     y_delta )
   {
-    PSH_Dimension  dim = &globals->dimension[0];
+    PSH_Dimension  dim;
 
 
     dim = &globals->dimension[0];
@@ -780,8 +768,6 @@
       psh_globals_scale_widths( globals, 1 );
       psh_blues_scale_zones( &globals->blues, y_scale, y_delta );
     }
-
-    return 0;
   }
 
 

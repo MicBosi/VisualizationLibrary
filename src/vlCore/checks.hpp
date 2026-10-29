@@ -64,8 +64,11 @@ namespace vl
     #if defined(_MSC_VER)
       #define VL_TRAP() { if (IsDebuggerPresent()) { __debugbreak(); } else ::vl::abort_vl(); }
     // GNU GCC
-    #elif defined(__GNUG__) || defined(__MINGW32__)
+    #elif (defined(__GNUG__) || defined(__MINGW32__)) && (defined(__i386__) || defined(__x86_64__))
       #define VL_TRAP() { fflush(stdout); fflush(stderr); asm("int $0x3"); }
+    // GNU GCC / Clang on non-x86 (e.g. ARM64)
+    #elif defined(__GNUG__)
+      #define VL_TRAP() { fflush(stdout); fflush(stderr); __builtin_trap(); }
     #else
       #define VL_TRAP() { ::vl::abort_vl(); }
     #endif

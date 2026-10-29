@@ -17,14 +17,6 @@
 
 set(PNG_DIR "${3RDPARTY_DIR}/libpng")
 
-include_directories("${3RDPARTY_DIR}/zlib")
-
-add_definitions(-DPNG_NO_MMX_CODE -D_CRT_SECURE_NO_WARNINGS)
-
-if(UNIX AND VL_DYNAMIC_LINKING)
-    add_definitions("-fPIC")
-endif()
-
 add_library(PNG STATIC
 	"${PNG_DIR}/png.c"
 	"${PNG_DIR}/pngerror.c"
@@ -43,8 +35,19 @@ add_library(PNG STATIC
 	"${PNG_DIR}/pngwutil.c"
 )
 
-if(NOT VL_DYNAMIC_LINKING)
-	VL_INSTALL_TARGET(PNG)
-endif()
+# Plain C code paths on every architecture: the SIMD filters need extra
+# per-architecture sources (arm/, intel/, mips/, powerpc/, loongarch/, riscv/)
+target_compile_definitions(PNG PRIVATE
+	PNG_ARM_NEON_OPT=0
+	PNG_INTEL_SSE_OPT=0
+	PNG_MIPS_MSA_OPT=0
+	PNG_MIPS_MMI_OPT=0
+	PNG_POWERPC_VSX_OPT=0
+	PNG_LOONGARCH_LSX_OPT=0
+	PNG_RISCV_RVV_OPT=0
+)
+target_link_libraries(PNG PRIVATE ZLib)
+
+VL_THIRDPARTY_TARGET(PNG)
 
 VL_PROJECT_ADD(VLCORE INCLUDE_DIRECTORIES "${PNG_DIR}" LINK_LIBRARIES PNG)

@@ -17,12 +17,6 @@
 
 set(ZLIB_DIR "${3RDPARTY_DIR}/zlib")
 
-add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-
-if(UNIX AND VL_DYNAMIC_LINKING)
-    add_definitions("-fPIC")
-endif()
-
 add_library(ZLib STATIC
     "${ZLIB_DIR}/adler32.c"
     "${ZLIB_DIR}/compress.c"
@@ -41,8 +35,18 @@ add_library(ZLib STATIC
     "${ZLIB_DIR}/zutil.c"
 )
 
-if(NOT VL_DYNAMIC_LINKING)
-	VL_INSTALL_TARGET(ZLib)
-endif()
+# These change zconf.h (e.g. z_off_t) so every user of zlib.h must see them
+set(ZLIB_DEFINITIONS "")
+set(ZLIB_DEFINITIONS_FLAGS "")
+foreach(_def UNISTD_H STDARG_H)
+	if(VL_HAVE_${_def})
+		list(APPEND ZLIB_DEFINITIONS HAVE_${_def})
+		list(APPEND ZLIB_DEFINITIONS_FLAGS -DHAVE_${_def})
+	endif()
+endforeach()
+target_compile_definitions(ZLib PUBLIC ${ZLIB_DEFINITIONS})
+target_include_directories(ZLib PUBLIC "${ZLIB_DIR}")
 
-VL_PROJECT_ADD(VLCORE INCLUDE_DIRECTORIES "${ZLIB_DIR}" LINK_LIBRARIES ZLib)
+VL_THIRDPARTY_TARGET(ZLib)
+
+VL_PROJECT_ADD(VLCORE DEFINITIONS ${ZLIB_DEFINITIONS_FLAGS} INCLUDE_DIRECTORIES "${ZLIB_DIR}" LINK_LIBRARIES ZLib)

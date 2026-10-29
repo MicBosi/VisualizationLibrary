@@ -50,35 +50,37 @@ namespace
   void tiff_warning(const char *, const char *, va_list)
   {
   }
-  tsize_t tiff_io_read_func(thandle_t fd, tdata_t buf, tsize_t size)
+  tmsize_t tiff_io_read_func(thandle_t fd, void* buf, tmsize_t size)
   {
     VirtualFile *fin = (VirtualFile*)fd;
     long long c = fin->read(buf,size);
-    return (tsize_t)c;
+    return (tmsize_t)c;
   }
-  tsize_t tiff_io_write_func(thandle_t fd, tdata_t buf, tsize_t size)
+  tmsize_t tiff_io_write_func(thandle_t fd, void* buf, tmsize_t size)
   {
     VirtualFile *fin = (VirtualFile*)fd;
     long long c = fin->write(buf,size);
-    return (tsize_t)c;
+    return (tmsize_t)c;
   }
   toff_t tiff_io_seek_func(thandle_t fd, toff_t off, int i)
   {
     VirtualFile*fin = (VirtualFile*)fd;
+    // SEEK_CUR/SEEK_END offsets can be negative, passed as two's complement
+    long long offset = (long long)off;
 
     switch(i)
     {
     case SEEK_SET:
-      fin->seekSet(off);
-      return (tsize_t)fin->position();
+      fin->seekSet(offset);
+      return (toff_t)fin->position();
 
     case SEEK_CUR:
-      fin->seekCur(off);
-      return (tsize_t)fin->position();
+      fin->seekCur(offset);
+      return (toff_t)fin->position();
 
     case SEEK_END:
-      fin->seekEnd(off);
-      return (tsize_t)fin->position();
+      fin->seekEnd(offset);
+      return (toff_t)fin->position();
 
     default:
       return 0;
@@ -93,13 +95,13 @@ namespace
   toff_t tiff_io_size_func(thandle_t fd)
   {
     VirtualFile *fin = (VirtualFile*)fd;
-    return (tsize_t)fin->size();
+    return (toff_t)fin->size();
   }
-  int tiff_io_map_func(thandle_t, tdata_t*, toff_t*)
+  int tiff_io_map_func(thandle_t, void**, toff_t*)
   {
     return 0;
   }
-  void tiff_io_unmap_func(thandle_t, tdata_t, toff_t)
+  void tiff_io_unmap_func(thandle_t, void*, toff_t)
   {
     return;
   }
@@ -137,14 +139,14 @@ ref<Image> vl::loadTIFF(VirtualFile* file)
 
   if (tif)
   {
-    uint32 w, h;
+    uint32_t w = 0, h = 0;
     size_t npixels;
-    uint32* raster;
+    uint32_t* raster;
 
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
     TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
-    npixels = w * h;
-    raster = (uint32*) _TIFFmalloc(npixels * sizeof (uint32));
+    npixels = (size_t)w * h;
+    raster = (uint32_t*) _TIFFmalloc(npixels * sizeof (uint32_t));
     if (raster != NULL)
     {
       if (TIFFReadRGBAImage(tif, w, h, raster, 0))
@@ -154,7 +156,7 @@ ref<Image> vl::loadTIFF(VirtualFile* file)
       }
       _TIFFfree(raster);
     }
-    uint16 orientation = ORIENTATION_TOPLEFT; // default
+    uint16_t orientation = ORIENTATION_TOPLEFT; // default
     TIFFGetField(tif, TIFFTAG_ORIENTATION, &orientation);
     if (orientation == ORIENTATION_LEFTBOT )
       img->flipVertically();

@@ -1,25 +1,30 @@
-/***************************************************************************/
-/*                                                                         */
-/*  ttbdf.c                                                                */
-/*                                                                         */
-/*    TrueType and OpenType embedded BDF properties (body).                */
-/*                                                                         */
-/*  Copyright 2005, 2006, 2010, 2013 by                                    */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
-/*                                                                         */
-/***************************************************************************/
+/****************************************************************************
+ *
+ * ttbdf.c
+ *
+ *   TrueType and OpenType embedded BDF properties (body).
+ *
+ * Copyright (C) 2005-2026 by
+ * David Turner, Robert Wilhelm, and Werner Lemberg.
+ *
+ * This file is part of the FreeType project, and may only be used,
+ * modified, and distributed under the terms of the FreeType project
+ * license, LICENSE.TXT.  By continuing to use, modify, or distribute
+ * this file you indicate that you have read the license and
+ * understand and accept it fully.
+ *
+ */
 
 
-#include <ft2build.h>
-#include FT_INTERNAL_DEBUG_H
-#include FT_INTERNAL_STREAM_H
-#include FT_TRUETYPE_TAGS_H
+  /*
+   * The 'BDF ' SFNT table is described in the FontForge documentation, see
+   *
+   *   https://fontforge.org/docs/techref/non-standard.html#non-standard-bdf
+   */
+
+#include <freetype/internal/ftdebug.h>
+#include <freetype/internal/ftstream.h>
+#include <freetype/tttags.h>
 #include "ttbdf.h"
 
 #include "sferrors.h"
@@ -27,14 +32,14 @@
 
 #ifdef TT_CONFIG_OPTION_BDF
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-  /* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
-  /* messages during execution.                                            */
-  /*                                                                       */
+  /**************************************************************************
+   *
+   * The macro FT_COMPONENT is used in trace mode.  It is an implicit
+   * parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log
+   * messages during execution.
+   */
 #undef  FT_COMPONENT
-#define FT_COMPONENT  trace_ttbdf
+#define FT_COMPONENT  ttbdf
 
 
   FT_LOCAL_DEF( void )
@@ -45,10 +50,10 @@
 
     if ( bdf->loaded )
     {
-      FT_Stream  stream = FT_FACE(face)->stream;
+      FT_Stream  stream = FT_FACE( face )->stream;
 
 
-      if ( bdf->table != NULL )
+      if ( bdf->table )
         FT_FRAME_RELEASE( bdf->table );
 
       bdf->table_end    = NULL;
@@ -81,21 +86,19 @@
     bdf->table_end = bdf->table + length;
 
     {
-      FT_Byte*   p           = bdf->table;
-      FT_UInt    version     = FT_NEXT_USHORT( p );
-      FT_UInt    num_strikes = FT_NEXT_USHORT( p );
-      FT_ULong   strings     = FT_NEXT_ULONG ( p );
-      FT_UInt    count;
-      FT_Byte*   strike;
+      FT_Byte*  p           = bdf->table;
+      FT_UInt   version     = FT_NEXT_USHORT( p );
+      FT_UInt   num_strikes = FT_NEXT_USHORT( p );
+      FT_ULong  strings     = FT_NEXT_ULONG ( p );
+      FT_UInt   count;
+      FT_Byte*  strike;
 
 
       if ( version != 0x0001                 ||
            strings < 8                       ||
            ( strings - 8 ) / 4 < num_strikes ||
-           strings + 1 > length              )
-      {
+           strings >= length                 )
         goto BadTable;
-      }
 
       bdf->num_strikes  = num_strikes;
       bdf->strings      = bdf->table + strings;
@@ -105,15 +108,14 @@
       p      = bdf->table + 8;
       strike = p + count * 4;
 
-
+      /* Check table length. */
       for ( ; count > 0; count-- )
       {
         FT_UInt  num_items = FT_PEEK_USHORT( p + 2 );
 
-        /*
-         *  We don't need to check the value sets themselves, since this
-         *  is done later.
-         */
+
+        /* We don't check the value sets themselves; */
+        /* this is done while accessing a property.  */
         strike += 10 * num_items;
 
         p += 4;
@@ -137,13 +139,14 @@
 
 
   FT_LOCAL_DEF( FT_Error )
-  tt_face_find_bdf_prop( TT_Face           face,
+  tt_face_find_bdf_prop( FT_Face           face,          /* TT_Face */
                          const char*       property_name,
                          BDF_PropertyRec  *aprop )
   {
-    TT_BDF     bdf   = &face->bdf;
-    FT_Size    size  = FT_FACE(face)->size;
-    FT_Error   error = FT_Err_Ok;
+    TT_Face    ttface = (TT_Face)face;
+    TT_BDF     bdf    = &ttface->bdf;
+    FT_Size    size   = face->size;
+    FT_Error   error  = FT_Err_Ok;
     FT_Byte*   p;
     FT_UInt    count;
     FT_Byte*   strike;
@@ -154,7 +157,7 @@
 
     if ( bdf->loaded == 0 )
     {
-      error = tt_face_load_bdf_props( face, FT_FACE( face )->stream );
+      error = tt_face_load_bdf_props( ttface, FT_FACE_STREAM( face ) );
       if ( error )
         goto Exit;
     }
@@ -165,7 +168,7 @@
 
     error = FT_ERR( Invalid_Argument );
 
-    if ( size == NULL || property_name == NULL )
+    if ( !size || !property_name )
       goto Exit;
 
     property_len = ft_strlen( property_name );
@@ -176,6 +179,7 @@
     {
       FT_UInt  _ppem  = FT_NEXT_USHORT( p );
       FT_UInt  _count = FT_NEXT_USHORT( p );
+
 
       if ( _ppem == size->metrics.y_ppem )
       {
@@ -193,10 +197,12 @@
     {
       FT_UInt  type = FT_PEEK_USHORT( p + 4 );
 
+
       if ( ( type & 0x10 ) != 0 )
       {
         FT_UInt32  name_offset = FT_PEEK_ULONG( p     );
         FT_UInt32  value       = FT_PEEK_ULONG( p + 6 );
+
 
         /* be a bit paranoid for invalid entries here */
         if ( name_offset < bdf->strings_size                    &&
@@ -210,8 +216,9 @@
           case 0x00:  /* string */
           case 0x01:  /* atoms */
             /* check that the content is really 0-terminated */
-            if ( value < bdf->strings_size &&
-                 ft_memchr( bdf->strings + value, 0, bdf->strings_size ) )
+            if ( value < bdf->strings_size              &&
+                 ft_memchr( bdf->strings + value, 0,
+                            bdf->strings_size - value ) )
             {
               aprop->type   = BDF_PROPERTY_TYPE_ATOM;
               aprop->u.atom = (const char*)bdf->strings + value;
@@ -244,7 +251,12 @@
     return error;
   }
 
-#endif /* TT_CONFIG_OPTION_BDF */
+#else /* !TT_CONFIG_OPTION_BDF */
+
+  /* ANSI C doesn't like empty source files */
+  typedef int  tt_bdf_dummy_;
+
+#endif /* !TT_CONFIG_OPTION_BDF */
 
 
 /* END */

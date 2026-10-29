@@ -1,19 +1,19 @@
-/***************************************************************************/
-/*                                                                         */
-/*  ttcmapc.h                                                              */
-/*                                                                         */
-/*    TT CMAP classes definitions (specification only).                    */
-/*                                                                         */
-/*  Copyright 2009 by                                                      */
-/*  Oran Agra and Mickey Gabel.                                            */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
-/*                                                                         */
-/***************************************************************************/
+/****************************************************************************
+ *
+ * ttcmapc.h
+ *
+ *   TT CMAP classes definitions (specification only).
+ *
+ * Copyright (C) 2009-2026 by
+ * Oran Agra and Mickey Gabel.
+ *
+ * This file is part of the FreeType project, and may only be used,
+ * modified, and distributed under the terms of the FreeType project
+ * license, LICENSE.TXT.  By continuing to use, modify, or distribute
+ * this file you indicate that you have read the license and
+ * understand and accept it fully.
+ *
+ */
 
 
 #ifdef TT_CONFIG_CMAP_FORMAT_0
@@ -50,6 +50,10 @@
 
 #ifdef TT_CONFIG_CMAP_FORMAT_14
   TTCMAPCITEM( tt_cmap14_class_rec )
+#endif
+
+#ifdef TT_CONFIG_CMAP_FORMAT_15
+  TTCMAPCITEM( tt_cmap15_class_rec )
 #endif
 
 

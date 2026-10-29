@@ -1,26 +1,25 @@
-/***************************************************************************/
-/*                                                                         */
-/*  ftcglyph.c                                                             */
-/*                                                                         */
-/*    FreeType Glyph Image (FT_Glyph) cache (body).                        */
-/*                                                                         */
-/*  Copyright 2000-2001, 2003, 2004, 2006, 2009, 2011 by                   */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
-/*                                                                         */
-/***************************************************************************/
+/****************************************************************************
+ *
+ * ftcglyph.c
+ *
+ *   FreeType Glyph Image (FT_Glyph) cache (body).
+ *
+ * Copyright (C) 2000-2026 by
+ * David Turner, Robert Wilhelm, and Werner Lemberg.
+ *
+ * This file is part of the FreeType project, and may only be used,
+ * modified, and distributed under the terms of the FreeType project
+ * license, LICENSE.TXT.  By continuing to use, modify, or distribute
+ * this file you indicate that you have read the license and
+ * understand and accept it fully.
+ *
+ */
 
 
-#include <ft2build.h>
-#include FT_INTERNAL_OBJECTS_H
-#include FT_CACHE_H
+#include <freetype/internal/ftobjs.h>
+#include <freetype/ftcache.h>
 #include "ftcglyph.h"
-#include FT_ERRORS_H
+#include <freetype/fterrors.h>
 
 #include "ftccback.h"
 #include "ftcerror.h"
@@ -80,20 +79,6 @@
   }
 
 
-#ifdef FTC_INLINE
-
-  FT_LOCAL_DEF( FT_Bool )
-  FTC_GNode_Compare( FTC_GNode   gnode,
-                     FTC_GQuery  gquery,
-                     FTC_Cache   cache,
-                     FT_Bool*    list_changed )
-  {
-    return ftc_gnode_compare( FTC_NODE( gnode ), gquery,
-                              cache, list_changed );
-  }
-
-#endif
-
   /*************************************************************************/
   /*************************************************************************/
   /*****                                                               *****/
@@ -106,7 +91,7 @@
   FTC_Family_Init( FTC_Family  family,
                    FTC_Cache   cache )
   {
-    FTC_GCacheClass  clazz = FTC_CACHE__GCACHE_CLASS( cache );
+    FTC_GCacheClass  clazz = FTC_CACHE_GCACHE_CLASS( cache );
 
 
     family->clazz     = clazz->family_class;
@@ -116,22 +101,22 @@
 
 
   FT_LOCAL_DEF( FT_Error )
-  ftc_gcache_init( FTC_Cache  ftccache )
+  ftc_gcache_init( FTC_Cache  cache )
   {
-    FTC_GCache  cache = (FTC_GCache)ftccache;
+    FTC_GCache  gcache = (FTC_GCache)cache;
     FT_Error    error;
 
 
-    error = FTC_Cache_Init( FTC_CACHE( cache ) );
+    error = FTC_Cache_Init( cache );
     if ( !error )
     {
-      FTC_GCacheClass   clazz = (FTC_GCacheClass)FTC_CACHE( cache )->org_class;
+      FTC_GCacheClass   clazz = (FTC_GCacheClass)cache->org_class;
 
-      FTC_MruList_Init( &cache->families,
+      FTC_MruList_Init( &gcache->families,
                         clazz->family_class,
                         0,  /* no maximum here! */
                         cache,
-                        FTC_CACHE( cache )->memory );
+                        cache->memory );
     }
 
     return error;
@@ -141,31 +126,31 @@
 #if 0
 
   FT_LOCAL_DEF( FT_Error )
-  FTC_GCache_Init( FTC_GCache  cache )
+  FTC_GCache_Init( FTC_GCache  gcache )
   {
-    return ftc_gcache_init( FTC_CACHE( cache ) );
+    return ftc_gcache_init( FTC_CACHE( gcache ) );
   }
 
 #endif /* 0 */
 
 
   FT_LOCAL_DEF( void )
-  ftc_gcache_done( FTC_Cache  ftccache )
+  ftc_gcache_done( FTC_Cache  cache )
   {
-    FTC_GCache  cache = (FTC_GCache)ftccache;
+    FTC_GCache  gcache = (FTC_GCache)cache;
 
 
-    FTC_Cache_Done( (FTC_Cache)cache );
-    FTC_MruList_Done( &cache->families );
+    FTC_Cache_Done( cache );
+    FTC_MruList_Done( &gcache->families );
   }
 
 
 #if 0
 
   FT_LOCAL_DEF( void )
-  FTC_GCache_Done( FTC_GCache  cache )
+  FTC_GCache_Done( FTC_GCache  gcache )
   {
-    ftc_gcache_done( FTC_CACHE( cache ) );
+    ftc_gcache_done( FTC_CACHE( gcache ) );
   }
 
 #endif /* 0 */
@@ -184,8 +169,8 @@
 #ifndef FTC_INLINE
 
   FT_LOCAL_DEF( FT_Error )
-  FTC_GCache_Lookup( FTC_GCache   cache,
-                     FT_PtrDist   hash,
+  FTC_GCache_Lookup( FTC_GCache   gcache,
+                     FT_Offset    hash,
                      FT_UInt      gindex,
                      FTC_GQuery   query,
                      FTC_Node    *anode )
@@ -195,7 +180,7 @@
 
     query->gindex = gindex;
 
-    FTC_MRULIST_LOOKUP( &cache->families, query, query->family, error );
+    FTC_MRULIST_LOOKUP( &gcache->families, query, query->family, error );
     if ( !error )
     {
       FTC_Family  family = query->family;
@@ -205,10 +190,10 @@
       /* out-of-memory condition occurs during glyph node initialization. */
       family->num_nodes++;
 
-      error = FTC_Cache_Lookup( FTC_CACHE( cache ), hash, query, anode );
+      error = FTC_Cache_Lookup( FTC_CACHE( gcache ), hash, query, anode );
 
       if ( --family->num_nodes == 0 )
-        FTC_FAMILY_FREE( family, cache );
+        FTC_FAMILY_FREE( family, FTC_CACHE( gcache ) );
     }
     return error;
   }

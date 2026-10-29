@@ -2882,5 +2882,5 @@ VL_GL_FUNCTION( PFNWGLWAITFORSBCOMLPROC, wglWaitForSbcOML )
 #endif
 
 #if defined(VL_PLATFORM_MACOSX)
-  Nothing to do here?
+// No platform-specific (CGL) functions needed
 #endif

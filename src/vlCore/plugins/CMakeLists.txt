@@ -15,12 +15,6 @@
 # Compile-time Plugins for VLCore
 ################################################################################
 
-include_directories("../src/external/freetype")
-include_directories("../src/external/jpeg-6b")
-include_directories("../src/external/libpng")
-include_directories("../src/external/libtiff")
-include_directories("../src/external/zlib")
-
 # List of "2D IO" plugins
 # set(VLCORE_PLUGINS "BMP" "DAT" "MHD" "DDS" "DICOM" "JPG" "PNG" "TGA" "TIFF")
 set(INSTALL_DIR "${VL_INCLUDE_INSTALL_DIR}/vlCore/plugins")
